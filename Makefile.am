@@ -7,12 +7,17 @@
 ## -----------
 ## Please keep this file well-commented.
 
+# Subdirectories where we also want to run make
+SUBDIRS = po
+
 # Our Autoconf macros are kept in the m4/ directory
 ACLOCAL_AMFLAGS = -I m4
 
 # Extra files to distribute in the tarball
 EXTRA_DIST = @EOS_SDK_API_NAME@.pc.in
 
+# Compiler flags
+DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 AM_CFLAGS = @STRICT_CFLAGS@
 
 DISTCLEANFILES =

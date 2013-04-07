@@ -1,7 +1,9 @@
 /* Copyright 2013 Endless Mobile, Inc. */
 
+#include <config.h>
 #include <string.h>
 #include <glib.h>
+#include <glib/gi18n-lib.h>
 #include <gio/gio.h>
 
 #include <endless/endless.h>
@@ -29,7 +31,7 @@ gboolean
 eos_hello_sample_function(GFile   *file,
                           GError **error)
 {
-  char hello_string[] = "Hello, world!\n";
+  char *hello_string = _("Hello, world!\n");
   GFileOutputStream *stream;
   ssize_t write_count;
   gboolean success;
@@ -66,4 +68,3 @@ eos_hello_sample_function(GFile   *file,
 
   return TRUE;
 }
-

@@ -80,6 +80,14 @@ EOS_REQUIRED_MODULES_PRIVATE="$GLIB_REQUIREMENT $GOBJECT_REQUIREMENT $GIO_REQUIR
 AC_SUBST(EOS_REQUIRED_MODULES)
 AC_SUBST(EOS_REQUIRED_MODULES_PRIVATE)
 
+# Gettext package name
+GETTEXT_PACKAGE=$PACKAGE
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, ["$GETTEXT_PACKAGE"],
+	[Package name for Gettext])
+# Detect which languages are available
+AS_ALL_LINGUAS
+
 # Configure options
 # -----------------
 # --enable-strict-flags: Compile with strict compiler flags. Done automatically
@@ -125,6 +133,9 @@ AC_SUBST(STRICT_CFLAGS)
 AC_PROG_CC
 # Library configuration tool
 PKG_PROG_PKG_CONFIG
+# Gettext
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.18.1])
 
 # Required libraries
 # ------------------
@@ -137,8 +148,10 @@ PKG_CHECK_MODULES([EOS_SDK], [
 # List files here that the configure script should output
 AC_CONFIG_FILES([
 	Makefile
+	po/Makefile.in
 	$EOS_SDK_API_NAME.pc
 ])
+AC_CONFIG_HEADERS([config.h])  dnl Header with system-dependent #defines
 # Do the output
 AC_OUTPUT
 

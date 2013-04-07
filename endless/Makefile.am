@@ -9,7 +9,8 @@ endless_private_installed_headers = \
 	endless/types.h
 
 endless_library_sources = \
-	endless/hello.c
+	endless/hello.c \
+	endless/init.c
 
 # Endless GUI library
 lib_LTLIBRARIES = libendless-@EOS_SDK_API_VERSION@.la
