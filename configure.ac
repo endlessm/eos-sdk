@@ -47,12 +47,21 @@ GTK_REQUIRED_VERSION=3.0
 AC_SUBST(GLIB_REQUIRED_VERSION)
 AC_SUBST(GTK_REQUIRED_VERSION)
 
+# Gettext package name
+GETTEXT_PACKAGE=$PACKAGE
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, ["$GETTEXT_PACKAGE"],
+	[Package name for Gettext])
+
 # Required build tools
 # --------------------
 # C compiler
 AC_PROG_CC
 # Library configuration tool; 0.24 required for querying install path
 PKG_PROG_PKG_CONFIG([0.24])
+# Gettext
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.18.1])
 
 # Required libraries
 # ------------------
@@ -64,8 +73,10 @@ PKG_CHECK_MODULES([GLIB], [glib-2.0 >= $GLIB_REQUIRED_VERSION gobject-2.0 gio-2.
 # List files here that the configure script should output
 AC_CONFIG_FILES([
 	Makefile
+	po/Makefile.in
 	$EOS_SDK_API_NAME.pc
 ])
+AC_CONFIG_HEADERS([config.h])  dnl Header with system-dependent #defines
 # Do the output
 AC_OUTPUT
 

@@ -1,6 +1,10 @@
+#include <config.h>
 #include <string.h>
 #include <glib.h>
+#include <glib/gi18n-lib.h>
 #include <gio/gio.h>
+
+#include "init.h"
 
 /**
  * SECTION:hello
@@ -25,10 +29,13 @@ gboolean
 eos_hello_sample_function(GFile   *file,
                           GError **error)
 {
-  char hello_string[] = "Hello, world!\n";
+  char *hello_string = _("Hello, world!\n");
   GFileOutputStream *stream;
   ssize_t write_count;
   gboolean success;
+
+  /* This is a library entry point */
+  _eos_init();
 
   g_return_val_if_fail (G_IS_FILE (file) || file == NULL, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -62,4 +69,3 @@ eos_hello_sample_function(GFile   *file,
 
   return TRUE;
 }
-
