@@ -39,6 +39,26 @@ endlessinclude_HEADERS = src/endless/endless.h
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = @EOS_SDK_API_NAME@.pc
 
+# # # TESTS # # #
+
+noinst_PROGRAMS = \
+	test/run-tests \
+	test/smoke-tests/hello
+
+test_run_tests_SOURCES = \
+	test/run-tests.c \
+	test/test-hello.c
+test_run_tests_CPPFLAGS = @GLIB_CFLAGS@ -I$(top_srcdir)/src
+test_run_tests_LDADD = @GLIB_LIBS@ $(top_builddir)/libendless.la
+
+test_smoke_tests_hello_SOURCES = test/smoke-tests/hello.c
+test_smoke_tests_hello_CPPFLAGS = @GLIB_CFLAGS@ -I$(top_srcdir)/src
+test_smoke_tests_hello_LDADD = @GLIB_LIBS@ $(top_builddir)/libendless.la
+
+# Run tests when running 'make check'
+TESTS_ENVIRONMENT = gtester -k -o test-results.xml
+TESTS = test/run-tests
+
 # # # MISCELLANEOUS # # #
 
 # Files to clean

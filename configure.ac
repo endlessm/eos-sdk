@@ -42,7 +42,7 @@ AC_SUBST(EOS_SDK_LIBTOOL_VERSION_INFO)
 
 # Required versions of libraries
 # Update these whenever you use a function that requires a certain API version
-GLIB_REQUIRED_VERSION=2.0
+GLIB_REQUIRED_VERSION=2.20
 GTK_REQUIRED_VERSION=3.0
 AC_SUBST(GLIB_REQUIRED_VERSION)
 AC_SUBST(GTK_REQUIRED_VERSION)
