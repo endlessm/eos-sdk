@@ -1,5 +1,7 @@
 # Build products
 endless-0.pc
+test/run-tests
+test/smoke-tests/hello
 
 *.py[cod]
 
@@ -29,6 +31,7 @@ stamp*
 /m4/ltoptions.m4
 /m4/ltsugar.m4
 /m4/ltversion.m4
+.dirstamp
 
 # Gettext droppings
 /ABOUT-NLS
@@ -97,6 +100,7 @@ pip-log.txt
 .coverage
 .tox
 nosetests.xml
+test-results.xml
 
 # Translations
 *.mo

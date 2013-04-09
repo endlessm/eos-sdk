@@ -20,6 +20,8 @@ EXTRA_DIST = @EOS_SDK_API_NAME@.pc.in
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 AM_CFLAGS = @STRICT_CFLAGS@
 
+# Generated files that 'make clean' should erase
+CLEANFILES =
 DISTCLEANFILES =
 
 # # # LIBRARY # # #
@@ -37,3 +39,13 @@ nobase_endlessinclude_HEADERS = \
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = @EOS_SDK_API_NAME@.pc
 DISTCLEANFILES += @EOS_SDK_API_NAME@.pc
+
+# # # TESTS # # #
+
+include $(top_srcdir)/test/Makefile.am
+
+# Run tests when running 'make check'
+TESTS_ENVIRONMENT = gtester -k -o test-results.xml
+TESTS = test/run-tests
+
+CLEANFILES += test-results.xml

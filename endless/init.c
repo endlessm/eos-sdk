@@ -4,6 +4,8 @@
 #include <glib.h>
 #include <glib/gi18n-lib.h>
 
+#include "init-private.h"
+
 /* Constructors supported since GCC 2.7; I have this on GLib's authority. This
 should also work on Clang. */
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 7)
@@ -37,4 +39,15 @@ _eos_init (void)
 
       _eos_initialized = TRUE;
     }
+}
+
+/*
+ * eos_is_inited:
+ *
+ * For testing purposes.
+ */
+gboolean
+eos_is_inited (void)
+{
+  return _eos_initialized;
 }
