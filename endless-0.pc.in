@@ -1,0 +1,15 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: @PACKAGE_NAME@
+Version: @PACKAGE_VERSION@
+Description: Software development kit for applications for the developing world
+URL: @PACKAGE_URL@
+
+Requires: @EOS_REQUIRED_MODULES@
+Requires.private: @EOS_REQUIRED_MODULES_PRIVATE@
+Cflags: -I${includedir}/@EOS_SDK_API_NAME@
+Libs: -L${libdir} -l@EOS_SDK_API_NAME@
+
