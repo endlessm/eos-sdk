@@ -27,6 +27,7 @@ if test -z "$NOCONFIGURE"; then
 fi
 
 # Run the actual tools to prepare the clean checkout
+gtkdocize || exit $?
 autoreconf -fi || exit $?
 rm -f po/Makevars.template
 

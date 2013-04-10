@@ -136,6 +136,8 @@ PKG_PROG_PKG_CONFIG
 # Gettext
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.18.1])
+# Gtk-doc; 0.18 required for Markdown parsing
+GTK_DOC_CHECK([1.18], [--flavour no-tmpl])
 
 # Required libraries
 # ------------------
@@ -149,6 +151,8 @@ PKG_CHECK_MODULES([EOS_SDK], [
 AC_CONFIG_FILES([
 	Makefile
 	po/Makefile.in
+	docs/reference/endless/Makefile
+	docs/reference/endless/version.xml
 	$EOS_SDK_API_NAME.pc
 ])
 AC_CONFIG_HEADERS([config.h])  dnl Header with system-dependent #defines

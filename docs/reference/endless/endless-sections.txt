@@ -1,0 +1,6 @@
+<SECTION>
+<FILE>hello</FILE>
+eos_hello_sample_function
+<SUBSECTION Private>
+EOS_SDK_ALL_API_VERSIONS
+</SECTION>

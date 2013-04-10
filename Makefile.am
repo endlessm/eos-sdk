@@ -8,7 +8,7 @@
 ## Please keep this file well-commented.
 
 # Subdirectories where we also want to run make
-SUBDIRS = po
+SUBDIRS = po docs/reference/endless
 
 # Our Autoconf macros are kept in the m4/ directory
 ACLOCAL_AMFLAGS = -I m4
@@ -19,6 +19,9 @@ EXTRA_DIST = @EOS_SDK_API_NAME@.pc.in
 # Compiler flags
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 AM_CFLAGS = @STRICT_CFLAGS@
+
+# Make sure to run Gtk-doc tests when doing 'make distcheck'
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
 # Generated files that 'make clean' should erase
 CLEANFILES =
