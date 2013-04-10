@@ -96,6 +96,32 @@ test_smoke_tests_hello_LDADD = @GLIB_LIBS@ $(top_builddir)/libendless.la
 TESTS_ENVIRONMENT = gtester -k -o test-results.xml
 TESTS = test/run-tests
 
+# # # DEBIAN PACKAGE # # #
+
+debian: distcheck
+	cd $(top_srcdir) && \
+	debuild -i -uc -us -b && \
+	mv ../*.deb ../*.build ../*.changes .
+
+# Indicate that 'make debian' doesn't have anything to do with the 'debian'
+# directory's timestamp
+.PHONY: debian
+
+CLEANFILES += \
+	debian/*.debhelper.log \
+	debian/*.debhelper \
+	debian/*.log \
+	debian/*.substvars \
+	debian/libendless0 \
+	debian/open-endless-sdk-dev \
+	debian/open-endless-sdk-doc \
+	debian/open-endless-sdk-libs \
+	debian/tmp \
+	*.deb \
+	*.build \
+	*.changes \
+	open-endless-sdk*.tar.gz
+
 # # # MISCELLANEOUS # # #
 
 # Files to clean
