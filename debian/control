@@ -1,0 +1,42 @@
+Source: open-endless-sdk
+Priority: extra
+Maintainer: Philip Chimento <philip@endlessm.com>
+Build-Depends: debhelper (>= 8.0.0),
+               autotools-dev,
+               gettext (>= 0.18.1),
+               pkg-config (>= 0.24),
+               gtk-doc-tools (>= 1.18),
+               gobject-introspection (>= 1.30),
+               libgirepository1.0-dev,
+               libglib2.0-dev (>= 2.20)
+Standards-Version: 3.9.2
+Section: libs
+
+Package: open-endless-sdk-dev
+Section: libdevel
+Architecture: any
+Depends: open-endless-sdk0 (= ${binary:Version})
+Description: Open Endless SDK
+ Development headers for the Open Endless SDK
+
+Package: libendless0
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends}
+Description: Open Endless SDK GUI library
+ Runtime libraries for the Open Endless SDK: GUI library
+
+Package: open-endless-sdk-libs
+Section: libs
+Architecture: any
+Depends: libendless0 (= ${binary:Version})
+Description: Open Endless SDK libraries
+ This is a metapackage for the Open Endless SDK runtime libraries
+
+Package: open-endless-sdk-doc
+Section: doc
+Architecture: all
+Depends: open-endless-sdk-dev (= ${binary:Version})
+Description: Open Endless SDK documentation
+ Documentation for the Open Endless SDK

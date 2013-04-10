@@ -1,0 +1,3 @@
+usr/include/endless*/*
+usr/lib/libendless*.so
+usr/lib/pkgconfig/endless*.pc

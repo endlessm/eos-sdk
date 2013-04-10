@@ -1,0 +1,4 @@
+<SECTION>
+<FILE>hello</FILE>
+eos_hello_sample_function
+</SECTION>

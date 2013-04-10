@@ -1,0 +1,153 @@
+## Process this file with automake to produce Makefile.in
+
+## -----------
+## Makefile.am
+## -----------
+## Please keep this file well-commented.
+
+# Subdirectories where we also want to run make
+SUBDIRS = po docs/reference/endless
+
+# Our Autoconf macros are kept in the m4/ directory
+ACLOCAL_AMFLAGS = -I m4
+
+# Extra files to distribute in the tarball
+EXTRA_DIST = @EOS_SDK_API_NAME@.pc.in
+
+# Compiler flags
+DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
+
+# Make sure to run Gtk-doc tests and build the introspection files when doing
+# 'make distcheck'
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --enable-introspection
+
+# Generated files that 'make clean' should erase
+CLEANFILES =
+
+# # # LIBRARY # # #
+
+# Main Open Endless SDK library
+lib_LTLIBRARIES = libendless.la
+libendless_la_SOURCES = \
+	src/endless/init.c src/endless/init.h \
+	src/endless/hello.c \
+	src/endless/endless.h
+libendless_la_CPPFLAGS = @GLIB_CFLAGS@
+libendless_la_LIBADD = @GLIB_LIBS@
+libendless_la_LDFLAGS = \
+	-version-info @EOS_SDK_LIBTOOL_VERSION_INFO@ \
+	-export-symbols-regex "^eos_"
+
+# Public header files
+endlessincludedir = $(includedir)/@EOS_SDK_API_NAME@/endless
+endlessinclude_HEADERS = src/endless/endless.h
+
+# Pkg-config file
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = @EOS_SDK_API_NAME@.pc
+
+# # # INTROSPECTION FILES # # #
+
+-include $(INTROSPECTION_MAKEFILE)
+INTROSPECTION_GIRS =
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir)
+INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+
+if HAVE_INTROSPECTION
+introspection_sources = $(libendless_la_SOURCES)
+
+Endless-@EOS_SDK_API_VERSION@.gir: libendless.la
+Endless_@EOS_SDK_API_VERSION@_gir_INCLUDES = GObject-2.0 GLib-2.0 Gio-2.0
+Endless_@EOS_SDK_API_VERSION@_gir_SCANNERFLAGS = \
+	--identifier-prefix=Eos \
+	--symbol-prefix=eos
+# Endless_@EOS_SDK_API_VERSION@_gir_CFLAGS = $(INCLUDES)
+Endless_@EOS_SDK_API_VERSION@_gir_LIBS = libendless.la
+Endless_@EOS_SDK_API_VERSION@_gir_FILES = $(introspection_sources)
+Endless_@EOS_SDK_API_VERSION@_gir_EXPORT_PACKAGES = @EOS_SDK_API_NAME@
+INTROSPECTION_GIRS += Endless-@EOS_SDK_API_VERSION@.gir
+
+girdir = $(datadir)/gir-1.0
+gir_DATA = $(INTROSPECTION_GIRS)
+
+typelibdir = $(libdir)/girepository-1.0
+typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+
+CLEANFILES += $(gir_DATA) $(typelib_DATA)
+endif
+
+# # # TESTS # # #
+
+noinst_PROGRAMS = \
+	test/run-tests \
+	test/smoke-tests/hello
+
+test_run_tests_SOURCES = \
+	test/run-tests.c \
+	test/test-hello.c
+test_run_tests_CPPFLAGS = @GLIB_CFLAGS@ -I$(top_srcdir)/src
+test_run_tests_LDADD = @GLIB_LIBS@ $(top_builddir)/libendless.la
+
+test_smoke_tests_hello_SOURCES = test/smoke-tests/hello.c
+test_smoke_tests_hello_CPPFLAGS = @GLIB_CFLAGS@ -I$(top_srcdir)/src
+test_smoke_tests_hello_LDADD = @GLIB_LIBS@ $(top_builddir)/libendless.la
+
+# Run tests when running 'make check'
+TESTS_ENVIRONMENT = gtester -k -o test-results.xml
+TESTS = test/run-tests
+
+# # # DEBIAN PACKAGE # # #
+
+debian: distcheck
+	cd $(top_srcdir) && \
+	debuild -i -uc -us -b && \
+	mv ../*.deb ../*.build ../*.changes .
+
+# Indicate that 'make debian' doesn't have anything to do with the 'debian'
+# directory's timestamp
+.PHONY: debian
+
+CLEANFILES += \
+	debian/*.debhelper.log \
+	debian/*.debhelper \
+	debian/*.log \
+	debian/*.substvars \
+	debian/libendless0 \
+	debian/open-endless-sdk-dev \
+	debian/open-endless-sdk-doc \
+	debian/open-endless-sdk-libs \
+	debian/tmp \
+	*.deb \
+	*.build \
+	*.changes \
+	open-endless-sdk*.tar.gz
+
+# # # MISCELLANEOUS # # #
+
+# Files to clean
+DISTCLEANFILES = @EOS_SDK_API_NAME@.pc
+
+# Git ignore magic
+GITIGNOREFILES = m4  # remove this when adding custom macros to m4/
+GITIGNORE_MAINTAINERCLEANFILES_GETTEXT = \
+	ABOUT-NLS \
+	config.rpath \
+	po/Makevars.template po/Rules-quot po/boldquot.sed po/en@boldquot.header \
+	po/en@quot.header po/insert-header.sin po/quot.sed po/remove-potcdate.sed \
+	po/remove-potcdate.sin po/stamp-po
+GITIGNORE_MAINTAINERCLEANFILES_M4_GETTEXT = \
+	codeset.m4 fcntl-o.m4 gettext.m4 glibc21.m4 glibc2.m4 iconv.m4 intdiv0.m4 \
+	intldir.m4 intl.m4 intlmacosx.m4 intmax.m4 inttypes_h.m4 inttypes-pri.m4 \
+	lcmessage.m4 lib-ld.m4 lib-link.m4 lib-prefix.m4 lock.m4 longlong.m4 \
+	nls.m4 po.m4 printf-posix.m4 progtest.m4 size_max.m4 stdint_h.m4 \
+	threadlib.m4 uintmax_t.m4 visibility.m4 wchar_t.m4 wint_t.m4 xsize.m4
+GITIGNORE_MAINTAINERCLEANFILES_GTKDOC = \
+	gtk-doc.make
+MAINTAINERCLEANFILES = \
+	$(GITIGNORE_MAINTAINERCLEANFILES_TOPLEVEL) \
+	$(GITIGNORE_MAINTAINERCLEANFILES_MAKEFILE_IN) \
+	$(GITIGNORE_MAINTAINERCLEANFILES_M4_LIBTOOL) \
+	$(GITIGNORE_MAINTAINERCLEANFILES_GETTEXT) \
+	$(GITIGNORE_MAINTAINERCLEANFILES_M4_GETTEXT) \
+	$(GITIGNORE_MAINTAINERCLEANFILES_GTKDOC)
+-include $(top_srcdir)/git.mk
