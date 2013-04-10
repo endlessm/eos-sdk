@@ -2,6 +2,8 @@
 endless-0.pc
 test/run-tests
 test/smoke-tests/hello
+Endless-0.gir
+Endless-0.typelib
 
 *.py[cod]
 

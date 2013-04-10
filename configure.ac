@@ -138,6 +138,8 @@ AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.18.1])
 # Gtk-doc; 0.18 required for Markdown parsing
 GTK_DOC_CHECK([1.18], [--flavour no-tmpl])
+# GObject Introspection
+GOBJECT_INTROSPECTION_REQUIRE([1.30])
 
 # Required libraries
 # ------------------
