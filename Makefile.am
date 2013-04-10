@@ -6,7 +6,7 @@
 ## Please keep this file well-commented.
 
 # Subdirectories where we also want to run make
-SUBDIRS = po
+SUBDIRS = po docs/reference/endless
 
 # Our Autoconf macros are kept in the m4/ directory
 ACLOCAL_AMFLAGS = -I m4
@@ -16,6 +16,9 @@ EXTRA_DIST = @EOS_SDK_API_NAME@.pc.in
 
 # Compiler flags
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
+
+# Make sure to run Gtk-doc tests when doing 'make distcheck'
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
 # # # LIBRARY # # #
 
@@ -78,10 +81,13 @@ GITIGNORE_MAINTAINERCLEANFILES_M4_GETTEXT = \
 	lcmessage.m4 lib-ld.m4 lib-link.m4 lib-prefix.m4 lock.m4 longlong.m4 \
 	nls.m4 po.m4 printf-posix.m4 progtest.m4 size_max.m4 stdint_h.m4 \
 	threadlib.m4 uintmax_t.m4 visibility.m4 wchar_t.m4 wint_t.m4 xsize.m4
+GITIGNORE_MAINTAINERCLEANFILES_GTKDOC = \
+	gtk-doc.make
 MAINTAINERCLEANFILES = \
 	$(GITIGNORE_MAINTAINERCLEANFILES_TOPLEVEL) \
 	$(GITIGNORE_MAINTAINERCLEANFILES_MAKEFILE_IN) \
 	$(GITIGNORE_MAINTAINERCLEANFILES_M4_LIBTOOL) \
 	$(GITIGNORE_MAINTAINERCLEANFILES_GETTEXT) \
-	$(GITIGNORE_MAINTAINERCLEANFILES_M4_GETTEXT)
+	$(GITIGNORE_MAINTAINERCLEANFILES_M4_GETTEXT) \
+	$(GITIGNORE_MAINTAINERCLEANFILES_GTKDOC)
 -include $(top_srcdir)/git.mk

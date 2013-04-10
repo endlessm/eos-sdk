@@ -14,7 +14,8 @@ AC_INIT([Open Endless SDK], [0.0])
 # Verify that the source directory can be found
 dnl AC_CONFIG_SRCDIR([src/hello.c])
 # Initialize Automake: enable all warnings and do not insist on GNU standards
-AM_INIT_AUTOMAKE([-Wall foreign])
+# Automake >= 1.6 required for gtk-doc
+AM_INIT_AUTOMAKE([-Wall foreign 1.6])
 # Avoid spewing garbage over the terminal ('make V=1' to see the garbage)
 AM_SILENT_RULES([yes])
 # Initialize Libtool; don't build static libraries
@@ -62,6 +63,8 @@ PKG_PROG_PKG_CONFIG([0.24])
 # Gettext
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.18.1])
+# Gtk-doc; 0.18 required for Markdown parsing
+GTK_DOC_CHECK([1.18], [--flavour no-tmpl])
 
 # Required libraries
 # ------------------
@@ -74,6 +77,9 @@ PKG_CHECK_MODULES([GLIB], [glib-2.0 >= $GLIB_REQUIRED_VERSION gobject-2.0 gio-2.
 AC_CONFIG_FILES([
 	Makefile
 	po/Makefile.in
+	docs/reference/endless/Makefile
+	docs/reference/endless/version.xml
+	docs/reference/endless/api-version.xml
 	$EOS_SDK_API_NAME.pc
 ])
 AC_CONFIG_HEADERS([config.h])  dnl Header with system-dependent #defines
