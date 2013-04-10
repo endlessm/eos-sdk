@@ -17,8 +17,12 @@ EXTRA_DIST = @EOS_SDK_API_NAME@.pc.in
 # Compiler flags
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
-# Make sure to run Gtk-doc tests when doing 'make distcheck'
-DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
+# Make sure to run Gtk-doc tests and build the introspection files when doing
+# 'make distcheck'
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --enable-introspection
+
+# Generated files that 'make clean' should erase
+CLEANFILES =
 
 # # # LIBRARY # # #
 
@@ -41,6 +45,36 @@ endlessinclude_HEADERS = src/endless/endless.h
 # Pkg-config file
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = @EOS_SDK_API_NAME@.pc
+
+# # # INTROSPECTION FILES # # #
+
+-include $(INTROSPECTION_MAKEFILE)
+INTROSPECTION_GIRS =
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir)
+INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+
+if HAVE_INTROSPECTION
+introspection_sources = $(libendless_la_SOURCES)
+
+Endless-@EOS_SDK_API_VERSION@.gir: libendless.la
+Endless_@EOS_SDK_API_VERSION@_gir_INCLUDES = GObject-2.0 GLib-2.0 Gio-2.0
+Endless_@EOS_SDK_API_VERSION@_gir_SCANNERFLAGS = \
+	--identifier-prefix=Eos \
+	--symbol-prefix=eos
+# Endless_@EOS_SDK_API_VERSION@_gir_CFLAGS = $(INCLUDES)
+Endless_@EOS_SDK_API_VERSION@_gir_LIBS = libendless.la
+Endless_@EOS_SDK_API_VERSION@_gir_FILES = $(introspection_sources)
+Endless_@EOS_SDK_API_VERSION@_gir_EXPORT_PACKAGES = @EOS_SDK_API_NAME@
+INTROSPECTION_GIRS += Endless-@EOS_SDK_API_VERSION@.gir
+
+girdir = $(datadir)/gir-1.0
+gir_DATA = $(INTROSPECTION_GIRS)
+
+typelibdir = $(libdir)/girepository-1.0
+typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+
+CLEANFILES += $(gir_DATA) $(typelib_DATA)
+endif
 
 # # # TESTS # # #
 
