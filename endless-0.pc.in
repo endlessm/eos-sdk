@@ -1,0 +1,14 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Open Endless SDK
+Version: @PACKAGE_VERSION@
+Description: Software development kit for applications for the developing world
+URL: http://endlessm.com
+
+Requires.private: glib-2.0 >= @GLIB_REQUIRED_VERSION@, gtk+-3.0 >= @GTK_REQUIRED_VERSION@
+Cflags: -I${includedir}/@EOS_SDK_API_NAME@
+Libs: -L${libdir} -lendless
+
