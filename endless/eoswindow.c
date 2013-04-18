@@ -100,6 +100,9 @@ static void
 eos_window_init (EosWindow *self)
 {
   self->priv = WINDOW_PRIVATE (self);
+
+  gtk_window_set_decorated (GTK_WINDOW (self), FALSE);
+  gtk_window_maximize (GTK_WINDOW (self));
 }
 
 /* Public API */
