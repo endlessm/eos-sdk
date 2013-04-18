@@ -7,6 +7,15 @@
 
 #include "eoswindow.h"
 
+#define DESKTOP_THEME_NAME "EndlessOS"
+#define ICON_THEME_NAME DESKTOP_THEME_NAME
+#define THEME_RELATIVE_PATH "themes" G_DIR_SEPARATOR_S \
+                            DESKTOP_THEME_NAME G_DIR_SEPARATOR_S \
+                            "gtk-3.0"
+#define THEME_CSS_RELATIVE_PATH THEME_RELATIVE_PATH G_DIR_SEPARATOR_S "gtk.css"
+#define THEME_RESOURCE_RELATIVE_PATH THEME_RELATIVE_PATH G_DIR_SEPARATOR_S \
+                                     "gtk.gresource"
+
 /**
  * SECTION:application
  * @short_description: Start here with your application
@@ -75,6 +84,68 @@ eos_application_activate (GApplication *application)
 }
 
 static void
+eos_application_startup (GApplication *application)
+{
+  const char * const *system_data_dirs = g_get_system_data_dirs ();
+  GtkCssProvider *provider = gtk_css_provider_new ();
+  const char * const *datadir;
+  GtkSettings *default_settings;
+
+  /* Make sure that Endless applications use the EndlessOS theme */
+  /* FIXME: This is not necessary when the theme is complete and the system-wide
+  theme is set to Endless. */
+  for (datadir = system_data_dirs; *datadir != NULL; datadir++)
+    {
+      char *theme_path = g_build_filename (*datadir,
+                                           THEME_CSS_RELATIVE_PATH,
+                                           NULL);
+      char *resource_path = g_build_filename (*datadir,
+                                              THEME_RESOURCE_RELATIVE_PATH,
+                                              NULL);
+      GResource *resource;
+      g_debug ("Searching %s for theme\n", *datadir);
+
+      /* Ignore exceptions */
+      if ((resource = g_resource_load (resource_path, NULL)) != NULL)
+        {
+          g_resources_register (resource);
+          g_resource_unref (resource);
+          g_free (resource_path);
+          if (gtk_css_provider_load_from_path (provider, theme_path, NULL))
+            {
+              g_debug ("Using theme from %s\n", theme_path);
+              g_free (theme_path);
+              break;
+            }
+        }
+
+      g_free (theme_path);
+      g_free (resource_path);
+    }
+
+  gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
+                                             GTK_STYLE_PROVIDER (provider),
+                                             GTK_STYLE_PROVIDER_PRIORITY_THEME);
+  g_debug ("Initialized theme\n");
+
+  g_object_unref (provider);
+
+  /* Also make sure that Endless applications use the EndlessOS icon theme */
+  default_settings = gtk_settings_get_default ();
+  if (default_settings != NULL)
+    {
+      g_object_set (default_settings,
+                    "gtk-icon-theme-name", ICON_THEME_NAME,
+                    NULL);
+      g_debug ("Initialized icon theme");
+    }
+  else
+    g_warning ("Could not get default GtkSettings, icon theme not initialized");
+
+  G_APPLICATION_CLASS (eos_application_parent_class)->startup (application);
+}
+
+static void
 eos_application_window_added (GtkApplication *application,
                               GtkWindow *window)
 {
@@ -130,6 +201,7 @@ eos_application_class_init (EosApplicationClass *klass)
   g_type_class_add_private (klass, sizeof (EosApplicationPrivate));
 
   g_application_class->activate = eos_application_activate;
+  g_application_class->startup = eos_application_startup;
   gtk_application_class->window_added = eos_application_window_added;
   gtk_application_class->window_removed = eos_application_window_removed;
 }
