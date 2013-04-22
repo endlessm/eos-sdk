@@ -1,9 +1,9 @@
 /* Copyright 2013 Endless Mobile, Inc. */
 
 #include "config.h"
-#include "window.h"
+#include "eoswindow.h"
 
-#include "application.h"
+#include "eosapplication.h"
 
 #include <gtk/gtk.h>
 

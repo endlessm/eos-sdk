@@ -3,18 +3,18 @@
 endless_public_installed_headers = endless/endless.h
 
 endless_private_installed_headers = \
-	endless/apiversion.h \
-	endless/application.h \
-	endless/enums.h \
-	endless/macros.h \
-	endless/types.h \
-	endless/window.h
+	endless/eosversion.h \
+	endless/eosapplication.h \
+	endless/eosenums.h \
+	endless/eosmacros.h \
+	endless/eostypes.h \
+	endless/eoswindow.h
 
 endless_library_sources = \
-	endless/application.c \
-	endless/hello.c \
-	endless/init.c endless/init-private.h \
-	endless/window.c
+	endless/eosapplication.c \
+	endless/eoshello.c \
+	endless/eosinit.c endless/eosinit-private.h \
+	endless/eoswindow.c
 
 # Endless GUI library
 lib_LTLIBRARIES = libendless-@EOS_SDK_API_VERSION@.la
