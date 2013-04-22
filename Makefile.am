@@ -85,7 +85,7 @@ endif
 include $(top_srcdir)/test/Makefile.am
 
 # Run tests when running 'make check'
-TESTS_ENVIRONMENT = gtester -k -o test-results.xml
+TESTS_ENVIRONMENT = gtester -k -o test-results.xml --verbose
 TESTS = test/run-tests
 
 CLEANFILES += test-results.xml
