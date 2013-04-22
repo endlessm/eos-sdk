@@ -36,10 +36,12 @@ AC_INIT([Open Endless SDK], [_EOS_SDK_VERSION_MACRO],
 dnl AC_CONFIG_SRCDIR([src/hello.c])
 # Initialize Automake: enable all warnings and do not insist on GNU standards
 # Automake >= 1.11 required for silent rules
-AM_INIT_AUTOMAKE([-Wall foreign 1.11])
+# no-portability suppresses warnings about syntax specific to GNU make
+AM_INIT_AUTOMAKE([-Wall -Wno-portability foreign 1.11])
 # Avoid spewing garbage over the terminal ('make V=1' to see the garbage)
 AM_SILENT_RULES([yes])
 # Initialize Libtool; don't build static libraries
+AM_PROG_AR  dnl must call before LT_INIT
 LT_INIT([disable-static])
 # Keep Autotools macros local to this source tree
 AC_CONFIG_MACRO_DIR([m4])
@@ -131,6 +133,8 @@ AC_SUBST(STRICT_CFLAGS)
 # --------------------
 # C compiler
 AC_PROG_CC
+# Make sure the C compiler supports per-target CFLAGS
+AM_PROG_CC_C_O
 # Library configuration tool
 PKG_PROG_PKG_CONFIG
 # Gettext

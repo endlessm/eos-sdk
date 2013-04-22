@@ -21,7 +21,9 @@ stamp*
 /Makefile
 /Makefile.in
 /aclocal.m4
+/ar-lib
 /autom4te.cache
+/compile
 /config.*
 /configure
 /depcomp
