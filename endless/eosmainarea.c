@@ -1,0 +1,241 @@
+/* Copyright 2013 Endless Mobile, Inc. */
+
+#include "config.h"
+#include "eosmainarea-private.h"
+
+#include <gtk/gtk.h>
+
+/*
+ * SECTION:main_area
+ * @short_description: The main area for your application, under the top bar.
+ * @title: EosMainArea
+ *
+ * Stub
+ */
+
+G_DEFINE_TYPE (EosMainArea, eos_main_area, GTK_TYPE_CONTAINER)
+
+#define MAIN_AREA_PRIVATE(o) \
+  (G_TYPE_INSTANCE_GET_PRIVATE ((o), EOS_TYPE_MAIN_AREA, EosMainAreaPrivate))
+
+struct _EosMainAreaPrivate
+{
+  GtkWidget *toolbox;
+  GtkWidget *content;
+};
+
+static void
+eos_main_area_get_preferred_width (GtkWidget *widget,
+                                   gint      *minimal,
+                                   gint      *natural)
+{
+  EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *content = self->priv->content;
+
+  if (content && gtk_widget_get_visible (content))
+    gtk_widget_get_preferred_width(content, minimal, natural);
+}
+
+static void
+eos_main_area_get_preferred_height (GtkWidget *widget,
+                                    gint      *minimal,
+                                    gint      *natural)
+{
+  EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *content = self->priv->content;
+
+  if (content && gtk_widget_get_visible (content))
+    gtk_widget_get_preferred_height(content, minimal, natural);
+}
+
+static void
+eos_main_area_get_preferred_width_for_height (GtkWidget *widget,
+                                              gint       for_height,
+                                              gint      *minimal,
+                                              gint      *natural)
+{
+  EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *content = self->priv->content;
+
+  if (content && gtk_widget_get_visible (content))
+    gtk_widget_get_preferred_width_for_height (content, for_height,
+                                               minimal, natural);
+}
+
+static void
+eos_main_area_get_preferred_height_for_width (GtkWidget *widget,
+                                              gint       for_width,
+                                              gint      *minimal,
+                                              gint      *natural)
+{
+  EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *content = self->priv->content;
+
+  if (content && gtk_widget_get_visible (content))
+    gtk_widget_get_preferred_width_for_height (content, for_width,
+                                               minimal, natural);
+}
+
+static void
+eos_main_size_allocate (GtkWidget     *widget,
+                        GtkAllocation *allocation)
+{
+  EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *content = self->priv->content;
+
+  gtk_widget_set_allocation (widget, allocation);
+  if (content && gtk_widget_get_visible (content))
+    gtk_widget_size_allocate (content, allocation);
+}
+
+static void
+eos_main_area_forall(GtkContainer *container,
+                     gboolean      include_internals,
+                     GtkCallback   callback,
+                     gpointer      callback_data)
+{
+  EosMainArea *self = EOS_MAIN_AREA (container);
+  EosMainAreaPrivate *priv = self->priv;
+
+  if (priv->toolbox)
+    (*callback) (priv->toolbox, callback_data);
+
+  if (priv->content)
+    (*callback) (priv->content, callback_data);
+}
+
+static void
+eos_main_area_class_init (EosMainAreaClass *klass)
+{
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
+
+  g_type_class_add_private (klass, sizeof (EosMainAreaPrivate));
+
+  widget_class->get_preferred_width = eos_main_area_get_preferred_width;
+  widget_class->get_preferred_height = eos_main_area_get_preferred_height;
+  widget_class->get_preferred_width_for_height = eos_main_area_get_preferred_width_for_height;
+  widget_class->get_preferred_height_for_width = eos_main_area_get_preferred_height_for_width;
+  widget_class->size_allocate = eos_main_size_allocate;
+
+  container_class->forall = eos_main_area_forall;
+}
+
+static void
+eos_main_area_init (EosMainArea *self)
+{
+  gtk_widget_set_has_window(GTK_WIDGET(self), FALSE);
+  self->priv = MAIN_AREA_PRIVATE (self);
+}
+
+/* Internal Public API */
+
+/*
+ * eos_main_area_new:
+ *
+ * Creates a main area. It is invisible by default.
+ *
+ * Returns: a pointer to the main area widget.
+ */
+GtkWidget *
+eos_main_area_new (void)
+{
+  return GTK_WIDGET (g_object_new (EOS_TYPE_MAIN_AREA, NULL));
+}
+
+
+/*
+ * eos_main_area_set_toolbox:
+ * @self: a #EosMainArea
+ * @toolbox: the toolbox widget to be displayed on left of content.
+ *
+ * Adds the toolbox widget to the main area. Passing %NULL will hide the
+ * toolbox area.
+ */
+void
+eos_main_area_set_toolbox (EosMainArea *self,
+                           GtkWidget   *toolbox)
+{
+  g_return_if_fail (EOS_IS_MAIN_AREA (self));
+  g_return_if_fail (toolbox == NULL || GTK_IS_WIDGET (toolbox));
+  g_return_if_fail (toolbox == NULL || gtk_widget_get_parent (toolbox) == NULL);
+
+  EosMainAreaPrivate *priv = self->priv;
+  GtkWidget *self_widget = GTK_WIDGET (self);
+
+  if (priv->toolbox == toolbox)
+    return;
+
+  if (priv->toolbox)
+    gtk_widget_unparent (priv->toolbox);
+
+  priv->toolbox = toolbox;
+  if (toolbox)
+    gtk_widget_set_parent (toolbox, self_widget);
+
+  if (gtk_widget_get_visible (self_widget))
+    gtk_widget_queue_resize (self_widget);
+}
+
+/*
+ * eos_main_area_get_toolbox:
+ * @self: a #EosMainArea
+ *
+ * Retrieves the toolbox widget for the main area.
+ *
+ * Return value: (transfer none): the toolbox widget,
+ *     or %NULL if there is none
+ */
+GtkWidget *
+eos_main_area_get_toolbox (EosMainArea *self)
+{
+  g_return_val_if_fail (EOS_IS_MAIN_AREA (self), NULL);
+  return self->priv->toolbox;
+}
+
+/*
+ * eos_main_area_set_content:
+ * @self: a #EosMainArea
+ * @content: the content widget to be displayed in the center.
+ *
+ * Adds the content widget to the main area.
+ */
+void
+eos_main_area_set_content (EosMainArea *self, GtkWidget *content)
+{
+  g_return_if_fail (EOS_IS_MAIN_AREA (self));
+  g_return_if_fail (content == NULL || GTK_IS_WIDGET (content));
+  g_return_if_fail (content == NULL || gtk_widget_get_parent (content) == NULL);
+
+  EosMainAreaPrivate *priv = self->priv;
+  GtkWidget *self_widget = GTK_WIDGET (self);
+
+  if (priv->content == content)
+    return;
+
+  if (priv->content)
+    gtk_widget_unparent (priv->content);
+
+  priv->content = content;
+  if (content)
+    gtk_widget_set_parent (content, self_widget);
+
+  if (gtk_widget_get_visible (self_widget))
+    gtk_widget_queue_resize (self_widget);
+}
+
+/*
+ * eos_main_area_get_content:
+ * @self: a #EosMainArea
+ *
+ * Retrieves the content widget for the main area.
+ *
+ * Return value: (transfer none): the content widget,
+ *     or %NULL if there is none
+ */
+GtkWidget *
+eos_main_area_get_content (EosMainArea *self)
+{
+  g_return_val_if_fail (EOS_IS_MAIN_AREA (self), NULL);
+  return self->priv->content;
+}
