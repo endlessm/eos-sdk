@@ -8,7 +8,8 @@
 ## Please keep this file well-commented.
 
 # Subdirectories where we also want to run make
-SUBDIRS = po docs/reference/endless
+# (Make sure that the library is built before the docs)
+SUBDIRS = po . docs/reference/endless
 
 # Our Autoconf macros are kept in the m4/ directory
 ACLOCAL_AMFLAGS = -I m4
@@ -84,7 +85,7 @@ endif
 include $(top_srcdir)/test/Makefile.am
 
 # Run tests when running 'make check'
-TESTS_ENVIRONMENT = gtester -k -o test-results.xml
+TESTS_ENVIRONMENT = gtester -k -o test-results.xml --verbose
 TESTS = test/run-tests
 
 CLEANFILES += test-results.xml
