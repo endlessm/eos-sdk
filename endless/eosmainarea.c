@@ -115,10 +115,24 @@ static void
 eos_main_area_get_preferred_width(GtkWidget *widget, gint *minimal, gint *natural)
 {
   EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *toolbar = self->priv->toolbar;
   GtkWidget *content = self->priv->content;
+  *minimal = *natural = 0;
+
+  if (toolbar && gtk_widget_get_visible (toolbar)) {
+    gint toolbar_minimal, toolbar_natural;
+    gtk_widget_get_preferred_height(toolbar, &toolbar_minimal, &toolbar_natural);
+
+    *minimal += toolbar_minimal;
+    *natural += toolbar_natural;
+  }
 
   if (content && gtk_widget_get_visible (content)) {
-    gtk_widget_get_preferred_width(content, minimal, natural);
+    gint content_minimal, content_natural;
+    gtk_widget_get_preferred_height(content, &content_minimal, &content_natural);
+
+    *minimal += content_minimal;
+    *natural += content_natural;
   }
 }
 
@@ -126,25 +140,35 @@ static void
 eos_main_area_get_preferred_height(GtkWidget *widget, gint *minimal, gint *natural)
 {
   EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *toolbar = self->priv->toolbar;
   GtkWidget *content = self->priv->content;
+  *minimal = *natural = 0;
+
+  if (toolbar && gtk_widget_get_visible (toolbar)) {
+    gint toolbar_minimal, toolbar_natural;
+    gtk_widget_get_preferred_height(toolbar, &toolbar_minimal, &toolbar_natural);
+
+    *minimal = MAX (*minimal, toolbar_minimal);
+    *natural = MAX (*natural, toolbar_natural);
+  }
 
   if (content && gtk_widget_get_visible (content)) {
-    gtk_widget_get_preferred_height(content, minimal, natural);
+    gint content_minimal, content_natural;
+    gtk_widget_get_preferred_height(content, &content_minimal, &content_natural);
+
+    *minimal = MAX (*minimal, content_minimal);
+    *natural = MAX (*natural, content_natural);
   }
 }
 
+// Don't size width for height or height for width, at least for now...
 static void
 eos_main_area_get_preferred_width_for_height(GtkWidget *widget,
                                              gint for_height,
                                              gint *minimal,
                                              gint *natural)
 {
-  EosMainArea *self = EOS_MAIN_AREA (widget);
-  GtkWidget *content = self->priv->content;
-
-  if (content && gtk_widget_get_visible (content)) {
-    gtk_widget_get_preferred_width_for_height(content, for_height, minimal, natural);
-  }
+  eos_main_area_get_preferred_width(widget, minimal, natural);
 }
 
 static void
@@ -153,23 +177,72 @@ eos_main_area_get_preferred_height_for_width(GtkWidget *widget,
                                              gint *minimal,
                                              gint *natural)
 {
-  EosMainArea *self = EOS_MAIN_AREA (widget);
-  GtkWidget *content = self->priv->content;
-
-  if (content && gtk_widget_get_visible (content)) {
-    gtk_widget_get_preferred_width_for_height(content, for_width, minimal, natural);
-  }
+  eos_main_area_get_preferred_height(widget, minimal, natural);
 }
 
 static void
 eos_main_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 {
   EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *toolbar = self->priv->toolbar;
   GtkWidget *content = self->priv->content;
 
   gtk_widget_set_allocation (widget, allocation);
-  if (content && gtk_widget_get_visible (content)) {
-    gtk_widget_size_allocate(content, allocation);
+
+  gint available_space = allocation->width;
+  gint toolbar_width = 0, content_width = 0;
+  gboolean content_visible = content && gtk_widget_get_visible (content);
+  gboolean toolbar_visible = toolbar && gtk_widget_get_visible (toolbar);
+
+  gint toolbar_min_width, toolbar_nat_width, toolbar_min_height, toolbar_nat_height;
+  if (toolbar_visible) {
+    gtk_widget_get_preferred_width(toolbar, &toolbar_min_width, &toolbar_nat_width);
+    gtk_widget_get_preferred_height(toolbar, &toolbar_min_height, &toolbar_nat_height);
+  }
+
+  gint content_min_width, content_nat_width, content_min_height, content_nat_height;
+  if (content_visible) {
+    gtk_widget_get_preferred_width(content, &content_min_width, &content_nat_width);
+    gtk_widget_get_preferred_height(content, &content_min_height, &content_nat_height);
+  }
+
+  // calculate space
+  if (available_space && toolbar_visible) {
+    toolbar_width = MIN (available_space, toolbar_min_width);
+    available_space -= toolbar_width;
+  }
+  if (available_space && content_visible) {
+    content_width = MIN (available_space, content_min_width);
+    available_space -= content_width;
+  }
+  if (available_space && toolbar_visible) {
+    toolbar_width = MIN (available_space + toolbar_min_width, toolbar_nat_width);
+    available_space = available_space + toolbar_min_width - toolbar_width;
+  }
+  if (available_space && content_visible) {
+    content_width = MIN (available_space + content_min_width, content_nat_width);
+    available_space = available_space + content_min_width - content_width;
+  }
+
+  // allocate space
+  gint x = allocation->x;
+  gint y = allocation->y;
+  if (toolbar_visible) {
+    GtkAllocation toolbar_allocation;
+    toolbar_allocation.x = x;
+    toolbar_allocation.y = y;
+    toolbar_allocation.width = toolbar_width;
+    toolbar_allocation.height = MIN (toolbar_nat_height, allocation->height);
+    gtk_widget_size_allocate(toolbar, &toolbar_allocation);
+    x += toolbar_allocation.width;
+  }
+  if (content_visible) {
+    GtkAllocation content_allocation;
+    content_allocation.x = x;
+    content_allocation.y = y;
+    content_allocation.width = content_width;
+    content_allocation.height = MIN (content_nat_height, allocation->height);
+    gtk_widget_size_allocate(content, &content_allocation);
   }
 }
 
@@ -246,6 +319,8 @@ eos_main_area_class_init (EosMainAreaClass *klass)
                          "object/widget/something",
                          FALSE,
                          G_PARAM_READABLE | G_PARAM_WRITABLE);
+
+  // TODO: Property for padding between toolbars and content?
 
   g_object_class_install_properties (object_class, NPROPS, eos_main_area_props);
 }

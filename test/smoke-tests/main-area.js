@@ -17,9 +17,11 @@ const TestApplication = new Lang.Class ({
             default_height: 400,
             default_width: 600,
             window_position: Gtk.WindowPosition.CENTER });
-        this._label = new Gtk.Label({ label: 'Hello World' });
+        this._button = new Gtk.Button({ label: 'Hello World!' });
+        this._label = new Gtk.Label({ label: 'The toolbar...' });
         this._main_area = new Endless.MainArea();
-        this._main_area.set_content(this._label);
+        this._main_area.set_content(this._button);
+        this._main_area.set_toolbar(this._label);
         this._window.add(this._main_area);
         this._window.show_all();
     },
