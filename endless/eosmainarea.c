@@ -90,14 +90,101 @@ eos_main_area_get_property (GObject    *object,
 }
 
 static void
+eos_main_area_get_preferred_width(GtkWidget *widget, gint *minimal, gint *natural)
+{
+  EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *content = self->priv->content;
+
+  if (content && gtk_widget_get_visible (content)) {
+    gtk_widget_get_preferred_width(content, minimal, natural);
+  }
+}
+
+static void
+eos_main_area_get_preferred_height(GtkWidget *widget, gint *minimal, gint *natural)
+{
+  EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *content = self->priv->content;
+
+  if (content && gtk_widget_get_visible (content)) {
+    gtk_widget_get_preferred_height(content, minimal, natural);
+  }
+}
+
+static void
+eos_main_area_get_preferred_width_for_height(GtkWidget *widget,
+                                             gint for_height,
+                                             gint *minimal,
+                                             gint *natural)
+{
+  EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *content = self->priv->content;
+
+  if (content && gtk_widget_get_visible (content)) {
+    gtk_widget_get_preferred_width_for_height(content, for_height, minimal, natural);
+  }
+}
+
+static void
+eos_main_area_get_preferred_height_for_width(GtkWidget *widget,
+                                             gint for_width,
+                                             gint *minimal,
+                                             gint *natural)
+{
+  EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *content = self->priv->content;
+
+  if (content && gtk_widget_get_visible (content)) {
+    gtk_widget_get_preferred_width_for_height(content, for_width, minimal, natural);
+  }
+}
+
+static void
+eos_main_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
+{
+  EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *content = self->priv->content;
+
+  gtk_widget_set_allocation (widget, allocation);
+  if (content && gtk_widget_get_visible (content)) {
+    gtk_widget_size_allocate(content, allocation);
+  }
+}
+
+void
+eos_main_area_forall(GtkContainer *container,
+                     gboolean      include_internals,
+                     GtkCallback   callback,
+                     gpointer      callback_data) {
+  EosMainArea *self = EOS_MAIN_AREA (container);
+  EosMainAreaPrivate *priv = self->priv;
+
+  if (priv->toolbar)
+    (* callback) (priv->toolbar, callback_data);
+
+  if (priv->content)
+    (* callback) (priv->content, callback_data);
+}
+
+static void
 eos_main_area_class_init (EosMainAreaClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
   g_type_class_add_private (klass, sizeof (EosMainAreaPrivate));
 
   object_class->set_property = eos_main_area_set_property;
   object_class->get_property = eos_main_area_get_property;
+
+  widget_class->get_preferred_width = eos_main_area_get_preferred_width;
+  widget_class->get_preferred_height = eos_main_area_get_preferred_height;
+  widget_class->get_preferred_width_for_height = eos_main_area_get_preferred_width_for_height;
+  widget_class->get_preferred_height_for_width = eos_main_area_get_preferred_height_for_width;
+  widget_class->size_allocate = eos_main_size_allocate;
+
+  container_class->forall = eos_main_area_forall;
 
   /**
    * EosMainArea:toolbar:
@@ -142,6 +229,7 @@ eos_main_area_class_init (EosMainAreaClass *klass)
 static void
 eos_main_area_init (EosMainArea *self)
 {
+  gtk_widget_set_has_window(GTK_WIDGET(self), FALSE);
   self->priv = MAIN_AREA_PRIVATE (self);
 }
 
