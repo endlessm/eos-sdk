@@ -30,10 +30,29 @@ eos_main_area_get_preferred_width (GtkWidget *widget,
                                    gint      *natural)
 {
   EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *toolbox = self->priv->toolbox;
   GtkWidget *content = self->priv->content;
+  *minimal = *natural = 0;
+
+  if (toolbox && gtk_widget_get_visible (toolbox))
+    {
+      gint toolbox_minimal, toolbox_natural;
+      gtk_widget_get_preferred_width (toolbox,
+                                      &toolbox_minimal, &toolbox_natural);
+
+      *minimal += toolbox_minimal;
+      *natural += toolbox_natural;
+    }
 
   if (content && gtk_widget_get_visible (content))
-    gtk_widget_get_preferred_width(content, minimal, natural);
+    {
+      gint content_minimal, content_natural;
+      gtk_widget_get_preferred_width (content,
+                                      &content_minimal, &content_natural);
+
+      *minimal += content_minimal;
+      *natural += content_natural;
+    }
 }
 
 static void
@@ -42,10 +61,29 @@ eos_main_area_get_preferred_height (GtkWidget *widget,
                                     gint      *natural)
 {
   EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *toolbox = self->priv->toolbox;
   GtkWidget *content = self->priv->content;
+  *minimal = *natural = 0;
+
+  if (toolbox && gtk_widget_get_visible (toolbox))
+    {
+      gint toolbox_minimal, toolbox_natural;
+      gtk_widget_get_preferred_height (toolbox,
+                                       &toolbox_minimal, &toolbox_natural);
+
+      *minimal = MAX (*minimal, toolbox_minimal);
+      *natural = MAX (*natural, toolbox_natural);
+    }
 
   if (content && gtk_widget_get_visible (content))
-    gtk_widget_get_preferred_height(content, minimal, natural);
+    {
+      gint content_minimal, content_natural;
+      gtk_widget_get_preferred_height (content,
+                                       &content_minimal, &content_natural);
+
+      *minimal = MAX (*minimal, content_minimal);
+      *natural = MAX (*natural, content_natural);
+    }
 }
 
 static void
@@ -54,12 +92,7 @@ eos_main_area_get_preferred_width_for_height (GtkWidget *widget,
                                               gint      *minimal,
                                               gint      *natural)
 {
-  EosMainArea *self = EOS_MAIN_AREA (widget);
-  GtkWidget *content = self->priv->content;
-
-  if (content && gtk_widget_get_visible (content))
-    gtk_widget_get_preferred_width_for_height (content, for_height,
-                                               minimal, natural);
+  eos_main_area_get_preferred_width(widget, minimal, natural);
 }
 
 static void
@@ -68,24 +101,91 @@ eos_main_area_get_preferred_height_for_width (GtkWidget *widget,
                                               gint      *minimal,
                                               gint      *natural)
 {
-  EosMainArea *self = EOS_MAIN_AREA (widget);
-  GtkWidget *content = self->priv->content;
-
-  if (content && gtk_widget_get_visible (content))
-    gtk_widget_get_preferred_width_for_height (content, for_width,
-                                               minimal, natural);
+  eos_main_area_get_preferred_height(widget, minimal, natural);
 }
 
+// Don't size width for height or height for width, at least for now...
 static void
 eos_main_size_allocate (GtkWidget     *widget,
                         GtkAllocation *allocation)
 {
   EosMainArea *self = EOS_MAIN_AREA (widget);
+  GtkWidget *toolbox = self->priv->toolbox;
   GtkWidget *content = self->priv->content;
 
   gtk_widget_set_allocation (widget, allocation);
-  if (content && gtk_widget_get_visible (content))
-    gtk_widget_size_allocate (content, allocation);
+
+  gint available_space = allocation->width;
+  gint toolbox_width = 0, content_width = 0;
+  gboolean content_visible = content && gtk_widget_get_visible (content);
+  gboolean toolbox_visible = toolbox && gtk_widget_get_visible (toolbox);
+
+  gint toolbox_min_width, toolbox_nat_width;
+  gint toolbox_min_height, toolbox_nat_height;
+  if (toolbox_visible)
+    {
+      gtk_widget_get_preferred_width (toolbox,
+                                      &toolbox_min_width, &toolbox_nat_width);
+      gtk_widget_get_preferred_height (toolbox,
+                                       &toolbox_min_height, &toolbox_nat_height);
+    }
+
+  gint content_min_width, content_nat_width;
+  gint content_min_height, content_nat_height;
+  if (content_visible)
+    {
+      gtk_widget_get_preferred_width (content,
+                                      &content_min_width, &content_nat_width);
+      gtk_widget_get_preferred_height (content,
+                                       &content_min_height, &content_nat_height);
+    }
+
+  // calculate space
+  if (available_space && toolbox_visible)
+    {
+      toolbox_width = MIN (available_space, toolbox_min_width);
+      available_space -= toolbox_width;
+    }
+  if (available_space && content_visible)
+    {
+      content_width = MIN (available_space, content_min_width);
+      available_space -= content_width;
+    }
+  if (available_space && toolbox_visible)
+    {
+      toolbox_width = MIN (available_space + toolbox_min_width,
+                           toolbox_nat_width);
+      available_space = available_space + toolbox_min_width - toolbox_width;
+    }
+  if (available_space && content_visible)
+    {
+      content_width = MIN (available_space + content_min_width,
+                           content_nat_width);
+      available_space = available_space + content_min_width - content_width;
+    }
+
+  // allocate space
+  gint x = allocation->x;
+  gint y = allocation->y;
+  if (toolbox_visible)
+    {
+      GtkAllocation toolbox_allocation;
+      toolbox_allocation.x = x;
+      toolbox_allocation.y = y;
+      toolbox_allocation.width = toolbox_width;
+      toolbox_allocation.height = MIN (toolbox_nat_height, allocation->height);
+      gtk_widget_size_allocate (toolbox, &toolbox_allocation);
+      x += toolbox_allocation.width;
+    }
+  if (content_visible)
+    {
+      GtkAllocation content_allocation;
+      content_allocation.x = x;
+      content_allocation.y = y;
+      content_allocation.width = content_width;
+      content_allocation.height = MIN (content_nat_height, allocation->height);
+      gtk_widget_size_allocate (content, &content_allocation);
+    }
 }
 
 static void
