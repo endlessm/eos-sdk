@@ -89,6 +89,30 @@ eos_main_size_allocate (GtkWidget     *widget,
 }
 
 static void
+eos_main_area_add (GtkContainer *container,
+                   GtkWidget    *widget)
+{
+  EosMainArea *self = EOS_MAIN_AREA (container);
+
+  /* Print out warning message?? */
+
+  eos_main_area_set_content(self, widget);
+}
+
+static void
+eos_main_area_remove (GtkContainer *container,
+                      GtkWidget *widget)
+{
+  EosMainArea *self = EOS_MAIN_AREA(container);
+  EosMainAreaPrivate *priv = self->priv;
+
+  if (priv->content == widget)
+    eos_main_area_set_content (self, NULL);
+  else if (priv->toolbox == widget)
+    eos_main_area_set_toolbox (self, NULL);
+}
+
+static void
 eos_main_area_forall(GtkContainer *container,
                      gboolean      include_internals,
                      GtkCallback   callback,
@@ -119,6 +143,8 @@ eos_main_area_class_init (EosMainAreaClass *klass)
   widget_class->size_allocate = eos_main_size_allocate;
 
   container_class->forall = eos_main_area_forall;
+  container_class->add = eos_main_area_add;
+  container_class->remove = eos_main_area_remove;
 }
 
 static void
