@@ -7,9 +7,9 @@
 #ifndef EOS_TYPES_H
 #define EOS_TYPES_H
 
-#include "enums.h"
-#include "macros.h"
-#include "apiversion.h"
+#include "eosenums.h"
+#include "eosmacros.h"
+#include "eosversion.h"
 
 #include <glib-object.h>
 

@@ -7,7 +7,7 @@
 #ifndef EOS_APPLICATION_H
 #define EOS_APPLICATION_H
 
-#include "types.h"
+#include "eostypes.h"
 
 #include <gtk/gtk.h>
 

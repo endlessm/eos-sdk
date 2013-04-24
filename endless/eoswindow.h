@@ -7,9 +7,9 @@
 #ifndef EOS_WINDOW_H
 #define EOS_WINDOW_H
 
-#include "types.h"
+#include "eostypes.h"
 
-#include "application.h"
+#include "eosapplication.h"
 
 G_BEGIN_DECLS
 
