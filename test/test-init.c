@@ -2,7 +2,7 @@
 
 #include <glib.h>
 #include <endless/endless.h>
-#include "endless/init-private.h"
+#include "endless/eosinit-private.h"
 
 #include "run-tests.h"
 

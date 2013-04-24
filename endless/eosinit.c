@@ -4,7 +4,7 @@
 #include <glib.h>
 #include <glib/gi18n-lib.h>
 
-#include "init-private.h"
+#include "eosinit-private.h"
 
 /* Constructors supported since GCC 2.7; I have this on GLib's authority. This
 should also work on Clang. */
