@@ -11,6 +11,8 @@
 #include "macros.h"
 #include "apiversion.h"
 
+#include <glib-object.h>
+
 /* Shared typedefs for structures */
 
 #endif /* EOS_TYPES_H */

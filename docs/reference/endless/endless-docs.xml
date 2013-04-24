@@ -17,7 +17,9 @@
 
   <chapter>
     <title>Open Endless SDK reference (C API)</title>
-        <xi:include href="xml/hello.xml"/>
+        <xi:include href="xml/application.xml"/>
+        <xi:include href="xml/window.xml"/>
+        <!--<xi:include href="xml/hello.xml"/>-->
   </chapter>
 
   <chapter id="object-tree">
