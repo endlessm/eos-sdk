@@ -1,0 +1,40 @@
+<SECTION>
+<FILE>hello</FILE>
+eos_hello_sample_function
+<SUBSECTION Private>
+EOS_SDK_ALL_API_VERSIONS
+</SECTION>
+
+<SECTION>
+<FILE>application</FILE>
+EosApplication
+eos_application_new
+<SUBSECTION Standard>
+EosApplicationClass
+EOS_APPLICATION
+EOS_APPLICATION_CLASS
+EOS_APPLICATION_GET_CLASS
+EOS_IS_APPLICATION
+EOS_IS_APPLICATION_CLASS
+EOS_TYPE_APPLICATION
+eos_application_get_type
+<SUBSECTION Private>
+EosApplicationPrivate
+</SECTION>
+
+<SECTION>
+<FILE>window</FILE>
+EosWindow
+eos_window_new
+<SUBSECTION Standard>
+EosWindowClass
+EOS_IS_WINDOW
+EOS_IS_WINDOW_CLASS
+EOS_TYPE_WINDOW
+EOS_WINDOW
+EOS_WINDOW_CLASS
+EOS_WINDOW_GET_CLASS
+eos_window_get_type
+<SUBSECTION Private>
+EosWindowPrivate
+</SECTION>
