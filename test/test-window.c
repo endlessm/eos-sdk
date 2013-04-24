@@ -6,6 +6,10 @@
 
 #include "run-tests.h"
 
+#define EXPECTED_NULL_APPLICATION_ERRMSG \
+  "In order to create a window, you must have an application for it to " \
+  "connect to."
+
 static void
 test_assign_application (GApplication *app)
 {
@@ -17,6 +21,24 @@ test_assign_application (GApplication *app)
   gtk_widget_destroy (win);
 }
 
+static void
+test_application_not_null (GApplication *app)
+{
+  GtkWidget *win;
+
+  g_test_expect_message (TEST_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL,
+                         EXPECTED_NULL_APPLICATION_ERRMSG);
+
+  win = eos_window_new (NULL);
+
+  g_test_assert_expected_messages ();
+
+  gtk_widget_destroy (win);
+  g_application_release (app);
+  g_application_quit (app); /* Doesn't quit when win is destroyed */
+}
+
+static void
 test_screen_size (GApplication *app)
 {
   GtkWidget *win = eos_window_new (EOS_APPLICATION (app));
@@ -54,5 +76,7 @@ void
 add_window_tests (void)
 {
   ADD_APP_WINDOW_TEST ("/window/assign-application", test_assign_application);
+  ADD_APP_WINDOW_TEST ("/window/application-not-null",
+                       test_application_not_null);
   ADD_APP_WINDOW_TEST ("/window/screen-size", test_screen_size);
 }
