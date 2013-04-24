@@ -3,9 +3,11 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <endless/endless.h>
+#include "endless/eostopbar.h"
 
 #include "run-tests.h"
 
+#define EXPECTED_TOP_BAR_HEIGHT 32
 #define EXPECTED_NULL_APPLICATION_ERRMSG \
   "*In order to create a window, you must have an application for it to " \
   "connect to.*"
@@ -72,6 +74,30 @@ test_screen_size (GApplication *app)
   gtk_widget_destroy (win);
 }
 
+/* Query all the children of win, including the internal children, to find the
+top bar */
+static void
+find_top_bar (GtkWidget *widget,
+              GtkWidget **top_bar_return_location)
+{
+  if (EOS_IS_TOP_BAR (widget))
+    *top_bar_return_location = widget;
+}
+
+static void
+test_has_top_bar (GApplication *app)
+{
+  GtkWidget *win = eos_window_new (EOS_APPLICATION (app));
+  GtkWidget *top_bar = NULL;
+
+  gtk_container_forall (GTK_CONTAINER (win), (GtkCallback)find_top_bar,
+                        &top_bar);
+  g_assert (top_bar != NULL);
+  g_assert (EOS_IS_TOP_BAR (top_bar));
+
+  gtk_widget_destroy (win);
+}
+
 void
 add_window_tests (void)
 {
@@ -79,4 +105,5 @@ add_window_tests (void)
   ADD_APP_WINDOW_TEST ("/window/application-not-null",
                        test_application_not_null);
   ADD_APP_WINDOW_TEST ("/window/screen-size", test_screen_size);
+  ADD_APP_WINDOW_TEST ("/window/has-top-bar", test_has_top_bar);
 }
