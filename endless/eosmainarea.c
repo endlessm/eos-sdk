@@ -21,6 +21,7 @@ struct _EosMainAreaPrivate
 {
   GtkWidget *toolbar;
   GtkWidget *content;
+  GtkWidget *actions_standin;
   guint actions : 1;
 };
 
@@ -123,8 +124,8 @@ eos_main_area_get_preferred_width(GtkWidget *widget, gint *minimal, gint *natura
     gint toolbar_minimal, toolbar_natural;
     gtk_widget_get_preferred_height(toolbar, &toolbar_minimal, &toolbar_natural);
 
-    *minimal += toolbar_minimal;
-    *natural += toolbar_natural;
+    *minimal += 2 * toolbar_minimal;
+    *natural += 2 * toolbar_natural;
   }
 
   if (content && gtk_widget_get_visible (content)) {
@@ -184,15 +185,20 @@ static void
 eos_main_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 {
   EosMainArea *self = EOS_MAIN_AREA (widget);
+  EosMainAreaPrivate *priv = self->priv;
   GtkWidget *toolbar = self->priv->toolbar;
   GtkWidget *content = self->priv->content;
 
   gtk_widget_set_allocation (widget, allocation);
 
-  gint available_space = allocation->width;
-  gint toolbar_width = 0, content_width = 0;
   gboolean content_visible = content && gtk_widget_get_visible (content);
   gboolean toolbar_visible = toolbar && gtk_widget_get_visible (toolbar);
+  gboolean actions_visible = priv->actions;
+  gint num_sidebars = 0;
+  if (toolbar_visible)
+    num_sidebars++;
+  if (actions_visible)
+    num_sidebars++;
 
   gint toolbar_min_width, toolbar_nat_width, toolbar_min_height, toolbar_nat_height;
   if (toolbar_visible) {
@@ -206,32 +212,30 @@ eos_main_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     gtk_widget_get_preferred_height(content, &content_min_height, &content_nat_height);
   }
 
-  // calculate space
-  if (available_space && toolbar_visible) {
-    toolbar_width = MIN (available_space, toolbar_min_width);
-    available_space -= toolbar_width;
-  }
-  if (available_space && content_visible) {
-    content_width = MIN (available_space, content_min_width);
-    available_space -= content_width;
-  }
-  if (available_space && toolbar_visible) {
-    toolbar_width = MIN (available_space + toolbar_min_width, toolbar_nat_width);
-    available_space = available_space + toolbar_min_width - toolbar_width;
-  }
-  if (available_space && content_visible) {
-    content_width = MIN (available_space + content_min_width, content_nat_width);
-    available_space = available_space + content_min_width - content_width;
+  // Calculate width of toolbars. We allocate space in the following order:
+  // Toolbars min width, content min width, toolbars natural width, content
+  // natural width.
+  gint sidebar_width = 0;
+  if (num_sidebars) {
+    if (allocation->width < toolbar_min_width * num_sidebars) {
+      sidebar_width = allocation->width / num_sidebars;
+    }
+    else if (content_visible && allocation->width - content_min_width < toolbar_nat_width * num_sidebars) {
+      sidebar_width = (allocation->width - content_min_width) / num_sidebars;
+    }
+    else {
+      sidebar_width = toolbar_nat_width;
+    }
   }
 
-  // allocate space
+  // Allocate size
   gint x = allocation->x;
   gint y = allocation->y;
   if (toolbar_visible) {
     GtkAllocation toolbar_allocation;
     toolbar_allocation.x = x;
     toolbar_allocation.y = y;
-    toolbar_allocation.width = toolbar_width;
+    toolbar_allocation.width = sidebar_width;
     toolbar_allocation.height = MIN (toolbar_nat_height, allocation->height);
     gtk_widget_size_allocate(toolbar, &toolbar_allocation);
     x += toolbar_allocation.width;
@@ -240,9 +244,18 @@ eos_main_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     GtkAllocation content_allocation;
     content_allocation.x = x;
     content_allocation.y = y;
-    content_allocation.width = content_width;
-    content_allocation.height = MIN (content_nat_height, allocation->height);
+    content_allocation.width = MAX (0, allocation->width - num_sidebars * sidebar_width);
+    content_allocation.height = allocation->height;
     gtk_widget_size_allocate(content, &content_allocation);
+    x += content_allocation.width;
+  }
+  if (priv->actions) {
+    GtkAllocation actions_allocation;
+    actions_allocation.x = x;
+    actions_allocation.y = y;
+    actions_allocation.width = sidebar_width;
+    actions_allocation.height = allocation->height;
+    gtk_widget_size_allocate(priv->actions_standin, &actions_allocation);
   }
 }
 
@@ -259,6 +272,9 @@ eos_main_area_forall(GtkContainer *container,
 
   if (priv->content)
     (* callback) (priv->content, callback_data);
+
+  if (include_internals && priv->actions)
+    (* callback) (priv->actions_standin, callback_data);
 }
 
 static void
@@ -382,9 +398,7 @@ eos_main_area_set_toolbar (EosMainArea *main_area, GtkWidget *toolbar)
   if (gtk_widget_get_visible (widget))
     gtk_widget_queue_resize (widget);
 
-  g_object_freeze_notify (G_OBJECT (main_area));
   g_object_notify (G_OBJECT (main_area), "toolbar");
-  g_object_thaw_notify (G_OBJECT (main_area));
 }
 
 /**
@@ -436,9 +450,7 @@ eos_main_area_set_content (EosMainArea *main_area, GtkWidget *content)
   if (gtk_widget_get_visible (widget))
     gtk_widget_queue_resize (widget);
 
-  g_object_freeze_notify (G_OBJECT (main_area));
   g_object_notify (G_OBJECT (main_area), "content");
-  g_object_thaw_notify (G_OBJECT (main_area));
 }
 
 /**
@@ -471,6 +483,7 @@ void *
 eos_main_area_set_actions (EosMainArea *main_area, gboolean actions)
 {
   g_return_if_fail (EOS_IS_MAIN_AREA (main_area));
+
   EosMainArea *self = EOS_MAIN_AREA (main_area);
   EosMainAreaPrivate *priv = self->priv;
   GtkWidget *widget = GTK_WIDGET (main_area);
@@ -479,6 +492,18 @@ eos_main_area_set_actions (EosMainArea *main_area, gboolean actions)
 
   if (priv->actions != actions) {
     priv->actions = actions;
+
+    if (priv->actions) {
+      priv->actions_standin = gtk_event_box_new();
+      gtk_widget_set_parent (priv->actions_standin, widget);
+      GdkRGBA red = {1.0, 0.0, 0.0, 1.0};
+      gtk_widget_override_background_color (priv->actions_standin, GTK_STATE_FLAG_NORMAL, &red);
+      gtk_widget_show(priv->actions_standin);
+    }
+    else {
+      // TODO: need to unref or anything?
+      gtk_widget_unparent (priv->actions_standin);
+    }
 
     if (gtk_widget_get_visible (widget))
       gtk_widget_queue_resize (widget);

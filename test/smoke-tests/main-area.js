@@ -22,6 +22,7 @@ const TestApplication = new Lang.Class ({
         this._main_area = new Endless.MainArea();
         this._main_area.set_content(this._button);
         this._main_area.set_toolbar(this._label);
+        this._main_area.set_actions(true);
         this._window.add(this._main_area);
         this._window.show_all();
     },
