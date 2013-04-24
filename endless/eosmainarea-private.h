@@ -57,6 +57,9 @@ GtkWidget *eos_main_area_get_toolbox (EosMainArea *self);
 void       eos_main_area_set_content (EosMainArea *self,
                                       GtkWidget *content);
 GtkWidget *eos_main_area_get_content (EosMainArea *self);
+void       eos_main_area_set_actions (EosMainArea *self,
+                                      gboolean     actions_visible);
+gboolean   eos_main_area_get_actions (EosMainArea *self);
 
 G_END_DECLS
 

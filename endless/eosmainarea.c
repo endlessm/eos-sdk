@@ -10,7 +10,11 @@
  * @short_description: The main area for your application, under the top bar.
  * @title: EosMainArea
  *
- * Stub
+ * EosMainArea has three areas it manages for you: the left toolbar area, the
+ * right action area, and the center content area. They can be set with the
+ * toolbar, actions and content properties. You will just about always want to
+ * set the content widget to display something, but the toolbar and action
+ * area will not appear unless set.
  */
 
 G_DEFINE_TYPE (EosMainArea, eos_main_area, GTK_TYPE_CONTAINER)
@@ -22,6 +26,8 @@ struct _EosMainAreaPrivate
 {
   GtkWidget *toolbox;
   GtkWidget *content;
+  GtkWidget *actions_standin;
+  guint actions_visible : 1;
 };
 
 static void
@@ -40,8 +46,8 @@ eos_main_area_get_preferred_width (GtkWidget *widget,
       gtk_widget_get_preferred_width (toolbox,
                                       &toolbox_minimal, &toolbox_natural);
 
-      *minimal += toolbox_minimal;
-      *natural += toolbox_natural;
+      *minimal += 2 * toolbox_minimal;
+      *natural += 2 * toolbox_natural;
     }
 
   if (content && gtk_widget_get_visible (content))
@@ -115,12 +121,15 @@ eos_main_size_allocate (GtkWidget     *widget,
 
   gtk_widget_set_allocation (widget, allocation);
 
-  gint available_space = allocation->width;
-  gint toolbox_width = 0, content_width = 0;
+  gint num_sidebars = 0;
   gboolean content_visible = content && gtk_widget_get_visible (content);
   gboolean toolbox_visible = toolbox && gtk_widget_get_visible (toolbox);
+  if (toolbox_visible)
+    num_sidebars++;
+  if (self->priv->actions_visible)
+    num_sidebars++;
 
-  gint toolbox_min_width, toolbox_nat_width;
+  gint toolbox_min_width = 0, toolbox_nat_width = 0;
   gint toolbox_min_height, toolbox_nat_height;
   if (toolbox_visible)
     {
@@ -130,7 +139,7 @@ eos_main_size_allocate (GtkWidget     *widget,
                                        &toolbox_min_height, &toolbox_nat_height);
     }
 
-  gint content_min_width, content_nat_width;
+  gint content_min_width = 0, content_nat_width = 0;
   gint content_min_height, content_nat_height;
   if (content_visible)
     {
@@ -140,31 +149,29 @@ eos_main_size_allocate (GtkWidget     *widget,
                                        &content_min_height, &content_nat_height);
     }
 
-  // calculate space
-  if (available_space && toolbox_visible)
+  /* Calculate width of sidebars. We allocate space in the following order:
+  Sidebars min width, content min width, sidebars natural width, content
+  natural width. */
+  gint sidebar_width = 0;
+  gint total_sidebars_width = allocation->width - content_min_width;
+  if (num_sidebars > 0)
     {
-      toolbox_width = MIN (available_space, toolbox_min_width);
-      available_space -= toolbox_width;
-    }
-  if (available_space && content_visible)
-    {
-      content_width = MIN (available_space, content_min_width);
-      available_space -= content_width;
-    }
-  if (available_space && toolbox_visible)
-    {
-      toolbox_width = MIN (available_space + toolbox_min_width,
-                           toolbox_nat_width);
-      available_space = available_space + toolbox_min_width - toolbox_width;
-    }
-  if (available_space && content_visible)
-    {
-      content_width = MIN (available_space + content_min_width,
-                           content_nat_width);
-      available_space = available_space + content_min_width - content_width;
+      if (allocation->width < toolbox_min_width * num_sidebars)
+        {
+          sidebar_width = allocation->width / num_sidebars;
+        }
+      else if (content_visible &&
+               total_sidebars_width < toolbox_nat_width * num_sidebars)
+        {
+          sidebar_width = total_sidebars_width / num_sidebars;
+        }
+      else
+        {
+          sidebar_width = toolbox_nat_width;
+        }
     }
 
-  // allocate space
+  // Allocate size
   gint x = allocation->x;
   gint y = allocation->y;
   if (toolbox_visible)
@@ -172,19 +179,31 @@ eos_main_size_allocate (GtkWidget     *widget,
       GtkAllocation toolbox_allocation;
       toolbox_allocation.x = x;
       toolbox_allocation.y = y;
-      toolbox_allocation.width = toolbox_width;
+      toolbox_allocation.width = sidebar_width;
       toolbox_allocation.height = MIN (toolbox_nat_height, allocation->height);
       gtk_widget_size_allocate (toolbox, &toolbox_allocation);
       x += toolbox_allocation.width;
+    }
+  if (self->priv->actions_visible)
+    {
+      GtkAllocation actions_allocation;
+      actions_allocation.x = allocation->x + allocation->width - sidebar_width;
+      actions_allocation.y = y;
+      actions_allocation.width = sidebar_width;
+      actions_allocation.height = allocation->height;
+      gtk_widget_size_allocate (self->priv->actions_standin,
+                                &actions_allocation);
     }
   if (content_visible)
     {
       GtkAllocation content_allocation;
       content_allocation.x = x;
       content_allocation.y = y;
-      content_allocation.width = content_width;
-      content_allocation.height = MIN (content_nat_height, allocation->height);
+      content_allocation.width = MAX (0,
+                                      allocation->width - num_sidebars * sidebar_width);
+      content_allocation.height = allocation->height;
       gtk_widget_size_allocate (content, &content_allocation);
+      x += content_allocation.width;
     }
 }
 
@@ -226,6 +245,9 @@ eos_main_area_forall(GtkContainer *container,
 
   if (priv->content)
     (*callback) (priv->content, callback_data);
+
+  if (include_internals && priv->actions_visible)
+    (*callback) (priv->actions_standin, callback_data);
 }
 
 static void
@@ -364,4 +386,64 @@ eos_main_area_get_content (EosMainArea *self)
 {
   g_return_val_if_fail (EOS_IS_MAIN_AREA (self), NULL);
   return self->priv->content;
+}
+
+/*
+ * eos_main_area_set_actions:
+ * @self: a #EosMainArea
+ * @actions: %TRUE if there will be actions area on right of content.
+ *
+ * Sets whether an actions area should be displayed on the right of the
+ * content. For now just a boolean eventually a widget/list of actions or
+ * something.
+ */
+void
+eos_main_area_set_actions (EosMainArea *self, gboolean actions_visible)
+{
+  g_return_if_fail (EOS_IS_MAIN_AREA (self));
+
+  EosMainAreaPrivate *priv = self->priv;
+  GtkWidget *self_widget = GTK_WIDGET (self);
+
+  actions_visible = actions_visible != FALSE;
+
+  if (priv->actions_visible == actions_visible)
+    return;
+
+  priv->actions_visible = actions_visible;
+
+  if (priv->actions_visible)
+    {
+      priv->actions_standin = gtk_event_box_new ();
+      gtk_widget_set_parent (priv->actions_standin, self_widget);
+      GdkRGBA red = { 1.0, 0.0, 0.0, 1.0 };
+      gtk_widget_override_background_color (priv->actions_standin,
+                                            GTK_STATE_FLAG_NORMAL,
+                                            &red);
+      gtk_widget_show (priv->actions_standin);
+    }
+  else
+    {
+      gtk_widget_unparent (priv->actions_standin);
+      gtk_widget_destroy (priv->actions_standin);
+      priv->actions_standin = NULL;
+    }
+
+  if (gtk_widget_get_visible (self_widget))
+    gtk_widget_queue_resize (self_widget);
+}
+
+/**
+ * eos_main_area_get_actions:
+ * @self: a #EosMainArea
+ *
+ * Retrieves the actions boolean value. See set_actions.
+ *
+ * Return value: stand in actions boolean, for now.
+ */
+gboolean
+eos_main_area_get_actions (EosMainArea *self)
+{
+  g_return_val_if_fail (EOS_IS_MAIN_AREA (self), FALSE);
+  return self->priv->actions_visible;
 }
