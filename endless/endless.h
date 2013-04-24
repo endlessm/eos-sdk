@@ -12,6 +12,8 @@ G_BEGIN_DECLS
 
 /* Pull in other header files */
 #include "types.h"
+#include "application.h"
+#include "window.h"
 
 #undef _EOS_SDK_INSIDE_ENDLESS_H
 

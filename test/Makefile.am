@@ -10,7 +10,9 @@ TEST_LIBS = @EOS_SDK_LIBS@ $(top_builddir)/libendless-@EOS_SDK_API_VERSION@.la
 test_run_tests_SOURCES = \
 	test/run-tests.c \
 	test/test-init.c \
-	test/test-hello.c
+	test/test-hello.c \
+	test/test-application.c \
+	test/test-window.c
 test_run_tests_CPPFLAGS = $(TEST_FLAGS)
 test_run_tests_LDADD = $(TEST_LIBS)
 
