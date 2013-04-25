@@ -38,3 +38,21 @@ eos_window_get_type
 <SUBSECTION Private>
 EosWindowPrivate
 </SECTION>
+
+<SECTION>
+<FILE>main_area</FILE>
+EosMainArea
+eos_main_area_new
+<SUBSECTION Standard>
+EosMainAreaClass
+EOS_IS_MAIN_AREA
+EOS_IS_MAIN_AREA_CLASS
+EOS_TYPE_MAIN_AREA
+EOS_MAIN_AREA
+EOS_MAIN_AREA_CLASS
+EOS_MAIN_AREA_GET_CLASS
+eos_main_area_get_type
+<SUBSECTION Private>
+EosMainAreaPrivate
+</SECTION>
+

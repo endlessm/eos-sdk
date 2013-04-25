@@ -7,6 +7,7 @@ endless_private_installed_headers = \
 	endless/eosapplication.h \
 	endless/eosenums.h \
 	endless/eosmacros.h \
+	endless/eosmainarea.h \
 	endless/eostypes.h \
 	endless/eoswindow.h
 
@@ -14,6 +15,7 @@ endless_library_sources = \
 	endless/eosapplication.c \
 	endless/eoshello.c \
 	endless/eosinit.c endless/eosinit-private.h \
+	endless/eosmainarea.c \
 	endless/eoswindow.c
 
 # Endless GUI library

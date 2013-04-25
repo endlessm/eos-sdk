@@ -13,6 +13,7 @@ G_BEGIN_DECLS
 /* Pull in other header files */
 #include "eostypes.h"
 #include "eosapplication.h"
+#include "eosmainarea.h"
 #include "eoswindow.h"
 
 #undef _EOS_SDK_INSIDE_ENDLESS_H
@@ -24,4 +25,3 @@ gboolean eos_hello_sample_function (GFile   *file,
 G_END_DECLS
 
 #endif
-
