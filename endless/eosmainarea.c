@@ -9,7 +9,11 @@
  * @short_description: The main area for your application, under the top toolbar.
  * @title: EosMainArea
  *
- * Stub
+ * EosMainArea has three areas it manages for you: the left toolbar area, the
+ * right action area, and the center content area. They can be set with the
+ * toolbar, actions and content properties. You will just about always want to
+ * set the content widget to display something, but the toolbar and action
+ * area will not appear unless set.
  */
 
 G_DEFINE_TYPE (EosMainArea, eos_main_area, GTK_TYPE_CONTAINER)
@@ -200,13 +204,13 @@ eos_main_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
   if (actions_visible)
     num_sidebars++;
 
-  gint toolbar_min_width, toolbar_nat_width, toolbar_min_height, toolbar_nat_height;
+  gint toolbar_min_width = 0, toolbar_nat_width = 0, toolbar_min_height, toolbar_nat_height;
   if (toolbar_visible) {
     gtk_widget_get_preferred_width(toolbar, &toolbar_min_width, &toolbar_nat_width);
     gtk_widget_get_preferred_height(toolbar, &toolbar_min_height, &toolbar_nat_height);
   }
 
-  gint content_min_width, content_nat_width, content_min_height, content_nat_height;
+  gint content_min_width = 0, content_nat_width = 0, content_min_height, content_nat_height;
   if (content_visible) {
     gtk_widget_get_preferred_width(content, &content_min_width, &content_nat_width);
     gtk_widget_get_preferred_height(content, &content_min_height, &content_nat_height);
@@ -240,6 +244,14 @@ eos_main_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     gtk_widget_size_allocate(toolbar, &toolbar_allocation);
     x += toolbar_allocation.width;
   }
+  if (priv->actions) {
+    GtkAllocation actions_allocation;
+    actions_allocation.x = allocation->x + allocation->width - sidebar_width;
+    actions_allocation.y = y;
+    actions_allocation.width = sidebar_width;
+    actions_allocation.height = allocation->height;
+    gtk_widget_size_allocate(priv->actions_standin, &actions_allocation);
+  }
   if (content_visible) {
     GtkAllocation content_allocation;
     content_allocation.x = x;
@@ -248,14 +260,6 @@ eos_main_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     content_allocation.height = allocation->height;
     gtk_widget_size_allocate(content, &content_allocation);
     x += content_allocation.width;
-  }
-  if (priv->actions) {
-    GtkAllocation actions_allocation;
-    actions_allocation.x = x;
-    actions_allocation.y = y;
-    actions_allocation.width = sidebar_width;
-    actions_allocation.height = allocation->height;
-    gtk_widget_size_allocate(priv->actions_standin, &actions_allocation);
   }
 }
 
@@ -303,8 +307,7 @@ eos_main_area_class_init (EosMainAreaClass *klass)
    * EosMainArea:toolbar:
    *
    * A widget to be added to the toolbar area on the left side of the screen.
-   * Sized to blah.... If not set, this area will not be allocated by the
-   * container.
+   * If not set, the right area will not be allocated by the container.
    */
   eos_main_area_props[PROP_TOOLBAR] =
     g_param_spec_object ("toolbar", "Toolbar",
@@ -316,8 +319,8 @@ eos_main_area_class_init (EosMainAreaClass *klass)
   /**
    * EosMainArea:content:
    *
-   * A widget with the main application content to be added in the center.
-   * Should always be set.
+   * A widget with the main application content to be added in the center of
+   * the container.
    */
   eos_main_area_props[PROP_CONTENT] =
     g_param_spec_object ("content", "Content",
@@ -327,7 +330,8 @@ eos_main_area_class_init (EosMainAreaClass *klass)
   /**
    * EosMainArea:actions:
    *
-   * Stub....
+   * A stand in boolean for whatever eventually goes here. If true adds a red
+   * event box.
    */
   eos_main_area_props[PROP_ACTIONS] =
     g_param_spec_boolean ("actions", "Actions",
@@ -475,7 +479,8 @@ eos_main_area_get_content (EosMainArea *main_area)
  * @actions: %TRUE if there will be actions area on right of content.
  *
  * Sets whether an actions area should be displayed on the right of the
- * content. For now just a boolean eventually a widget.
+ * content. For now just a boolean eventually a widget/list of actions or
+ * something.
  *
  * Return value: (transfer none):
  */
@@ -516,7 +521,7 @@ eos_main_area_set_actions (EosMainArea *main_area, gboolean actions)
  * eos_main_area_get_actions:
  * @main_area: a #EosMainArea
  *
- * Retrieves the actions widget for the main area.
+ * Retrieves the actions boolean value. See set_actions.
  *
  * Return value: (transfer none): stand in actions boolean, for now.
  */

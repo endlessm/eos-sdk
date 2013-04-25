@@ -3,7 +3,6 @@
 endless_public_installed_headers = endless/endless.h
 
 endless_private_installed_headers = \
-<<<<<<< HEAD
 	endless/eosversion.h \
 	endless/eosapplication.h \
 	endless/eosenums.h \
