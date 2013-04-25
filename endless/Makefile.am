@@ -22,8 +22,12 @@ libendless_@EOS_SDK_API_VERSION@_la_SOURCES = \
 	$(endless_public_installed_headers) \
 	$(endless_private_installed_headers) \
 	$(endless_library_sources)
+# Defining G_LOG_DOMAIN allows you to run any program with
+# G_MESSAGES_DEBUG=EndlessSDK ./myprogram
+# and turn on debug messages
 libendless_@EOS_SDK_API_VERSION@_la_CPPFLAGS = \
 	@EOS_SDK_CFLAGS@ \
+	-DG_LOG_DOMAIN=\"EndlessSDK\" \
 	-DCOMPILING_EOS_SDK
 libendless_@EOS_SDK_API_VERSION@_la_CFLAGS = $(AM_CFLAGS)
 libendless_@EOS_SDK_API_VERSION@_la_LIBADD = @EOS_SDK_LIBS@
