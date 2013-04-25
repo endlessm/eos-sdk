@@ -14,6 +14,12 @@ test -f $FILE_MUST_EXIST || {
     exit 1
 }
 
+# Install our commit message script if a git repo
+if [ -d .git ]; then
+    cp commit-msg .git/hooks/commit-msg
+    chmod +x .git/hooks/commit-msg
+fi
+
 # GNU gettext automake support doesn't get along with git
 # https://bugzilla.gnome.org/show_bug.cgi?id=661128
 touch -t 200001010000 $POT_FILE
