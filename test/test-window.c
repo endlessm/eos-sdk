@@ -7,8 +7,8 @@
 #include "run-tests.h"
 
 #define EXPECTED_NULL_APPLICATION_ERRMSG \
-  "In order to create a window, you must have an application for it to " \
-  "connect to."
+  "*In order to create a window, you must have an application for it to " \
+  "connect to.*"
 
 static void
 test_assign_application (GApplication *app)
@@ -24,18 +24,18 @@ test_assign_application (GApplication *app)
 static void
 test_application_not_null (GApplication *app)
 {
-  GtkWidget *win;
+  /* Unix-only test */
+  if (g_test_trap_fork(0 /* timeout */, G_TEST_TRAP_SILENCE_STDERR))
+    {
+      GtkWidget *win = eos_window_new (NULL);
+      gtk_widget_destroy (win);
+      exit (0);
+    }
 
-  g_test_expect_message (TEST_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL,
-                         EXPECTED_NULL_APPLICATION_ERRMSG);
+  g_test_trap_assert_failed ();
+  g_test_trap_assert_stderr (EXPECTED_NULL_APPLICATION_ERRMSG);
 
-  win = eos_window_new (NULL);
-
-  g_test_assert_expected_messages ();
-
-  gtk_widget_destroy (win);
-  g_application_release (app);
-  g_application_quit (app); /* Doesn't quit when win is destroyed */
+  g_application_quit (app); /* No window, so otherwise won't quit */
 }
 
 static void
