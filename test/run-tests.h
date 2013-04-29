@@ -3,6 +3,7 @@
 #ifndef RUN_TESTS_H
 #define RUN_TESTS_H
 
+#define TEST_LOG_DOMAIN "EndlessSDK"
 #define TEST_APPLICATION_ID "com.endlessm.example.test"
 
 #define ADD_APP_WINDOW_TEST(path, test_func) \

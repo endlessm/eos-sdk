@@ -12,7 +12,22 @@
  * @short_description: A window for your application
  * @title: Window
  *
- * Stub
+ * The #EosWindow class is where you put your application's user interface.
+ * You should create a class that extends #EosWindow.
+ *
+ * Create the interface in your window class's _init() function, like this:
+ * |[
+ * const SmokeGrinderWindow = new Lang.Class({
+ *     Name: 'SmokeGrinderWindow',
+ *     Extends: Endless.Window,
+ *
+ *     _init(): function (props) {
+ *         this.parent(props);
+ *         this._button = Gtk.Button({label: 'Push me'});
+ *         this.add(this._button);
+ *     },
+ * });
+ * ]|
  */
 
 G_DEFINE_TYPE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
@@ -87,6 +102,13 @@ eos_window_class_init (EosWindowClass *klass)
   object_class->get_property = eos_window_get_property;
   object_class->set_property = eos_window_set_property;
 
+  /**
+   * EosWindow:application:
+   *
+   * The #EosApplication that this window is associated with. See also
+   * #GtkWindow:application; the difference is that #EosWindow:application
+   * cannot be %NULL and must be an #EosApplication.
+   */
   eos_window_props[PROP_APPLICATION] =
     g_param_spec_object ("application", "Application",
                          "Application associated with this window",
@@ -100,6 +122,9 @@ static void
 eos_window_init (EosWindow *self)
 {
   self->priv = WINDOW_PRIVATE (self);
+
+  gtk_window_set_decorated (GTK_WINDOW (self), FALSE);
+  gtk_window_maximize (GTK_WINDOW (self));
 }
 
 /* Public API */
