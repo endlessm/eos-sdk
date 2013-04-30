@@ -14,6 +14,7 @@ endless_library_sources = \
 	endless/eosapplication.c \
 	endless/eoshello.c \
 	endless/eosinit.c endless/eosinit-private.h \
+	endless/eostopbar.c endless/eostopbar.h \
 	endless/eoswindow.c
 
 # Endless GUI library
