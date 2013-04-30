@@ -83,8 +83,8 @@ eos_window_set_property (GObject      *object,
       gtk_window_set_application (GTK_WINDOW (self),
                                   GTK_APPLICATION (self->priv->application));
       if (self->priv->application == NULL)
-        g_critical ("In order to create a window, you must have an application "
-                    "for it to connect to.");
+        g_error ("In order to create a window, you must have an application "
+                 "for it to connect to.");
       break;
 
     default:
