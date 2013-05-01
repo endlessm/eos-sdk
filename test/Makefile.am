@@ -4,7 +4,7 @@ noinst_PROGRAMS = \
 	test/run-tests \
 	test/smoke-tests/hello
 
-TEST_FLAGS = @EOS_SDK_CFLAGS@ -I$(top_srcdir)
+TEST_FLAGS = @EOS_SDK_CFLAGS@ -I$(top_srcdir) -DCOMPILING_EOS_SDK
 TEST_LIBS = @EOS_SDK_LIBS@ $(top_builddir)/libendless-@EOS_SDK_API_VERSION@.la
 
 test_run_tests_SOURCES = \
