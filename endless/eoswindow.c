@@ -4,6 +4,7 @@
 #include "eoswindow.h"
 
 #include "eosapplication.h"
+#include "eostopbar-private.h"
 
 #include <gtk/gtk.h>
 
@@ -38,6 +39,8 @@ G_DEFINE_TYPE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
 struct _EosWindowPrivate
 {
   EosApplication *application;
+
+  GtkWidget *top_bar;
 };
 
 enum
@@ -92,15 +95,142 @@ eos_window_set_property (GObject      *object,
     }
 }
 
+/* Piggy-back on the parent class's get_preferred_height(), but add the
+height of our top bar. Do not assume any borders on the top bar. */
+static void
+eos_window_get_preferred_height (GtkWidget *widget,
+                                 int *minimum_height,
+                                 int *natural_height)
+{
+  EosWindow *self = EOS_WINDOW (widget);
+  int top_bar_minimum, top_bar_natural;
+
+  GTK_WIDGET_CLASS (eos_window_parent_class)->get_preferred_height (widget,
+    minimum_height, natural_height);
+  gtk_widget_get_preferred_height (self->priv->top_bar,
+                                   &top_bar_minimum, &top_bar_natural);
+  if (minimum_height != NULL)
+    *minimum_height += top_bar_minimum;
+  if (natural_height != NULL)
+    *natural_height += top_bar_natural;
+}
+
+/* Remove space for our top bar from the allocation before doing a normal
+size_allocate(). Do not assume any borders on the top bar. */
+static void
+eos_window_size_allocate (GtkWidget *widget,
+                          GtkAllocation *allocation)
+{
+  EosWindow *self = EOS_WINDOW (widget);
+  GtkWidget *child;
+  GtkAllocation child_allocation = *allocation;
+  unsigned border_width;
+
+  gtk_widget_set_allocation (widget, allocation);
+
+  if (self->priv->top_bar != NULL)
+    {
+      int top_bar_natural;
+      GtkAllocation top_bar_allocation = *allocation;
+
+      gtk_widget_get_preferred_height (self->priv->top_bar,
+                                       NULL, &top_bar_natural);
+      top_bar_allocation.height = MIN(top_bar_natural, allocation->height);
+      child_allocation.y += top_bar_allocation.height;
+      child_allocation.height -= top_bar_allocation.height;
+
+      gtk_widget_size_allocate (self->priv->top_bar, &top_bar_allocation);
+    }
+
+  /* We can't chain up to GtkWindow's implementation of size_allocate() here,
+  because it always assumes that its child begins at (0, 0). */
+  child = gtk_bin_get_child (GTK_BIN (self));
+  if (child != NULL)
+    {
+      border_width = gtk_container_get_border_width (GTK_CONTAINER (self));
+      child_allocation.x += border_width;
+      child_allocation.y += border_width;
+      child_allocation.width -= 2 * border_width;
+      child_allocation.height -= 2 * border_width;
+      child_allocation.width = MAX(1, child_allocation.width);
+      child_allocation.height = MAX(1, child_allocation.height);
+      gtk_widget_size_allocate (child, &child_allocation);
+    }
+}
+
+static void
+eos_window_map (GtkWidget *widget)
+{
+  EosWindow *self = EOS_WINDOW (widget);
+
+  GTK_WIDGET_CLASS (eos_window_parent_class)->map (widget);
+  if (self->priv->top_bar != NULL
+      && gtk_widget_get_visible (self->priv->top_bar))
+    {
+      gtk_widget_map (self->priv->top_bar);
+    }
+}
+
+static void
+eos_window_unmap (GtkWidget *widget)
+{
+  EosWindow *self = EOS_WINDOW (widget);
+
+  GTK_WIDGET_CLASS (eos_window_parent_class)->unmap (widget);
+  if (self->priv->top_bar != NULL)
+    gtk_widget_unmap (self->priv->top_bar);
+}
+
+static void
+eos_window_show (GtkWidget *widget)
+{
+  EosWindow *self = EOS_WINDOW (widget);
+
+  GTK_WIDGET_CLASS (eos_window_parent_class)->show (widget);
+  if (self->priv->top_bar != NULL)
+    gtk_widget_show_all (self->priv->top_bar);
+}
+
+/* The top bar is an internal child, so include it in our list of internal
+children. */
+static void
+eos_window_forall (GtkContainer *container,
+                   gboolean include_internals,
+                   GtkCallback callback,
+                   gpointer callback_data)
+{
+  EosWindow *self = EOS_WINDOW (container);
+
+  if (include_internals && self->priv->top_bar != NULL)
+    (*callback) (self->priv->top_bar, callback_data);
+  GTK_CONTAINER_CLASS (eos_window_parent_class)->forall (container,
+                                                         include_internals,
+                                                         callback,
+                                                         callback_data);
+}
+
+
 static void
 eos_window_class_init (EosWindowClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+  GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
   g_type_class_add_private (klass, sizeof (EosWindowPrivate));
 
   object_class->get_property = eos_window_get_property;
   object_class->set_property = eos_window_set_property;
+  /* Overriding the following six functions is because we treat the top bar as
+  an "internal" child. This will not be necessary any more if we use
+  gtk_window_set_titlebar(), available from GTK >= 3.10. But for now we are
+  targeting GTK 3.8. Issue: [endlessm/eos-sdk#28] */
+  widget_class->get_preferred_height = eos_window_get_preferred_height;
+  widget_class->size_allocate = eos_window_size_allocate;
+  widget_class->map = eos_window_map;
+  widget_class->unmap = eos_window_unmap;
+  widget_class->show = eos_window_show;
+  container_class->forall = eos_window_forall;
 
   /**
    * EosWindow:application:
@@ -119,12 +249,40 @@ eos_window_class_init (EosWindowClass *klass)
 }
 
 static void
+on_minimize_clicked_cb (GtkWidget* top_bar,
+                        gpointer user_data)
+{
+  if (user_data != NULL)
+    {
+      gtk_window_iconify (GTK_WINDOW (user_data));
+    }
+}
+
+static void
+on_close_clicked_cb (GtkWidget* top_bar,
+                     gpointer user_data)
+{
+  if (user_data != NULL)
+    {
+      gtk_widget_destroy (GTK_WIDGET (user_data));
+    }
+}
+
+static void
 eos_window_init (EosWindow *self)
 {
   self->priv = WINDOW_PRIVATE (self);
 
+  self->priv->top_bar = eos_top_bar_new ();
+  gtk_widget_set_parent (self->priv->top_bar, GTK_WIDGET (self));
+
   gtk_window_set_decorated (GTK_WINDOW (self), FALSE);
   gtk_window_maximize (GTK_WINDOW (self));
+
+  g_signal_connect (self->priv->top_bar, "minimize-clicked",
+                    G_CALLBACK (on_minimize_clicked_cb), self);
+  g_signal_connect (self->priv->top_bar, "close-clicked",
+                    G_CALLBACK (on_close_clicked_cb), self);
 }
 
 /* Public API */
