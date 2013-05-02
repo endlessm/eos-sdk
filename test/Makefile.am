@@ -8,7 +8,7 @@ TEST_FLAGS = @EOS_SDK_CFLAGS@ -I$(top_srcdir)
 TEST_LIBS = @EOS_SDK_LIBS@ $(top_builddir)/libendless-@EOS_SDK_API_VERSION@.la
 
 test_run_tests_SOURCES = \
-	test/run-tests.c \
+	test/run-tests.c test/run-tests.h \
 	test/test-init.c \
 	test/test-hello.c \
 	test/test-application.c \
