@@ -42,6 +42,7 @@ main (int    argc,
   add_hello_tests ();
   add_application_tests ();
   add_window_tests ();
+  add_page_manager_tests ();
 
   return g_test_run ();
 }

@@ -13,6 +13,7 @@ G_BEGIN_DECLS
 /* Pull in other header files */
 #include "eostypes.h"
 #include "eosapplication.h"
+#include "eospagemanager.h"
 #include "eoswindow.h"
 
 #undef _EOS_SDK_INSIDE_ENDLESS_H
