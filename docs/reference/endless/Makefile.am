@@ -67,7 +67,7 @@ expand_content_files=
 # Only needed if you are using gtkdoc-scangobj to dynamically query widget
 # signals and properties.
 GTKDOC_CFLAGS=-I$(top_srcdir) -I$(top_builddir) @EOS_SDK_CFLAGS@
-GTKDOC_LIBS=$(top_builddir)/libendless-@EOS_SDK_API_VERSION@.la
+GTKDOC_LIBS=$(top_builddir)/libendless-@EOS_SDK_API_VERSION@.la @EOS_SDK_LIBS@
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
 include $(top_srcdir)/gtk-doc.make
