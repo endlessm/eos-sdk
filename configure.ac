@@ -84,8 +84,6 @@ EOS_REQUIRED_MODULES_PRIVATE="$GLIB_REQUIREMENT $GOBJECT_REQUIREMENT $GIO_REQUIR
 AC_SUBST(EOS_REQUIRED_MODULES)
 AC_SUBST(EOS_REQUIRED_MODULES_PRIVATE)
 
-AC_CACHE_SAVE
-
 # Gettext package name
 GETTEXT_PACKAGE=$PACKAGE
 AC_SUBST(GETTEXT_PACKAGE)
@@ -93,6 +91,29 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, ["$GETTEXT_PACKAGE"],
 	[Package name for Gettext])
 # Detect which languages are available
 AS_ALL_LINGUAS
+
+# Required build tools
+# --------------------
+# C compiler
+AC_PROG_CC
+# Make sure the C compiler supports per-target CFLAGS
+AM_PROG_CC_C_O
+# Library configuration tool
+PKG_PROG_PKG_CONFIG
+# Gettext
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.18.1])
+# Gtk-doc; 0.18 required for Markdown parsing
+GTK_DOC_CHECK([1.18], [--flavour no-tmpl])
+# GObject Introspection
+GOBJECT_INTROSPECTION_REQUIRE([1.30])
+
+AC_CACHE_SAVE
+
+# Check that the compiler supports C99, and enable it in our CFLAGS
+AS_COMPILER_FLAGS(C99_CFLAGS, "-std=c99")
+C99_CFLAGS=${C99_CFLAGS#*  }
+CFLAGS="$CFLAGS $C99_CFLAGS"
 
 # Configure options
 # -----------------
@@ -116,38 +137,21 @@ STRICT_COMPILER_FLAGS="$STRICT_COMPILER_FLAGS
 	-Werror=format
 	-Werror=format-security
 	-Werror=format-nonliteral
-	-Werror=init-self
-	-Werror=declaration-after-statement
-	-Werror=vla"
+	-Werror=init-self"
 AS_CASE([$enable_strict_flags],
 	[yes],
 		[AS_COMPILER_FLAGS([STRICT_CFLAGS], [$STRICT_COMPILER_FLAGS])],
 	[no],
 		[],
-    [error],
+        [error],
         [
         	STRICT_COMPILER_FLAGS="$STRICT_COMPILER_FLAGS -Werror"
 			AS_COMPILER_FLAGS([STRICT_CFLAGS], [$STRICT_COMPILER_FLAGS])
         ],
 	[AC_MSG_ERROR([Invalid option for --enable-strict-flags])])
-STRICT_CFLAGS=${STRICT_CFLAGS#*  } dnl Strip spaces
+dnl Strip leading spaces
+STRICT_CFLAGS=${STRICT_CFLAGS#*  }
 AC_SUBST(STRICT_CFLAGS)
-
-# Required build tools
-# --------------------
-# C compiler
-AC_PROG_CC
-# Make sure the C compiler supports per-target CFLAGS
-AM_PROG_CC_C_O
-# Library configuration tool
-PKG_PROG_PKG_CONFIG
-# Gettext
-AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.18.1])
-# Gtk-doc; 0.18 required for Markdown parsing
-GTK_DOC_CHECK([1.18], [--flavour no-tmpl])
-# GObject Introspection
-GOBJECT_INTROSPECTION_REQUIRE([1.30])
 
 # Required libraries
 # ------------------
