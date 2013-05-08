@@ -21,9 +21,9 @@ EXTRA_DIST = @EOS_SDK_API_NAME@.pc.in
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 AM_CFLAGS = @STRICT_CFLAGS@
 
-# Make sure to run Gtk-doc tests and build the introspection files when doing
+# Make sure to run Gtk-doc tests and build the documentation when doing
 # 'make distcheck'
-DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --enable-introspection
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --enable-gir-doc
 
 # Generated files that 'make clean' should erase
 CLEANFILES =
@@ -78,6 +78,32 @@ typelibdir = $(libdir)/girepository-1.0
 typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 CLEANFILES += $(gir_DATA) $(typelib_DATA)
+endif
+
+# # # GOBJECT INTROSPECTION DOCUMENTATION # # #
+
+if ENABLE_GIR_DOC
+
+docs/reference/endless-js/index.page: $(INTROSPECTION_GIRS)
+	$(MKDIR_P) $(@D)
+	g-ir-doc-tool -o $(@D) -l gjs $<
+
+docs/reference/endless-js/html/index.html: docs/reference/endless-js/index.page
+	$(MKDIR_P) $(@D)
+	yelp-build html -o $(@D) $(<D)
+
+all-local: docs/reference/endless-js/html/index.html
+
+EXTRA_DIST += \
+	docs/reference/endless-js/html/*.html \
+	docs/reference/endless-js/html/*.css \
+	docs/reference/endless-js/html/*.js
+
+CLEANFILES += \
+	docs/reference/endless-js/*.page \
+	docs/reference/endless-js/html/*.html \
+	docs/reference/endless-js/html/*.css \
+	docs/reference/endless-js/html/*.js
 endif
 
 # # # TESTS # # #

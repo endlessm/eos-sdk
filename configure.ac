@@ -94,6 +94,8 @@ AS_ALL_LINGUAS
 
 # Required build tools
 # --------------------
+# Make sure we can create directory hierarchies
+AC_PROG_MKDIR_P
 # C compiler
 AC_PROG_CC
 # Make sure the C compiler supports per-target CFLAGS
@@ -107,6 +109,11 @@ AM_GNU_GETTEXT_VERSION([0.18.1])
 GTK_DOC_CHECK([1.18], [--flavour no-tmpl])
 # GObject Introspection
 GOBJECT_INTROSPECTION_REQUIRE([1.30])
+# Various tools
+AC_PATH_PROG([GIRDOCTOOL], [g-ir-doc-tool], [notfound])
+AC_ARG_VAR([GIRDOCTOOL], [Path to g-ir-doc-tool])
+AC_PATH_PROG([YELPBUILD], [yelp-build], [notfound])
+AC_ARG_VAR([YELPBUILD], [Path to yelp-build])
 
 AC_CACHE_SAVE
 
@@ -152,6 +159,18 @@ AS_CASE([$enable_strict_flags],
 dnl Strip leading spaces
 STRICT_CFLAGS=${STRICT_CFLAGS#*  }
 AC_SUBST(STRICT_CFLAGS)
+
+# --enable-gir-doc: Build GIR documentation for Javascript. Done automatically
+# during 'make distcheck'.
+AC_ARG_ENABLE([gir-doc],
+	[AS_HELP_STRING([--enable-gir-doc],
+		[Build GIR documentation for Javascript @<:@default=no@:>@])])
+AS_IF([test "x$enable_gir_doc" = "xyes"], [
+	AS_IF([test "x$GIRDOCTOOL" = "xnotfound"],
+		[AC_MSG_ERROR([g-ir-doc-tool must be installed for --enable-gir-doc])])
+	AS_IF([test "x$YELPBUILD" = "xnotfound"],
+		[AC_MSG_ERROR([yelp-build must be installed for --enable-gir-doc])])])
+AM_CONDITIONAL([ENABLE_GIR_DOC], [test "x$enable_gir_doc" = "xyes"])
 
 # Required libraries
 # ------------------
