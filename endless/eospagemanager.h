@@ -110,6 +110,19 @@ EOS_SDK_ALL_API_VERSIONS
 void         eos_page_manager_remove_page_by_name            (EosPageManager *self,
                                                               const gchar    *name);
 
+EOS_SDK_ALL_API_VERSIONS
+const gchar *eos_page_manager_get_page_background            (EosPageManager *self,
+                                                              GtkWidget      *page);
+
+EOS_SDK_ALL_API_VERSIONS
+void         eos_page_manager_set_page_background            (EosPageManager *self,
+                                                              GtkWidget      *page,
+                                                              const gchar    *background);
+
+EOS_SDK_ALL_API_VERSIONS
+void         eos_page_manager_remove_page_by_name            (EosPageManager *self,
+                                                              const gchar    *name);
+
 G_END_DECLS
 
 #endif /* EOS_PAGE_MANAGER_H */

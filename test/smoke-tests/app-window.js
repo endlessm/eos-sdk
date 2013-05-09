@@ -100,10 +100,12 @@ const TestApplication = new Lang.Class ({
         this._pm = new Endless.PageManager();
         this._pm.add(this._page0, {
             name: "page0",
+            background: "images/cat_eye.jpg",
             custom_toolbox_widget: this._toolbox
         });
         this._pm.add(this._page1, {
             name: "page1",
+            background: "images/dog_eye.jpg",
             custom_toolbox_widget: this._toolbox,
             page_actions: true
         });
