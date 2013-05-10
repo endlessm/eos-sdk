@@ -274,6 +274,14 @@ eos_main_area_init (EosMainArea *self)
 {
   gtk_widget_set_has_window(GTK_WIDGET(self), FALSE);
   self->priv = MAIN_AREA_PRIVATE (self);
+
+  self->priv->actions_standin = gtk_event_box_new ();
+  g_object_ref_sink (self->priv->actions_standin);
+  GdkRGBA red = { 1.0, 0.0, 0.0, 1.0 };
+  gtk_widget_override_background_color (self->priv->actions_standin,
+                                        GTK_STATE_FLAG_NORMAL,
+                                        &red);
+  gtk_widget_show (self->priv->actions_standin);
 }
 
 /* Internal Public API */
@@ -413,21 +421,9 @@ eos_main_area_set_actions (EosMainArea *self, gboolean actions_visible)
   priv->actions_visible = actions_visible;
 
   if (priv->actions_visible)
-    {
-      priv->actions_standin = gtk_event_box_new ();
       gtk_widget_set_parent (priv->actions_standin, self_widget);
-      GdkRGBA red = { 1.0, 0.0, 0.0, 1.0 };
-      gtk_widget_override_background_color (priv->actions_standin,
-                                            GTK_STATE_FLAG_NORMAL,
-                                            &red);
-      gtk_widget_show (priv->actions_standin);
-    }
   else
-    {
       gtk_widget_unparent (priv->actions_standin);
-      gtk_widget_destroy (priv->actions_standin);
-      priv->actions_standin = NULL;
-    }
 
   if (gtk_widget_get_visible (self_widget))
     gtk_widget_queue_resize (self_widget);
