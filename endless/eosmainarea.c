@@ -40,7 +40,8 @@ eos_main_area_get_preferred_width (GtkWidget *widget,
   GtkWidget *content = self->priv->content;
   *minimal = *natural = 0;
 
-  if (toolbox && gtk_widget_get_visible (toolbox))
+  if ((toolbox && gtk_widget_get_visible (toolbox)) ||
+      self->priv->actions_visible)
     {
       gint toolbox_minimal, toolbox_natural;
       gtk_widget_get_preferred_width (toolbox,
@@ -314,7 +315,6 @@ eos_main_area_set_toolbox (EosMainArea *self,
 {
   g_return_if_fail (EOS_IS_MAIN_AREA (self));
   g_return_if_fail (toolbox == NULL || GTK_IS_WIDGET (toolbox));
-  g_return_if_fail (toolbox == NULL || gtk_widget_get_parent (toolbox) == NULL);
 
   EosMainAreaPrivate *priv = self->priv;
   GtkWidget *self_widget = GTK_WIDGET (self);
@@ -327,7 +327,10 @@ eos_main_area_set_toolbox (EosMainArea *self,
 
   priv->toolbox = toolbox;
   if (toolbox)
-    gtk_widget_set_parent (toolbox, self_widget);
+    {
+      gtk_widget_set_parent (toolbox, self_widget);
+      gtk_widget_show (toolbox);
+    }
 
   if (gtk_widget_get_visible (self_widget))
     gtk_widget_queue_resize (self_widget);
