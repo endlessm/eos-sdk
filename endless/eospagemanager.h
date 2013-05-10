@@ -80,6 +80,9 @@ void         eos_page_manager_set_visible_page_name          (EosPageManager *se
                                                               const gchar    *page_name);
 
 EOS_SDK_ALL_API_VERSIONS
+const gchar *eos_page_manager_get_visible_page_background    (EosPageManager *self);
+
+EOS_SDK_ALL_API_VERSIONS
 const gchar *eos_page_manager_get_page_name                  (EosPageManager *self,
                                                               GtkWidget      *page);
 
@@ -105,10 +108,6 @@ EOS_SDK_ALL_API_VERSIONS
 void         eos_page_manager_set_page_custom_toolbox_widget (EosPageManager *self,
                                                               GtkWidget      *page,
                                                               GtkWidget      *custom_toolbox_widget);
-
-EOS_SDK_ALL_API_VERSIONS
-void         eos_page_manager_remove_page_by_name            (EosPageManager *self,
-                                                              const gchar    *name);
 
 EOS_SDK_ALL_API_VERSIONS
 const gchar *eos_page_manager_get_page_background            (EosPageManager *self,

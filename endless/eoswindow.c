@@ -1,6 +1,7 @@
 /* Copyright 2013 Endless Mobile, Inc. */
 
 #include "config.h"
+#include "string.h"
 #include "eoswindow.h"
 
 #include "eosapplication.h"
@@ -33,7 +34,11 @@
  * ]|
  */
 
-#define _BACKGROUND_IMAGE_CSS_TEMPLATE "EosWindow { background-image: url(\"%s\"); }"
+// Put in a transition for fun, should be part of API though someday...
+#define _BACKGROUND_IMAGE_CSS_TEMPLATE "EosWindow { background-image: url(\"%s\");" \
+                                                   "transition-property: background-image;" \
+                                                   "transition-duration: 0.5s;" \
+                                                   "background-size:100%% 100%%; }"
 
 G_DEFINE_TYPE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
 
@@ -326,22 +331,20 @@ static void
 set_background_to_page (EosWindow      *self,
                         EosPageManager *page_manager)
 {
-  gint length;
-  GError *error = NULL;
   GtkCssProvider *provider = self->priv->background_provider;
   GdkScreen *screen = gdk_screen_get_default ();
-  GtkWidget *visible_page = eos_page_manager_get_visible_page (page_manager);
-  const gchar *background;
-  gchar background_css[128];
+  const gchar *background = eos_page_manager_get_visible_page_background (page_manager);
+  gint background_css_length = strlen (background) + strlen (_BACKGROUND_IMAGE_CSS_TEMPLATE) + 1;
+  gchar background_css[background_css_length];
+  GError *error = NULL;
 
-  if (visible_page != NULL)
+  if (background != NULL && strlen (background) > 0)
     {
-      background = eos_page_manager_get_page_background (page_manager, visible_page);
-      length = sprintf (background_css, _BACKGROUND_IMAGE_CSS_TEMPLATE, background);
+      sprintf (background_css, _BACKGROUND_IMAGE_CSS_TEMPLATE, background);
       gtk_style_context_remove_provider_for_screen (screen, GTK_STYLE_PROVIDER (provider));
       gtk_css_provider_load_from_data (provider,
                                        background_css,
-                                       length,
+                                       background_css_length,
                                        &error);
       gtk_style_context_add_provider_for_screen (screen,
                                                  GTK_STYLE_PROVIDER (provider),
@@ -369,7 +372,7 @@ eos_window_add (GtkContainer *container,
   if (EOS_IS_PAGE_MANAGER (widget))
     {
       set_background_to_page (EOS_WINDOW (container), EOS_PAGE_MANAGER (widget));
-      g_signal_connect (widget, "notify::visible-page",
+      g_signal_connect (widget, "notify::visible-page-background",
                         G_CALLBACK (on_background_changed_cb), container);
     }
   GTK_CONTAINER_CLASS (eos_window_parent_class)->add (container, widget);
