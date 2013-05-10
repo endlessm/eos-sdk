@@ -106,6 +106,14 @@ CLEANFILES += \
 	docs/reference/endless-js/html/*.js
 endif
 
+# # # GJS OVERRIDES # # #
+
+gjsoverridedir = ${datadir}/gjs-1.0/overrides
+
+# Put override files here for custom js API outside of normal introspection
+dist_gjsoverride_DATA = 		\
+	overrides/Endless.js
+
 # # # TESTS # # #
 
 include $(top_srcdir)/test/Makefile.am
