@@ -1,11 +1,11 @@
 /* Copyright 2013 Endless Mobile, Inc. */
 
+#ifndef EOS_WINDOW_H
+#define EOS_WINDOW_H
+
 #if !(defined(_EOS_SDK_INSIDE_ENDLESS_H) || defined(COMPILING_EOS_SDK))
 #error "Please do not include this header file directly."
 #endif
-
-#ifndef EOS_WINDOW_H
-#define EOS_WINDOW_H
 
 #include "eostypes.h"
 
