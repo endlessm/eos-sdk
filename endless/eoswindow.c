@@ -5,6 +5,7 @@
 
 #include "eosapplication.h"
 #include "eostopbar-private.h"
+#include "eosmainarea-private.h"
 
 #include <gtk/gtk.h>
 
@@ -41,16 +42,116 @@ struct _EosWindowPrivate
   EosApplication *application;
 
   GtkWidget *top_bar;
+  GtkWidget *main_area;
+
+  EosPageManager *page_manager;
+
+  /* For keeping track of what to display alongside the current page */
+  GtkWidget *current_page;
+  gulong     child_page_actions_handler;
+  gulong     child_custom_toolbox_handler;
 };
 
 enum
 {
   PROP_0,
   PROP_APPLICATION,
+  PROP_PAGE_MANAGER,
   NPROPS
 };
 
 static GParamSpec *eos_window_props[NPROPS] = { NULL, };
+
+/*
+ * update_page_actions:
+ * @self: the window
+ *
+ * Ensures that the currently shown state of the action area is in line with
+ * the child properties of the currently showing page.
+ */
+static void
+update_page_actions (EosWindow *self)
+{
+  EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
+  EosMainArea *ma = EOS_MAIN_AREA (self->priv->main_area);
+  GtkWidget *page = self->priv->current_page;
+
+  if (page != NULL)
+    {
+      gboolean fake_action_area = eos_page_manager_get_page_actions (pm, page);
+      eos_main_area_set_actions (ma, fake_action_area);
+    }
+  else
+    {
+      eos_main_area_set_actions (ma, FALSE);
+    }
+}
+
+/*
+ * update_page_toolbox:
+ * @self: the window
+ *
+ * Ensures that the currently shown state of the toolbox is in line with
+ * the child properties of the currently showing page.
+ */
+static void
+update_page_toolbox (EosWindow *self)
+{
+  EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
+  EosMainArea *ma = EOS_MAIN_AREA (self->priv->main_area);
+  GtkWidget *page = self->priv->current_page;
+
+  if (page != NULL)
+    {
+      GtkWidget *custom_toolbox_widget =
+        eos_page_manager_get_page_custom_toolbox_widget (pm, page);
+      eos_main_area_set_toolbox (ma, custom_toolbox_widget);
+    }
+  else
+    {
+      eos_main_area_set_toolbox (ma, NULL);
+    }
+}
+
+/*
+ * update_page:
+ * @self: the window
+ *
+ * Ensures that the state of the window and the window's main area are in line
+ * with the currently showing page and its child properties.
+ */
+static void
+update_page (EosWindow *self)
+{
+  EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
+
+  if (self->priv->current_page)
+    {
+      g_signal_handler_disconnect (self->priv->current_page,
+                                   self->priv->child_page_actions_handler);
+      g_signal_handler_disconnect (self->priv->current_page,
+                                   self->priv->child_custom_toolbox_handler);
+    }
+
+  self->priv->current_page = eos_page_manager_get_visible_page (pm);
+
+  update_page_actions (self);
+  update_page_toolbox (self);
+
+  if (self->priv->current_page)
+    {
+      self->priv->child_page_actions_handler =
+        g_signal_connect_swapped (self->priv->current_page,
+                                  "child-notify::page-actions",
+                                  G_CALLBACK (update_page_actions),
+                                  self);
+      self->priv->child_custom_toolbox_handler =
+        g_signal_connect_swapped (self->priv->current_page,
+                                  "child-notify::custom-toolbox-widget",
+                                  G_CALLBACK (update_page_toolbox),
+                                  self);
+    }
+}
 
 static void
 eos_window_get_property (GObject    *object,
@@ -64,6 +165,10 @@ eos_window_get_property (GObject    *object,
     {
     case PROP_APPLICATION:
       g_value_set_object (value, self->priv->application);
+      break;
+
+    case PROP_PAGE_MANAGER:
+      g_value_set_object (value, eos_window_get_page_manager (self));
       break;
 
     default:
@@ -88,6 +193,10 @@ eos_window_set_property (GObject      *object,
       if (self->priv->application == NULL)
         g_error ("In order to create a window, you must have an application "
                  "for it to connect to.");
+      break;
+
+    case PROP_PAGE_MANAGER:
+      eos_window_set_page_manager (self, g_value_get_object (value));
       break;
 
     default:
@@ -209,7 +318,6 @@ eos_window_forall (GtkContainer *container,
                                                          callback_data);
 }
 
-
 static void
 eos_window_class_init (EosWindowClass *klass)
 {
@@ -245,6 +353,17 @@ eos_window_class_init (EosWindowClass *klass)
                          EOS_TYPE_APPLICATION,
                          G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
 
+  /**
+   * EosWindow:page-manager:
+   *
+   * The #EosPageManager that controls the flow of this window's application.
+   */
+  eos_window_props[PROP_PAGE_MANAGER] =
+    g_param_spec_object ("page-manager", "Page manager",
+                         "Page manager associated with this window",
+                         EOS_TYPE_PAGE_MANAGER,
+                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
   g_object_class_install_properties (object_class, NPROPS, eos_window_props);
 }
 
@@ -276,6 +395,9 @@ eos_window_init (EosWindow *self)
   self->priv->top_bar = eos_top_bar_new ();
   gtk_widget_set_parent (self->priv->top_bar, GTK_WIDGET (self));
 
+  self->priv->main_area = eos_main_area_new ();
+  gtk_container_add (GTK_CONTAINER (self), self->priv->main_area);
+
   gtk_window_set_decorated (GTK_WINDOW (self), FALSE);
   gtk_window_maximize (GTK_WINDOW (self));
 
@@ -283,6 +405,9 @@ eos_window_init (EosWindow *self)
                     G_CALLBACK (on_minimize_clicked_cb), self);
   g_signal_connect (self->priv->top_bar, "close-clicked",
                     G_CALLBACK (on_close_clicked_cb), self);
+
+  eos_window_set_page_manager (self,
+                               EOS_PAGE_MANAGER (eos_page_manager_new ()));
 }
 
 /* Public API */
@@ -301,4 +426,48 @@ eos_window_new (EosApplication *application)
   return GTK_WIDGET (g_object_new (EOS_TYPE_WINDOW,
                                    "application", application,
                                    NULL));
+}
+
+/**
+ * eos_window_get_page_manager:
+ * @self: the window
+ *
+ * Stub
+ *
+ * Returns: (transfer none) (allow-none): a pointer to the current page manager,
+ * or %NULL if there is no page manager set.
+ */
+EosPageManager *
+eos_window_get_page_manager (EosWindow *self)
+{
+  g_return_val_if_fail (self != NULL && EOS_IS_WINDOW (self), NULL);
+
+  return self->priv->page_manager;
+}
+
+/**
+ * eos_window_set_page_manager:
+ * @self: the window
+ * @page_manager: the page manager
+ *
+ * Stub
+ */
+void
+eos_window_set_page_manager (EosWindow *self,
+                             EosPageManager *page_manager)
+{
+  g_return_if_fail (self != NULL && EOS_IS_WINDOW (self));
+  g_return_if_fail (page_manager != NULL && EOS_IS_PAGE_MANAGER (page_manager));
+
+  EosMainArea *main_area = EOS_MAIN_AREA (self->priv->main_area);
+
+  self->priv->page_manager = page_manager;
+
+  eos_main_area_set_content (main_area,
+                             GTK_WIDGET (self->priv->page_manager));
+
+  update_page (self);
+
+  g_signal_connect_swapped (self->priv->page_manager, "notify::visible-page",
+                            G_CALLBACK (update_page), self);
 }
