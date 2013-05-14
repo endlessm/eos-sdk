@@ -100,6 +100,8 @@ struct _EosPageManagerPrivate
 {
   GtkWidget *stack;
   GList *page_info; /* GList<EosPageManagerPageInfo> */
+  GHashTable *pages_by_name; /* GHashTable<gchar *, EosPageManagerPageInfo *> */
+  GHashTable *pages_by_widget; /* GHashTable<GtkWidget *, EosPageManagerPageInfo *> */
   EosPageManagerPageInfo *visible_page_info;
 };
 
@@ -128,14 +130,6 @@ page_info_free (EosPageManagerPageInfo *info)
   g_slice_free (EosPageManagerPageInfo, info);
 }
 
-/* Helper function for find_page_info_by_widget() */
-static gint
-page_info_widget_compare (const EosPageManagerPageInfo *info,
-                          const GtkWidget *page)
-{
-  return (info->page != page); /* not orderable */
-}
-
 /*
  * find_page_info_by_widget:
  * @self: the page manager
@@ -150,20 +144,7 @@ static EosPageManagerPageInfo *
 find_page_info_by_widget (EosPageManager *self,
                           GtkWidget      *page)
 {
-  GList *result = g_list_find_custom (self->priv->page_info, page,
-                                      (GCompareFunc)page_info_widget_compare);
-  if (result == NULL)
-    return NULL;
-  return result->data;
-}
-
-/* Helper function for find_page_info_by_name() */
-static gint
-page_info_name_compare (const EosPageManagerPageInfo *info,
-                        const gchar *name)
-{
-  /* g_strcmp0() handles NULL */
-  return g_strcmp0(info->name, name);
+  return g_hash_table_lookup (self->priv->pages_by_widget, page);
 }
 
 /*
@@ -180,11 +161,7 @@ static EosPageManagerPageInfo *
 find_page_info_by_name (EosPageManager *self,
                         const gchar    *name)
 {
-  GList *result = g_list_find_custom (self->priv->page_info, name,
-                                      (GCompareFunc)page_info_name_compare);
-  if (result == NULL)
-    return NULL;
-  return result->data;
+  return g_hash_table_lookup (self->priv->pages_by_name, name);
 }
 
 /* Convenience function, since this warning occurs at several places */
@@ -206,6 +183,24 @@ warn_page_name_not_found (EosPageManager *self,
   g_critical ("EosPageManager %p has no page named %s",
               self,
               name);
+}
+
+/* Invariants: number of pages in list and number of pages in pages_by_widget
+hash table must be equal; and number of pages in pages_by_name hash table must
+be equal or less. This check is expensive, should only be enabled for debugging.
+*/
+static void
+assert_internal_state (EosPageManager *self)
+{
+#ifdef DEBUG
+  guint list_length = g_list_length (self->priv->page_info);
+  g_assert_cmpuint (list_length,
+                    ==,
+                    g_hash_table_size (self->priv->pages_by_widget));
+  g_assert_cmpuint (list_length,
+                    >=,
+                    g_hash_table_size (self->priv->pages_by_name));
+#endif
 }
 
 static void
@@ -278,6 +273,8 @@ eos_page_manager_finalize (GObject *object)
   EosPageManager *self = EOS_PAGE_MANAGER (object);
 
   g_list_foreach (self->priv->page_info, (GFunc)page_info_free, NULL);
+  g_hash_table_destroy(self->priv->pages_by_widget);
+  g_hash_table_destroy(self->priv->pages_by_name);
 
   G_OBJECT_CLASS (eos_page_manager_parent_class)->finalize (object);
 }
@@ -396,10 +393,13 @@ eos_page_manager_add (GtkContainer *container,
   EosPageManagerPageInfo *info = g_slice_new0 (EosPageManagerPageInfo);
   info->page = new_page;
   self->priv->page_info = g_list_prepend (self->priv->page_info, info);
+  g_hash_table_insert (self->priv->pages_by_widget, new_page, info);
 
   /* If there were no pages yet, then this one must become the visible one */
   if (self->priv->visible_page_info == NULL)
     self->priv->visible_page_info = info;
+
+  assert_internal_state (self);
 }
 
 static void
@@ -416,12 +416,17 @@ eos_page_manager_remove (GtkContainer *container,
       return;
     }
   self->priv->page_info = g_list_remove (self->priv->page_info, info);
+  g_hash_table_remove (self->priv->pages_by_widget, page);
+  if (info->name != NULL)
+    g_hash_table_remove (self->priv->pages_by_name, info->name);
 
   /* If this was the only page */
   if (self->priv->visible_page_info == info)
     self->priv->visible_page_info = NULL;
 
   page_info_free (info);
+
+  assert_internal_state (self);
 }
 
 static void
@@ -568,6 +573,12 @@ eos_page_manager_init (EosPageManager *self)
 {
   GtkWidget *self_widget = GTK_WIDGET (self);
   self->priv = PAGE_MANAGER_PRIVATE (self);
+  self->priv->pages_by_widget = g_hash_table_new (g_direct_hash,
+                                                  g_direct_equal);
+  self->priv->pages_by_name = g_hash_table_new_full (g_str_hash,
+                                                     g_str_equal,
+                                                     g_free,
+                                                     NULL);
 
   gtk_widget_set_has_window (self_widget, FALSE);
 
@@ -757,10 +768,16 @@ eos_page_manager_set_page_name (EosPageManager *self,
   if (g_strcmp0(info->name, name) == 0)
     return;
 
+  if (info->name != NULL)
+    g_hash_table_remove (self->priv->pages_by_name, info->name);
   g_free (info->name);
   info->name = g_strdup (name);
+  if (name != NULL)
+      g_hash_table_insert (self->priv->pages_by_name, g_strdup (name), info);
 
   gtk_container_child_notify (GTK_CONTAINER (self), page, "name");
+
+  assert_internal_state (self);
 }
 
 /**
@@ -792,4 +809,6 @@ eos_page_manager_remove_page_by_name (EosPageManager *self,
   gtk_widget_get_parent(child) == self || GTK_IS_ASSISTANT(self)
   See https://bugzilla.gnome.org/show_bug.cgi?id=699756 [endlessm/eos-sdk#67] */
   g_signal_emit_by_name (self, "remove", info->page);
+
+  assert_internal_state (self);
 }
