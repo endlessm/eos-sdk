@@ -176,12 +176,26 @@ test_pm_page_no_name (PageManagerFixture *fixture,
   GtkWidget *new_page = gtk_label_new("new");
   gtk_container_add (GTK_CONTAINER (fixture->pm), new_page);
   name_get = eos_page_manager_get_page_name (EOS_PAGE_MANAGER (fixture->pm), new_page);
-  g_assert_cmpstr (name_get, ==, "");
+  g_assert (name_get == NULL);
   gtk_container_child_get (GTK_CONTAINER (fixture->pm), new_page,
                            "name", &name_prop,
                            NULL);
-  g_assert_cmpstr (name_prop, ==, "");
-  g_free (name_prop);
+  g_assert (name_prop == NULL);
+}
+
+static void
+test_pm_set_page_no_name (PageManagerFixture *fixture,
+                          gconstpointer       unused)
+{
+  const gchar *name;
+  eos_page_manager_set_page_name (EOS_PAGE_MANAGER (fixture->pm),
+                                  fixture->page1,
+                                  NULL);
+  name = eos_page_manager_get_page_name (EOS_PAGE_MANAGER (fixture->pm),
+                                         fixture->page1);
+  g_assert (name == NULL);
+  name = eos_page_manager_get_visible_page_name (EOS_PAGE_MANAGER (fixture->pm));
+  g_assert (name == NULL);
 }
 
 static void
@@ -310,6 +324,8 @@ add_page_manager_tests (void)
   ADD_PAGE_MANAGER_TEST ("/page-manager/child-prop-name",
                          test_pm_child_prop_name);
   ADD_PAGE_MANAGER_TEST ("/page-manager/page-no-name", test_pm_page_no_name);
+  ADD_PAGE_MANAGER_TEST ("/page-manager/set-page-no-name",
+                         test_pm_set_page_no_name);
   ADD_PAGE_MANAGER_TEST ("/page-manager/remove-page-by-name",
                          test_pm_remove_page_by_name);
   ADD_PAGE_MANAGER_TEST ("/page-manager/duplicate-page-name",

@@ -540,9 +540,8 @@ eos_page_manager_class_init (EosPageManagerClass *klass)
    * EosPageManager:visible-page-name:
    *
    * The name of the page that is currently being displayed by the page manager.
-   * If the page manager has no pages, then this is %NULL.
-   * However, if there is a page currently being displayed but it has no name,
-   * then this is the empty string (<code>""</code>).
+   * If the page manager has no pages, or if there is a page currently being
+   * displayed but it has no name, then this is %NULL.
    */
   eos_page_manager_props[PROP_VISIBLE_PAGE_NAME] =
     g_param_spec_string ("visible-page-name", "Visible page name",
@@ -659,8 +658,8 @@ eos_page_manager_set_visible_page (EosPageManager *self,
  * Gets the name of the page widget that @self is currently displaying.
  * See #EosPageManager:visible-page for more information.
  *
- * Returns: the name of the page, or %NULL if @self does not have any pages,
- * or the empty string if the page does not have a name.
+ * Returns: (allow-none): the name of the page, or %NULL if @self does not have
+ * any pages or if the visible page does not have a name.
  */
 const gchar *
 eos_page_manager_get_visible_page_name (EosPageManager *self)
@@ -687,6 +686,7 @@ eos_page_manager_set_visible_page_name (EosPageManager *self,
                                         const gchar    *page_name)
 {
   g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
+  g_return_if_fail (page_name != NULL);
 
   EosPageManagerPageInfo *info = find_page_info_by_name (self, page_name);
   if (info == NULL)
@@ -707,7 +707,7 @@ eos_page_manager_set_visible_page_name (EosPageManager *self,
  * page manager.
  * See #EosPageManager:name for more information.
  *
- * Returns: the name of @page, or the empty string if @page does not have a
+ * Returns: (allow-none): the name of @page, or %NULL if @page does not have a
  * name.
  */
 const gchar *
@@ -724,9 +724,6 @@ eos_page_manager_get_page_name (EosPageManager *self,
       return NULL;
     }
 
-  if (info->name == NULL)
-    return "";
-
   return info->name;
 }
 
@@ -734,10 +731,11 @@ eos_page_manager_get_page_name (EosPageManager *self,
  * eos_page_manager_set_page_name:
  * @self: the page manager
  * @page: the page to be renamed
- * @name: the new name for @page
+ * @name: (allow-none): the new name for @page
  *
  * Changes the name of @page, which must previously have been added to the
  * page manager.
+ * To remove @page's name, pass %NULL for @name.
  * See #EosPageManager:name for more information.
  */
 void
@@ -745,17 +743,22 @@ eos_page_manager_set_page_name (EosPageManager *self,
                                 GtkWidget      *page,
                                 const gchar    *name)
 {
+  EosPageManagerPageInfo *info;
+
   g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
   g_return_if_fail (GTK_IS_WIDGET (page));
 
   /* Two pages with the same name are not allowed */
-  EosPageManagerPageInfo *info = find_page_info_by_name (self, name);
-  if (info != NULL && info->page != page)
+  if (name != NULL)
     {
-      g_critical ("Not setting page name to \"%s\", because page manager "
-                  "already contains a page by that name",
-                  name);
-      return;
+      info = find_page_info_by_name (self, name);
+      if (info != NULL && info->page != page)
+        {
+          g_critical ("Not setting page name to \"%s\", because page manager "
+                      "already contains a page by that name",
+                      name);
+          return;
+        }
     }
 
   info = find_page_info_by_widget (self, page);
@@ -797,6 +800,7 @@ eos_page_manager_remove_page_by_name (EosPageManager *self,
                                       const gchar    *name)
 {
   g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
+  g_return_if_fail (name != NULL);
 
   EosPageManagerPageInfo *info = find_page_info_by_name (self, name);
   if (info == NULL)
