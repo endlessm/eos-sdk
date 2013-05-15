@@ -28,5 +28,6 @@ void add_init_tests                   (void);
 void add_hello_tests                  (void);
 void add_application_tests            (void);
 void add_window_tests                 (void);
+void add_page_manager_tests           (void);
 
 #endif /* RUN_TESTS_H */

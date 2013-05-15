@@ -6,6 +6,15 @@ const Gtk = imports.gi.Gtk;
 
 const TEST_APPLICATION_ID = 'com.endlessm.example.test';
 
+/* Override Endless.PageManager.add() */
+Endless.PageManager.prototype.add_real = Endless.PageManager.prototype.add
+Endless.PageManager.prototype.add = function(child, props) {
+    this.add_real(child);
+    for(let prop_id in props) {
+        this.child_set_property(child, prop_id, props[prop_id]);
+    }
+}
+
 const TestApplication = new Lang.Class ({
     Name: 'TestApplication',
     Extends: Endless.Application,
@@ -13,14 +22,41 @@ const TestApplication = new Lang.Class ({
     vfunc_startup: function() {
         this.parent();
 
-        this._button = new Gtk.Button({label: 'Close me'});
-        this._button.connect('clicked', Lang.bind(this, this._onButtonClicked));
+        // First page
+        this._page0 = new Gtk.Grid({ orientation: Gtk.Orientation.VERTICAL });
+        let a1 = new Gtk.Button({ label: 'Go to page1' });
+        a1.connect('clicked', Lang.bind(this, function () {
+            this._pm.visible_page = this._page1;
+        }));
+        this._page0.add(a1);
+        let a2 = new Gtk.Button({ label: 'Go to page named "page1"' });
+        a2.connect('clicked', Lang.bind(this, function () {
+            this._pm.visible_page_name = "page1";
+        }));
+        this._page0.add(a2);
+
+        // Second page
+        this._page1 = new Gtk.Grid({ orientation: Gtk.Orientation.HORIZONTAL });
+        let b1 = new Gtk.Button({ label: 'Go to page0' });
+        b1.connect('clicked', Lang.bind(this, function () {
+            this._pm.visible_page = this._page0;
+        }));
+        this._page1.add(b1);
+        let b2 = new Gtk.Button({ label: 'Go to page named "page0"' });
+        b2.connect('clicked', Lang.bind(this, function () {
+            this._pm.visible_page_name = "page0";
+        }));
+        this._page1.add(b2);
+
+        this._pm = new Endless.PageManager();
+        this._pm.add(this._page0, { name: "page0" });
+        this._pm.add(this._page1, { name: "page1" });
 
         this._window = new Endless.Window({
             application: this,
             border_width: 16
         });
-        this._window.add(this._button);
+        this._window.add(this._pm);
         this._window.show_all();
     },
 
