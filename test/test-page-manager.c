@@ -23,6 +23,9 @@
 #define ADD_EMPTY_PAGE_MANAGER_TEST(path, test_func) \
   g_test_add ((path), PageManagerFixture, NULL, \
               empty_pm_fixture_setup, (test_func), pm_fixture_teardown);
+#define DURATION_DEFAULT 200
+#define DURATION_1 1
+#define DURATION_2 9999
 
 typedef struct
 {
@@ -458,6 +461,50 @@ test_pm_duplicate_page_name (PageManagerFixture *fixture,
 }
 
 static void
+test_pm_prop_transition_duration (PageManagerFixture *fixture,
+                                  gconstpointer       unused)
+{
+  guint duration;
+  g_object_get (fixture->pm, "transition-duration", &duration, NULL);
+  g_assert (duration == DURATION_DEFAULT);
+  g_object_set (fixture->pm, "transition-duration", DURATION_2, NULL);
+  g_object_get (fixture->pm, "transition-duration", &duration, NULL);
+  g_assert (duration == DURATION_2);
+}
+
+static void
+test_pm_get_set_transition_duration (PageManagerFixture *fixture,
+                                     gconstpointer       unused)
+{
+  g_assert (DURATION_DEFAULT == eos_page_manager_get_transition_duration (EOS_PAGE_MANAGER (fixture->pm)));
+  eos_page_manager_set_transition_duration (EOS_PAGE_MANAGER (fixture->pm), DURATION_1);
+  g_assert (DURATION_1 == eos_page_manager_get_transition_duration (EOS_PAGE_MANAGER (fixture->pm)));
+  eos_page_manager_set_transition_duration (EOS_PAGE_MANAGER (fixture->pm), DURATION_2);
+  g_assert (DURATION_2 == eos_page_manager_get_transition_duration (EOS_PAGE_MANAGER (fixture->pm)));
+}
+
+static void
+test_pm_prop_transition_type (PageManagerFixture *fixture,
+                                  gconstpointer       unused)
+{
+  EosPageManagerTransitionType type;
+  g_object_get (fixture->pm, "transition-type", &type, NULL);
+  g_assert (type == EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE);
+  g_object_set (fixture->pm, "transition-type", EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE, NULL);
+  g_object_get (fixture->pm, "transition-type", &type, NULL);
+  g_assert (type == EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE);
+}
+
+static void
+test_pm_get_set_transition_type (PageManagerFixture *fixture,
+                                 gconstpointer       unused)
+{
+  g_assert (EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE == eos_page_manager_get_transition_type (EOS_PAGE_MANAGER (fixture->pm)));
+  eos_page_manager_set_transition_type (EOS_PAGE_MANAGER (fixture->pm), EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE);
+  g_assert (EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE == eos_page_manager_get_transition_type (EOS_PAGE_MANAGER (fixture->pm)));
+}
+
+static void
 test_empty_pm_visible_page (PageManagerFixture *fixture,
                             gconstpointer       unused)
 {
@@ -531,6 +578,14 @@ add_page_manager_tests (void)
                          test_pm_remove_page_by_name);
   ADD_PAGE_MANAGER_TEST ("/page-manager/duplicate-page-name",
                          test_pm_duplicate_page_name);
+  ADD_PAGE_MANAGER_TEST ("/page-manager/prop-transition-duration",
+                         test_pm_prop_transition_duration);
+  ADD_PAGE_MANAGER_TEST ("/page-manager/get-set-transition-duration",
+                         test_pm_get_set_transition_duration);
+  ADD_PAGE_MANAGER_TEST ("/page-manager/prop-transition-type",
+                         test_pm_prop_transition_type);
+  ADD_PAGE_MANAGER_TEST ("/page-manager/get-set-transition-type",
+                         test_pm_get_set_transition_type);
   ADD_EMPTY_PAGE_MANAGER_TEST ("/page-manager/empty-visible-page",
                                test_empty_pm_visible_page);
   ADD_EMPTY_PAGE_MANAGER_TEST ("/page-manager/empty-visible-page-name",
