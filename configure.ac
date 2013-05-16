@@ -172,6 +172,15 @@ AS_IF([test "x$enable_gir_doc" = "xyes"], [
 		[AC_MSG_ERROR([yelp-build must be installed for --enable-gir-doc])])])
 AM_CONDITIONAL([ENABLE_GIR_DOC], [test "x$enable_gir_doc" = "xyes"])
 
+# For 'make dist' or 'make distcheck', both --enable-gtk-doc and
+# --enable-gir-doc are required
+AC_MSG_CHECKING([whether this configuration allows building distributions])
+can_make_dist=yes
+AM_COND_IF([ENABLE_GTK_DOC], [], [can_make_dist=no])
+AM_COND_IF([ENABLE_GIR_DOC], [], [can_make_dist=no])
+AM_CONDITIONAL([CAN_MAKE_DIST], [test "x$can_make_dist" = "xyes"])
+AC_MSG_RESULT([$can_make_dist])
+
 # Required libraries
 # ------------------
 PKG_CHECK_MODULES([EOS_SDK], [
