@@ -3,6 +3,10 @@
 #ifndef EOS_MAIN_AREA_H
 #define EOS_MAIN_AREA_H
 
+#if !(defined(_EOS_SDK_INSIDE_ENDLESS_H) || defined(COMPILING_EOS_SDK))
+#error "Please do not include this header file directly."
+#endif
+
 #include "eostypes.h"
 
 #include <gtk/gtk.h>
@@ -52,10 +56,10 @@ GType      eos_main_area_get_type    (void) G_GNUC_CONST;
 GtkWidget *eos_main_area_new         (void);
 
 void       eos_main_area_set_toolbox (EosMainArea *self,
-                                      GtkWidget *toolbox);
+                                      GtkWidget   *toolbox);
 GtkWidget *eos_main_area_get_toolbox (EosMainArea *self);
 void       eos_main_area_set_content (EosMainArea *self,
-                                      GtkWidget *content);
+                                      GtkWidget   *content);
 GtkWidget *eos_main_area_get_content (EosMainArea *self);
 void       eos_main_area_set_actions (EosMainArea *self,
                                       gboolean     actions_visible);

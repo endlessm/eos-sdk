@@ -30,6 +30,8 @@ struct _EosMainAreaPrivate
   guint actions_visible : 1;
 };
 
+static GtkContainerClass *parent_klass = NULL;
+
 static void
 eos_main_area_get_preferred_width (GtkWidget *widget,
                                    gint      *minimal,
@@ -91,24 +93,6 @@ eos_main_area_get_preferred_height (GtkWidget *widget,
       *minimal = MAX (*minimal, content_minimal);
       *natural = MAX (*natural, content_natural);
     }
-}
-
-static void
-eos_main_area_get_preferred_width_for_height (GtkWidget *widget,
-                                              gint       for_height,
-                                              gint      *minimal,
-                                              gint      *natural)
-{
-  eos_main_area_get_preferred_width(widget, minimal, natural);
-}
-
-static void
-eos_main_area_get_preferred_height_for_width (GtkWidget *widget,
-                                              gint       for_width,
-                                              gint      *minimal,
-                                              gint      *natural)
-{
-  eos_main_area_get_preferred_height(widget, minimal, natural);
 }
 
 // Don't size width for height or height for width, at least for now...
@@ -251,19 +235,29 @@ eos_main_area_forall(GtkContainer *container,
     (*callback) (priv->actions_standin, callback_data);
 }
 
+void
+eos_main_destroy (GtkWidget *widget)
+{
+  EosMainArea *self = EOS_MAIN_AREA (widget);
+
+  GTK_WIDGET_CLASS (parent_klass)->destroy (widget);
+  gtk_widget_destroy (self->priv->actions_standin);
+}
+
 static void
 eos_main_area_class_init (EosMainAreaClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
+  parent_klass = g_type_class_peek_parent (klass);
+
   g_type_class_add_private (klass, sizeof (EosMainAreaPrivate));
 
   widget_class->get_preferred_width = eos_main_area_get_preferred_width;
   widget_class->get_preferred_height = eos_main_area_get_preferred_height;
-  widget_class->get_preferred_width_for_height = eos_main_area_get_preferred_width_for_height;
-  widget_class->get_preferred_height_for_width = eos_main_area_get_preferred_height_for_width;
   widget_class->size_allocate = eos_main_size_allocate;
+  widget_class->destroy = eos_main_destroy;
 
   container_class->forall = eos_main_area_forall;
   container_class->add = eos_main_area_add;
@@ -424,12 +418,9 @@ eos_main_area_set_actions (EosMainArea *self, gboolean actions_visible)
   priv->actions_visible = actions_visible;
 
   if (priv->actions_visible)
-      gtk_widget_set_parent (priv->actions_standin, self_widget);
+    gtk_widget_set_parent (priv->actions_standin, self_widget);
   else
-      gtk_widget_unparent (priv->actions_standin);
-
-  if (gtk_widget_get_visible (self_widget))
-    gtk_widget_queue_resize (self_widget);
+    gtk_widget_unparent (priv->actions_standin);
 }
 
 /**
