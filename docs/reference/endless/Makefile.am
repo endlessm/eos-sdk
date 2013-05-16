@@ -16,7 +16,8 @@ DOC_MAIN_SGML_FILE=$(DOC_MODULE)-docs.xml
 DOC_SOURCE_DIR=$(top_srcdir)/endless
 
 # Extra options to pass to gtkdoc-scangobj. Not normally needed.
-SCANGOBJ_OPTIONS=
+SCANGOBJ_OPTIONS= \
+    --query-child-properties=gtk_container_class_list_child_properties
 
 # Extra options to supply to gtkdoc-scan.
 # e.g. SCAN_OPTIONS=--deprecated-guards="GTK_DISABLE_DEPRECATED"
