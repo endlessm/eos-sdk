@@ -6,14 +6,6 @@ const Gtk = imports.gi.Gtk;
 
 const TEST_APPLICATION_ID = 'com.endlessm.example.test';
 
-/* Override Endless.PageManager.add() */
-Endless.PageManager.prototype.add_real = Endless.PageManager.prototype.add
-Endless.PageManager.prototype.add = function(child, props) {
-    this.add_real(child);
-    for(let prop_id in props) {
-        this.child_set_property(child, prop_id, props[prop_id]);
-    }
-}
 
 const TestApplication = new Lang.Class ({
     Name: 'TestApplication',
