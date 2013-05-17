@@ -26,6 +26,8 @@ EosApplicationPrivate
 <FILE>window</FILE>
 EosWindow
 eos_window_new
+eos_window_get_page_manager
+eos_window_set_page_manager
 <SUBSECTION Standard>
 EosWindowClass
 EOS_IS_WINDOW
@@ -49,6 +51,10 @@ eos_page_manager_get_visible_page_name
 eos_page_manager_set_visible_page_name
 eos_page_manager_get_page_name
 eos_page_manager_set_page_name
+eos_page_manager_get_page_actions
+eos_page_manager_set_page_actions
+eos_page_manager_get_page_custom_toolbox_widget
+eos_page_manager_set_page_custom_toolbox_widget
 eos_page_manager_remove_page_by_name
 <SUBSECTION Standard>
 EOS_IS_PAGE_MANAGER

@@ -7,6 +7,61 @@ const Gtk = imports.gi.Gtk;
 const TEST_APPLICATION_ID = 'com.endlessm.example.test';
 
 
+const Page0 = new Lang.Class ({
+    Name: 'Page0',
+    Extends: Gtk.Grid,
+
+    _init: function(props) {
+        props = props || {};
+        props.orientation = Gtk.Orientation.VERTICAL;
+        this.parent(props);
+
+        this.button1 = new Gtk.Button({ label: 'Go to page1' });
+        this.add(this.button1);
+        this.button2 = new Gtk.Button({ label: 'Go to page named "page1"' });
+        this.add(this.button2);
+    }
+});
+
+const Page1 = new Lang.Class ({
+    Name: 'Page1',
+    Extends: Gtk.Grid,
+
+    _init: function(props) {
+        props = props || {};
+        props.orientation = Gtk.Orientation.HORIZONTAL;
+        this.parent(props);
+
+        this.button1 = new Gtk.Button({ label: 'Go to page0' });
+        this.add(this.button1);
+        this.button2 = new Gtk.Button({ label: 'Go to page named "page0"' });
+        this.add(this.button2);
+    }
+});
+
+const Toolbox = new Lang.Class ({
+    Name: 'Toolbox',
+    Extends: Gtk.Grid,
+
+    _init: function(props) {
+        props = props || {};
+        props.orientation = Gtk.Orientation.VERTICAL;
+        this.parent(props);
+
+        this._label = new Gtk.Label({ label: 'The Toolbox' });
+        this._label1 = new Gtk.Label({ label: 'Actions on page 0' });
+        this._label2 = new Gtk.Label({ label: 'Actions on page 1' });
+        this.switch1 = new Gtk.Switch({ active: false });
+        this.switch2 = new Gtk.Switch({ active: true });
+
+        this.add(this._label);
+        this.add(this._label1);
+        this.add(this.switch1);
+        this.add(this._label2);
+        this.add(this.switch2);
+    }
+});
+
 const TestApplication = new Lang.Class ({
     Name: 'TestApplication',
     Extends: Endless.Application,
@@ -15,40 +70,49 @@ const TestApplication = new Lang.Class ({
         this.parent();
 
         // First page
-        this._page0 = new Gtk.Grid({ orientation: Gtk.Orientation.VERTICAL });
-        let a1 = new Gtk.Button({ label: 'Go to page1' });
-        a1.connect('clicked', Lang.bind(this, function () {
+        this._page0 = new Page0();
+        this._page0.button1.connect('clicked', Lang.bind(this, function () {
             this._pm.visible_page = this._page1;
         }));
-        this._page0.add(a1);
-        let a2 = new Gtk.Button({ label: 'Go to page named "page1"' });
-        a2.connect('clicked', Lang.bind(this, function () {
+        this._page0.button2.connect('clicked', Lang.bind(this, function () {
             this._pm.visible_page_name = "page1";
         }));
-        this._page0.add(a2);
 
         // Second page
-        this._page1 = new Gtk.Grid({ orientation: Gtk.Orientation.HORIZONTAL });
-        let b1 = new Gtk.Button({ label: 'Go to page0' });
-        b1.connect('clicked', Lang.bind(this, function () {
+        this._page1 = new Page1();
+        this._page1.button1.connect('clicked', Lang.bind(this, function () {
             this._pm.visible_page = this._page0;
         }));
-        this._page1.add(b1);
-        let b2 = new Gtk.Button({ label: 'Go to page named "page0"' });
-        b2.connect('clicked', Lang.bind(this, function () {
+        this._page1.button2.connect('clicked', Lang.bind(this, function () {
             this._pm.visible_page_name = "page0";
         }));
-        this._page1.add(b2);
+
+        this._toolbox = new Toolbox();
+        this._toolbox.switch1.connect('notify::active', Lang.bind(this, function () {
+            this._pm.set_page_actions(this._page0,
+                this._toolbox.switch1.active);
+        }));
+        this._toolbox.switch2.connect('notify::active', Lang.bind(this, function () {
+            this._pm.set_page_actions(this._page1,
+                this._toolbox.switch2.active);
+        }));
 
         this._pm = new Endless.PageManager();
-        this._pm.add(this._page0, { name: "page0" });
-        this._pm.add(this._page1, { name: "page1" });
+        this._pm.add(this._page0, {
+            name: "page0",
+            custom_toolbox_widget: this._toolbox
+        });
+        this._pm.add(this._page1, {
+            name: "page1",
+            custom_toolbox_widget: this._toolbox,
+            page_actions: true
+        });
 
         this._window = new Endless.Window({
             application: this,
-            border_width: 16
+            border_width: 16,
+            page_manager: this._pm
         });
-        this._window.add(this._pm);
         this._window.show_all();
     },
 

@@ -25,4 +25,3 @@ gboolean eos_hello_sample_function (GFile   *file,
 G_END_DECLS
 
 #endif
-
