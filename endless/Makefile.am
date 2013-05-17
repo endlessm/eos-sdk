@@ -16,7 +16,7 @@ endless_library_sources = \
 	endless/eoshello.c \
 	endless/eosinit.c endless/eosinit-private.h \
 	endless/eospagemanager.c \
-	endless/eosmainarea.c \
+	endless/eosmainarea.c endless/eosmainarea-private.h \
 	endless/eostopbar.c endless/eostopbar-private.h \
 	endless/eoswindow.c
 

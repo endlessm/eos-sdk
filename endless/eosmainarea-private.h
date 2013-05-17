@@ -3,10 +3,6 @@
 #ifndef EOS_MAIN_AREA_H
 #define EOS_MAIN_AREA_H
 
-#if !(defined(_EOS_SDK_INSIDE_ENDLESS_H) || defined(COMPILING_EOS_SDK))
-#error "Please do not include this header file directly."
-#endif
-
 #include "eostypes.h"
 
 #include <gtk/gtk.h>
