@@ -4,6 +4,7 @@
 #include "eospagemanager.h"
 
 #include <gtk/gtk.h>
+#include <pstack.h>
 
 #include <string.h>
 
@@ -212,11 +213,8 @@ set_visible_page_from_info (EosPageManager         *self,
                             EosPageManagerPageInfo *info)
 {
   /* FIXME when porting to GtkStack */
-  GtkNotebook *stack_notebook = GTK_NOTEBOOK (self->priv->stack);
-  int page_pos = gtk_notebook_page_num (stack_notebook, info->page);
-  /* Invariant: if info is not NULL, then page must be in stack */
-  g_assert (page_pos != -1);
-  gtk_notebook_set_current_page (stack_notebook, page_pos);
+  PStack *stack = P_STACK (self->priv->stack);
+  p_stack_set_visible_child (stack, info->page);
 
   self->priv->visible_page_info = info;
 
@@ -644,11 +642,9 @@ eos_page_manager_init (EosPageManager *self)
   gtk_widget_set_has_window (self_widget, FALSE);
 
   /* TODO replace with GtkStack */
-  self->priv->stack = gtk_notebook_new ();
-  g_object_set (self->priv->stack,
-                "show-tabs", FALSE,
-                "show-border", FALSE,
-                NULL);
+  self->priv->stack = p_stack_new ();
+  p_stack_set_transition_type (P_STACK (self->priv->stack),
+                               P_STACK_TRANSITION_TYPE_CROSSFADE);
   gtk_widget_set_parent (self->priv->stack, self_widget);
 }
 
