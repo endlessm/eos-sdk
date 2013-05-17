@@ -10,6 +10,7 @@
 #include "eostypes.h"
 
 #include "eosapplication.h"
+#include "eospagemanager.h"
 
 G_BEGIN_DECLS
 
@@ -61,10 +62,17 @@ struct _EosWindowClass
 };
 
 EOS_SDK_ALL_API_VERSIONS
-GType      eos_window_get_type (void) G_GNUC_CONST;
+GType           eos_window_get_type         (void) G_GNUC_CONST;
 
 EOS_SDK_ALL_API_VERSIONS
-GtkWidget *eos_window_new      (EosApplication *application);
+GtkWidget      *eos_window_new              (EosApplication *application);
+
+EOS_SDK_ALL_API_VERSIONS
+EosPageManager *eos_window_get_page_manager (EosWindow      *self);
+
+EOS_SDK_ALL_API_VERSIONS
+void            eos_window_set_page_manager (EosWindow      *self,
+                                             EosPageManager *page_manager);
 
 G_END_DECLS
 
