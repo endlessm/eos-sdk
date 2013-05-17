@@ -80,9 +80,6 @@ void         eos_page_manager_set_visible_page_name          (EosPageManager *se
                                                               const gchar    *page_name);
 
 EOS_SDK_ALL_API_VERSIONS
-const gchar *eos_page_manager_get_visible_page_background    (EosPageManager *self);
-
-EOS_SDK_ALL_API_VERSIONS
 const gchar *eos_page_manager_get_page_name                  (EosPageManager *self,
                                                               GtkWidget      *page);
 

@@ -128,20 +128,6 @@ test_pm_prop_visible_page_name (PageManagerFixture *fixture,
 }
 
 static void
-test_pm_prop_visible_page_background (PageManagerFixture *fixture,
-                                      gconstpointer       unused)
-{
-  gchar *name;
-  g_object_get (fixture->pm, "visible-page-background", &name, NULL);
-  g_assert_cmpstr (name, !=, EXPECTED_PAGE_BACKGROUND);
-  g_free (name);
-  g_object_set (fixture->pm, "visible-page-name", EXPECTED_PAGE_NAME, NULL);
-  g_object_get (fixture->pm, "visible-page-background", &name, NULL);
-  g_assert_cmpstr (name, ==, EXPECTED_PAGE_BACKGROUND);
-  g_free (name);
-}
-
-static void
 test_pm_get_set_page_name (PageManagerFixture *fixture,
                            gconstpointer       unused)
 {
@@ -366,11 +352,11 @@ test_pm_page_no_background (PageManagerFixture *fixture,
   GtkWidget *new_page = gtk_label_new("new");
   gtk_container_add (GTK_CONTAINER (fixture->pm), new_page);
   background_get = eos_page_manager_get_page_background (EOS_PAGE_MANAGER (fixture->pm), new_page);
-  g_assert_cmpstr (background_get, ==, "");
+  g_assert_cmpstr (background_get, ==, NULL);
   gtk_container_child_get (GTK_CONTAINER (fixture->pm), new_page,
                            "background", &background_prop,
                            NULL);
-  g_assert_cmpstr (background_prop, ==, "");
+  g_assert_cmpstr (background_prop, ==, NULL);
   g_free (background_prop);
 }
 
@@ -470,18 +456,6 @@ test_empty_pm_visible_page_name (PageManagerFixture *fixture,
 }
 
 static void
-test_empty_pm_visible_page_background (PageManagerFixture *fixture,
-                                 gconstpointer       unused)
-{
-  const gchar *background_get;
-  gchar *background_prop;
-  background_get = eos_page_manager_get_visible_page_background (EOS_PAGE_MANAGER (fixture->pm));
-  g_assert (background_get == NULL);
-  g_object_get (fixture->pm, "visible-page-background", &background_prop, NULL);
-  g_assert (background_prop == NULL);
-}
-
-static void
 test_empty_pm_add_page_behavior (PageManagerFixture *fixture,
                                  gconstpointer       unused)
 {
@@ -509,8 +483,6 @@ add_page_manager_tests (void)
                          test_pm_prop_visible_page_name);
   ADD_PAGE_MANAGER_TEST ("/page-manager/get-set-page-name",
                          test_pm_get_set_page_name);
-  ADD_PAGE_MANAGER_TEST ("/page-manager/prop-visible-page-background",
-                         test_pm_prop_visible_page_background);
   ADD_PAGE_MANAGER_TEST ("/page-manager/child-prop-name",
                          test_pm_child_prop_name);
   ADD_PAGE_MANAGER_TEST ("/page-manager/get-set-page-actions",
@@ -536,8 +508,6 @@ add_page_manager_tests (void)
                                test_empty_pm_visible_page);
   ADD_EMPTY_PAGE_MANAGER_TEST ("/page-manager/empty-visible-page-name",
                                test_empty_pm_visible_page_name);
-  ADD_EMPTY_PAGE_MANAGER_TEST ("/page-manager/empty-visible-page-background",
-                               test_empty_pm_visible_page_background);
   ADD_EMPTY_PAGE_MANAGER_TEST ("/page-manager/add-page-behavior",
                                test_empty_pm_add_page_behavior);
 

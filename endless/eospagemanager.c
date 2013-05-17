@@ -96,7 +96,7 @@ struct _EosPageManagerPageInfo
   gchar *name;
   gboolean fake_page_actions_visible;
   GtkWidget *custom_toolbox_widget;
-  gchar *background;
+  gchar *background_uri;
 };
 
 struct _EosPageManagerPrivate
@@ -113,7 +113,6 @@ enum
   PROP_0,
   PROP_VISIBLE_PAGE,
   PROP_VISIBLE_PAGE_NAME,
-  PROP_VISIBLE_PAGE_BACKGROUND,
   NPROPS
 };
 
@@ -134,6 +133,7 @@ static void
 page_info_free (EosPageManagerPageInfo *info)
 {
   g_free (info->name);
+  g_free (info->background_uri);
   g_slice_free (EosPageManagerPageInfo, info);
 }
 
@@ -226,7 +226,6 @@ set_visible_page_from_info (EosPageManager         *self,
   GObject *self_object = G_OBJECT (self);
   g_object_notify(self_object, "visible-page");
   g_object_notify(self_object, "visible-page-name");
-  g_object_notify(self_object, "visible-page-background");
 }
 
 static void
@@ -245,10 +244,6 @@ eos_page_manager_get_property (GObject    *object,
 
     case PROP_VISIBLE_PAGE_NAME:
       g_value_set_string (value, eos_page_manager_get_visible_page_name (self));
-      break;
-
-    case PROP_VISIBLE_PAGE_BACKGROUND:
-      g_value_set_string (value, eos_page_manager_get_visible_page_background (self));
       break;
 
     default:
@@ -475,8 +470,10 @@ eos_page_manager_get_child_property (GtkContainer *container,
     case CHILD_PROP_NAME:
       g_value_set_string (value, eos_page_manager_get_page_name (self, child));
       break;
+
     case CHILD_PROP_BACKGROUND:
-      g_value_set_string (value, eos_page_manager_get_page_background (self, child));
+      g_value_set_string (value,
+                          eos_page_manager_get_page_background (self, child));
       break;
 
     case CHILD_PROP_PAGE_ACTIONS:
@@ -510,8 +507,10 @@ eos_page_manager_set_child_property (GtkContainer *container,
     case CHILD_PROP_NAME:
       eos_page_manager_set_page_name (self, child, g_value_get_string (value));
       break;
+
     case CHILD_PROP_BACKGROUND:
-      eos_page_manager_set_page_background (self, child, g_value_get_string (value));
+      eos_page_manager_set_page_background (self, child,
+                                            g_value_get_string (value));
       break;
 
     case CHILD_PROP_PAGE_ACTIONS:
@@ -588,21 +587,6 @@ eos_page_manager_class_init (EosPageManagerClass *klass)
                          "manager",
                          "",
                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * EosPageManager:visible-page-background:
-   *
-   * The name of URI for the page that is currently being displayed by the
-   * page manager. If the page manager has no pages, then this is %NULL.
-   * However, if there is a page currently being displayed but it has no name,
-   * then this is the empty string (<code>""</code>).
-   */
-  eos_page_manager_props[PROP_VISIBLE_PAGE_BACKGROUND] =
-    g_param_spec_string ("visible-page-background", "Visible background URI",
-                         "URI for the background of page currently displaying"
-                         "in the page manager",
-                         "",
-                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, NPROPS,
                                      eos_page_manager_props);
@@ -799,29 +783,6 @@ eos_page_manager_set_visible_page_name (EosPageManager *self,
     }
 
   set_visible_page_from_info (self, info);
-}
-
-/**
- * eos_page_manager_get_visible_page_background:
- * @self: the page manager
- *
- * Gets the background of the page widget that @self is currently displaying.
- * See #EosPageManager:visible-page for more information.
- *
- * Returns: the background of the page, or %NULL if @self does not have any pages,
- * or the empty string if the page does not have a background.
- */
-const gchar *
-eos_page_manager_get_visible_page_background (EosPageManager *self)
-{
-  // TODO: if page managers are nested, this shows the value for the leaf
-  // (non-page manager) page background URI.
-  g_return_val_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self), NULL);
-
-  if (self->priv->visible_page_info == NULL)
-    return NULL;
-
-  return self->priv->visible_page_info->background;
 }
 
 /**
@@ -1045,7 +1006,7 @@ eos_page_manager_set_page_custom_toolbox_widget (EosPageManager *self,
  * been added to the page manager.
  * See #EosPageManager:background for more information.
  *
- * Returns: the background of @page, or the empty string if @page does not have a
+ * Returns: the background of @page, or the %NULL if @page does not have a
  * background.
  */
 const gchar *
@@ -1058,20 +1019,18 @@ eos_page_manager_get_page_background (EosPageManager *self,
   EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
   g_return_val_if_fail (info != NULL, NULL);
 
-  if (info->background == NULL)
-    return "";
-
-  return info->background;
+  return info->background_uri;
 }
 
 /**
  * eos_page_manager_set_page_background:
  * @self: the page manager
- * @page: the page to be renamed
- * @background: the URI string for the background image of this page.
+ * @page: the page to be modified
+ * @background: (allow-none): the URI for the background image of this page.
  *
  * Changes the background of @page, which must previously have been added to the
  * page manager.
+ * Setting %NULL removes the background, using the window's default background.
  * See #EosPageManager:background for more information.
  */
 void
@@ -1085,11 +1044,11 @@ eos_page_manager_set_page_background (EosPageManager *self,
   EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
   g_return_if_fail (info != NULL);
 
-  info->background = g_strdup (background);
-  gtk_widget_child_notify (GTK_WIDGET (self), "background");
+  if (g_strcmp0 (info->background_uri, background) == 0)
+    return;
 
-  if (page == eos_page_manager_get_visible_page(self))
-    g_object_notify (G_OBJECT (self), "visible-page-background");
+  info->background_uri = g_strdup (background);
+  gtk_container_child_notify (GTK_CONTAINER (self), page, "background");
 }
 
 /**
