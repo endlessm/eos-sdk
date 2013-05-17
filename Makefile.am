@@ -29,6 +29,18 @@ DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --enable-gir-doc
 CLEANFILES =
 DISTCLEANFILES =
 
+# Make sure that 'make dist' includes documentation
+if CAN_MAKE_DIST
+dist-hook:
+else
+dist-hook:
+	@echo "***"
+	@echo "*** You must configure with --enable-gtk-doc and --enable-gir-doc"
+	@echo "*** to run make dist or make distcheck."
+	@echo "***"
+	@false
+endif
+
 # # # LIBRARY # # #
 
 # Main Open Endless SDK library
