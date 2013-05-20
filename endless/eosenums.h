@@ -9,4 +9,26 @@
 
 /* Shared typedefs for enumerations */
 
+/**
+ * SECTION:eosenum
+ * @Short_description: Public enumerated types used throughout the Endless SDK
+ * @Title: Standard Enumerations
+ */
+
+/**
+ * EosActionButtonSize:
+ *
+ * Built-in sizes for @EosActionButton
+ */
+
+typedef enum
+{
+  EOS_ACTION_BUTTON_SIZE_PRIMARY = 0,
+  EOS_ACTION_BUTTON_SIZE_SECONDARY,
+  EOS_ACTION_BUTTON_SIZE_TERTIARY,
+  EOS_ACTION_BUTTON_SIZE_QUATERNARY,
+  EOS_ACTION_BUTTON_SIZE_NUM_SIZES
+} EosActionButtonSize;
+
+
 #endif /* EOS_ENUMS_H */
