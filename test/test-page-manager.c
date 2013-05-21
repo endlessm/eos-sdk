@@ -361,6 +361,20 @@ test_pm_page_no_background (PageManagerFixture *fixture,
 }
 
 static void
+test_pm_page_change_background (PageManagerFixture *fixture,
+                                gconstpointer       unused)
+{
+  const gchar *background_get;
+  GtkWidget *new_page = gtk_label_new("new");
+  gtk_container_add (GTK_CONTAINER (fixture->pm), new_page);
+  eos_page_manager_set_page_background(GTK_CONTAINER (fixture->pm),
+                                       new_page,
+                                       EXPECTED_PAGE_BACKGROUND);
+  background_get = eos_page_manager_get_page_background (EOS_PAGE_MANAGER (fixture->pm), new_page);
+  g_assert_cmpstr (background_get, ==, EXPECTED_PAGE_BACKGROUND);
+}
+
+static void
 test_pm_remove_page_behavior (PageManagerFixture *fixture,
                               gconstpointer       unused)
 {
@@ -500,6 +514,8 @@ add_page_manager_tests (void)
                          test_pm_set_page_no_name);
   ADD_PAGE_MANAGER_TEST ("/page-manager/page-no-background",
                          test_pm_page_no_background);
+  ADD_PAGE_MANAGER_TEST ("/page-manager/page-set-background",
+                         test_pm_page_change_background);
   ADD_PAGE_MANAGER_TEST ("/page-manager/remove-page-by-name",
                          test_pm_remove_page_by_name);
   ADD_PAGE_MANAGER_TEST ("/page-manager/duplicate-page-name",
