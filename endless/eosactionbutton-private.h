@@ -1,9 +1,5 @@
 /* Copyright 2013 Endless Mobile, Inc. */
 
-#if !(defined(_EOS_SDK_INSIDE_ENDLESS_H) || defined(COMPILING_EOS_SDK))
-#error "Please do not include this header file directly."
-#endif
-
 #ifndef EOS_ACTION_BUTTON_H
 #define EOS_ACTION_BUTTON_H
 

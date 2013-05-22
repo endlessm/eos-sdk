@@ -10,7 +10,7 @@ endless_private_installed_headers = \
 	endless/eospagemanager.h \
 	endless/eostypes.h \
 	endless/eoswindow.h \
-	endless/eosactionbutton.h
+	endless/eosactionbutton-private.h
 
 endless_library_sources = \
 	endless/eosapplication.c \

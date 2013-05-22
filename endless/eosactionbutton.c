@@ -1,7 +1,7 @@
 /* Copyright 2013 Endless Mobile, Inc. */
 
 #include "config.h"
-#include "eosactionbutton.h"
+#include "eosactionbutton-private.h"
 
 #include <glib-object.h>
 #include <gtk/gtk.h>
@@ -201,11 +201,11 @@ eos_action_button_new (EosActionButtonSize size,
                        const gchar *label,
                        const gchar *icon_id)
 {
-  return GTK_WIDGET (g_object_new (EOS_TYPE_ACTION_BUTTON,
-                                   "size", size,
-                                   "label", label,
-                                   "icon-id", icon_id,
-                                   NULL));
+  return g_object_new (EOS_TYPE_ACTION_BUTTON,
+                       "size", size,
+                       "label", label,
+                       "icon-id", icon_id,
+                       NULL);
 }
 
 static void
@@ -372,9 +372,9 @@ eos_action_button_get_icon_id (EosActionButton *button)
 
 static void
 eos_action_button_get_property (GObject    *object,
-                          guint       property_id,
-                          GValue     *value,
-                          GParamSpec *pspec)
+                                guint       property_id,
+                                GValue     *value,
+                                GParamSpec *pspec)
 {
   EosActionButton *button = EOS_ACTION_BUTTON (object);
   EosActionButtonPrivate *priv = button->priv;
@@ -529,7 +529,7 @@ eos_action_button_draw (GtkWidget *widget,
                         x, y, width, height);
     }
 
-  // TODO fix this:
+  // TODO is it really needed to restore and save the cairo_t here?
   cairo_restore (cr);
   cairo_save (cr);
 
@@ -542,7 +542,7 @@ eos_action_button_draw (GtkWidget *widget,
 
   gtk_widget_draw (GTK_WIDGET (priv->icon_image), cr);
 
-  // TODO and this:
+  // TODO same as previous
   cairo_restore (cr);
   cairo_save (cr);
 
