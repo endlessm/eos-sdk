@@ -9,6 +9,7 @@
 
 #include "eostypes.h"
 
+#include <pstack.h>
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS
@@ -46,14 +47,14 @@ typedef struct _EosPageManagerPrivate EosPageManagerPrivate;
  */
 struct _EosPageManager
 {
-  GtkContainer parent;
+  PStack parent;
 
   EosPageManagerPrivate *priv;
 };
 
 struct _EosPageManagerClass
 {
-  GtkContainerClass parent_class;
+  PStackClass parent_class;
 
   /* For further expansion */
   gpointer _padding[8];
