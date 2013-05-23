@@ -451,14 +451,8 @@ add_page_manager_tests (void)
                                test_empty_pm_visible_page_name);
   ADD_EMPTY_PAGE_MANAGER_TEST ("/page-manager/add-page-behavior",
                                test_empty_pm_add_page_behavior);
-
-  /* Disabled until https://bugzilla.gnome.org/show_bug.cgi?id=699756 is fixed
-  [endlessm/eos-sdk#67] */
-  if (FALSE)
-    {
-      ADD_PAGE_MANAGER_TEST ("/page-manager/remove-page-behavior",
-                           test_pm_remove_page_behavior);
-      ADD_PAGE_MANAGER_TEST ("/page-manager/remove-page-undefined-behavior",
-                             test_pm_remove_page_undefined_behavior);
-    }
+  ADD_PAGE_MANAGER_TEST ("/page-manager/remove-page-behavior",
+                       test_pm_remove_page_behavior);
+  ADD_PAGE_MANAGER_TEST ("/page-manager/remove-page-undefined-behavior",
+                         test_pm_remove_page_undefined_behavior);
 }
