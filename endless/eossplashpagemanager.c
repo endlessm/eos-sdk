@@ -12,16 +12,22 @@
  * @short_description: Add splash screen to application
  * @title: Splash Page Manager
  *
- * Builds on the #EosSplashPageManager to provide an application with two pages. The
- * first page is called the splash screen and provides a simple welcome screen
- * with minimal user interface. Once the user complete any action needed on
- * the splash screen page (e.g. select a file to open), they will be taken to
- * the main screen where the main work of the application will be done.
+ * Builds on the #EosPageManager to provide an application with two pages.
+ * The first page is called the splash page and is the first page to be
+ * presented to the user. This is generally a simple page with a minimal
+ * interface that acts as a gateway to the rest of the application.
+ *
+ * The second page, called the main page, is generally where the main work of
+ * the application will get done. This can be shown instead of the splash page
+ * at any time by calling eos_splash_page_manager_show_main_page(). The main
+ * page can be a second page manager (such as a tabbed notebook view), for
+ * applications with more complex page flow.
  *
  * The splash screen and main page can contain any widget. Call
- * show_main_page() and show_splash_page() to toggle between the two views.
- * The splash screen will be shown by default until a call to show_main_page()
- * is made.
+ * eos_splash_page_manager_show_main_page() and
+ * eos_splash_page_manager_show_splash_page() to toggle between the two views.
+ * The splash screen will be shown by default until a call to
+ * eos_splash_page_manager_show_main_page() is made.
  */
 
 G_DEFINE_TYPE (EosSplashPageManager, eos_splash_page_manager, EOS_TYPE_PAGE_MANAGER)
@@ -115,7 +121,7 @@ eos_splash_page_manager_class_init (EosSplashPageManagerClass *klass)
                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
-   * EosPageManager:main-page:
+   * EosSplashPageManager:main-page:
    *
    * A reference to the main page widget of the splash page manager. If no
    * page has been set, points to null.
@@ -155,8 +161,8 @@ eos_splash_page_manager_new (void)
  * eos_splash_page_manager_get_splash_page:
  * @self: the splash page manager
  *
- * Gets a pointer to the splash page widget. See #EosSplashPageManager:splash-
- * page for more information.
+ * Gets a pointer to the splash page widget. See #EosSplashPageManager:splash-page
+ * for more information.
  *
  * Returns: (transfer none): the page #GtkWidget, or %NULL if the splash page
  * has not been set.
@@ -248,7 +254,7 @@ eos_splash_page_manager_set_main_page (EosSplashPageManager *self,
 }
 
 /**
- * eos_splash_page_manager_show_splash_page:
+ * eos_splash_page_manager_show_main_page:
  * @self: the splash page manager
  *
  * Shows the main page of the splash page manager.
@@ -271,7 +277,8 @@ eos_splash_page_manager_show_main_page (EosSplashPageManager *self)
  * @self: the splash page manager
  *
  * Shows the splash page. This page is shown first by default, so this only
- * has effect if you want to "reshow" the page after calling show_main_page.
+ * has effect if you want to "reshow" the page after calling
+ * eos_splash_page_manager_show_main_page().
  */
 void
 eos_splash_page_manager_show_splash_page (EosSplashPageManager *self)
