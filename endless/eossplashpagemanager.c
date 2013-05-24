@@ -19,15 +19,27 @@
  *
  * The second page, called the main page, is generally where the main work of
  * the application will get done. This can be shown instead of the splash page
- * at any time by calling eos_splash_page_manager_show_main_page(). The main
- * page can be a second page manager (such as a tabbed notebook view), for
- * applications with more complex page flow.
+ * at any time by calling eos_splash_page_manager_show_main_page().
+ *
+ * Unlike the generic page manager, the splash page manager can only contain
+ * two pages. However, the main page can be a second page manager (such as a
+ * tabbed notebook view), for applications with more complex page flow.
  *
  * The splash screen and main page can contain any widget. Call
  * eos_splash_page_manager_show_main_page() and
  * eos_splash_page_manager_show_splash_page() to toggle between the two views.
  * The splash screen will be shown by default until a call to
  * eos_splash_page_manager_show_main_page() is made.
+ *
+ * Javascript example usage:
+ * |[
+ * splash_page_manager = new SplashPageManager({
+ *     "splash-page": page0,
+ *     "main-page": page1
+ * });
+ * // After splash page actions completed
+ * splash_page_manager.show_main_page();
+ * ]|
  */
 
 G_DEFINE_TYPE (EosSplashPageManager, eos_splash_page_manager, EOS_TYPE_PAGE_MANAGER)
@@ -99,14 +111,49 @@ eos_splash_page_manager_set_property (GObject      *object,
 }
 
 static void
+eos_splash_page_manager_add (GtkContainer *container,
+                             GtkWidget    *new_page)
+{
+  EosSplashPageManager *self = EOS_SPLASH_PAGE_MANAGER (container);
+  if (self->priv->splash_page != NULL)
+    {
+      g_critical ("Not adding page %p to splash page manager. You already added"
+                  "a splash page.", new_page);
+    }
+  else
+    {
+      eos_splash_page_manager_set_splash_page (self, new_page);
+    }
+}
+
+static void
+eos_splash_page_manager_remove (GtkContainer *container,
+                                GtkWidget    *page)
+{
+  EosSplashPageManager *self = EOS_SPLASH_PAGE_MANAGER (container);
+  if (page == self->priv->splash_page)
+    {
+      eos_splash_page_manager_set_splash_page (self, NULL);
+    }
+  if (page == self->priv->main_page)
+    {
+      eos_splash_page_manager_set_main_page (self, NULL);
+    }
+}
+
+static void
 eos_splash_page_manager_class_init (EosSplashPageManagerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
   g_type_class_add_private (klass, sizeof (EosSplashPageManagerPrivate));
 
   object_class->get_property = eos_splash_page_manager_get_property;
   object_class->set_property = eos_splash_page_manager_set_property;
+
+  container_class->add = eos_splash_page_manager_add;
+  container_class->remove = eos_splash_page_manager_remove;
 
   /**
    * EosSplashPageManager:splash-page:
@@ -181,7 +228,9 @@ eos_splash_page_manager_get_splash_page (EosSplashPageManager *self)
  * @page: the splash page widget
  *
  * Sets the widget for the splash page. See #EosSplashPageManager:splash-page
- * for more information.
+ * for more information. Setting this widget will add it to the splash page
+ * manager as a child, any widget previously set as the splash page will be
+ * removed.
  */
 void
 eos_splash_page_manager_set_splash_page (EosSplashPageManager *self,
@@ -195,12 +244,12 @@ eos_splash_page_manager_set_splash_page (EosSplashPageManager *self,
   if (self->priv->splash_page != page)
     {
       if (self->priv->splash_page != NULL)
-          gtk_container_remove (GTK_CONTAINER (self), self->priv->splash_page);
+        gtk_container_remove (GTK_CONTAINER (self), self->priv->splash_page);
       if (page != NULL)
         {
-          gtk_container_add (GTK_CONTAINER (self), page);
+          GTK_CONTAINER_CLASS (eos_splash_page_manager_parent_class)->add (GTK_CONTAINER (self), page);
           if (!self->priv->main_page_shown)
-              eos_page_manager_set_visible_page (EOS_PAGE_MANAGER (self), page);
+            eos_page_manager_set_visible_page (EOS_PAGE_MANAGER (self), page);
         }
       self->priv->splash_page = page;
       g_object_notify( G_OBJECT (self), "splash-page");
@@ -232,7 +281,9 @@ eos_splash_page_manager_get_main_page (EosSplashPageManager *self)
  * @page: the main page widget
  *
  * Sets the widget for the main page. See #EosSplashPageManager:main-page for
- * more information.
+ * more information. Setting this widget will add it to the splash page
+ * manager as a child, any widget previously set as the main page will be
+ * removed.
  */
 void
 eos_splash_page_manager_set_main_page (EosSplashPageManager *self,
@@ -245,9 +296,10 @@ eos_splash_page_manager_set_main_page (EosSplashPageManager *self,
   if (self->priv->main_page != page)
     {
       if (self->priv->main_page != NULL)
-          gtk_container_remove (GTK_CONTAINER (self), self->priv->main_page);
+        gtk_container_remove (GTK_CONTAINER (self), self->priv->main_page);
+      // Call page manager add not our own.
       if (page != NULL)
-          gtk_container_add (GTK_CONTAINER (self), page);
+        GTK_CONTAINER_CLASS (eos_splash_page_manager_parent_class)->add (GTK_CONTAINER (self), page);
       self->priv->main_page = page;
       g_object_notify( G_OBJECT (self), "main-page");
     }

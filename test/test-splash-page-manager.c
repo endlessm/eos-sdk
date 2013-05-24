@@ -140,6 +140,19 @@ test_spm_default_visible_splash (SplashPageManagerFixture *fixture,
   g_assert (visible_page == fixture->first_splash_page);
 }
 
+static void
+test_spm_add_to_splash (SplashPageManagerFixture *fixture,
+                        gconstpointer             unused)
+{
+  // Right now container add sets the splash page by default. This tests that
+  // functionality.
+  GtkWidget *splash_page;
+  gtk_container_add (GTK_CONTAINER (fixture->spm),
+                     fixture->first_splash_page);
+  splash_page = eos_splash_page_manager_get_splash_page (EOS_SPLASH_PAGE_MANAGER (fixture->spm));
+  g_assert (splash_page == fixture->first_splash_page);
+}
+
 void
 add_splash_page_manager_tests (void)
 {
@@ -149,6 +162,8 @@ add_splash_page_manager_tests (void)
                                 test_spm_show_splash_page);
   ADD_EMPTY_SPLASH_PAGE_MANAGER_TEST ("/splash-page-manager/default-visible-splash",
                                       test_spm_default_visible_splash);
+  ADD_EMPTY_SPLASH_PAGE_MANAGER_TEST ("/splash-page-manager/add-to-splash",
+                                      test_spm_add_to_splash);
 
   /* Disabled until https://bugzilla.gnome.org/show_bug.cgi?id=699756 is fixed
   [endlessm/eos-sdk#67] */
