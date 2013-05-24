@@ -48,33 +48,33 @@ struct _EosActionButtonClass
 };
 
 EOS_SDK_ALL_API_VERSIONS
-GType eos_action_button_get_type (void) G_GNUC_CONST;
+GType               eos_action_button_get_type    (void) G_GNUC_CONST;
 
 EOS_SDK_ALL_API_VERSIONS
-GtkWidget *eos_action_button_new (EosActionButtonSize size,
-                                  const gchar *label,
-                                  const gchar *icon_id);
+GtkWidget          *eos_action_button_new         (EosActionButtonSize size,
+                                                   const gchar        *label,
+                                                   const gchar        *icon_id);
 
 EOS_SDK_ALL_API_VERSIONS
-void eos_action_button_set_size (EosActionButton *button,
-                                 const EosActionButtonSize size);
+void                eos_action_button_set_size    (EosActionButton    *button,
+                                                   EosActionButtonSize size);
 
 EOS_SDK_ALL_API_VERSIONS
-EosActionButtonSize eos_action_button_get_size (EosActionButton *button);
+EosActionButtonSize eos_action_button_get_size    (EosActionButton    *button);
 
 EOS_SDK_ALL_API_VERSIONS
-void eos_action_button_set_label (EosActionButton *button,
-                                  const gchar *label);
+void                eos_action_button_set_label   (EosActionButton    *button,
+                                                   const gchar        *label);
 
 EOS_SDK_ALL_API_VERSIONS
-const gchar * eos_action_button_get_label (EosActionButton *button);
+const gchar        *eos_action_button_get_label   (EosActionButton    *button);
 
 EOS_SDK_ALL_API_VERSIONS
-void eos_action_button_set_icon_id (EosActionButton *button,
-                                     const gchar *stock_id);
+void                eos_action_button_set_icon_id (EosActionButton    *button,
+                                                   const gchar        *stock_id);
 
 EOS_SDK_ALL_API_VERSIONS
-const gchar * eos_action_button_get_icon_id (EosActionButton *button);
+const gchar        *eos_action_button_get_icon_id (EosActionButton    *button);
 
 G_END_DECLS
 
