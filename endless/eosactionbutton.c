@@ -222,7 +222,7 @@ eos_action_button_finalize (GObject *object)
 
 /* ******* PROPERTIES ******* */
 
-void
+static void
 eos_action_button_load_icon (EosActionButton *button)
 {
   EosActionButtonPrivate *priv;
@@ -421,7 +421,7 @@ eos_action_button_set_property (GObject      *object,
 
 /* ******* EXTENDED METHODS ******* */
 
-void
+static void
 eos_action_button_get_real_size (GtkWidget      *widget,
                                  GtkOrientation  orientation,
                                  gint           *minimum_size,
@@ -481,16 +481,12 @@ eos_action_button_draw (GtkWidget *widget,
   EosActionButton *button = EOS_ACTION_BUTTON (widget);
   EosActionButtonPrivate *priv = button->priv;
   gint x, y;
-  GtkBorder default_border;
-  GtkBorder default_outside_border;
-  gboolean interior_focus;
   gint focus_width;
   gint focus_pad;
   GtkAllocation allocation;
   GtkStyleContext *context;
   GtkStateFlags state;
-  gboolean draw_focus;
-  gint width, height, border_width, border_height, thickness;
+  gint width, height, border_width, border_height;
   GtkBorder margin;
 
   context = gtk_widget_get_style_context (widget);
@@ -502,7 +498,7 @@ eos_action_button_draw (GtkWidget *widget,
                                NULL);
 
   gtk_style_context_get_margin(context,
-                               gtk_style_context_get_state (context),
+                               state,
                                &margin);
 
   gtk_widget_get_allocation (widget, &allocation);
@@ -514,7 +510,6 @@ eos_action_button_draw (GtkWidget *widget,
 
   border_width = icon_sizes[priv->size].width;
   border_height = icon_sizes[priv->size].height;
-  thickness = icon_sizes[priv->size].border_width;
 
   cairo_save (cr);
 
@@ -555,4 +550,6 @@ eos_action_button_draw (GtkWidget *widget,
   gtk_widget_draw (GTK_WIDGET (priv->label_widget), cr);
 
   cairo_restore (cr);
+
+  return FALSE;
 }
