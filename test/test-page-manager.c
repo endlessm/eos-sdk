@@ -365,13 +365,21 @@ test_pm_page_change_background (PageManagerFixture *fixture,
                                 gconstpointer       unused)
 {
   const gchar *background_get;
+  const gchar *background_name_1 = "first background name";
+  const gchar *background_name_2 = "second background name";
   GtkWidget *new_page = gtk_label_new("new");
   gtk_container_add (GTK_CONTAINER (fixture->pm), new_page);
-  eos_page_manager_set_page_background(GTK_CONTAINER (fixture->pm),
+  eos_page_manager_set_page_background (GTK_CONTAINER (fixture->pm),
                                        new_page,
-                                       EXPECTED_PAGE_BACKGROUND);
+                                       background_name_1);
   background_get = eos_page_manager_get_page_background (EOS_PAGE_MANAGER (fixture->pm), new_page);
-  g_assert_cmpstr (background_get, ==, EXPECTED_PAGE_BACKGROUND);
+  g_assert_cmpstr (background_get, ==, background_name_1);
+
+  eos_page_manager_set_page_background (GTK_CONTAINER (fixture->pm),
+                                       new_page,
+                                       background_name_2);
+  background_get = eos_page_manager_get_page_background (EOS_PAGE_MANAGER (fixture->pm), new_page);
+  g_assert_cmpstr (background_get, ==, background_name_2);
 }
 
 static void

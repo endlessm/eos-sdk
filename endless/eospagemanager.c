@@ -1004,7 +1004,7 @@ eos_page_manager_set_page_custom_toolbox_widget (EosPageManager *self,
  *
  * Gets the URI for the background image of @page, which must previously have
  * been added to the page manager.
- * See #EosPageManager:background_uri for more information.
+ * See #EosPageManager:background for more information.
  *
  * Returns: the background of @page, or the %NULL if @page does not have a
  * background.
@@ -1031,7 +1031,7 @@ eos_page_manager_get_page_background (EosPageManager *self,
  * Changes the background of @page, which must previously have been added to the
  * page manager.
  * Setting %NULL removes the background, using the window's default background.
- * See #EosPageManager:background_uri for more information.
+ * See #EosPageManager:background for more information.
  */
 void
 eos_page_manager_set_page_background (EosPageManager *self,
