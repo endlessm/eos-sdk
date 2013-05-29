@@ -1,9 +1,11 @@
 /* Copyright 2013 Endless Mobile, Inc. */
 
 #include "config.h"
+#include "string.h"
 #include "eoswindow.h"
 
 #include "eosapplication.h"
+#include "eospagemanager.h"
 #include "eostopbar-private.h"
 #include "eosmainarea-private.h"
 
@@ -32,6 +34,18 @@
  * ]|
  */
 
+// Put in a transition for fun, should be part of API though someday...
+#define BACKGROUND_IMAGE_CSS_TEMPLATE \
+  "EosWindow { background-image: url(\"%s\");" \
+               "transition-property: background-image;" \
+               "transition-duration: 0.5s;" \
+               "background-size:100%% 100%%; }"
+#define EMPTY_BACKGROUND_CSS \
+  "EosWindow { background-image: none;" \
+               "transition-property: background-image;" \
+               "transition-duration: 0.5s;" \
+               "background-size:100% 100%; }"
+
 G_DEFINE_TYPE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
 
 #define WINDOW_PRIVATE(o) \
@@ -48,8 +62,10 @@ struct _EosWindowPrivate
 
   /* For keeping track of what to display alongside the current page */
   GtkWidget *current_page;
-  gulong     child_page_actions_handler;
-  gulong     child_custom_toolbox_handler;
+  gulong child_page_actions_handler;
+  gulong child_custom_toolbox_handler;
+  gulong child_background_handler;
+  GtkCssProvider *background_provider;
 };
 
 enum
@@ -113,6 +129,67 @@ update_page_toolbox (EosWindow *self)
     }
 }
 
+static void
+remove_page_background (EosWindow *self)
+{
+  GtkStyleProvider *provider =
+    GTK_STYLE_PROVIDER (self->priv->background_provider);
+  GdkScreen *screen = gdk_screen_get_default ();
+  GError *error = NULL;
+
+  gtk_style_context_remove_provider_for_screen (screen, provider);
+  gtk_css_provider_load_from_data (self->priv->background_provider,
+                                   EMPTY_BACKGROUND_CSS, -1,
+                                   &error);
+  gtk_style_context_add_provider_for_screen (screen, provider,
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  if (error != NULL)
+    g_warning ("Error loading background CSS: %s", error->message);
+}
+
+/*
+ * update_page_background:
+ * @self: the window
+ *
+ * Ensures that the window's background image is in line with the currently
+ * showing page and its child properties.
+ */
+static void
+update_page_background (EosWindow *self)
+{
+  EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
+  GtkWidget *page = self->priv->current_page;
+
+  if (page == NULL)
+    {
+      remove_page_background (self);
+      return;
+    }
+
+  const gchar *background = eos_page_manager_get_page_background_uri (pm, page);
+  if (background == NULL)
+    {
+      remove_page_background (self);
+      return;
+    }
+
+  gchar *background_css = g_strdup_printf (BACKGROUND_IMAGE_CSS_TEMPLATE,
+                                           background);
+
+  GtkStyleProvider *provider =
+    GTK_STYLE_PROVIDER (self->priv->background_provider);
+  GdkScreen *screen = gdk_screen_get_default ();
+  GError *error = NULL;
+
+  gtk_style_context_remove_provider_for_screen (screen, provider);
+  gtk_css_provider_load_from_data (self->priv->background_provider,
+                                   background_css, -1, &error);
+  gtk_style_context_add_provider_for_screen (screen, provider,
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  if (error != NULL)
+    g_warning ("Error loading background CSS: %s", error->message);
+}
+
 /*
  * update_page:
  * @self: the window
@@ -131,12 +208,15 @@ update_page (EosWindow *self)
                                    self->priv->child_page_actions_handler);
       g_signal_handler_disconnect (self->priv->current_page,
                                    self->priv->child_custom_toolbox_handler);
+      g_signal_handler_disconnect (self->priv->current_page,
+                                   self->priv->child_background_handler);
     }
 
   self->priv->current_page = eos_page_manager_get_visible_page (pm);
 
   update_page_actions (self);
   update_page_toolbox (self);
+  update_page_background (self);
 
   if (self->priv->current_page)
     {
@@ -149,6 +229,11 @@ update_page (EosWindow *self)
         g_signal_connect_swapped (self->priv->current_page,
                                   "child-notify::custom-toolbox-widget",
                                   G_CALLBACK (update_page_toolbox),
+                                  self);
+      self->priv->child_background_handler =
+        g_signal_connect_swapped (self->priv->current_page,
+                                  "child-notify::background-uri",
+                                  G_CALLBACK (update_page_background),
                                   self);
     }
 }
@@ -392,6 +477,7 @@ eos_window_init (EosWindow *self)
 {
   self->priv = WINDOW_PRIVATE (self);
 
+  self->priv->background_provider = gtk_css_provider_new ();
   self->priv->top_bar = eos_top_bar_new ();
   gtk_widget_set_parent (self->priv->top_bar, GTK_WIDGET (self));
 
