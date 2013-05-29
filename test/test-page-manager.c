@@ -45,19 +45,19 @@ pm_fixture_setup (PageManagerFixture *fixture,
   gtk_container_add_with_properties (GTK_CONTAINER (fixture->pm),
                                      fixture->page1,
                                      "name", PAGE1_NAME,
-                                     "background", PAGE1_BACKGROUND,
+                                     "background-uri", PAGE1_BACKGROUND,
                                      NULL);
   gtk_container_add_with_properties (GTK_CONTAINER (fixture->pm),
                                      fixture->page2,
                                      "name", PAGE2_NAME,
                                      "custom-toolbox-widget", fixture->toolbox2,
-                                     "background", PAGE2_BACKGROUND,
+                                     "background-uri", PAGE2_BACKGROUND,
                                      NULL);
   gtk_container_add_with_properties (GTK_CONTAINER (fixture->pm),
                                      fixture->page3,
                                      "name", PAGE3_NAME,
                                      "page-actions", TRUE,
-                                     "background", PAGE3_BACKGROUND,
+                                     "background-uri", PAGE3_BACKGROUND,
                                      NULL);
 }
 
@@ -288,25 +288,25 @@ test_pm_child_prop_background (PageManagerFixture *fixture,
 {
   gchar *background;
   gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page1,
-                           "background", &background,
+                           "background-uri", &background,
                            NULL);
   g_assert_cmpstr (background, ==, PAGE1_BACKGROUND);
   g_free (background);
   gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page2,
-                           "background", &background,
+                           "background-uri", &background,
                            NULL);
   g_assert_cmpstr (background, ==, PAGE2_BACKGROUND);
   g_free (background);
   gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page3,
-                           "background", &background,
+                           "background-uri", &background,
                            NULL);
   g_assert_cmpstr (background, ==, PAGE3_BACKGROUND);
   g_free (background);
   gtk_container_child_set (GTK_CONTAINER (fixture->pm), fixture->page2,
-                           "background", EXPECTED_CHANGED_NAME,
+                           "background-uri", EXPECTED_CHANGED_NAME,
                            NULL);
   gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page2,
-                           "background", &background,
+                           "background-uri", &background,
                            NULL);
   g_assert_cmpstr (background, ==, EXPECTED_CHANGED_NAME);
   g_free (background);
@@ -351,10 +351,11 @@ test_pm_page_no_background (PageManagerFixture *fixture,
   gchar *background_prop;
   GtkWidget *new_page = gtk_label_new("new");
   gtk_container_add (GTK_CONTAINER (fixture->pm), new_page);
-  background_get = eos_page_manager_get_page_background (EOS_PAGE_MANAGER (fixture->pm), new_page);
+  background_get = eos_page_manager_get_page_background_uri (EOS_PAGE_MANAGER (fixture->pm),
+                                                             new_page);
   g_assert_cmpstr (background_get, ==, NULL);
   gtk_container_child_get (GTK_CONTAINER (fixture->pm), new_page,
-                           "background", &background_prop,
+                           "background-uri", &background_prop,
                            NULL);
   g_assert_cmpstr (background_prop, ==, NULL);
   g_free (background_prop);
@@ -369,16 +370,18 @@ test_pm_page_change_background (PageManagerFixture *fixture,
   const gchar *background_name_2 = "second background name";
   GtkWidget *new_page = gtk_label_new("new");
   gtk_container_add (GTK_CONTAINER (fixture->pm), new_page);
-  eos_page_manager_set_page_background (GTK_CONTAINER (fixture->pm),
-                                       new_page,
-                                       background_name_1);
-  background_get = eos_page_manager_get_page_background (EOS_PAGE_MANAGER (fixture->pm), new_page);
+  eos_page_manager_set_page_background_uri (EOS_PAGE_MANAGER (fixture->pm),
+                                            new_page,
+                                            background_name_1);
+  background_get = eos_page_manager_get_page_background_uri (EOS_PAGE_MANAGER (fixture->pm),
+                                                             new_page);
   g_assert_cmpstr (background_get, ==, background_name_1);
 
-  eos_page_manager_set_page_background (GTK_CONTAINER (fixture->pm),
-                                       new_page,
-                                       background_name_2);
-  background_get = eos_page_manager_get_page_background (EOS_PAGE_MANAGER (fixture->pm), new_page);
+  eos_page_manager_set_page_background_uri (EOS_PAGE_MANAGER (fixture->pm),
+                                            new_page,
+                                            background_name_2);
+  background_get = eos_page_manager_get_page_background_uri (EOS_PAGE_MANAGER (fixture->pm),
+                                                             new_page);
   g_assert_cmpstr (background_get, ==, background_name_2);
 }
 

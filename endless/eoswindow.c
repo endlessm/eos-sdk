@@ -149,6 +149,10 @@ remove_page_background (EosWindow *self)
 
 /*
  * update_page_background:
+ * @self: the window
+ *
+ * Ensures that the window's background image is in line with the currently
+ * showing page and its child properties.
  */
 static void
 update_page_background (EosWindow *self)
@@ -162,7 +166,7 @@ update_page_background (EosWindow *self)
       return;
     }
 
-  const gchar *background = eos_page_manager_get_page_background (pm, page);
+  const gchar *background = eos_page_manager_get_page_background_uri (pm, page);
   if (background == NULL)
     {
       remove_page_background (self);
@@ -228,7 +232,7 @@ update_page (EosWindow *self)
                                   self);
       self->priv->child_background_handler =
         g_signal_connect_swapped (self->priv->current_page,
-                                  "child-notify::background",
+                                  "child-notify::background-uri",
                                   G_CALLBACK (update_page_background),
                                   self);
     }

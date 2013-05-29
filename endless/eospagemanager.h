@@ -107,11 +107,11 @@ void         eos_page_manager_set_page_custom_toolbox_widget (EosPageManager *se
                                                               GtkWidget      *custom_toolbox_widget);
 
 EOS_SDK_ALL_API_VERSIONS
-const gchar *eos_page_manager_get_page_background            (EosPageManager *self,
+const gchar *eos_page_manager_get_page_background_uri        (EosPageManager *self,
                                                               GtkWidget      *page);
 
 EOS_SDK_ALL_API_VERSIONS
-void         eos_page_manager_set_page_background            (EosPageManager *self,
+void         eos_page_manager_set_page_background_uri        (EosPageManager *self,
                                                               GtkWidget      *page,
                                                               const gchar    *background);
 

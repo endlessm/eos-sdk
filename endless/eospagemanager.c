@@ -57,14 +57,14 @@
  * |[
  * gtk_container_add_with_properties (GTK_CONTAINER (page_manager), page,
  *                                    "name", "front-page",
- *                                    "background", "image.jpg",
+ *                                    "background_uri", "image.jpg",
  *                                    NULL);
  * ]|
  * In Javascript, this has been simplified to use JSON:
  * |[
  * page_manager.add(page, {
  *     name: 'front-page',
- *     background: 'image.jpg'
+ *     background_uri: 'image.jpg'
  * });
  * ]|
  * To remove a page, use gtk_container_remove() or
@@ -122,7 +122,7 @@ enum
   CHILD_PROP_NAME,
   CHILD_PROP_PAGE_ACTIONS,
   CHILD_PROP_CUSTOM_TOOLBOX_WIDGET,
-  CHILD_PROP_BACKGROUND,
+  CHILD_PROP_BACKGROUND_URI,
   NCHILDPROPS
 };
 
@@ -471,9 +471,10 @@ eos_page_manager_get_child_property (GtkContainer *container,
       g_value_set_string (value, eos_page_manager_get_page_name (self, child));
       break;
 
-    case CHILD_PROP_BACKGROUND:
+    case CHILD_PROP_BACKGROUND_URI:
       g_value_set_string (value,
-                          eos_page_manager_get_page_background (self, child));
+                          eos_page_manager_get_page_background_uri (self,
+                                                                    child));
       break;
 
     case CHILD_PROP_PAGE_ACTIONS:
@@ -508,9 +509,9 @@ eos_page_manager_set_child_property (GtkContainer *container,
       eos_page_manager_set_page_name (self, child, g_value_get_string (value));
       break;
 
-    case CHILD_PROP_BACKGROUND:
-      eos_page_manager_set_page_background (self, child,
-                                            g_value_get_string (value));
+    case CHILD_PROP_BACKGROUND_URI:
+      eos_page_manager_set_page_background_uri (self, child,
+                                                g_value_get_string (value));
       break;
 
     case CHILD_PROP_PAGE_ACTIONS:
@@ -635,13 +636,13 @@ eos_page_manager_class_init (EosPageManagerClass *klass)
                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
-   * EosPageManager:background:
+   * EosPageManager:background-uri:
    *
    * The URI for the image file for the background of this page. Setting this to
    * %NULL indicates that the window's default background should be used.
    */
-  eos_page_manager_child_props[CHILD_PROP_BACKGROUND] =
-    g_param_spec_string ("background", "Background",
+  eos_page_manager_child_props[CHILD_PROP_BACKGROUND_URI] =
+    g_param_spec_string ("background-uri", "Background URI",
                          "URI for background of the page",
                          NULL,
                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
@@ -998,20 +999,20 @@ eos_page_manager_set_page_custom_toolbox_widget (EosPageManager *self,
 }
 
 /**
- * eos_page_manager_get_page_background:
+ * eos_page_manager_get_page_background_uri:
  * @self: the page manager
  * @page: the page to be queried
  *
  * Gets the URI for the background image of @page, which must previously have
  * been added to the page manager.
- * See #EosPageManager:background for more information.
+ * See #EosPageManager:background-uri for more information.
  *
  * Returns: the background of @page, or the %NULL if @page does not have a
  * background.
  */
 const gchar *
-eos_page_manager_get_page_background (EosPageManager *self,
-                                      GtkWidget      *page)
+eos_page_manager_get_page_background_uri (EosPageManager *self,
+                                          GtkWidget      *page)
 {
   g_return_val_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self), NULL);
   g_return_val_if_fail (page != NULL && GTK_IS_WIDGET (page), NULL);
@@ -1023,7 +1024,7 @@ eos_page_manager_get_page_background (EosPageManager *self,
 }
 
 /**
- * eos_page_manager_set_page_background:
+ * eos_page_manager_set_page_background_uri:
  * @self: the page manager
  * @page: the page to be modified
  * @background: (allow-none): the URI for the background image of this page.
@@ -1031,12 +1032,12 @@ eos_page_manager_get_page_background (EosPageManager *self,
  * Changes the background of @page, which must previously have been added to the
  * page manager.
  * Setting %NULL removes the background, using the window's default background.
- * See #EosPageManager:background for more information.
+ * See #EosPageManager:background-uri for more information.
  */
 void
-eos_page_manager_set_page_background (EosPageManager *self,
-                                      GtkWidget      *page,
-                                      const gchar    *background)
+eos_page_manager_set_page_background_uri (EosPageManager *self,
+                                          GtkWidget      *page,
+                                          const gchar    *background)
 {
   g_return_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self));
   g_return_if_fail (page != NULL && GTK_IS_WIDGET (page));
@@ -1048,7 +1049,7 @@ eos_page_manager_set_page_background (EosPageManager *self,
     return;
 
   info->background_uri = g_strdup (background);
-  gtk_container_child_notify (GTK_CONTAINER (self), page, "background");
+  gtk_container_child_notify (GTK_CONTAINER (self), page, "background-uri");
 }
 
 /**
