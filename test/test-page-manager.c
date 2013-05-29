@@ -6,12 +6,17 @@
 #define PAGE1_NAME "page1"
 #define PAGE2_NAME "page2"
 #define PAGE3_NAME "page3"
+#define PAGE1_BACKGROUND "back1"
+#define PAGE2_BACKGROUND "back2"
+#define PAGE3_BACKGROUND "back3"
 #define EXPECTED_PAGE_NAME PAGE2_NAME
 #define EXPECTED_CHANGED_PAGE_NAME "changed-name"
 #define DUPLICATE_PAGE_NAME "duplicate-name"
 #define EXPECTED_DUPLICATE_PAGE_NAME_ERRMSG "*Not setting page name to \"" \
   DUPLICATE_PAGE_NAME "\", because page manager already contains a page by " \
   "that name*"
+#define EXPECTED_PAGE_BACKGROUND PAGE2_BACKGROUND
+#define EXPECTED_CHANGED_NAME "changed-name"
 #define ADD_PAGE_MANAGER_TEST(path, test_func) \
   g_test_add ((path), PageManagerFixture, NULL, \
               pm_fixture_setup, (test_func), pm_fixture_teardown)
@@ -40,16 +45,19 @@ pm_fixture_setup (PageManagerFixture *fixture,
   gtk_container_add_with_properties (GTK_CONTAINER (fixture->pm),
                                      fixture->page1,
                                      "name", PAGE1_NAME,
+                                     "background-uri", PAGE1_BACKGROUND,
                                      NULL);
   gtk_container_add_with_properties (GTK_CONTAINER (fixture->pm),
                                      fixture->page2,
                                      "name", PAGE2_NAME,
                                      "custom-toolbox-widget", fixture->toolbox2,
+                                     "background-uri", PAGE2_BACKGROUND,
                                      NULL);
   gtk_container_add_with_properties (GTK_CONTAINER (fixture->pm),
                                      fixture->page3,
                                      "name", PAGE3_NAME,
                                      "page-actions", TRUE,
+                                     "background-uri", PAGE3_BACKGROUND,
                                      NULL);
 }
 
@@ -135,10 +143,10 @@ test_pm_get_set_page_name (PageManagerFixture *fixture,
   g_assert_cmpstr (name, ==, PAGE3_NAME);
   eos_page_manager_set_page_name (EOS_PAGE_MANAGER (fixture->pm),
                                   fixture->page2,
-                                  EXPECTED_CHANGED_PAGE_NAME);
+                                  EXPECTED_CHANGED_NAME);
   name = eos_page_manager_get_page_name (EOS_PAGE_MANAGER (fixture->pm),
                                          fixture->page2);
-  g_assert_cmpstr (name, ==, EXPECTED_CHANGED_PAGE_NAME);
+  g_assert_cmpstr (name, ==, EXPECTED_CHANGED_NAME);
 }
 
 static void
@@ -162,12 +170,12 @@ test_pm_child_prop_name (PageManagerFixture *fixture,
   g_assert_cmpstr (name, ==, PAGE3_NAME);
   g_free (name);
   gtk_container_child_set (GTK_CONTAINER (fixture->pm), fixture->page2,
-                           "name", EXPECTED_CHANGED_PAGE_NAME,
+                           "name", EXPECTED_CHANGED_NAME,
                            NULL);
   gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page2,
                            "name", &name,
                            NULL);
-  g_assert_cmpstr (name, ==, EXPECTED_CHANGED_PAGE_NAME);
+  g_assert_cmpstr (name, ==, EXPECTED_CHANGED_NAME);
   g_free (name);
 }
 
@@ -275,6 +283,36 @@ test_pm_child_prop_custom_toolbox (PageManagerFixture *fixture,
 }
 
 static void
+test_pm_child_prop_background (PageManagerFixture *fixture,
+                               gconstpointer       unused)
+{
+  gchar *background;
+  gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page1,
+                           "background-uri", &background,
+                           NULL);
+  g_assert_cmpstr (background, ==, PAGE1_BACKGROUND);
+  g_free (background);
+  gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page2,
+                           "background-uri", &background,
+                           NULL);
+  g_assert_cmpstr (background, ==, PAGE2_BACKGROUND);
+  g_free (background);
+  gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page3,
+                           "background-uri", &background,
+                           NULL);
+  g_assert_cmpstr (background, ==, PAGE3_BACKGROUND);
+  g_free (background);
+  gtk_container_child_set (GTK_CONTAINER (fixture->pm), fixture->page2,
+                           "background-uri", EXPECTED_CHANGED_NAME,
+                           NULL);
+  gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page2,
+                           "background-uri", &background,
+                           NULL);
+  g_assert_cmpstr (background, ==, EXPECTED_CHANGED_NAME);
+  g_free (background);
+}
+
+static void
 test_pm_page_no_name (PageManagerFixture *fixture,
                       gconstpointer       unused)
 {
@@ -303,6 +341,48 @@ test_pm_set_page_no_name (PageManagerFixture *fixture,
   g_assert (name == NULL);
   name = eos_page_manager_get_visible_page_name (EOS_PAGE_MANAGER (fixture->pm));
   g_assert (name == NULL);
+}
+
+static void
+test_pm_page_no_background (PageManagerFixture *fixture,
+                            gconstpointer       unused)
+{
+  const gchar *background_get;
+  gchar *background_prop;
+  GtkWidget *new_page = gtk_label_new("new");
+  gtk_container_add (GTK_CONTAINER (fixture->pm), new_page);
+  background_get = eos_page_manager_get_page_background_uri (EOS_PAGE_MANAGER (fixture->pm),
+                                                             new_page);
+  g_assert_cmpstr (background_get, ==, NULL);
+  gtk_container_child_get (GTK_CONTAINER (fixture->pm), new_page,
+                           "background-uri", &background_prop,
+                           NULL);
+  g_assert_cmpstr (background_prop, ==, NULL);
+  g_free (background_prop);
+}
+
+static void
+test_pm_page_change_background (PageManagerFixture *fixture,
+                                gconstpointer       unused)
+{
+  const gchar *background_get;
+  const gchar *background_name_1 = "first background name";
+  const gchar *background_name_2 = "second background name";
+  GtkWidget *new_page = gtk_label_new("new");
+  gtk_container_add (GTK_CONTAINER (fixture->pm), new_page);
+  eos_page_manager_set_page_background_uri (EOS_PAGE_MANAGER (fixture->pm),
+                                            new_page,
+                                            background_name_1);
+  background_get = eos_page_manager_get_page_background_uri (EOS_PAGE_MANAGER (fixture->pm),
+                                                             new_page);
+  g_assert_cmpstr (background_get, ==, background_name_1);
+
+  eos_page_manager_set_page_background_uri (EOS_PAGE_MANAGER (fixture->pm),
+                                            new_page,
+                                            background_name_2);
+  background_get = eos_page_manager_get_page_background_uri (EOS_PAGE_MANAGER (fixture->pm),
+                                                             new_page);
+  g_assert_cmpstr (background_get, ==, background_name_2);
 }
 
 static void
@@ -438,9 +518,15 @@ add_page_manager_tests (void)
                          test_pm_get_set_page_custom_toolbox);
   ADD_PAGE_MANAGER_TEST ("/page-manager/child-prop-custom-toolbox",
                          test_pm_child_prop_custom_toolbox);
+  ADD_PAGE_MANAGER_TEST ("/page-manager/child-prop-background",
+                         test_pm_child_prop_background);
   ADD_PAGE_MANAGER_TEST ("/page-manager/page-no-name", test_pm_page_no_name);
   ADD_PAGE_MANAGER_TEST ("/page-manager/set-page-no-name",
                          test_pm_set_page_no_name);
+  ADD_PAGE_MANAGER_TEST ("/page-manager/page-no-background",
+                         test_pm_page_no_background);
+  ADD_PAGE_MANAGER_TEST ("/page-manager/page-set-background",
+                         test_pm_page_change_background);
   ADD_PAGE_MANAGER_TEST ("/page-manager/remove-page-by-name",
                          test_pm_remove_page_by_name);
   ADD_PAGE_MANAGER_TEST ("/page-manager/duplicate-page-name",
