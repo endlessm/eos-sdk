@@ -10,6 +10,13 @@
 
 #define _EOS_STYLE_CLASS_ACTION_MENU "action-menu"
 
+/**
+ * SECTION:action-menu
+ * @short_description: Adding actions to the page
+ * @title: Action Menu
+ */
+
+
 G_DEFINE_TYPE (EosActionMenu, eos_action_menu, GTK_TYPE_GRID)
 
 #define EOS_ACTION_MENU_PRIVATE(o) \
@@ -53,6 +60,11 @@ eos_action_menu_init (EosActionMenu *menu)
 
 /* ******* LIFECYCLE ******* */
 
+/*
+ * eos_action_menu_new:
+ *
+ * Returns: a new instance
+ */
 GtkWidget *
 eos_action_menu_new ()
 {
@@ -73,38 +85,69 @@ eos_action_menu_finalize (GObject *object)
 
 /* ******* ACTION GROUP MGMT ******* */
 
-GtkAction *
+/**
+ * eos_action_menu_add_action:
+ * @menu: a #EosActionMenu
+ * @action: a #GtkAction: name, label, icon-name, is-important.
+ *
+ * Adds an action to the #EosActionMenu, using its name, label, icon-name and
+ * is-important properties.
+ */
+void
 eos_action_menu_add_action (EosActionMenu *menu,
-                            const gchar *first_property_name,
-                            ...)
+                            GtkAction *action)
 {
   EosActionMenuPrivate *priv;
-  GtkAction *action;
-  va_list var_args;
 
   g_return_val_if_fail (EOS_IS_ACTION_MENU (menu), NULL);
-  menu->priv = EOS_ACTION_MENU_PRIVATE (menu);
+  priv = menu->priv;
 
-  va_start (var_args, first_property_name);
-  action = (GtkAction*) g_object_new_valist (GTK_TYPE_ACTION, first_property_name, var_args);
-  va_end (var_args);
+  if (action)
+    {
+      gtk_action_group_add_action (priv->action_group, action);
 
-  gtk_action_group_add_action(priv->action_group, action);
+      EosActionButtonSize size = gtk_action_get_is_important (action) ?
+                                             EOS_ACTION_BUTTON_SIZE_PRIMARY :
+                                             EOS_ACTION_BUTTON_SIZE_SECONDARY;
 
-  // TODO : create and wire up the action button
+      GtkWidget *action_button = eos_action_button_new (size,
+                                                        gtk_action_get_label (action),
+                                                        gtk_action_get_icon_name (action));
+
+      gtk_activatable_set_related_action (GTK_ACTIVATABLE (action_button), action);
+
+      // TODO : maybe we need a finer control, taking is-important into account?
+      gtk_grid_attach_next_to (GTK_GRID (menu), action_button, NULL,
+                               GTK_POS_BOTTOM, 1, 1);
+    }
 }
 
+/**
+ * eos_action_menu_get_action:
+ * @menu: an #EosActionMenu
+ * @name: the name of the action to retrieve
+ *
+ * Retrieves an action.
+ *
+ * Returns: (transfer none): the #GtkAction
+ */
 GtkAction *
 eos_action_menu_get_action (EosActionMenu *menu,
                             const gchar *name)
 {
   EosActionMenuPrivate *priv;
   g_return_val_if_fail (EOS_IS_ACTION_MENU (menu), NULL);
-  menu->priv = EOS_ACTION_MENU_PRIVATE (menu);
+  priv = menu->priv;
 
   return gtk_action_group_get_action (priv->action_group, name);
 }
 
+/**
+ * eos_action_list_actions:
+ * @menu: an #EosActionMenu
+ *
+ * Returns: (element-type GList) (transfer container): an allocated list of the action objects in the action group
+ */
 GList *
 eos_action_list_actions (EosActionMenu *menu)
 {
@@ -115,6 +158,13 @@ eos_action_list_actions (EosActionMenu *menu)
   return gtk_action_group_list_actions (priv->action_group);
 }
 
+/**
+ * eos_action_menu_remove_action:
+ * @menu: an #EosActionMenu
+ * @action: the action to remove
+ *
+ * Removes an action
+ */
 void
 eos_action_menu_remove_action (EosActionMenu *menu,
                                GtkAction *action)
@@ -126,6 +176,13 @@ eos_action_menu_remove_action (EosActionMenu *menu,
   gtk_action_group_remove_action(priv->action_group, action);
 }
 
+/**
+ * eos_action_menu_remove_action_by_name:
+ * @menu: an #EosActionMenu
+ * @name: the name of the action to remove
+ *
+ * Removes the action with the given name
+ */
 void
 eos_action_menu_remove_action_by_name (EosActionMenu *menu,
                                        const gchar *name)

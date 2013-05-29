@@ -13,22 +13,41 @@ const TestApplication = new Lang.Class ({
     vfunc_startup: function() {
         this.parent();
 
-        this._page = new Gtk.Grid();
+        this._page = new Endless.ActionMenu();
         
-        /* should be using Endless.EOS_ACTION_BUTTON_SIZE_PRIMARY */
+        this._page.add_action (new Gtk.Action({
+            name: 'select',
+            'icon-name': 'object-select-symbolic',
+            label: 'select stuff',
+            'is-important': true }));
+        
+        this._page.get_action('select').connect('activate',
+            Lang.bind(this, function () {
+        	var md = new Gtk.MessageDialog({modal:true, title:"Information",
+        	    message_type:Gtk.MessageType.INFO,
+        	    buttons:Gtk.ButtonsType.OK, text:"Select button pressed!"});
+        	md.run();
+        	md.destroy();
+            }));
 
-        this._eosButton0 = new Endless.ActionButton({size: 0, label: 'SMILE', 'icon-id': 'face-smile-symbolic' });
-        this._page.attach(this._eosButton0, 0, 0, 1, 1);
-        
-        this._eosButton1 = new Endless.ActionButton({size: 1, label: 'POUT', 'icon-id': 'face-sad-symbolic' });
-        this._page.attach(this._eosButton1, 0, 1, 1, 1);
-        
-        this._eosButton2 = new Endless.ActionButton({size: 2, label: '', 'icon-id': 'edit-delete-symbolic' });
-        this._page.attach(this._eosButton2, 0, 2, 1, 1);
-        
-        this._eosButton3 = new Endless.ActionButton({size: 3, label: '', 'icon-id': 'object-select-symbolic' });
-        this._page.attach(this._eosButton3, 0, 3, 1, 1);
-        
+        this._page.add_action (new Gtk.Action({
+            name: 'delete',
+            'icon-name': 'edit-delete-symbolic',
+            label: 'delete stuff',
+            'is-important': false }));
+
+        this._page.add_action (new Gtk.Action({
+            name: 'smile',
+            'icon-name': 'face-smile-symbolic',
+            label: 'smile',
+            'is-important': false }));
+
+        this._page.add_action (new Gtk.Action({
+            name: 'sadface',
+            'icon-name': 'face-sad-symbolic',
+            label: 'sadface',
+            'is-important': false }));
+
         this._pm = new Endless.PageManager();
         this._pm.add(this._page, { name: "page" });
         
