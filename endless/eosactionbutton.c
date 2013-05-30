@@ -185,8 +185,7 @@ eos_action_button_init (EosActionButton *self)
   gtk_container_add (GTK_CONTAINER (self),
                      GTK_WIDGET (priv->grid));
 
-  // TODO positioning is not really working right
-  // it will be done manually in draw ()
+  // TODO positioning is not really working right, it will be done manually in draw ()
 
   gtk_widget_set_hexpand (GTK_WIDGET(self), FALSE);
   gtk_widget_set_halign (GTK_WIDGET(self), GTK_ALIGN_CENTER);
@@ -237,30 +236,36 @@ eos_action_button_load_icon (EosActionButton *button)
 
   // TODO maybe use gtk_image_set_from_icon_set
 
-  g_return_if_fail (priv->icon_id != NULL);
-
-  icon_info = gtk_icon_theme_lookup_icon (gtk_icon_theme_get_default (),
-                                          priv->icon_id,
-                                          icon_sizes[priv->size].icon_size,
-                                          GTK_ICON_LOOKUP_FORCE_SIZE
-                                          | GTK_ICON_LOOKUP_GENERIC_FALLBACK
-                                          | GTK_ICON_LOOKUP_USE_BUILTIN );
-
-  new_icon = gtk_icon_info_load_symbolic_for_context (icon_info,
-                                                      gtk_widget_get_style_context (GTK_WIDGET(button)),
-                                                      &was_symbolic,
-                                                      &error);
-
-  if (!was_symbolic)
+  if (priv->icon_id != NULL)
     {
-      g_warning ("Icon for %s is not symbolic\n", priv->icon_id);
+      icon_info = gtk_icon_theme_lookup_icon (gtk_icon_theme_get_default (),
+                                              priv->icon_id,
+                                              icon_sizes[priv->size].icon_size,
+                                              GTK_ICON_LOOKUP_FORCE_SIZE
+                                              | GTK_ICON_LOOKUP_GENERIC_FALLBACK
+                                              | GTK_ICON_LOOKUP_USE_BUILTIN );
+
+      new_icon = gtk_icon_info_load_symbolic_for_context (icon_info,
+                                                          gtk_widget_get_style_context (GTK_WIDGET(button)),
+                                                          &was_symbolic,
+                                                          &error);
+
+      if (!was_symbolic)
+        {
+          g_warning ("Icon for %s is not symbolic\n", priv->icon_id);
+        }
+      if (error != NULL)
+        {
+          g_warning ("Unable to load icon for %s : %s\n", priv->icon_id, error->message);
+          g_error_free (error);
+        }
+      g_object_ref (new_icon);
+      g_object_unref (icon_info);
     }
-  if (error != NULL)
+  else
     {
-      g_warning ("Unable to load icon for %s : %s\n", priv->icon_id, error->message);
-      g_error_free (error);
+      new_icon = NULL;
     }
-  g_object_unref (icon_info);
 
   if (priv->icon_pixbuf != NULL)
     {
@@ -268,7 +273,6 @@ eos_action_button_load_icon (EosActionButton *button)
     }
 
   priv->icon_pixbuf = new_icon;
-  g_object_ref (priv->icon_pixbuf);
 
   gtk_image_set_from_pixbuf (GTK_IMAGE (priv->icon_image), priv->icon_pixbuf);
 }
@@ -381,13 +385,13 @@ eos_action_button_get_property (GObject    *object,
 
   switch (property_id)
   {
-  case PROP_SIZE :
+  case PROP_SIZE:
     g_value_set_int (value, priv->size);
     break;
-  case PROP_LABEL :
+  case PROP_LABEL:
     g_value_set_string (value, priv->label);
     break;
-  case PROP_ICON_ID :
+  case PROP_ICON_ID:
     g_value_set_string (value, priv->icon_id);
     break;
   default:
