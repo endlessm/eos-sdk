@@ -34,6 +34,8 @@ const TestApplication = new Lang.Class ({
         this._main_page.add(main_button);
 
         this._pm = new Endless.SplashPageManager();
+        this._pm.add(this._splash_page, {name: "splash"});
+        this._pm.add(this._main_page, {name: "main"});
         this._pm.set_splash_page(this._splash_page);
         this._pm.set_main_page(this._main_page);
 

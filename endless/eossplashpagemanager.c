@@ -51,7 +51,11 @@ struct _EosSplashPageManagerPrivate
 {
   GtkWidget *splash_page;
   GtkWidget *main_page;
+  const gchar *splash_page_name;
+  const gchar *main_page_name;
   gboolean main_page_shown;
+  gulong splash_name_changed_handler;
+  gulong main_name_changed_handler;
 };
 
 enum
@@ -59,10 +63,50 @@ enum
   PROP_0,
   PROP_SPLASH_PAGE,
   PROP_MAIN_PAGE,
+  PROP_SPLASH_PAGE_NAME,
+  PROP_MAIN_PAGE_NAME,
   NPROPS
 };
 
 static GParamSpec *eos_splash_page_manager_props[NPROPS] = { NULL, };
+
+static void
+remove_cb (GtkContainer *container,
+              GtkWidget    *widget,
+              gpointer      user_data)
+{
+  EosSplashPageManager *self = EOS_SPLASH_PAGE_MANAGER (container);
+  if (widget == self->priv->splash_page)
+    {
+      self->priv->splash_page = NULL;
+      self->priv->splash_page_name = NULL;
+      g_object_notify (G_OBJECT (self), "splash-page");
+      g_object_notify (G_OBJECT (self), "splash-page-name");
+    }
+  if (widget == self->priv->main_page)
+    {
+      self->priv->main_page = NULL;
+      self->priv->main_page_name = NULL;
+      g_object_notify (G_OBJECT (self), "main-page");
+      g_object_notify (G_OBJECT (self), "main-page-name");
+    }
+}
+
+static void
+splash_name_changed_cb (EosSplashPageManager *self)
+{
+  self->priv->splash_page_name = eos_page_manager_get_page_name (EOS_PAGE_MANAGER (self),
+                                                                 self->priv->splash_page);
+  g_object_notify (G_OBJECT (self), "splash-page-name");
+}
+
+static void
+main_name_changed_cb (EosSplashPageManager *self)
+{
+  self->priv->main_page_name = eos_page_manager_get_page_name (EOS_PAGE_MANAGER (self),
+                                                                 self->priv->main_page);
+  g_object_notify (G_OBJECT (self), "splash-page-name");
+}
 
 static void
 eos_splash_page_manager_get_property (GObject    *object,
@@ -80,6 +124,14 @@ eos_splash_page_manager_get_property (GObject    *object,
 
     case PROP_MAIN_PAGE:
       g_value_set_object (value, eos_splash_page_manager_get_main_page (self));
+      break;
+
+    case PROP_SPLASH_PAGE_NAME:
+      g_value_set_string (value, eos_splash_page_manager_get_splash_page_name (self));
+      break;
+
+    case PROP_MAIN_PAGE_NAME:
+      g_value_set_string (value, eos_splash_page_manager_get_main_page_name (self));
       break;
 
     default:
@@ -105,39 +157,15 @@ eos_splash_page_manager_set_property (GObject      *object,
       eos_splash_page_manager_set_main_page (self, g_value_get_object (value));
       break;
 
+    case PROP_SPLASH_PAGE_NAME:
+      eos_splash_page_manager_set_splash_page_name (self, g_value_get_string (value));
+      break;
+
+    case PROP_MAIN_PAGE_NAME:
+      eos_splash_page_manager_set_main_page_name (self, g_value_get_string (value));
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-    }
-}
-
-static void
-eos_splash_page_manager_add (GtkContainer *container,
-                             GtkWidget    *new_page)
-{
-  EosSplashPageManager *self = EOS_SPLASH_PAGE_MANAGER (container);
-  if (self->priv->splash_page != NULL)
-    {
-      g_critical ("Not adding page %p to splash page manager. You already added"
-                  "a splash page.", new_page);
-    }
-  else
-    {
-      eos_splash_page_manager_set_splash_page (self, new_page);
-    }
-}
-
-static void
-eos_splash_page_manager_remove (GtkContainer *container,
-                                GtkWidget    *page)
-{
-  EosSplashPageManager *self = EOS_SPLASH_PAGE_MANAGER (container);
-  if (page == self->priv->splash_page)
-    {
-      eos_splash_page_manager_set_splash_page (self, NULL);
-    }
-  if (page == self->priv->main_page)
-    {
-      eos_splash_page_manager_set_main_page (self, NULL);
     }
 }
 
@@ -145,15 +173,11 @@ static void
 eos_splash_page_manager_class_init (EosSplashPageManagerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
-  GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
   g_type_class_add_private (klass, sizeof (EosSplashPageManagerPrivate));
 
   object_class->get_property = eos_splash_page_manager_get_property;
   object_class->set_property = eos_splash_page_manager_set_property;
-
-  container_class->add = eos_splash_page_manager_add;
-  container_class->remove = eos_splash_page_manager_remove;
 
   /**
    * EosSplashPageManager:splash-page:
@@ -179,6 +203,28 @@ eos_splash_page_manager_class_init (EosSplashPageManagerClass *klass)
                          GTK_TYPE_WIDGET,
                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
+  /**
+   * EosSplashPageManager:splash-page-name:
+   *
+   * The name of the page in the page manager that should be treated as the
+   * splash page. The splash page will be shown by default until
+   * eos_splash_page_manager_show_main_page() is called.
+   */
+  eos_splash_page_manager_props[PROP_SPLASH_PAGE_NAME] =
+    g_param_spec_string ("splash-page-name", "Splash page name", "Name of splash"
+                         " page in page manager", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * EosSplashPageManager:main-page-name:
+   *
+   * The name of the page in the page manager that should be treated as the
+   * main page. The main page will not be shown until
+   * eos_splash_page_manager_show_main_page() is called.
+   */
+  eos_splash_page_manager_props[PROP_MAIN_PAGE_NAME] =
+    g_param_spec_string ("main-page-name", "Main page name", "Name of main"
+                         " page in page manager", NULL, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
   g_object_class_install_properties (object_class, NPROPS,
                                      eos_splash_page_manager_props);
 }
@@ -187,6 +233,8 @@ static void
 eos_splash_page_manager_init (EosSplashPageManager *self)
 {
   self->priv = SPLASH_PAGE_MANAGER_PRIVATE (self);
+  g_signal_connect (self, "remove",
+                    G_CALLBACK (remove_cb), self);
 }
 
 /* Public API */
@@ -234,32 +282,111 @@ eos_splash_page_manager_get_splash_page (EosSplashPageManager *self)
  */
 void
 eos_splash_page_manager_set_splash_page (EosSplashPageManager *self,
-                                         GtkWidget      *page)
+                                         GtkWidget            *page)
 {
   g_return_if_fail (EOS_IS_SPLASH_PAGE_MANAGER (self));
   g_return_if_fail (page == NULL || GTK_IS_WIDGET (page));
-  g_return_if_fail (page == NULL || gtk_widget_get_parent (page) == NULL);
 
 
   if (self->priv->splash_page != page)
     {
-      if (self->priv->splash_page != NULL)
-        gtk_container_remove (GTK_CONTAINER (self), self->priv->splash_page);
       if (page != NULL)
         {
-          GTK_CONTAINER_CLASS (eos_splash_page_manager_parent_class)->add (GTK_CONTAINER (self), page);
-          if (!self->priv->main_page_shown)
-            eos_page_manager_set_visible_page (EOS_PAGE_MANAGER (self), page);
+          if (gtk_widget_get_parent (page) == NULL)
+            gtk_container_add (GTK_CONTAINER (self), page);
+          // TODO I'd like a check like this, but this doesn't work as it's a
+          // composite widget. Thoughts??
+          // if (gtk_widget_get_parent (page) != GTK_WIDGET (self))
+          //   g_critical ("Trying to add %p as splash page, but child of another widget.",
+          //                page);
+          self->priv->splash_page_name = eos_page_manager_get_page_name (EOS_PAGE_MANAGER (self),
+                                                                         page);
+          if (self->priv->splash_page != NULL)
+            g_signal_handler_disconnect (self->priv->splash_page,
+                                         self->priv->splash_name_changed_handler);
+          self->priv->splash_name_changed_handler = g_signal_connect_swapped (page,
+                                                                      "child-notify::name",
+                                                                      G_CALLBACK (splash_name_changed_cb),
+                                                                      self);
+        }
+      else
+        {
+          self->priv->splash_page_name = NULL;
         }
       self->priv->splash_page = page;
+      if (!self->priv->main_page_shown)
+        eos_page_manager_set_visible_page (EOS_PAGE_MANAGER (self), page);
+
+      g_object_notify (G_OBJECT (self), "splash-page");
+      g_object_notify (G_OBJECT (self), "splash-page-name");
+    }
+}
+
+/**
+ * eos_splash_page_manager_get_splash_page:
+ * @self: the splash page manager
+ *
+ * Gets a pointer to the splash page widget. See #EosSplashPageManager:splash-page
+ * for more information.
+ *
+ * Returns: (transfer none): the page #GtkWidget, or %NULL if the splash page
+ * has not been set.
+ */
+const gchar *
+eos_splash_page_manager_get_splash_page_name (EosSplashPageManager *self)
+{
+  g_return_val_if_fail (EOS_IS_SPLASH_PAGE_MANAGER (self), NULL);
+  
+  return self->priv->splash_page_name;
+}
+
+/**
+ * eos_splash_page_manager_set_splash_page:
+ * @self: the splash page manager
+ * @page: the splash page widget
+ *
+ * Sets the widget for the splash page. See #EosSplashPageManager:splash-page
+ * for more information. Setting this widget will add it to the splash page
+ * manager as a child, any widget previously set as the splash page will be
+ * removed.
+ */
+void
+eos_splash_page_manager_set_splash_page_name (EosSplashPageManager *self,
+                                              const gchar          *name)
+{
+  GtkWidget *page;
+
+  g_return_if_fail (EOS_IS_SPLASH_PAGE_MANAGER (self));
+  g_return_if_fail (name != NULL);
+
+  if (self->priv->splash_page_name != name)
+    {
+      page = eos_page_manager_get_page_by_name (EOS_PAGE_MANAGER (self), name);
+      if (page == NULL)
+        {
+          g_critical ("No page with name %s found.", name);
+          return;
+        }
+      if (self->priv->splash_page != NULL)
+        g_signal_handler_disconnect (self->priv->splash_page,
+                                     self->priv->splash_name_changed_handler);
+      self->priv->splash_name_changed_handler = g_signal_connect_swapped (page,
+                                                                  "child-notify::name",
+                                                                  G_CALLBACK (splash_name_changed_cb),
+                                                                  self);
+      self->priv->splash_page = page;
+      if (!self->priv->main_page_shown)
+        eos_page_manager_set_visible_page (EOS_PAGE_MANAGER (self), page);
+
       g_object_notify( G_OBJECT (self), "splash-page");
+      g_object_notify( G_OBJECT (self), "splash-page-name");
     }
 }
 
 
 /**
  * eos_splash_page_manager_get_main_page:
- * @self: the splash page manager
+ * @self: the main page manager
  *
  * Gets a pointer to the main page widget. See #EosSplashPageManager:main-page
  * for more information.
@@ -277,31 +404,110 @@ eos_splash_page_manager_get_main_page (EosSplashPageManager *self)
 
 /**
  * eos_splash_page_manager_set_main_page:
- * @self: the splash page manager
+ * @self: the main page manager
  * @page: the main page widget
  *
- * Sets the widget for the main page. See #EosSplashPageManager:main-page for
- * more information. Setting this widget will add it to the splash page
+ * Sets the widget for the main page. See #EosSplashPageManager:main-page
+ * for more information. Setting this widget will add it to the main page
  * manager as a child, any widget previously set as the main page will be
  * removed.
  */
 void
 eos_splash_page_manager_set_main_page (EosSplashPageManager *self,
-                                       GtkWidget      *page)
+                                         GtkWidget            *page)
 {
   g_return_if_fail (EOS_IS_SPLASH_PAGE_MANAGER (self));
   g_return_if_fail (page == NULL || GTK_IS_WIDGET (page));
-  g_return_if_fail (page == NULL || gtk_widget_get_parent (page) == NULL);
+
 
   if (self->priv->main_page != page)
     {
-      if (self->priv->main_page != NULL)
-        gtk_container_remove (GTK_CONTAINER (self), self->priv->main_page);
-      // Call page manager add not our own.
       if (page != NULL)
-        GTK_CONTAINER_CLASS (eos_splash_page_manager_parent_class)->add (GTK_CONTAINER (self), page);
+        {
+          if (gtk_widget_get_parent (page) == NULL)
+            gtk_container_add (GTK_CONTAINER (self), page);
+          // TODO I'd like a check like this, but this doesn't work as it's a
+          // composite widget. Thoughts??
+          // if (gtk_widget_get_parent (page) != GTK_WIDGET (self))
+          //   g_critical ("Trying to add %p as main page, but child of another widget.",
+          //                page);
+          self->priv->main_page_name = eos_page_manager_get_page_name (EOS_PAGE_MANAGER (self),
+                                                                       page);
+          if (self->priv->main_page != NULL)
+            g_signal_handler_disconnect (self->priv->main_page,
+                                         self->priv->main_name_changed_handler);
+          self->priv->main_name_changed_handler = g_signal_connect_swapped (page,
+                                                                    "child-notify::name",
+                                                                    G_CALLBACK (main_name_changed_cb),
+                                                                    self);
+        }
+      else
+        {
+          self->priv->main_page_name = NULL;
+        }
       self->priv->main_page = page;
-      g_object_notify( G_OBJECT (self), "main-page");
+
+      g_object_notify (G_OBJECT (self), "main-page");
+      g_object_notify (G_OBJECT (self), "main-page-name");
+    }
+}
+
+/**
+ * eos_splash_page_manager_get_main_page:
+ * @self: the main page manager
+ *
+ * Gets a pointer to the main page widget. See #EosSplashPageManager:main-page
+ * for more information.
+ *
+ * Returns: (transfer none): the page #GtkWidget, or %NULL if the main page
+ * has not been set.
+ */
+const gchar *
+eos_splash_page_manager_get_main_page_name (EosSplashPageManager *self)
+{
+  g_return_val_if_fail (EOS_IS_SPLASH_PAGE_MANAGER (self), NULL);
+  
+  return self->priv->main_page_name;
+}
+
+/**
+ * eos_splash_page_manager_set_main_page:
+ * @self: the main page manager
+ * @page: the main page widget
+ *
+ * Sets the widget for the main page. See #EosSplashPageManager:main-page
+ * for more information. Setting this widget will add it to the main page
+ * manager as a child, any widget previously set as the main page will be
+ * removed.
+ */
+void
+eos_splash_page_manager_set_main_page_name (EosSplashPageManager *self,
+                                            const gchar          *name)
+{
+  GtkWidget *page;
+
+  g_return_if_fail (EOS_IS_SPLASH_PAGE_MANAGER (self));
+  g_return_if_fail (name != NULL);
+
+  if (self->priv->main_page_name != name)
+    {
+      page = eos_page_manager_get_page_by_name (EOS_PAGE_MANAGER (self), name);
+      if (page == NULL)
+        {
+          g_critical ("No page with name %s found.", name);
+          return;
+        }
+      if (self->priv->main_page != NULL)
+        g_signal_handler_disconnect (self->priv->main_page,
+                                     self->priv->main_name_changed_handler);
+      self->priv->main_name_changed_handler = g_signal_connect_swapped (page,
+                                                                "child-notify::name",
+                                                                G_CALLBACK (main_name_changed_cb),
+                                                                self);
+      self->priv->main_page = page;
+
+      g_object_notify (G_OBJECT (self), "main-page");
+      g_object_notify (G_OBJECT (self), "main-page-name");
     }
 }
 

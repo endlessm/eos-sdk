@@ -75,11 +75,25 @@ void         eos_splash_page_manager_set_splash_page  (EosSplashPageManager *sel
                                                        GtkWidget            *page);
 
 EOS_SDK_ALL_API_VERSIONS
+const gchar *eos_splash_page_manager_get_splash_page_name  (EosSplashPageManager *self);
+
+EOS_SDK_ALL_API_VERSIONS
+void         eos_splash_page_manager_set_splash_page_name  (EosSplashPageManager *self,
+                                                            const gchar          *name);
+
+EOS_SDK_ALL_API_VERSIONS
 GtkWidget   *eos_splash_page_manager_get_main_page    (EosSplashPageManager *self);
 
 EOS_SDK_ALL_API_VERSIONS
 void         eos_splash_page_manager_set_main_page    (EosSplashPageManager *self,
                                                        GtkWidget            *page);
+
+EOS_SDK_ALL_API_VERSIONS
+const gchar *eos_splash_page_manager_get_main_page_name  (EosSplashPageManager *self);
+
+EOS_SDK_ALL_API_VERSIONS
+void         eos_splash_page_manager_set_main_page_name  (EosSplashPageManager *self,
+                                                          const gchar          *name);
 
 EOS_SDK_ALL_API_VERSIONS
 void         eos_splash_page_manager_show_main_page   (EosSplashPageManager *self);

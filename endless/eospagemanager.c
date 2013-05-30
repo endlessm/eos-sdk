@@ -1057,6 +1057,19 @@ eos_page_manager_set_page_custom_toolbox_widget (EosPageManager *self,
                               "custom-toolbox-widget");
 }
 
+GtkWidget *
+eos_page_manager_get_page_by_name (EosPageManager *self,
+                                   const gchar    *name)
+{
+  g_return_val_if_fail (EOS_IS_PAGE_MANAGER (self), NULL);
+  g_return_val_if_fail (name != NULL, NULL);
+
+  EosPageManagerPageInfo *info = find_page_info_by_name (self, name);
+  if (info == NULL)
+    return NULL;
+  return info->page;
+}
+
 /**
  * eos_page_manager_get_page_background_uri:
  * @self: the page manager
