@@ -10,6 +10,7 @@
 #include "eosmainarea-private.h"
 
 #include <gtk/gtk.h>
+#include <pstack.h>
 
 /**
  * SECTION:window
@@ -34,17 +35,10 @@
  * ]|
  */
 
-// Put in a transition for fun, should be part of API though someday...
-#define BACKGROUND_IMAGE_CSS_TEMPLATE \
-  "EosWindow { background-image: url(\"%s\");" \
-               "transition-property: background-image;" \
-               "transition-duration: 0.5s;" \
-               "background-size:100%% 100%%; }"
-#define EMPTY_BACKGROUND_CSS \
-  "EosWindow { background-image: none;" \
-               "transition-property: background-image;" \
-               "transition-duration: 0.5s;" \
-               "background-size:100% 100%; }"
+#define BACKGROUND_FRAME_NAME_TEMPLATE "_window-background-%d"
+
+#define BACKGROUND_FRAME_CSS_TEMPLATE "#%s { background-image: url(\"%s\");" \
+                                           " background-size:100%% 100%%; }"
 
 G_DEFINE_TYPE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
 
@@ -57,6 +51,10 @@ struct _EosWindowPrivate
 
   GtkWidget *top_bar;
   GtkWidget *main_area;
+  GtkWidget *overlay;
+  GtkWidget *current_background;
+  GtkWidget *next_background;
+  GtkWidget *background_stack;
 
   EosPageManager *page_manager;
 
@@ -66,6 +64,7 @@ struct _EosWindowPrivate
   gulong child_custom_toolbox_handler;
   gulong child_background_handler;
   GtkCssProvider *background_provider;
+  gchar *current_background_css;
 };
 
 enum
@@ -129,24 +128,6 @@ update_page_toolbox (EosWindow *self)
     }
 }
 
-static void
-remove_page_background (EosWindow *self)
-{
-  GtkStyleProvider *provider =
-    GTK_STYLE_PROVIDER (self->priv->background_provider);
-  GdkScreen *screen = gdk_screen_get_default ();
-  GError *error = NULL;
-
-  gtk_style_context_remove_provider_for_screen (screen, provider);
-  gtk_css_provider_load_from_data (self->priv->background_provider,
-                                   EMPTY_BACKGROUND_CSS, -1,
-                                   &error);
-  gtk_style_context_add_provider_for_screen (screen, provider,
-                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-  if (error != NULL)
-    g_warning ("Error loading background CSS: %s", error->message);
-}
-
 /*
  * update_page_background:
  * @self: the window
@@ -160,34 +141,55 @@ update_page_background (EosWindow *self)
   EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
   GtkWidget *page = self->priv->current_page;
 
-  if (page == NULL)
-    {
-      remove_page_background (self);
-      return;
-    }
-
-  const gchar *background = eos_page_manager_get_page_background_uri (pm, page);
-  if (background == NULL)
-    {
-      remove_page_background (self);
-      return;
-    }
-
-  gchar *background_css = g_strdup_printf (BACKGROUND_IMAGE_CSS_TEMPLATE,
-                                           background);
-
+  // Set up next background...
+  const gchar *background_uri = eos_page_manager_get_page_background_uri (pm, page);
+  gchar *next_background_css = g_strdup_printf (BACKGROUND_FRAME_CSS_TEMPLATE,
+                                                gtk_widget_get_name (self->priv->next_background),
+                                                background_uri);
+  gchar *background_css = g_strconcat(self->priv->current_background_css, next_background_css, NULL);
+  printf("%s\n", background_css);
   GtkStyleProvider *provider =
     GTK_STYLE_PROVIDER (self->priv->background_provider);
   GdkScreen *screen = gdk_screen_get_default ();
   GError *error = NULL;
-
   gtk_style_context_remove_provider_for_screen (screen, provider);
   gtk_css_provider_load_from_data (self->priv->background_provider,
                                    background_css, -1, &error);
   gtk_style_context_add_provider_for_screen (screen, provider,
                                              GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-  if (error != NULL)
-    g_warning ("Error loading background CSS: %s", error->message);
+
+  // TODO: Same code in two places... Should we make a private to sdk function
+  // in the page manager that gets the internal pstack transition type for a
+  // page?
+  EosPageManagerTransitionType pm_transtion = eos_page_manager_get_transition_type (pm);
+  PStackTransitionType pstack_transition;
+  switch (pm_transtion)
+  {
+  case EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE:
+  case EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE:
+  case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_RIGHT:
+  case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT:
+  case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP:
+  case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN:
+    pstack_transition = (PStackTransitionType)pm_transtion;
+    break;
+  default:
+    pstack_transition = P_STACK_TRANSITION_TYPE_NONE;
+    break;
+  }
+  // Set up p_stack animation...
+  p_stack_set_transition_type (P_STACK (self->priv->background_stack),
+                               pstack_transition);
+  p_stack_set_transition_duration (P_STACK (self->priv->background_stack),
+                                   eos_page_manager_get_transition_duration (pm));
+  p_stack_set_visible_child (P_STACK (self->priv->background_stack),
+                                      self->priv->next_background);
+
+  // Swap our background frames for next animation
+  GtkWidget *temp = self->priv->next_background;
+  self->priv->next_background = self->priv->current_background;
+  self->priv->current_background = temp;
+  self->priv->current_background_css = next_background_css;
 }
 
 /*
@@ -478,11 +480,29 @@ eos_window_init (EosWindow *self)
   self->priv = WINDOW_PRIVATE (self);
 
   self->priv->background_provider = gtk_css_provider_new ();
+  self->priv->current_background_css = "";
+
   self->priv->top_bar = eos_top_bar_new ();
   gtk_widget_set_parent (self->priv->top_bar, GTK_WIDGET (self));
 
+  self->priv->overlay = gtk_overlay_new ();
+  gtk_container_add (GTK_CONTAINER (self), self->priv->overlay);
+
+  self->priv->background_stack = p_stack_new ();
+  gtk_container_add (GTK_CONTAINER (self->priv->overlay), self->priv->background_stack);
+
+  gchar *background_name0 = g_strdup_printf (BACKGROUND_FRAME_NAME_TEMPLATE, 0);
+  self->priv->current_background = gtk_frame_new (NULL);
+  gtk_container_add (GTK_CONTAINER (self->priv->background_stack), self->priv->current_background);
+  gtk_widget_set_name (self->priv->current_background, background_name0);
+
+  gchar *background_name1 = g_strdup_printf (BACKGROUND_FRAME_NAME_TEMPLATE, 1);
+  self->priv->next_background = gtk_frame_new (NULL);
+  gtk_container_add (GTK_CONTAINER (self->priv->background_stack), self->priv->next_background);
+  gtk_widget_set_name (self->priv->next_background, background_name1);
+
   self->priv->main_area = eos_main_area_new ();
-  gtk_container_add (GTK_CONTAINER (self), self->priv->main_area);
+  gtk_overlay_add_overlay (GTK_OVERLAY (self->priv->overlay), self->priv->main_area);
 
   gtk_window_set_decorated (GTK_WINDOW (self), FALSE);
   gtk_window_maximize (GTK_WINDOW (self));
