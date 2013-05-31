@@ -38,7 +38,8 @@
 #define BACKGROUND_FRAME_NAME_TEMPLATE "_window-background-%d"
 
 #define BACKGROUND_FRAME_CSS_TEMPLATE "#%s { background-image: url(\"%s\");" \
-                                           " background-size:100%% 100%%; }"
+                                           " background-size:100%% 100%%;" \
+                                           " border-width: 0px; }"
 
 G_DEFINE_TYPE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
 
@@ -146,8 +147,9 @@ update_page_background (EosWindow *self)
   gchar *next_background_css = g_strdup_printf (BACKGROUND_FRAME_CSS_TEMPLATE,
                                                 gtk_widget_get_name (self->priv->next_background),
                                                 background_uri);
-  gchar *background_css = g_strconcat(self->priv->current_background_css, next_background_css, NULL);
-  printf("%s\n", background_css);
+  gchar *background_css = g_strconcat(self->priv->current_background_css,
+                                      next_background_css,
+                                      NULL);
   GtkStyleProvider *provider =
     GTK_STYLE_PROVIDER (self->priv->background_provider);
   GdkScreen *screen = gdk_screen_get_default ();
@@ -342,16 +344,7 @@ eos_window_size_allocate (GtkWidget *widget,
   because it always assumes that its child begins at (0, 0). */
   child = gtk_bin_get_child (GTK_BIN (self));
   if (child != NULL)
-    {
-      border_width = gtk_container_get_border_width (GTK_CONTAINER (self));
-      child_allocation.x += border_width;
-      child_allocation.y += border_width;
-      child_allocation.width -= 2 * border_width;
-      child_allocation.height -= 2 * border_width;
-      child_allocation.width = MAX(1, child_allocation.width);
-      child_allocation.height = MAX(1, child_allocation.height);
       gtk_widget_size_allocate (child, &child_allocation);
-    }
 }
 
 static void

@@ -155,7 +155,6 @@ const TestApplication = new Lang.Class ({
 
         this._window = new Endless.Window({
             application: this,
-            border_width: 16,
             page_manager: this._pm
         });
         this._window.show_all();
