@@ -39,6 +39,29 @@ typedef struct _EosPageManager EosPageManager;
 typedef struct _EosPageManagerClass EosPageManagerClass;
 typedef struct _EosPageManagerPrivate EosPageManagerPrivate;
 
+#define EOS_TYPE_PAGE_MANAGER_TRANSITION_TYPE (eos_page_manager_transition_type_get_type ())
+
+/**
+ * EosPageManagerTransitionType:
+ * @EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE: No animation, regardless of duration.
+ * @EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE: Pages will not move, but fade into one another.
+ * @EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_RIGHT: The old page will slide off to the right.
+ * @EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT: The old page will slide off to the left.
+ * @EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP: The old page will slide up the screen.
+ * @EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN: The old page will slide down the screen.
+ *
+ * Enum values to specify the type of animation to use when transitioning
+ * between pages.
+ **/
+typedef enum {
+  EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE,
+  EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE,
+  EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_RIGHT,
+  EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT,
+  EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP,
+  EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN
+} EosPageManagerTransitionType;
+
 /**
  * EosPageManager:
  *
@@ -60,64 +83,81 @@ struct _EosPageManagerClass
 };
 
 EOS_SDK_ALL_API_VERSIONS
-GType        eos_page_manager_get_type                       (void) G_GNUC_CONST;
+GType        eos_page_manager_get_type                            (void) G_GNUC_CONST;
 
 EOS_SDK_ALL_API_VERSIONS
-GtkWidget   *eos_page_manager_new                            (void);
+GType        eos_page_manager_transition_type_get_type            (void) G_GNUC_CONST;
 
 EOS_SDK_ALL_API_VERSIONS
-GtkWidget   *eos_page_manager_get_visible_page               (EosPageManager *self);
+GtkWidget   *eos_page_manager_new                                 (void);
 
 EOS_SDK_ALL_API_VERSIONS
-void         eos_page_manager_set_visible_page               (EosPageManager *self,
-                                                              GtkWidget      *page);
+GtkWidget   *eos_page_manager_get_visible_page                    (EosPageManager *self);
 
 EOS_SDK_ALL_API_VERSIONS
-const gchar *eos_page_manager_get_visible_page_name          (EosPageManager *self);
+void         eos_page_manager_set_visible_page                    (EosPageManager *self,
+                                                                   GtkWidget      *page);
 
 EOS_SDK_ALL_API_VERSIONS
-void         eos_page_manager_set_visible_page_name          (EosPageManager *self,
-                                                              const gchar    *page_name);
+const gchar *eos_page_manager_get_visible_page_name               (EosPageManager *self);
 
 EOS_SDK_ALL_API_VERSIONS
-const gchar *eos_page_manager_get_page_name                  (EosPageManager *self,
-                                                              GtkWidget      *page);
+void         eos_page_manager_set_visible_page_name               (EosPageManager *self,
+                                                                   const gchar    *page_name);
 
 EOS_SDK_ALL_API_VERSIONS
-void         eos_page_manager_set_page_name                  (EosPageManager *self,
-                                                              GtkWidget      *page,
-                                                              const gchar    *name);
+const gchar *eos_page_manager_get_page_name                       (EosPageManager *self,
+                                                                   GtkWidget      *page);
 
 EOS_SDK_ALL_API_VERSIONS
-gboolean     eos_page_manager_get_page_actions               (EosPageManager *self,
-                                                              GtkWidget      *page);
+void         eos_page_manager_set_page_name                       (EosPageManager *self,
+                                                                   GtkWidget      *page,
+                                                                   const gchar    *name);
 
 EOS_SDK_ALL_API_VERSIONS
-void         eos_page_manager_set_page_actions               (EosPageManager *self,
-                                                              GtkWidget      *page,
-                                                              gboolean        actions_visible);
+gboolean     eos_page_manager_get_page_actions                    (EosPageManager *self,
+                                                                   GtkWidget      *page);
 
 EOS_SDK_ALL_API_VERSIONS
-GtkWidget   *eos_page_manager_get_page_custom_toolbox_widget (EosPageManager *self,
-                                                              GtkWidget      *page);
+void         eos_page_manager_set_page_actions                    (EosPageManager *self,
+                                                                   GtkWidget      *page,
+                                                                   gboolean        actions_visible);
 
 EOS_SDK_ALL_API_VERSIONS
-void         eos_page_manager_set_page_custom_toolbox_widget (EosPageManager *self,
-                                                              GtkWidget      *page,
-                                                              GtkWidget      *custom_toolbox_widget);
+GtkWidget   *eos_page_manager_get_page_custom_toolbox_widget      (EosPageManager *self,
+                                                                   GtkWidget      *page);
 
 EOS_SDK_ALL_API_VERSIONS
-const gchar *eos_page_manager_get_page_background_uri        (EosPageManager *self,
-                                                              GtkWidget      *page);
+void         eos_page_manager_set_page_custom_toolbox_widget      (EosPageManager *self,
+                                                                   GtkWidget      *page,
+                                                                   GtkWidget      *custom_toolbox_widget);
 
 EOS_SDK_ALL_API_VERSIONS
-void         eos_page_manager_set_page_background_uri        (EosPageManager *self,
-                                                              GtkWidget      *page,
-                                                              const gchar    *background);
+void         eos_page_manager_set_transition_duration             (EosPageManager *self,
+                                                                   guint           duration);
 
 EOS_SDK_ALL_API_VERSIONS
-void         eos_page_manager_remove_page_by_name            (EosPageManager *self,
-                                                              const gchar    *name);
+guint        eos_page_manager_get_transition_duration             (EosPageManager *self);
+
+EOS_SDK_ALL_API_VERSIONS
+void         eos_page_manager_set_transition_type                 (EosPageManager *self,
+                                                                   EosPageManagerTransitionType  transition);
+
+EOS_SDK_ALL_API_VERSIONS
+EosPageManagerTransitionType eos_page_manager_get_transition_type (EosPageManager *self);
+
+EOS_SDK_ALL_API_VERSIONS
+const gchar *eos_page_manager_get_page_background_uri             (EosPageManager *self,
+                                                                   GtkWidget      *page);
+
+EOS_SDK_ALL_API_VERSIONS
+void         eos_page_manager_set_page_background_uri             (EosPageManager *self,
+                                                                   GtkWidget      *page,
+                                                                   const gchar    *background);
+
+EOS_SDK_ALL_API_VERSIONS
+void         eos_page_manager_remove_page_by_name                 (EosPageManager *self,
+                                                                   const gchar    *name);
 
 G_END_DECLS
 

@@ -3,6 +3,7 @@
 const Lang = imports.lang;
 const Endless = imports.gi.Endless;
 const Gtk = imports.gi.Gtk;
+const GObject = imports.gi.GObject;
 
 const TEST_APPLICATION_ID = 'com.endlessm.example.test';
 
@@ -11,7 +12,7 @@ const Page0 = new Lang.Class ({
     Name: 'Page0',
     Extends: Gtk.Grid,
 
-    _init: function(props) {
+    _init: function(pm, props) {
         props = props || {};
         props.orientation = Gtk.Orientation.VERTICAL;
         this.parent(props);
@@ -20,6 +21,47 @@ const Page0 = new Lang.Class ({
         this.add(this.button1);
         this.button2 = new Gtk.Button({ label: 'Go to page named "page1"' });
         this.add(this.button2);
+
+        this._addTransitionOptions(pm);
+    },
+
+    _addTransitionOptions: function(pm) {
+        // Combo box for transition type...
+        let typeMenu = new Gtk.ComboBoxText();
+        let type_options = {
+            "Transition type: None": Endless.PageManagerTransitionType.NONE,
+            "Transition type: Fade": Endless.PageManagerTransitionType.CROSSFADE,
+            "Transition type: Slide Right": Endless.PageManagerTransitionType.SLIDE_RIGHT,
+            "Transition type: Slide Left": Endless.PageManagerTransitionType.SLIDE_LEFT,
+            "Transition type: Slide Down": Endless.PageManagerTransitionType.SLIDE_DOWN,
+            "Transition type: Slide Up": Endless.PageManagerTransitionType.SLIDE_UP
+        }
+        for (let key in type_options) {
+            typeMenu.append_text(key);
+        }
+        typeMenu.set_active (0);
+        this.add(typeMenu);
+        typeMenu.connect('changed', Lang.bind(this, function () {
+            let activeKey = typeMenu.get_active_text();
+            pm.set_transition_type(type_options[activeKey]);
+        }));
+        // Combo box for transition time...
+        let durationMenu = new Gtk.ComboBoxText();
+        let duration_options = {
+            "Transition time: 200": 200,
+            "Transition time: 500": 500,
+            "Transition time: 1000": 1000,
+            "Transition time: 2000": 2000
+        }
+        for (let key in duration_options) {
+            durationMenu.append_text(key);
+        }
+        durationMenu.set_active (0);
+        this.add(durationMenu);
+        durationMenu.connect('changed', Lang.bind(this, function () {
+            let activeKey = durationMenu.get_active_text();
+            pm.set_transition_duration(duration_options[activeKey]);
+        }));
     }
 });
 
@@ -69,8 +111,10 @@ const TestApplication = new Lang.Class ({
     vfunc_startup: function() {
         this.parent();
 
+        this._pm = new Endless.PageManager();
+
         // First page
-        this._page0 = new Page0();
+        this._page0 = new Page0(this._pm);
         this._page0.button1.connect('clicked', Lang.bind(this, function () {
             this._pm.visible_page = this._page1;
         }));
@@ -97,7 +141,6 @@ const TestApplication = new Lang.Class ({
                 this._toolbox.switch2.active);
         }));
 
-        this._pm = new Endless.PageManager();
         this._pm.add(this._page0, {
             name: "page0",
             background_uri: "./test/smoke-tests/images/cat_eye.jpg",
@@ -120,7 +163,7 @@ const TestApplication = new Lang.Class ({
 
     _onButtonClicked: function () {
         this._window.destroy();
-    },
+    }
 });
 
 let app = new TestApplication({ application_id: TEST_APPLICATION_ID,
