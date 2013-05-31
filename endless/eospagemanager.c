@@ -123,7 +123,7 @@ eos_page_manager_transition_type_get_type (void)
       { EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN, "EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN", "slide_down" },
       { 0, NULL, NULL }
     };
-    etype = g_enum_register_static (g_intern_static_string ("EosPageManagerTransition"), values);
+    etype = g_enum_register_static (g_intern_static_string ("EosPageManagerTransitionType"), values);
   }
   return etype;
 }
@@ -1184,8 +1184,8 @@ eos_page_manager_set_transition_duration (EosPageManager *self,
  * eos_page_manager_get_transition_type:
  * @self: the page manager
  *
- * Gets the animation type of page transitions. See #EosPageManager
- * :transition-type for more information.
+ * Gets the animation type of page transitions. See
+ * #EosPageManager:transition-type for more information.
  *
  * Returns: the current transition type of the page manager.
  */
@@ -1203,8 +1203,8 @@ eos_page_manager_get_transition_type (EosPageManager *self)
  * @self: the page manager
  * @transition: the type of page transitions
  *
- * Sets the animation type of page transitions. See #EosPageManager
- * :transition-type for more information.
+ * Sets the animation type of page transitions. See
+ * #EosPageManager:transition-type for more information.
  */
 void
 eos_page_manager_set_transition_type (EosPageManager                *self,
@@ -1212,28 +1212,16 @@ eos_page_manager_set_transition_type (EosPageManager                *self,
 {
   g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
 
-  // WOO useless switch statement! Should I just cast, cause I know they're the
-  // same? This seems more futureproof.
   PStackTransitionType type;
   switch (transition)
     {
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE:
-      type = P_STACK_TRANSITION_TYPE_NONE;
-      break;
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE:
-      type = P_STACK_TRANSITION_TYPE_CROSSFADE;
-      break;
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_RIGHT:
-      type = P_STACK_TRANSITION_TYPE_SLIDE_RIGHT;
-      break;
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT:
-      type = P_STACK_TRANSITION_TYPE_SLIDE_LEFT;
-      break;
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP:
-      type = P_STACK_TRANSITION_TYPE_SLIDE_UP;
-      break;
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN:
-      type = P_STACK_TRANSITION_TYPE_SLIDE_DOWN;
+      type = (PStackTransitionType)transition;
       break;
     default:
       type = P_STACK_TRANSITION_TYPE_NONE;

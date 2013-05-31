@@ -41,6 +41,18 @@ typedef struct _EosPageManagerPrivate EosPageManagerPrivate;
 
 #define EOS_TYPE_PAGE_MANAGER_TRANSITION_TYPE (eos_page_manager_transition_type_get_type ())
 
+/**
+ * EosPageManagerTransitionType:
+ * @EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE: No animation, regardless of duration.
+ * @EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE: Pages will not move, but fade into one another.
+ * @EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_RIGHT: The old page will slide off to the right.
+ * @EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT: The old page will slide off to the left.
+ * @EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP: The old page will slide up the screen.
+ * @EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN: The old page will slide down the screen.
+ *
+ * Enum values to specify the type of animation to use when transitioning
+ * between pages.
+ **/
 typedef enum {
   EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE,
   EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE,
