@@ -109,11 +109,32 @@ struct _EosPageManagerPrivate
   EosPageManagerPageInfo *visible_page_info;
 };
 
+GType
+eos_page_manager_transition_type_get_type (void)
+{
+  static GType etype = 0;
+  if (G_UNLIKELY(etype == 0)) {
+    static const GEnumValue values[] = {
+      { EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE, "EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE", "none" },
+      { EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE, "EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE", "crossfade" },
+      { EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_RIGHT, "EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_RIGHT", "slide_right" },
+      { EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT, "EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT", "slide_left" },
+      { EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP, "EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP", "slide_up" },
+      { EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN, "EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN", "slide_down" },
+      { 0, NULL, NULL }
+    };
+    etype = g_enum_register_static (g_intern_static_string ("EosPageManagerTransitionType"), values);
+  }
+  return etype;
+}
+
 enum
 {
   PROP_0,
   PROP_VISIBLE_PAGE,
   PROP_VISIBLE_PAGE_NAME,
+  PROP_TRANSITION_DURATION,
+  PROP_TRANSITION_TYPE,
   NPROPS
 };
 
@@ -244,6 +265,14 @@ eos_page_manager_get_property (GObject    *object,
       g_value_set_string (value, eos_page_manager_get_visible_page_name (self));
       break;
 
+    case PROP_TRANSITION_DURATION:
+      g_value_set_uint (value, eos_page_manager_get_transition_duration (self));
+      break;
+
+    case PROP_TRANSITION_TYPE:
+      g_value_set_enum (value, eos_page_manager_get_transition_type (self));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -265,6 +294,14 @@ eos_page_manager_set_property (GObject      *object,
 
     case PROP_VISIBLE_PAGE_NAME:
       eos_page_manager_set_visible_page_name (self, g_value_get_string (value));
+      break;
+
+    case PROP_TRANSITION_DURATION:
+      eos_page_manager_set_transition_duration (self, g_value_get_uint (value));
+      break;
+
+    case PROP_TRANSITION_TYPE:
+      eos_page_manager_set_transition_type (self, g_value_get_enum (value));
       break;
 
     default:
@@ -587,6 +624,34 @@ eos_page_manager_class_init (EosPageManagerClass *klass)
                          "",
                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
+  /**
+   * EosPageManager:transition-duration:
+   *
+   * The time it will take to animate between pages in the page managers, in
+   * milliseconds.
+   */
+  eos_page_manager_props[PROP_TRANSITION_DURATION] =
+    g_param_spec_uint ("transition-duration", "Transition duration",
+                       "The animation duration, in milliseconds",
+                       0, G_MAXUINT,
+                       200,
+                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+
+
+  /**
+   * EosPageManager:transition-type:
+   *
+   * The type of animation to use when switching between pages in the page
+   * manager. The pages can crossfade from one to the next, or slide in from
+   * any direction.
+   */
+  eos_page_manager_props[PROP_TRANSITION_TYPE] =
+    g_param_spec_enum ("transition-type", "Transition type",
+                       "The type of animation used to transition",
+                       EOS_TYPE_PAGE_MANAGER_TRANSITION_TYPE,
+                       EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE,
+                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+
   g_object_class_install_properties (object_class, NPROPS,
                                      eos_page_manager_props);
 
@@ -669,8 +734,6 @@ eos_page_manager_init (EosPageManager *self)
 
   /* TODO replace with GtkStack */
   self->priv->stack = p_stack_new ();
-  p_stack_set_transition_type (P_STACK (self->priv->stack),
-                               P_STACK_TRANSITION_TYPE_CROSSFADE);
   gtk_widget_set_parent (self->priv->stack, self_widget);
 }
 
@@ -1080,4 +1143,91 @@ eos_page_manager_remove_page_by_name (EosPageManager *self,
   g_signal_emit_by_name (self, "remove", info->page);
 
   assert_internal_state (self);
+}
+
+/**
+ * eos_page_manager_get_transition_duration:
+ * @self: the page manager
+ *
+ * Gets the animation duration of page transitions, in milliseconds. See
+ * #EosPageManager:transition-duration for more information.
+ *
+ * Returns: the current transition time of the page manager.
+ */
+guint
+eos_page_manager_get_transition_duration (EosPageManager *self)
+{
+  g_return_val_if_fail (EOS_IS_PAGE_MANAGER (self), 0);
+
+  return p_stack_get_transition_duration (P_STACK (self->priv->stack));
+}
+
+/**
+ * eos_page_manager_set_transition_duration:
+ * @self: the page manager
+ * @duration: the duration of page transitions, in milliseconds
+ *
+ * Sets the animation duration of page transitions, in milliseconds. See
+ * #EosPageManager:transition-duration for more information.
+ */
+void
+eos_page_manager_set_transition_duration (EosPageManager *self,
+                                          guint           duration)
+{
+  g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
+
+  p_stack_set_transition_duration (P_STACK (self->priv->stack), duration);
+  g_object_notify (G_OBJECT (self), "transition-duration");
+}
+
+/**
+ * eos_page_manager_get_transition_type:
+ * @self: the page manager
+ *
+ * Gets the animation type of page transitions. See
+ * #EosPageManager:transition-type for more information.
+ *
+ * Returns: the current transition type of the page manager.
+ */
+EosPageManagerTransitionType
+eos_page_manager_get_transition_type (EosPageManager *self)
+{
+  g_return_val_if_fail (EOS_IS_PAGE_MANAGER (self), EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE);
+
+  return p_stack_get_transition_type (P_STACK (self->priv->stack));
+}
+
+
+/**
+ * eos_page_manager_set_transition_type:
+ * @self: the page manager
+ * @transition: the type of page transitions
+ *
+ * Sets the animation type of page transitions. See
+ * #EosPageManager:transition-type for more information.
+ */
+void
+eos_page_manager_set_transition_type (EosPageManager                *self,
+                                      EosPageManagerTransitionType   transition)
+{
+  g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
+
+  PStackTransitionType type;
+  switch (transition)
+    {
+    case EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE:
+    case EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE:
+    case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_RIGHT:
+    case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT:
+    case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP:
+    case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN:
+      type = (PStackTransitionType)transition;
+      break;
+    default:
+      type = P_STACK_TRANSITION_TYPE_NONE;
+      break;
+    }
+  p_stack_set_transition_type (P_STACK (self->priv->stack), type);
+
+  g_object_notify (G_OBJECT (self), "transition-type");
 }
