@@ -77,3 +77,8 @@ eos_page_manager_transition_type_get_type
 <SUBSECTION Private>
 EosPageManagerPrivate
 </SECTION>
+
+<SECTION>
+<FILE>enums</FILE>
+EosActionButtonSize
+</SECTION>
