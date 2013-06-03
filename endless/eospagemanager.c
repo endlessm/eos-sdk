@@ -25,7 +25,7 @@
  * The default page manager, described in this section of the manual, lets you
  * add any number of pages and switch between them however you like, but there
  * are also other, more specialized ones:
- * for example, the #EosSplashScreenPageManager displays a splash screen and
+ * for example, the #EosSplashPageManager displays a splash screen and
  * later turns control over to a different page or page manager when you signal
  * it to;
  * and the #EosTabbedPageManager creates a tabbed interface in your window, much

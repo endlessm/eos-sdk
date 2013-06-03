@@ -43,6 +43,7 @@ main (int    argc,
   add_application_tests ();
   add_window_tests ();
   add_page_manager_tests ();
+  add_splash_page_manager_tests ();
 
   return g_test_run ();
 }

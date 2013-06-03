@@ -21,6 +21,7 @@
         <xi:include href="xml/window.xml"/>
         <xi:include href="xml/page-manager.xml"/>
         <xi:include href="xml/enums.xml"/>
+        <xi:include href="xml/splash-page-manager.xml"/>
         <!--<xi:include href="xml/hello.xml"/>-->
   </chapter>
 
