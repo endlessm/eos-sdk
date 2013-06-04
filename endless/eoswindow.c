@@ -6,6 +6,7 @@
 
 #include "eosapplication.h"
 #include "eospagemanager.h"
+#include "eospagemanager-private.h"
 #include "eostopbar-private.h"
 #include "eosmainarea-private.h"
 
@@ -133,26 +134,8 @@ static void
 sync_stack_animation (EosWindow *self)
 {
   EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
-  // TODO: Same code in two places... Should we make a private to sdk function
-  EosPageManagerTransitionType pm_transtion = eos_page_manager_get_transition_type (pm);
-  PStackTransitionType pstack_transition;
-  switch (pm_transtion)
-  {
-  case EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE:
-  case EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE:
-  case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_RIGHT:
-  case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT:
-  case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP:
-  case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN:
-    pstack_transition = (PStackTransitionType)pm_transtion;
-    break;
-  default:
-    pstack_transition = P_STACK_TRANSITION_TYPE_NONE;
-    break;
-  }
-  // Set up p_stack animation...
   p_stack_set_transition_type (P_STACK (self->priv->background_stack),
-                               pstack_transition);
+                               eos_page_manager_get_pstack_transition_type (pm));
   p_stack_set_transition_duration (P_STACK (self->priv->background_stack),
                                    eos_page_manager_get_transition_duration (pm));
 }
