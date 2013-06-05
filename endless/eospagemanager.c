@@ -462,9 +462,21 @@ eos_page_manager_remove (GtkContainer *container,
   if (info->name != NULL)
     g_hash_table_remove (self->priv->pages_by_name, info->name);
 
-  /* If this was the only page */
   if (self->priv->visible_page_info == info)
-    self->priv->visible_page_info = NULL;
+    {
+      /* If this was the only page */
+      if (self->priv->page_info == NULL)
+        {
+          self->priv->visible_page_info = NULL;
+        }
+      /* Otherwise set visible page as the first in our list. */
+      else
+        {
+          EosPageManagerPageInfo *visible_info = g_list_first (self->priv->page_info)->data;
+          set_visible_page_from_info (self, visible_info);
+        }
+
+    }
 
   page_info_free (info);
 
