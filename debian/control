@@ -1,42 +1,31 @@
-Source: open-endless-sdk
-Priority: extra
-Maintainer: Philip Chimento <philip@endlessm.com>
+Source: eos-sdk
+Section: non-free/libs
+Priority: standard
+Maintainer: Endless Mobile <maintainers@endlessm.com>
 Build-Depends: debhelper (>= 8.0.0),
                autotools-dev,
                gettext (>= 0.18.1),
                pkg-config (>= 0.24),
                gtk-doc-tools (>= 1.18),
-               gobject-introspection (>= 1.30),
-               libgirepository1.0-dev,
-               libglib2.0-dev (>= 2.20)
+               gir1.2-gtk-3.0 (>= 3.8),
+               pstack-dev (>= 1.0)
 Standards-Version: 3.9.2
-Section: libs
+Homepage: http://www.endlessm.com
 
-Package: open-endless-sdk-dev
-Section: libdevel
-Architecture: any
-Depends: open-endless-sdk0 (= ${binary:Version})
-Description: Open Endless SDK
- Development headers for the Open Endless SDK
-
-Package: libendless0
+Package: eos-sdk
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends},
-         ${misc:Depends}
+         ${misc:Depends},
+         gir1.2-gtk-3.0 (>= 3.8),
+         pstack (>= 1.0)
 Description: Open Endless SDK GUI library
  Runtime libraries for the Open Endless SDK: GUI library
 
-Package: open-endless-sdk-libs
-Section: libs
+Package: eos-sdk-dev
+Section: libdevel
 Architecture: any
-Depends: libendless0 (= ${binary:Version})
-Description: Open Endless SDK libraries
- This is a metapackage for the Open Endless SDK runtime libraries
-
-Package: open-endless-sdk-doc
-Section: doc
-Architecture: all
-Depends: open-endless-sdk-dev (= ${binary:Version})
-Description: Open Endless SDK documentation
- Documentation for the Open Endless SDK
+Depends: eos-sdk (= ${binary:Version}),
+         pstack-dev
+Description: Open Endless SDK
+ Development headers for the Open Endless SDK

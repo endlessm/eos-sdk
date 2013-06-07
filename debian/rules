@@ -12,5 +12,9 @@
 %:
 	dh $@ 
 
-override_dh_auto_configure:
-	dh_auto_configure -- --enable-gtk-doc
+DEB_CONFIGURE_EXTRA_FLAGS += --enable-gtk-doc
+
+# Keeps our tests from running when building debian! We should get rid of
+# this, but right now the tests fail because Gtk is initialized but can't find
+# an X window
+override_dh_auto_test:
