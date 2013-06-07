@@ -15,13 +15,11 @@ const TestApplication = new Lang.Class ({
 
         this._page = new Endless.ActionMenu();
         
-        this._page.add_action (new Gtk.Action({
+        this._page.add_action ({
             name: 'select',
             'icon-name': 'object-select-symbolic',
             label: 'select stuff',
-            'is-important': true }));
-        
-        this._page.get_action('select').connect('activate',
+            'is-important': true },
             Lang.bind(this, function () {
         	var md = new Gtk.MessageDialog({modal:true, title:"Information",
         	    message_type:Gtk.MessageType.INFO,
@@ -30,23 +28,23 @@ const TestApplication = new Lang.Class ({
         	md.destroy();
             }));
 
-        this._page.add_action (new Gtk.Action({
+        this._page.add_action ({
             name: 'delete',
             'icon-name': 'edit-delete-symbolic',
             label: 'delete stuff',
-            'is-important': false }));
+            'is-important': false });
 
-        this._page.add_action (new Gtk.Action({
+        this._page.add_action ({
             name: 'smile',
             'icon-name': 'face-smile-symbolic',
             label: 'smile',
-            'is-important': false }));
+            'is-important': false });
 
-        this._page.add_action (new Gtk.Action({
+        this._page.add_action ({
             name: 'sadface',
             'icon-name': 'face-sad-symbolic',
             label: 'sadface',
-            'is-important': false }));
+            'is-important': false });
 
         this._pm = new Endless.PageManager();
         this._pm.add(this._page, { name: "page" });

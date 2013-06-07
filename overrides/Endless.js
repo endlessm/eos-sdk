@@ -15,4 +15,16 @@ function _init() {
             }
         }
     }
+    
+    // Override Endless.ActionMenu.add_action() so that we hide the use of
+    // GtkAction from the developer, as that will be deprecated in the future.
+    Endless.ActionMenu.prototype._add_action_real = Endless.ActionMenu.prototype.add_action;
+    Endless.ActionMenu.prototype.add_action = function(dict, callback) {
+	let action = new Gtk.Action(dict);
+	this._add_action_real(action);
+
+	if (typeof callback === "function") {
+	    action.connect('activate', callback);
+	}
+    }
 }
