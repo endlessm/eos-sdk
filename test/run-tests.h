@@ -24,10 +24,11 @@ void app_window_test_fixture_test     (AppWindowTestFixture *fixture,
 void app_window_test_fixture_teardown (AppWindowTestFixture *fixture,
                                        gconstpointer unused);
 
-void add_init_tests                   (void);
-void add_hello_tests                  (void);
-void add_application_tests            (void);
-void add_window_tests                 (void);
-void add_page_manager_tests           (void);
+void add_init_tests                          (void);
+void add_hello_tests                         (void);
+void add_application_tests                   (void);
+void add_window_tests                        (void);
+void add_page_manager_tests                  (void);
+void add_splash_page_manager_tests           (void);
 
 #endif /* RUN_TESTS_H */
