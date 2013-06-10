@@ -51,6 +51,13 @@ GType eos_top_bar_get_type (void) G_GNUC_CONST;
 
 GtkWidget *eos_top_bar_new (void);
 
+void eos_top_bar_set_left_widget (EosTopBar *self,
+                             GtkWidget *left_top_bar_widget);
+
+void
+eos_top_bar_set_center_widget (EosTopBar *self,
+                               GtkWidget *center_top_bar_widget);
+
 G_END_DECLS
 
 #endif /* EOS_TOP_BAR_H */

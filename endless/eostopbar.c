@@ -19,6 +19,9 @@ struct _EosTopBarPrivate
 {
   GtkWidget *actions_hbox;
 
+  GtkWidget *left_top_bar_widget;
+  GtkWidget *center_top_bar_widget;
+
   GtkWidget *minimize_button;
   GtkWidget *minimize_icon;
   GtkWidget *close_button;
@@ -91,6 +94,33 @@ on_close_clicked_cb (GtkButton *button,
 {
   EosTopBar *self = EOS_TOP_BAR (user_data);
   g_signal_emit (self, top_bar_signals[CLOSE_CLICKED], 0);
+}
+
+void
+eos_top_bar_set_left_widget (EosTopBar *self,
+                             GtkWidget *left_top_bar_widget)
+{
+  self->priv->left_top_bar_widget = left_top_bar_widget;
+  /* TODO
+  if there is a previous widget, remove it first, then add the new one...
+  */
+  gtk_box_pack_start (GTK_BOX (self->priv->actions_hbox),
+                      left_top_bar_widget,
+                      FALSE, FALSE, 0);
+}
+
+void
+eos_top_bar_set_center_widget (EosTopBar *self,
+                               GtkWidget *center_top_bar_widget)
+{
+  gtk_widget_set_halign (GTK_WIDGET (center_top_bar_widget), GTK_ALIGN_CENTER);
+  gtk_widget_set_hexpand (GTK_WIDGET (center_top_bar_widget), TRUE);
+
+  self->priv->center_top_bar_widget = center_top_bar_widget;
+
+  gtk_box_pack_start (GTK_BOX (self->priv->actions_hbox),
+                      center_top_bar_widget,
+                      FALSE, FALSE, 0);
 }
 
 static void

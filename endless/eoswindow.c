@@ -64,6 +64,8 @@ struct _EosWindowPrivate
   GtkWidget *current_page;
   gulong child_page_actions_handler;
   gulong child_custom_toolbox_handler;
+  gulong child_left_topbar_handler;
+  gulong child_center_topbar_handler;
   gulong child_background_handler;
   GtkCssProvider *background_provider;
   const gchar *current_background_uri;
@@ -127,6 +129,59 @@ update_page_toolbox (EosWindow *self)
   else
     {
       eos_main_area_set_toolbox (ma, NULL);
+    }
+}
+
+/**
+ * update_page_left_topbar:
+ * @self: the window
+ * 
+ * Ensures that the currently shown state of the left topbar is in line with
+ * the child properties of the currently showing page.
+ */
+static void
+update_page_left_topbar (EosWindow *self)
+{
+  EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
+  EosTopBar *tb = EOS_TOP_BAR (self->priv->top_bar);
+  GtkWidget *page = self->priv->current_page;
+
+  if (page != NULL)
+    {
+      GtkWidget *left_topbar_widget = 
+        eos_page_manager_get_page_left_topbar_widget (pm, page);
+      eos_top_bar_set_left_widget (tb, left_topbar_widget);
+      gtk_widget_show (self->priv->top_bar);
+    }
+  else
+    {
+      eos_top_bar_set_left_widget (tb, NULL);
+    }
+}
+
+/**
+ * update_page_center_topbar:
+ * @self: the window
+ * 
+ * Ensures that the currently-shown state of the center topbar is in line with
+ * the child properties of the currently-showing page.
+ */
+static void
+update_page_center_topbar (EosWindow *self)
+{
+  EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
+  EosTopBar *tb = EOS_TOP_BAR (self->priv->top_bar);
+  GtkWidget *page = self->priv->current_page;
+
+  if (page != NULL)
+    {
+      GtkWidget *center_topbar_widget =
+        eos_page_manager_get_page_center_topbar_widget (pm, page);
+      eos_top_bar_set_center_widget (tb, center_topbar_widget);
+    }
+  else
+    {
+      eos_top_bar_set_center_widget (tb, NULL);
     }
 }
 
@@ -208,8 +263,8 @@ update_page_background (EosWindow *self)
  * update_page:
  * @self: the window
  *
- * Ensures that the state of the window and the window's main area are in line
- * with the currently showing page and its child properties.
+ * Ensures that the state of the window, the window's main area and top bar are 
+ * in line with the currently showing page and its child properties.
  */
 static void
 update_page (EosWindow *self)
@@ -224,6 +279,10 @@ update_page (EosWindow *self)
                                    self->priv->child_custom_toolbox_handler);
       g_signal_handler_disconnect (self->priv->current_page,
                                    self->priv->child_background_handler);
+      g_signal_handler_disconnect (self->priv->current_page,
+                                   self->priv->child_left_topbar_handler);
+      g_signal_handler_disconnect (self->priv->current_page,
+                                   self->priv->child_center_topbar_handler);
     }
 
   self->priv->current_page = eos_page_manager_get_visible_page (pm);
@@ -231,6 +290,8 @@ update_page (EosWindow *self)
   update_page_actions (self);
   update_page_toolbox (self);
   sync_stack_animation (self);
+  update_page_left_topbar (self);
+  update_page_center_topbar (self);
   update_page_background (self);
   p_stack_set_transition_type (P_STACK (self->priv->background_stack),
                                P_STACK_TRANSITION_TYPE_NONE);
@@ -246,6 +307,16 @@ update_page (EosWindow *self)
         g_signal_connect_swapped (self->priv->current_page,
                                   "child-notify::custom-toolbox-widget",
                                   G_CALLBACK (update_page_toolbox),
+                                  self);
+      self->priv->child_left_topbar_handler =
+        g_signal_connect_swapped (self->priv->current_page,
+                                  "child-notify::left-topbar-widget",
+                                  G_CALLBACK (update_page_left_topbar),
+                                  self);
+      self->priv->child_center_topbar_handler =
+        g_signal_connect_swapped (self->priv->current_page,
+                                  "child-notify::center-topbar-widget",
+                                  G_CALLBACK (update_page_center_topbar),
                                   self);
       self->priv->child_background_handler =
         g_signal_connect_swapped (self->priv->current_page,
@@ -390,6 +461,7 @@ eos_window_show (GtkWidget *widget)
   GTK_WIDGET_CLASS (eos_window_parent_class)->show (widget);
   if (self->priv->top_bar != NULL)
     gtk_widget_show_all (self->priv->top_bar);
+    
 }
 
 /* The top bar is an internal child, so include it in our list of internal
