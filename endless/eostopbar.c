@@ -157,6 +157,7 @@ void
 eos_top_bar_set_left_widget (EosTopBar *self,
                              GtkWidget *left_top_bar_widget)
 {
+  printf ("\n\nSetting Left Top Bar widget ...");
   self->priv->left_top_bar_widget = left_top_bar_widget;
 
   gtk_box_pack_start (GTK_BOX (self->priv->actions_hbox),
@@ -168,6 +169,7 @@ void
 eos_top_bar_set_center_widget (EosTopBar *self,
                                GtkWidget *center_top_bar_widget)
 {
+  printf ("\nSetting Center Top Bar widget ...");
   gtk_widget_set_halign (GTK_WIDGET (center_top_bar_widget), GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand (GTK_WIDGET (center_top_bar_widget), TRUE);
 
