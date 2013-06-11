@@ -117,7 +117,7 @@ const LeftTopbar = new Lang.Class ({
         props.orientation = Gtk.Orientation.VERTICAL;
         this.parent(props);
 
-        this._label = new Gtk.Label({ label: 'How big do we want the left topbar?' });
+        this._label = new Gtk.Label({ label: 'The Left Topbar' });
 
         this.add(this._label);
     }
