@@ -169,6 +169,9 @@ update_page_background (EosWindow *self)
 {
   EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
   GtkWidget *page = self->priv->current_page;
+  // If no page set, no override
+  if (page == NULL)
+    return;
 
   const gchar *next_background_uri = eos_page_manager_get_page_background_uri (pm, page);
   // If backgrounds are the same, do not transition.
@@ -192,9 +195,8 @@ update_page_background (EosWindow *self)
                                    background_css, -1, &error);
   gtk_style_context_add_provider_for_screen (screen, provider,
                                              GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
   p_stack_set_visible_child (P_STACK (self->priv->background_stack),
-                                    self->priv->next_background);
+                                      self->priv->next_background);
   // Swap our background frames for next animation
   GtkWidget *temp = self->priv->next_background;
   self->priv->next_background = self->priv->current_background;
@@ -483,7 +485,6 @@ eos_window_init (EosWindow *self)
   self->priv = WINDOW_PRIVATE (self);
 
   self->priv->background_provider = gtk_css_provider_new ();
-  self->priv->current_background_uri = "";
 
   self->priv->top_bar = eos_top_bar_new ();
   gtk_widget_set_parent (self->priv->top_bar, GTK_WIDGET (self));
@@ -494,13 +495,15 @@ eos_window_init (EosWindow *self)
   self->priv->background_stack = p_stack_new ();
   gtk_container_add (GTK_CONTAINER (self->priv->overlay), self->priv->background_stack);
 
-  gchar *background_name0 = g_strdup_printf (BACKGROUND_FRAME_NAME_TEMPLATE, 0);
-  self->priv->current_background = g_object_new (GTK_TYPE_FRAME, "name", background_name0, NULL);
-  gtk_container_add (GTK_CONTAINER (self->priv->background_stack), self->priv->current_background);
-
   gchar *background_name1 = g_strdup_printf (BACKGROUND_FRAME_NAME_TEMPLATE, 1);
   self->priv->next_background = g_object_new (GTK_TYPE_FRAME, "name", background_name1, NULL);
   gtk_container_add (GTK_CONTAINER (self->priv->background_stack), self->priv->next_background);
+
+  // Add the current background to the stack second. I think the latest added
+  // will be the first visible page in the stack
+  gchar *background_name0 = g_strdup_printf (BACKGROUND_FRAME_NAME_TEMPLATE, 0);
+  self->priv->current_background = g_object_new (GTK_TYPE_FRAME, "name", background_name0, NULL);
+  gtk_container_add (GTK_CONTAINER (self->priv->background_stack), self->priv->current_background);
 
   self->priv->main_area = eos_main_area_new ();
   gtk_overlay_add_overlay (GTK_OVERLAY (self->priv->overlay), self->priv->main_area);
