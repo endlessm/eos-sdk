@@ -17,12 +17,19 @@ typedef struct
   EosApplication *app;
 } AppWindowTestFixture;
 
-void app_window_test_fixture_setup    (AppWindowTestFixture *fixture,
-                                       gconstpointer callback);
-void app_window_test_fixture_test     (AppWindowTestFixture *fixture,
-                                       gconstpointer unused);
-void app_window_test_fixture_teardown (AppWindowTestFixture *fixture,
-                                       gconstpointer unused);
+void       app_window_test_fixture_setup       (AppWindowTestFixture *fixture,
+                                                gconstpointer callback);
+
+void       app_window_test_fixture_test        (AppWindowTestFixture *fixture,
+                                                gconstpointer unused);
+
+void       app_window_test_fixture_teardown    (AppWindowTestFixture *fixture,
+                                                gconstpointer unused);
+
+GList     *container_get_all_children          (GtkContainer *container);
+
+GtkWidget *container_find_descendant_with_type (GtkContainer *container,
+                                                GType type);
 
 void add_init_tests                          (void);
 void add_hello_tests                         (void);
