@@ -68,11 +68,7 @@ struct _EosWindowPrivate
 
   /* For keeping track of what to display alongside the current page */
   GtkWidget *current_page;
-  gulong child_page_actions_handler;
-  gulong child_custom_toolbox_handler;
-  gulong child_left_topbar_handler;
-  gulong child_center_topbar_handler;
-  gulong child_background_handler;
+  gulong visible_page_property_handler;
   GtkCssProvider *background_provider;
   gchar *current_background_css;
 };
@@ -273,6 +269,37 @@ update_page_background (EosWindow *self)
 }
 
 /*
+ * update_visible_page_properties:
+ * @widget: the page
+ * @child_property: the property that changed
+ * @user_data: pointer to the window
+ *
+ * Updates the currently displaying page when one of its child properties
+ * changes.
+ */
+static void
+update_visible_page_properties (GtkWidget  *widget,
+                                GParamSpec *child_property,
+                                gpointer    data)
+{
+  EosWindow *self = (EosWindow *)data;
+  const gchar *property_name = child_property->name;
+  if (g_strcmp0 (property_name, "page-actions") == 0)
+    update_page_actions (self);
+  else if (g_strcmp0 (property_name, "custom-toolbox-widget") == 0)
+    update_page_toolbox (self);
+  else if (g_strcmp0 (property_name, "left-topbar-widget") == 0)
+    update_page_left_topbar (self);
+  else if (g_strcmp0 (property_name, "center-topbar-widget") == 0)
+    update_page_center_topbar (self);
+  else if (g_strcmp0 (property_name, "background-uri") == 0
+           || g_strcmp0 (property_name, "background-size") == 0
+           || g_strcmp0 (property_name, "background-position") == 0
+           || g_strcmp0 (property_name, "background-repeats") == 0)
+    update_page_background (self);
+}
+
+/*
  * update_page:
  * @self: the window
  *
@@ -287,15 +314,7 @@ update_page (EosWindow *self)
   if (self->priv->current_page)
     {
       g_signal_handler_disconnect (self->priv->current_page,
-                                   self->priv->child_page_actions_handler);
-      g_signal_handler_disconnect (self->priv->current_page,
-                                   self->priv->child_custom_toolbox_handler);
-      g_signal_handler_disconnect (self->priv->current_page,
-                                   self->priv->child_background_handler);
-      g_signal_handler_disconnect (self->priv->current_page,
-                                   self->priv->child_left_topbar_handler);
-      g_signal_handler_disconnect (self->priv->current_page,
-                                   self->priv->child_center_topbar_handler);
+                                   self->priv->visible_page_property_handler);
     }
   self->priv->current_page = eos_page_manager_get_visible_page (pm);
 
@@ -310,33 +329,11 @@ update_page (EosWindow *self)
 
   if (self->priv->current_page)
     {
-      self->priv->child_page_actions_handler =
-        g_signal_connect_swapped (self->priv->current_page,
-                                  "child-notify::page-actions",
-                                  G_CALLBACK (update_page_actions),
-                                  self);
-      self->priv->child_custom_toolbox_handler =
-        g_signal_connect_swapped (self->priv->current_page,
-                                  "child-notify::custom-toolbox-widget",
-                                  G_CALLBACK (update_page_toolbox),
-                                  self);
-      self->priv->child_left_topbar_handler =
-        g_signal_connect_swapped (self->priv->current_page,
-                                  "child-notify::left-topbar-widget",
-                                  G_CALLBACK (update_page_left_topbar),
-                                  self);
-      self->priv->child_center_topbar_handler =
-        g_signal_connect_swapped (self->priv->current_page,
-                                  "child-notify::center-topbar-widget",
-                                  G_CALLBACK (update_page_center_topbar),
-                                  self);
-      // If any background property changes we still call
-      // update_page_background, but leave the stack transition type as NONE.
-      self->priv->child_background_handler =
-        g_signal_connect_swapped (self->priv->current_page,
-                                  "child-notify::background-uri",
-                                  G_CALLBACK (update_page_background),
-                                  self);
+      self->priv->visible_page_property_handler =
+        g_signal_connect (self->priv->current_page,
+                          "child-notify",
+                          G_CALLBACK (update_visible_page_properties),
+                          self);
     }
 }
 
