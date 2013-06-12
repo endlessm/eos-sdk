@@ -7,6 +7,8 @@ const GObject = imports.gi.GObject;
 
 const TEST_APPLICATION_ID = 'com.endlessm.example.test';
 
+const CAT_BACKGROUND_PATH = './test/smoke-tests/images/cat_eye.jpg';
+const DOG_BACKGROUND_PATH = './test/smoke-tests/images/dog_eye.jpg';
 
 const Page0 = new Lang.Class ({
     Name: 'Page0',
@@ -78,6 +80,8 @@ const Page1 = new Lang.Class ({
         this.add(this.button1);
         this.button2 = new Gtk.Button({ label: 'Go to page named "page0"' });
         this.add(this.button2);
+        this.button3 = new Gtk.Button({ label: 'Swap this page background' });
+        this.add(this.button3);
     }
 });
 
@@ -130,6 +134,15 @@ const TestApplication = new Lang.Class ({
         this._page1.button2.connect('clicked', Lang.bind(this, function () {
             this._pm.visible_page_name = "page0";
         }));
+        this._page1.button3.connect('clicked', Lang.bind(this, function () {
+            let background_uri = this._pm.get_page_background_uri(this._page1);
+            if (background_uri === CAT_BACKGROUND_PATH)
+                background_uri = DOG_BACKGROUND_PATH;
+            else
+                background_uri = CAT_BACKGROUND_PATH;
+            this._pm.set_page_background_uri(this._page1, background_uri);
+        }));
+
 
         this._toolbox = new Toolbox();
         this._toolbox.switch1.connect('notify::active', Lang.bind(this, function () {
@@ -143,19 +156,18 @@ const TestApplication = new Lang.Class ({
 
         this._pm.add(this._page0, {
             name: "page0",
-            background_uri: "./test/smoke-tests/images/cat_eye.jpg",
+            background_uri: CAT_BACKGROUND_PATH,
             custom_toolbox_widget: this._toolbox
         });
         this._pm.add(this._page1, {
             name: "page1",
-            background_uri: "./test/smoke-tests/images/dog_eye.jpg",
+            background_uri: DOG_BACKGROUND_PATH,
             custom_toolbox_widget: this._toolbox,
             page_actions: true
         });
 
         this._window = new Endless.Window({
             application: this,
-            border_width: 16,
             page_manager: this._pm
         });
         this._window.show_all();

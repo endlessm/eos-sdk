@@ -2,6 +2,7 @@
 
 #include "config.h"
 #include "eospagemanager.h"
+#include "eospagemanager-private.h"
 
 #include <gtk/gtk.h>
 #include <pstack.h>
@@ -109,6 +110,7 @@ struct _EosPageManagerPrivate
   GHashTable *pages_by_name; /* GHashTable<gchar *, EosPageManagerPageInfo *> */
   GHashTable *pages_by_widget; /* GHashTable<GtkWidget *, EosPageManagerPageInfo *> */
   EosPageManagerPageInfo *visible_page_info;
+  EosPageManagerTransitionType transition_type;
 };
 
 GType
@@ -1210,26 +1212,27 @@ eos_page_manager_get_transition_type (EosPageManager *self)
 {
   g_return_val_if_fail (EOS_IS_PAGE_MANAGER (self), EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE);
 
-  return p_stack_get_transition_type (P_STACK (self->priv->stack));
+  return self->priv->transition_type;
 }
 
 
 /**
  * eos_page_manager_set_transition_type:
  * @self: the page manager
- * @transition: the type of page transitions
+ * @transition_type: the type of page transitions
  *
  * Sets the animation type of page transitions. See
  * #EosPageManager:transition-type for more information.
  */
 void
 eos_page_manager_set_transition_type (EosPageManager                *self,
-                                      EosPageManagerTransitionType   transition)
+                                      EosPageManagerTransitionType   transition_type)
 {
   g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
 
-  PStackTransitionType type;
-  switch (transition)
+  self->priv->transition_type = transition_type;
+  PStackTransitionType pstack_transition;
+  switch (transition_type)
     {
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE:
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE:
@@ -1237,13 +1240,25 @@ eos_page_manager_set_transition_type (EosPageManager                *self,
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT:
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP:
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN:
-      type = (PStackTransitionType)transition;
+      pstack_transition = (PStackTransitionType)self->priv->transition_type;
       break;
     default:
-      type = P_STACK_TRANSITION_TYPE_NONE;
+      pstack_transition = P_STACK_TRANSITION_TYPE_NONE;
       break;
     }
-  p_stack_set_transition_type (P_STACK (self->priv->stack), type);
-
+  p_stack_set_transition_type (P_STACK (self->priv->stack),
+                               pstack_transition);
   g_object_notify (G_OBJECT (self), "transition-type");
+}
+
+/*
+ * eos_page_manager_get_pstack_transition_type:
+ * @self: the page manager
+ *
+ * Gets the internal pstack transition type used to animate the page manager.
+ */
+PStackTransitionType
+eos_page_manager_get_pstack_transition_type (EosPageManager *self)
+{
+  return p_stack_get_transition_type (P_STACK (self->priv->stack));
 }

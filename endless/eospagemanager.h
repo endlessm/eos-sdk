@@ -141,7 +141,7 @@ guint        eos_page_manager_get_transition_duration             (EosPageManage
 
 EOS_SDK_ALL_API_VERSIONS
 void         eos_page_manager_set_transition_type                 (EosPageManager *self,
-                                                                   EosPageManagerTransitionType  transition);
+                                                                   EosPageManagerTransitionType  transition_type);
 
 EOS_SDK_ALL_API_VERSIONS
 EosPageManagerTransitionType eos_page_manager_get_transition_type (EosPageManager *self);
