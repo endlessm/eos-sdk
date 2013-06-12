@@ -6,6 +6,17 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
+/*
+ * SECTION:topbar
+ * @short_description: The top bar of the window, above the main area of your
+ * application.
+ * @title: TopBar
+ * 
+ * The #EosTopBar has three different areas that can be managed through this 
+ * class: a left widget, center widget, and action buttons area.
+ * 
+ * The action buttons area contain "minimize" and "close" buttons.
+ */
 #define _EOS_STYLE_CLASS_TOP_BAR "top-bar"
 #define _EOS_TOP_BAR_HEIGHT_PX 36
 #define _EOS_TOP_BAR_BUTTON_PADDING_PX 3
@@ -153,6 +164,13 @@ eos_top_bar_new (void)
   return GTK_WIDGET (g_object_new (EOS_TYPE_TOP_BAR, NULL));
 }
 
+/**
+ * eos_top_bar_set_left_widget:
+ * @self: the top bar
+ * @left_top_bar_widget: the left top bar widget to be set
+ * 
+ * Sets the left widget in the top bar.
+ */
 void
 eos_top_bar_set_left_widget (EosTopBar *self,
                              GtkWidget *left_top_bar_widget)
@@ -161,7 +179,6 @@ eos_top_bar_set_left_widget (EosTopBar *self,
   g_return_if_fail (left_top_bar_widget == NULL || GTK_IS_WIDGET (left_top_bar_widget));
 
   EosTopBarPrivate *priv = self->priv;
-  GtkWidget *self_widget = GTK_WIDGET (self);
 
   if (priv->left_top_bar_widget == left_top_bar_widget)
     return;
@@ -172,6 +189,7 @@ eos_top_bar_set_left_widget (EosTopBar *self,
   priv->left_top_bar_widget = left_top_bar_widget;
   if (left_top_bar_widget)
     {
+      // Override font color 
       GdkRGBA white = { 1.0, 1.0, 1.0, 1.0 };
       gtk_widget_set_halign (GTK_WIDGET (left_top_bar_widget), GTK_ALIGN_CENTER);
       gtk_widget_set_valign (GTK_WIDGET (left_top_bar_widget), GTK_ALIGN_CENTER);
@@ -185,6 +203,13 @@ eos_top_bar_set_left_widget (EosTopBar *self,
     }
 }
 
+/*
+ * eos_top_bar_set_left_widget:
+ * @self: the top bar
+ * @left_top_bar_widget: the left top bar widget to be set
+ * 
+ * Sets the left widget in the top bar.
+ */
 void
 eos_top_bar_set_center_widget (EosTopBar *self,
                                GtkWidget *center_top_bar_widget)
@@ -193,7 +218,6 @@ eos_top_bar_set_center_widget (EosTopBar *self,
   g_return_if_fail (center_top_bar_widget == NULL || GTK_IS_WIDGET (center_top_bar_widget));
 
   EosTopBarPrivate *priv = self->priv;
-  GtkWidget *self_widget = GTK_WIDGET (self);
 
   if (priv->center_top_bar_widget == center_top_bar_widget)
     return;
@@ -204,6 +228,7 @@ eos_top_bar_set_center_widget (EosTopBar *self,
   priv->center_top_bar_widget = center_top_bar_widget;
   if (center_top_bar_widget)
     {
+      // Add white foreground to make label actually visible
       GdkRGBA white = { 1.0, 1.0, 1.0, 1.0 };
       gtk_widget_set_halign (GTK_WIDGET (center_top_bar_widget), GTK_ALIGN_CENTER);
       gtk_widget_set_valign (GTK_WIDGET (center_top_bar_widget), GTK_ALIGN_CENTER);
