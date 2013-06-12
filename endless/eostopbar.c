@@ -172,9 +172,16 @@ eos_top_bar_set_left_widget (EosTopBar *self,
   priv->left_top_bar_widget = left_top_bar_widget;
   if (left_top_bar_widget)
     {
+      GdkRGBA white = { 1.0, 1.0, 1.0, 1.0 };
+      gtk_widget_set_halign (GTK_WIDGET (left_top_bar_widget), GTK_ALIGN_CENTER);
+      gtk_widget_set_valign (GTK_WIDGET (left_top_bar_widget), GTK_ALIGN_CENTER);
+      gtk_widget_override_color (GTK_WIDGET (left_top_bar_widget),
+                                 GTK_STATE_FLAG_NORMAL,
+                                 &white);
+
       gtk_box_pack_start (GTK_BOX (priv->actions_hbox),
                           left_top_bar_widget,
-                          FALSE, FALSE, 0);
+                          TRUE, TRUE, 0);
     }
 }
 
@@ -197,10 +204,16 @@ eos_top_bar_set_center_widget (EosTopBar *self,
   priv->center_top_bar_widget = center_top_bar_widget;
   if (center_top_bar_widget)
     {
+      GdkRGBA white = { 1.0, 1.0, 1.0, 1.0 };
       gtk_widget_set_halign (GTK_WIDGET (center_top_bar_widget), GTK_ALIGN_CENTER);
+      gtk_widget_set_valign (GTK_WIDGET (center_top_bar_widget), GTK_ALIGN_CENTER);
       gtk_widget_set_hexpand (GTK_WIDGET (center_top_bar_widget), TRUE);
+      gtk_widget_override_color (GTK_WIDGET (center_top_bar_widget),
+                                 GTK_STATE_FLAG_NORMAL,
+                                 &white);
+
       gtk_box_pack_start (GTK_BOX (priv->actions_hbox),
                           center_top_bar_widget,
-                          FALSE, FALSE, 0);
+                          TRUE, TRUE, 0);
     }
 }
