@@ -72,8 +72,10 @@
  * eos_page_manager_remove_page_by_name().
  * If the removed page was the only page, then the page manager will display
  * nothing.
- * If that page was currently displaying but was not the only page, then the
- * page manager will display another page; which page is undefined.
+ * If there are multiple pages still in the page manager, you should never
+ * remove the visible-page. Always set a new visible page before removing the
+ * current one. A critical warning will be emitted if you remove the visible-
+ * page when there are still other pages in the page manager.
  *
  * <warning>
  *   <para>Removing pages with gtk_container_remove() is currently broken due to
@@ -462,9 +464,23 @@ eos_page_manager_remove (GtkContainer *container,
   if (info->name != NULL)
     g_hash_table_remove (self->priv->pages_by_name, info->name);
 
-  /* If this was the only page */
   if (self->priv->visible_page_info == info)
-    self->priv->visible_page_info = NULL;
+    {
+      /* If this was the only page */
+      if (self->priv->page_info == NULL)
+        {
+          self->priv->visible_page_info = NULL;
+        }
+      /* Otherwise set visible page as the first in our list. */
+      else
+        {
+          g_critical ("Removing the currently visible page %p from the page manager.",
+                      page);
+          EosPageManagerPageInfo *visible_info = g_list_first (self->priv->page_info)->data;
+          set_visible_page_from_info (self, visible_info);
+        }
+
+    }
 
   page_info_free (info);
 

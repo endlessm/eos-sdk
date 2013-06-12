@@ -411,11 +411,18 @@ test_pm_remove_page_undefined_behavior (PageManagerFixture *fixture,
                                         gconstpointer       unused)
 {
   GtkWidget *visible_page;
+  GtkWidget *page1 = gtk_label_new ("page1");
+  GtkWidget *page2 = gtk_label_new ("page2");
+  gtk_container_add (GTK_CONTAINER (fixture->pm), page1);
+  gtk_container_add (GTK_CONTAINER (fixture->pm), page2);
+  eos_page_manager_set_visible_page (EOS_PAGE_MANAGER (fixture->pm),
+                                     page1);
   visible_page = eos_page_manager_get_visible_page (EOS_PAGE_MANAGER (fixture->pm));
-  g_assert (visible_page == fixture->page1);
-  gtk_container_remove (GTK_CONTAINER (fixture->pm), fixture->page1);
+  g_assert (visible_page == page1);
+  gtk_container_remove (GTK_CONTAINER (fixture->pm), page1);
+  // Only one page left, so it should be the visible page.
   visible_page = eos_page_manager_get_visible_page (EOS_PAGE_MANAGER (fixture->pm));
-  g_assert (visible_page != fixture->page1);
+  g_assert (visible_page == page2);
 }
 
 static void
@@ -599,7 +606,7 @@ add_page_manager_tests (void)
     {
       ADD_PAGE_MANAGER_TEST ("/page-manager/remove-page-behavior",
                            test_pm_remove_page_behavior);
-      ADD_PAGE_MANAGER_TEST ("/page-manager/remove-page-undefined-behavior",
-                             test_pm_remove_page_undefined_behavior);
+      ADD_EMPTY_PAGE_MANAGER_TEST ("/page-manager/remove-page-undefined-behavior",
+                                   test_pm_remove_page_undefined_behavior);
     }
 }
