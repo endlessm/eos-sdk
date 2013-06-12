@@ -9,7 +9,7 @@ Build-Depends: debhelper (>= 8.0.0),
                gtk-doc-tools (>= 1.18),
                gobject-introspection (>= 1.30),
                gir1.2-gtk-3.0 (>= 3.8),
-               pstack-dev (>= 1.0)
+               eos-pstack-dev (>= 1.0)
 Standards-Version: 3.9.2
 Homepage: http://www.endlessm.com
 
@@ -19,7 +19,7 @@ Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
          gir1.2-gtk-3.0 (>= 3.8),
-         pstack (>= 1.0)
+         eos-pstack (>= 1.0)
 Description: Open Endless SDK GUI library
  Runtime libraries for the Open Endless SDK: GUI library
 
@@ -27,6 +27,6 @@ Package: eos-sdk-dev
 Section: libdevel
 Architecture: any
 Depends: eos-sdk (= ${binary:Version}),
-         pstack-dev
+         eos-pstack-dev
 Description: Open Endless SDK
  Development headers for the Open Endless SDK
