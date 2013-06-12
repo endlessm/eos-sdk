@@ -157,27 +157,50 @@ void
 eos_top_bar_set_left_widget (EosTopBar *self,
                              GtkWidget *left_top_bar_widget)
 {
-  printf ("\n\nSetting Left Top Bar widget ...");
-  self->priv->left_top_bar_widget = left_top_bar_widget;
+  g_return_if_fail (EOS_IS_TOP_BAR (self));
+  g_return_if_fail (left_top_bar_widget == NULL || GTK_IS_WIDGET (left_top_bar_widget));
 
-  gtk_box_pack_start (GTK_BOX (self->priv->actions_hbox),
-                      self->priv->left_top_bar_widget,
-                      FALSE, FALSE, 0);
+  EosTopBarPrivate *priv = self->priv;
+  GtkWidget *self_widget = GTK_WIDGET (self);
+
+  if (priv->left_top_bar_widget == left_top_bar_widget)
+    return;
+
+  if (priv->left_top_bar_widget)
+    gtk_widget_unparent (priv->left_top_bar_widget);
+
+  priv->left_top_bar_widget = left_top_bar_widget;
+  if (left_top_bar_widget)
+    {
+      gtk_box_pack_start (GTK_BOX (priv->actions_hbox),
+                          left_top_bar_widget,
+                          FALSE, FALSE, 0);
+    }
 }
 
 void
 eos_top_bar_set_center_widget (EosTopBar *self,
                                GtkWidget *center_top_bar_widget)
 {
-  printf ("\nSetting Center Top Bar widget ...");
-  gtk_widget_set_halign (GTK_WIDGET (center_top_bar_widget), GTK_ALIGN_CENTER);
-  gtk_widget_set_hexpand (GTK_WIDGET (center_top_bar_widget), TRUE);
+  g_return_if_fail (EOS_IS_TOP_BAR (self));
+  g_return_if_fail (center_top_bar_widget == NULL || GTK_IS_WIDGET (center_top_bar_widget));
 
-  self->priv->center_top_bar_widget = center_top_bar_widget;
+  EosTopBarPrivate *priv = self->priv;
+  GtkWidget *self_widget = GTK_WIDGET (self);
 
-  gtk_box_pack_start (GTK_BOX (self->priv->actions_hbox),
-                      self->priv->center_top_bar_widget,
-                      FALSE, FALSE, 0);
+  if (priv->center_top_bar_widget == center_top_bar_widget)
+    return;
 
-  gtk_widget_show (self->priv->actions_hbox);
+  if (priv->center_top_bar_widget)
+    gtk_widget_unparent (priv->center_top_bar_widget);
+
+  priv->center_top_bar_widget = center_top_bar_widget;
+  if (center_top_bar_widget)
+    {
+      gtk_widget_set_halign (GTK_WIDGET (center_top_bar_widget), GTK_ALIGN_CENTER);
+      gtk_widget_set_hexpand (GTK_WIDGET (center_top_bar_widget), TRUE);
+      gtk_box_pack_start (GTK_BOX (priv->actions_hbox),
+                          center_top_bar_widget,
+                          FALSE, FALSE, 0);
+    }
 }

@@ -149,7 +149,7 @@ update_page_left_topbar (EosWindow *self)
   if (page != NULL)
     {
       GtkWidget *left_topbar_widget = 
-        eos_page_manager_get_page_left_topbar_widget (pm, page);
+        GTK_WIDGET (eos_page_manager_get_page_left_topbar_widget (pm, page));
       eos_top_bar_set_left_widget (tb, left_topbar_widget);
       gtk_widget_show (self->priv->top_bar);
     }
@@ -176,7 +176,7 @@ update_page_center_topbar (EosWindow *self)
   if (page != NULL)
     {
       GtkWidget *center_topbar_widget =
-        eos_page_manager_get_page_center_topbar_widget (pm, page);
+        GTK_WIDGET (eos_page_manager_get_page_center_topbar_widget (pm, page));
       eos_top_bar_set_center_widget (tb, center_topbar_widget);
     }
   else

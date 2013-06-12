@@ -192,7 +192,6 @@ const TestApplication = new Lang.Class ({
             name: "page0",
             background_uri: CAT_BACKGROUND_PATH,
             custom_toolbox_widget: this._toolbox
-
             left_topbar_widget: this._left_topbar,
             center_topbar_widget: this._center_topbar 
         });
@@ -200,9 +199,9 @@ const TestApplication = new Lang.Class ({
         this._pm.add(this._page1, {
             name: "page1",
             background_uri: DOG_BACKGROUND_PATH,
-
             custom_toolbox_widget: this._toolbox,
             left_topbar_widget: this._left_topbar,
+            center_topbar_widget: this._center_topbar,
             page_actions: true
         });
 
