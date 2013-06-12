@@ -38,9 +38,15 @@
 
 #define BACKGROUND_FRAME_NAME_TEMPLATE "_eos-window-background-%d"
 
-#define BACKGROUND_FRAME_CSS_TEMPLATE "#%s { background-image: url(\"%s\");" \
-                                           " background-size: 100%% 100%%;" \
-                                           " border-width: 0px; }"
+#define TRANSPARENT_FRAME_CSS_TEMPLATE "#%s { background-image: none;\n" \
+                                            " background-color: transparent\n;" \
+                                            " border-width: 0px; }\n"
+
+#define BACKGROUND_FRAME_CSS_TEMPLATE "#%s { background-image: url(\"%s\");\n" \
+                                           " background-size: %s;\n" \
+                                           " background-position: %s;\n" \
+                                           " background-repeat: %s;\n" \
+                                           " border-width: 0px; }\n"
 
 G_DEFINE_TYPE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
 
@@ -68,7 +74,7 @@ struct _EosWindowPrivate
   gulong child_center_topbar_handler;
   gulong child_background_handler;
   GtkCssProvider *background_provider;
-  const gchar *current_background_uri;
+  gchar *current_background_css;
 };
 
 enum
@@ -195,21 +201,31 @@ sync_stack_animation (EosWindow *self)
                                    eos_page_manager_get_transition_duration (pm));
 }
 
-// Helper to generate css override
+// Helper to generate frame css override
 static gchar *
-format_background_css (GtkWidget *widget, const gchar *background_uri)
+format_background_css (EosPageManager *pm,
+                       GtkWidget *background_frame,
+                       GtkWidget *page)
 {
-  // If background uri is NULL (unset) our css override is empty. The frame
-  // will be transparent by default so any css styling of EosWindow will "show
-  // through" the pages.
+  const gchar *frame_name = gtk_widget_get_name (background_frame);
+  const gchar *background_uri = eos_page_manager_get_page_background_uri (pm, page);
+  const gchar *background_size = eos_page_manager_get_page_background_size (pm, page);
+  const gchar *background_position = eos_page_manager_get_page_background_position (pm, page);
+  gboolean background_repeats = eos_page_manager_get_page_background_repeats (pm, page);
+  const gchar *background_repeats_string = background_repeats ? "repeat" : "no-repeat";
 
-  // TODO: Enforce transparent frame background with CSS in case the user has
-  // overriden default frame styling.
+  // If background uri is NULL (unset) our css override forces the frame to be
+  // transparent. So any css styling of EosWindow will "show through" the
+  // pages.
   if (background_uri == NULL)
-    return "";
+    return g_strdup_printf (TRANSPARENT_FRAME_CSS_TEMPLATE,
+                            frame_name);
   return g_strdup_printf (BACKGROUND_FRAME_CSS_TEMPLATE,
-                          gtk_widget_get_name (widget),
-                          background_uri);
+                          frame_name,
+                          background_uri,
+                          background_size,
+                          background_position,
+                          background_repeats_string);
 }
 
 /*
@@ -224,23 +240,20 @@ update_page_background (EosWindow *self)
 {
   EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
   GtkWidget *page = self->priv->current_page;
-  // If no page set, no override
+  // If no page set, do not transition
   if (page == NULL)
     return;
-
-  const gchar *next_background_uri = eos_page_manager_get_page_background_uri (pm, page);
-  // If backgrounds are the same, do not transition.
-  if (g_strcmp0 (next_background_uri, self->priv->current_background_uri) == 0)
-    return;
   // Set up css override for transition background...
-  gchar *next_background_css = format_background_css (self->priv->next_background,
-                                                      next_background_uri);
-  gchar *current_background_css = format_background_css (self->priv->current_background,
-                                                         self->priv->current_background_uri);
+  gchar *next_background_css = format_background_css (pm,
+                                                      self->priv->next_background,
+                                                      page);
+  // If page background are exactly the same, do not transition
+  if (g_strcmp0 (self->priv->current_background_css, next_background_css) == 0)
+    return;
   gchar *background_css = g_strconcat(next_background_css,
-                                      current_background_css,
+                                      self->priv->current_background_css,
                                       NULL);
-
+  // Override the css
   GtkStyleProvider *provider =
     GTK_STYLE_PROVIDER (self->priv->background_provider);
   GdkScreen *screen = gdk_screen_get_default ();
@@ -256,7 +269,7 @@ update_page_background (EosWindow *self)
   GtkWidget *temp = self->priv->next_background;
   self->priv->next_background = self->priv->current_background;
   self->priv->current_background = temp;
-  self->priv->current_background_uri = next_background_uri;
+  self->priv->current_background_css = next_background_css;
 }
 
 /*
@@ -284,7 +297,6 @@ update_page (EosWindow *self)
       g_signal_handler_disconnect (self->priv->current_page,
                                    self->priv->child_center_topbar_handler);
     }
-
   self->priv->current_page = eos_page_manager_get_visible_page (pm);
 
   update_page_actions (self);
@@ -318,6 +330,8 @@ update_page (EosWindow *self)
                                   "child-notify::center-topbar-widget",
                                   G_CALLBACK (update_page_center_topbar),
                                   self);
+      // If any background property changes we still call
+      // update_page_background, but leave the stack transition type as NONE.
       self->priv->child_background_handler =
         g_signal_connect_swapped (self->priv->current_page,
                                   "child-notify::background-uri",
