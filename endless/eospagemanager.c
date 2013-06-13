@@ -5,7 +5,7 @@
 #include "eospagemanager-private.h"
 
 #include <gtk/gtk.h>
-#include "../pstack/pstack.h"
+#include <pstack.h>
 
 #include <string.h>
 
