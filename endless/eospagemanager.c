@@ -476,6 +476,7 @@ eos_page_manager_add (GtkContainer *container,
   EosPageManagerPageInfo *info = g_slice_new0 (EosPageManagerPageInfo);
   info->background_size = DEFAULT_BACKGROUND_SIZE;
   info->background_position = DEFAULT_BACKGROUND_POSITION;
+  info->background_repeats = TRUE;
   info->page = new_page;
   self->priv->page_info = g_list_prepend (self->priv->page_info, info);
   g_hash_table_insert (self->priv->pages_by_widget, new_page, info);
