@@ -13,9 +13,24 @@ const TestApplication = new Lang.Class ({
     vfunc_startup: function() {
         this.parent();
 
-        this._page = new Endless.ActionMenu();
+        this._page = new Gtk.Grid ();
         
-        this._page.add_action ({
+        this._content = new Gtk.Label ({name: 'content', label: 'Content'});
+        
+        this._menu = new Endless.ActionMenu ();
+        
+        // put the ActionMenu in a panel, as GtkGrid doesn't expand if none of its children want to
+        this._menu_panel = new Gtk.Frame ({name: 'menu'});
+        this._menu_panel.add (this._menu);
+        this._menu_panel.set_hexpand (true);
+        this._menu_panel.set_vexpand (true);
+
+        // the ActionMenu takes 1/6 of the width
+        this._page.set_column_homogeneous (true);
+        this._page.attach (this._content, 0, 0, 5, 1);
+        this._page.attach (this._menu_panel, 5, 0, 1, 1);
+        
+        this._menu.add_action ({
             name: 'select',
             'icon-name': 'object-select-symbolic',
             label: 'select stuff',
@@ -28,19 +43,19 @@ const TestApplication = new Lang.Class ({
         	md.destroy();
             }));
 
-        this._page.add_action ({
+        this._menu.add_action ({
             name: 'delete',
             'icon-name': 'edit-delete-symbolic',
             label: 'delete stuff',
             'is-important': false });
 
-        this._page.add_action ({
+        this._menu.add_action ({
             name: 'smile',
             'icon-name': 'face-smile-symbolic',
             label: 'smile',
             'is-important': false });
 
-        this._page.add_action ({
+        this._menu.add_action ({
             name: 'sadface',
             'icon-name': 'face-sad-symbolic',
             label: 'sadface',
@@ -54,7 +69,7 @@ const TestApplication = new Lang.Class ({
         
         this._window = new Endless.Window({
             application: this,
-            border_width: 16,
+            border_width: 1,
             page_manager: this._pm
         });
         

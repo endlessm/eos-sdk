@@ -47,15 +47,24 @@ eos_action_menu_class_init (EosActionMenuClass *klass)
 }
 
 static void
-eos_action_menu_init (EosActionMenu *menu)
+eos_action_menu_init (EosActionMenu *self)
 {
   EosActionMenuPrivate *priv;
+  GtkStyleContext *context;
 
-  menu->priv = EOS_ACTION_MENU_PRIVATE (menu);
-  priv = menu->priv;
+  self->priv = EOS_ACTION_MENU_PRIVATE (self);
+  priv = self->priv;
+
+  context = gtk_widget_get_style_context (GTK_WIDGET (self));
+  gtk_style_context_add_class (context, _EOS_STYLE_CLASS_ACTION_MENU);
 
   // TODO : name?
   priv->action_group = gtk_action_group_new ("EosActionMenu");
+
+  gtk_widget_set_hexpand (GTK_WIDGET (self), TRUE);
+  gtk_widget_set_vexpand (GTK_WIDGET (self), TRUE);
+  gtk_widget_set_halign (GTK_WIDGET (self), GTK_ALIGN_CENTER);
+  gtk_widget_set_valign (GTK_WIDGET (self), GTK_ALIGN_CENTER);
 }
 
 /* ******* LIFECYCLE ******* */
@@ -99,7 +108,7 @@ eos_action_menu_add_action (EosActionMenu *menu,
 {
   EosActionMenuPrivate *priv;
 
-  g_return_val_if_fail (EOS_IS_ACTION_MENU (menu), NULL);
+  g_return_if_fail (EOS_IS_ACTION_MENU (menu));
   priv = menu->priv;
 
   if (action)
