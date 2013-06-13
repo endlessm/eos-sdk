@@ -1,0 +1,107 @@
+<SECTION>
+<FILE>hello</FILE>
+eos_hello_sample_function
+<SUBSECTION Private>
+EOS_SDK_ALL_API_VERSIONS
+</SECTION>
+
+<SECTION>
+<FILE>application</FILE>
+EosApplication
+eos_application_new
+<SUBSECTION Standard>
+EosApplicationClass
+EOS_APPLICATION
+EOS_APPLICATION_CLASS
+EOS_APPLICATION_GET_CLASS
+EOS_IS_APPLICATION
+EOS_IS_APPLICATION_CLASS
+EOS_TYPE_APPLICATION
+eos_application_get_type
+<SUBSECTION Private>
+EosApplicationPrivate
+</SECTION>
+
+<SECTION>
+<FILE>window</FILE>
+EosWindow
+eos_window_new
+eos_window_get_page_manager
+eos_window_set_page_manager
+<SUBSECTION Standard>
+EosWindowClass
+EOS_IS_WINDOW
+EOS_IS_WINDOW_CLASS
+EOS_TYPE_WINDOW
+EOS_WINDOW
+EOS_WINDOW_CLASS
+EOS_WINDOW_GET_CLASS
+eos_window_get_type
+<SUBSECTION Private>
+EosWindowPrivate
+</SECTION>
+
+<SECTION>
+<FILE>page-manager</FILE>
+EosPageManager
+eos_page_manager_new
+eos_page_manager_get_visible_page
+eos_page_manager_set_visible_page
+eos_page_manager_get_visible_page_name
+eos_page_manager_set_visible_page_name
+eos_page_manager_get_page_name
+eos_page_manager_set_page_name
+eos_page_manager_get_page_actions
+eos_page_manager_set_page_actions
+eos_page_manager_get_page_custom_toolbox_widget
+eos_page_manager_set_page_custom_toolbox_widget
+eos_page_manager_get_page_background_uri
+eos_page_manager_set_page_background_uri
+eos_page_manager_get_transition_duration
+eos_page_manager_set_transition_duration
+eos_page_manager_get_transition_type
+eos_page_manager_set_transition_type
+eos_page_manager_remove_page_by_name
+EosPageManagerTransitionType
+<SUBSECTION Standard>
+EOS_IS_PAGE_MANAGER
+EOS_IS_PAGE_MANAGER_CLASS
+EOS_PAGE_MANAGER
+EOS_PAGE_MANAGER_CLASS
+EOS_PAGE_MANAGER_GET_CLASS
+EOS_TYPE_PAGE_MANAGER
+EOS_TYPE_PAGE_MANAGER_TRANSITION_TYPE
+EosPageManagerClass
+eos_page_manager_get_type
+eos_page_manager_transition_type_get_type
+<SUBSECTION Private>
+EosPageManagerPrivate
+</SECTION>
+
+<SECTION>
+<FILE>enums</FILE>
+EosActionButtonSize
+</SECTION>
+
+<SECTION>
+<FILE>splash-page-manager</FILE>
+EosSplashPageManager
+eos_splash_page_manager_new
+eos_splash_page_manager_get_splash_page
+eos_splash_page_manager_set_splash_page
+eos_splash_page_manager_get_main_page
+eos_splash_page_manager_set_main_page
+eos_splash_page_manager_show_main_page
+eos_splash_page_manager_show_splash_page
+<SUBSECTION Standard>
+EOS_IS_SPLASH_PAGE_MANAGER
+EOS_IS_SPLASH_PAGE_MANAGER_CLASS
+EOS_SPLASH_PAGE_MANAGER
+EOS_SPLASH_PAGE_MANAGER_CLASS
+EOS_SPLASH_PAGE_MANAGER_GET_CLASS
+EOS_TYPE_SPLASH_PAGE_MANAGER
+EosSplashPageManagerClass
+eos_splash_page_manager_get_type
+<SUBSECTION Private>
+EosSplashPageManagerPrivate
+</SECTION>

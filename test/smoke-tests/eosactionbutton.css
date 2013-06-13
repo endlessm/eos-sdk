@@ -1,0 +1,56 @@
+EosActionButton {
+	background-color: transparent;
+	border-color: #012345;
+	border-radius: 32px;
+	border-width: 8px;
+	border-style: solid;
+	margin: 10px;
+}
+
+/* ****** SIZES ****** */
+
+EosActionButton.primary {
+	border-radius: 32px;
+	border-width: 8px;
+}
+
+EosActionButton.secondary {
+	border-radius: 24px;
+	border-width: 6px;
+}
+
+EosActionButton.tertiary {
+	border-radius: 18px;
+	border-width: 5px;
+}
+
+EosActionButton.quaternary {
+	border-radius: 13px;
+	border-width: 4px;
+}
+
+/* ****** STATES ****** */
+
+EosActionButton:active {
+	border-color: #123456;
+}
+
+EosActionButton:hover {
+	border-color: #234567;
+}
+
+EosActionButton:insensitive {
+	border-color: #345678;
+}
+
+EosActionButton:selected {
+	border-color: #456789;
+}
+
+EosActionButton:focused {
+	border-color: #56789A;
+}
+
+EosActionButton:inconsistent {
+	border-color: #6789AB;
+}

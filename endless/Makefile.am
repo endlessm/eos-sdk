@@ -1,0 +1,44 @@
+# Copyright 2013 Endless Mobile, Inc.
+
+endless_public_installed_headers = endless/endless.h
+
+endless_private_installed_headers = \
+	endless/eosversion.h \
+	endless/eosapplication.h \
+	endless/eosenums.h \
+	endless/eosmacros.h \
+	endless/eospagemanager.h \
+	endless/eossplashpagemanager.h \
+	endless/eostypes.h \
+	endless/eoswindow.h \
+	endless/eosactionbutton-private.h
+
+endless_library_sources = \
+	endless/eosapplication.c \
+	endless/eoshello.c \
+	endless/eosinit.c endless/eosinit-private.h \
+	endless/eospagemanager.c \
+	endless/eosmainarea.c endless/eosmainarea-private.h \
+	endless/eossplashpagemanager.c \
+	endless/eostopbar.c endless/eostopbar-private.h \
+	endless/eosactionbutton.c \
+	endless/eoswindow.c
+
+# Endless GUI library
+lib_LTLIBRARIES = libendless-@EOS_SDK_API_VERSION@.la
+libendless_@EOS_SDK_API_VERSION@_la_SOURCES = \
+	$(endless_public_installed_headers) \
+	$(endless_private_installed_headers) \
+	$(endless_library_sources)
+# Defining G_LOG_DOMAIN allows you to run any program with
+# G_MESSAGES_DEBUG=EndlessSDK ./myprogram
+# and turn on debug messages
+libendless_@EOS_SDK_API_VERSION@_la_CPPFLAGS = \
+	@EOS_SDK_CFLAGS@ \
+	-DG_LOG_DOMAIN=\"EndlessSDK\" \
+	-DCOMPILING_EOS_SDK
+libendless_@EOS_SDK_API_VERSION@_la_CFLAGS = $(AM_CFLAGS)
+libendless_@EOS_SDK_API_VERSION@_la_LIBADD = @EOS_SDK_LIBS@
+libendless_@EOS_SDK_API_VERSION@_la_LDFLAGS = \
+	-version-info @EOS_SDK_LT_VERSION_INFO@ \
+	-export-symbols-regex "^eos_"
