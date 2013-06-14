@@ -474,8 +474,8 @@ eos_page_manager_add (GtkContainer *container,
 
   gtk_container_add (GTK_CONTAINER (self->priv->stack), new_page);
   EosPageManagerPageInfo *info = g_slice_new0 (EosPageManagerPageInfo);
-  info->background_size = DEFAULT_BACKGROUND_SIZE;
-  info->background_position = DEFAULT_BACKGROUND_POSITION;
+  info->background_size = g_strdup (DEFAULT_BACKGROUND_SIZE);
+  info->background_position = g_strdup (DEFAULT_BACKGROUND_POSITION);
   info->background_repeats = TRUE;
   info->page = new_page;
   self->priv->page_info = g_list_prepend (self->priv->page_info, info);
