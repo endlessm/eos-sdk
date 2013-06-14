@@ -31,6 +31,54 @@ app_window_test_fixture_teardown (AppWindowTestFixture *fixture,
   g_object_unref (fixture->app);
 }
 
+
+static void
+add_widget_to_list_cb (GtkWidget *widget,
+                       gpointer   data)
+{
+  GList **list = (GList**) data;
+  *list = g_list_append (*list, widget);
+}
+
+GList *
+container_get_all_children (GtkContainer *container)
+{
+  GList *children = NULL;
+  gtk_container_forall (container,
+                        add_widget_to_list_cb,
+                        &children);
+  return children;
+}
+
+static GtkWidget *
+container_find_descendant_with_type_recurse (GtkWidget *widget,
+                                             GType type)
+{
+  if (G_TYPE_CHECK_INSTANCE_TYPE (widget, type))
+    return widget;
+  if (GTK_IS_CONTAINER (widget))
+    {
+      GList *children = container_get_all_children (GTK_CONTAINER (widget));
+      for (guint i = 0; i < g_list_length (children); i++)
+        {
+          GtkWidget *descendant = container_find_descendant_with_type_recurse (g_list_nth_data (children, i),
+                                                                               type);
+          if (descendant != NULL)
+            return descendant;
+        }
+    }
+  return NULL;
+}
+
+/* Query all the descendants of container, return the first found of the desired
+ type, or null*/
+GtkWidget *
+container_find_descendant_with_type (GtkContainer *container,
+                                     GType type)
+{
+  return container_find_descendant_with_type_recurse (GTK_WIDGET (container), type);
+}
+
 int
 main (int    argc,
       char **argv)

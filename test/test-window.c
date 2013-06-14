@@ -75,48 +75,22 @@ test_screen_size (GApplication *app)
   gtk_widget_destroy (win);
 }
 
-/* Query all the children of win, including the internal children, to find the
-top bar */
-static void
-find_top_bar (GtkWidget *widget,
-              GtkWidget **top_bar_return_location)
-{
-  if (EOS_IS_TOP_BAR (widget))
-    *top_bar_return_location = widget;
-}
-
 static void
 test_has_top_bar (GApplication *app)
 {
   GtkWidget *win = eos_window_new (EOS_APPLICATION (app));
-  GtkWidget *top_bar = NULL;
-
-  gtk_container_forall (GTK_CONTAINER (win), (GtkCallback)find_top_bar,
-                        &top_bar);
+  GtkWidget *top_bar = container_find_descendant_with_type (GTK_CONTAINER (win), EOS_TYPE_TOP_BAR);
   g_assert (top_bar != NULL);
   g_assert (EOS_IS_TOP_BAR (top_bar));
 
   gtk_widget_destroy (win);
 }
 
-/* Query all the children of win, including the internal children, to find the
-main area */
-static void
-find_main_area (GtkWidget *widget,
-                GtkWidget **main_area_return_location)
-{
-  if (EOS_IS_MAIN_AREA (widget))
-    *main_area_return_location = widget;
-}
-
 static void
 test_has_main_area (GApplication *app)
 {
   GtkWidget *win = eos_window_new (EOS_APPLICATION (app));
-  GtkWidget *main_area = NULL;
-
-  gtk_container_forall (GTK_CONTAINER (win), (GtkCallback)find_main_area,
-                        &main_area);
+  GtkWidget *main_area = container_find_descendant_with_type (GTK_CONTAINER (win), EOS_TYPE_MAIN_AREA);
   g_assert (main_area != NULL);
   g_assert (EOS_IS_MAIN_AREA (main_area));
 
@@ -176,10 +150,7 @@ test_main_area_widgets_visibility (GApplication *app)
 {
   GtkWidget *win = eos_window_new (EOS_APPLICATION (app));
   EosPageManager *pm = eos_window_get_page_manager (EOS_WINDOW (win));
-  GtkWidget *main_area = NULL;
-
-  gtk_container_forall (GTK_CONTAINER (win), (GtkCallback)find_main_area,
-                        &main_area);
+  GtkWidget *main_area = container_find_descendant_with_type (GTK_CONTAINER (win), EOS_TYPE_MAIN_AREA);
 
   GtkWidget *page0 = gtk_label_new ("no-no");
   GtkWidget *page1 = gtk_label_new ("yes-no");
