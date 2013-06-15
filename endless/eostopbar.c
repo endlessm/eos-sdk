@@ -184,7 +184,7 @@ eos_top_bar_set_left_widget (EosTopBar *self,
     return;
 
   if (priv->left_top_bar_widget)
-    gtk_widget_unparent (priv->left_top_bar_widget);
+    gtk_widget_destroy (priv->left_top_bar_widget);
 
   priv->left_top_bar_widget = left_top_bar_widget;
   if (left_top_bar_widget)
@@ -218,7 +218,7 @@ eos_top_bar_set_center_widget (EosTopBar *self,
     return;
 
   if (priv->center_top_bar_widget)
-    gtk_widget_unparent (priv->center_top_bar_widget);
+    gtk_widget_destroy (priv->center_top_bar_widget);
 
   priv->center_top_bar_widget = center_top_bar_widget;
   if (center_top_bar_widget)
