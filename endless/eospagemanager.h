@@ -133,6 +133,24 @@ void         eos_page_manager_set_page_custom_toolbox_widget      (EosPageManage
                                                                    GtkWidget      *custom_toolbox_widget);
 
 EOS_SDK_ALL_API_VERSIONS
+GtkWidget   *eos_page_manager_get_page_left_topbar_widget         (EosPageManager *self,
+                                                                   GtkWidget      *page);
+
+EOS_SDK_ALL_API_VERSIONS
+void        eos_page_manager_set_page_left_topbar_widget          (EosPageManager *self,
+                                                                   GtkWidget      *page,
+                                                                   GtkWidget      *left_topbar_widget);
+
+EOS_SDK_ALL_API_VERSIONS
+GtkWidget *eos_page_manager_get_page_center_topbar_widget         (EosPageManager *self,
+                                                                   GtkWidget      *page);
+
+EOS_SDK_ALL_API_VERSIONS
+void        eos_page_manager_set_page_center_topbar_widget        (EosPageManager *self,
+                                                                   GtkWidget      *page,
+                                                                   GtkWidget      *center_topbar_widget);
+
+EOS_SDK_ALL_API_VERSIONS
 void         eos_page_manager_set_transition_duration             (EosPageManager *self,
                                                                    guint           duration);
 

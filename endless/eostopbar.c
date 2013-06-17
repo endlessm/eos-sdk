@@ -6,6 +6,17 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
+/*
+ * SECTION:topbar
+ * @short_description: The top bar of the window, above the main area of your
+ * application.
+ * @title: TopBar
+ * 
+ * The #EosTopBar has three different areas that can be managed through this 
+ * class: a left widget, center widget, and action buttons area.
+ * 
+ * The action buttons area contain "minimize" and "close" buttons.
+ */
 #define _EOS_STYLE_CLASS_TOP_BAR "top-bar"
 #define _EOS_TOP_BAR_HEIGHT_PX 36
 #define _EOS_TOP_BAR_BUTTON_PADDING_PX 3
@@ -18,6 +29,11 @@ G_DEFINE_TYPE (EosTopBar, eos_top_bar, GTK_TYPE_EVENT_BOX)
 struct _EosTopBarPrivate
 {
   GtkWidget *actions_hbox;
+  GtkWidget *left_top_bar_attach;
+  GtkWidget *center_top_bar_attach;
+
+  GtkWidget *left_top_bar_widget;
+  GtkWidget *center_top_bar_widget;
 
   GtkWidget *minimize_button;
   GtkWidget *minimize_icon;
@@ -105,8 +121,18 @@ eos_top_bar_init (EosTopBar *self)
 
   gtk_widget_set_hexpand (GTK_WIDGET (self), TRUE);
 
-  self->priv->actions_hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  self->priv->actions_hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_set_hexpand (self->priv->actions_hbox, TRUE);
+
+  self->priv->left_top_bar_attach = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
+  self->priv->center_top_bar_attach = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
+
+  /* TODO Remove foreground override; for now, it is useful for smoke tests */
+  GdkRGBA gray = {0.75, 0.75, 0.75, 1.0};
+  gtk_widget_override_color (self->priv->left_top_bar_attach,
+                             GTK_STATE_FLAG_NORMAL, &gray);
+  gtk_widget_override_color (self->priv->center_top_bar_attach,
+                             GTK_STATE_FLAG_NORMAL, &gray);
 
   /* TODO implement adding actions and widgets to the actions_hbox */
 
@@ -125,6 +151,13 @@ eos_top_bar_init (EosTopBar *self)
                                     GTK_ICON_SIZE_SMALL_TOOLBAR);
   gtk_button_set_image (GTK_BUTTON (self->priv->close_button),
                         self->priv->close_icon);
+
+  gtk_box_pack_start (GTK_BOX (self->priv->actions_hbox),
+                      self->priv->left_top_bar_attach,
+                      FALSE, FALSE, _EOS_TOP_BAR_BUTTON_PADDING_PX);
+  gtk_box_pack_start (GTK_BOX (self->priv->actions_hbox),
+                      self->priv->center_top_bar_attach,
+                      TRUE, FALSE, _EOS_TOP_BAR_BUTTON_PADDING_PX);
 
   gtk_box_pack_end (GTK_BOX (self->priv->actions_hbox),
                       self->priv->close_button,
@@ -148,4 +181,66 @@ GtkWidget *
 eos_top_bar_new (void)
 {
   return GTK_WIDGET (g_object_new (EOS_TYPE_TOP_BAR, NULL));
+}
+
+/*
+ * eos_top_bar_set_left_widget:
+ * @self: the top bar
+ * @left_top_bar_widget: the left top bar widget to be set
+ * 
+ * Sets the left widget in the top bar.
+ */
+void
+eos_top_bar_set_left_widget (EosTopBar *self,
+                             GtkWidget *left_top_bar_widget)
+{
+  g_return_if_fail (EOS_IS_TOP_BAR (self));
+  g_return_if_fail (left_top_bar_widget == NULL || GTK_IS_WIDGET (left_top_bar_widget));
+
+  EosTopBarPrivate *priv = self->priv;
+
+  if (priv->left_top_bar_widget == left_top_bar_widget)
+    return;
+
+  if (priv->left_top_bar_widget)
+    gtk_container_remove (GTK_CONTAINER (priv->left_top_bar_attach),
+                       priv->left_top_bar_widget);
+
+  priv->left_top_bar_widget = left_top_bar_widget;
+  if (left_top_bar_widget)
+    {
+      gtk_container_add (GTK_CONTAINER (priv->left_top_bar_attach),
+                         priv->left_top_bar_widget);
+    }
+}
+
+/*
+ * eos_top_bar_set_center_widget:
+ * @self: the top bar
+ * @center_top_bar_widget: the center top bar widget to be set
+ * 
+ * Sets the center widget in the top bar.
+ */
+void
+eos_top_bar_set_center_widget (EosTopBar *self,
+                               GtkWidget *center_top_bar_widget)
+{
+  g_return_if_fail (EOS_IS_TOP_BAR (self));
+  g_return_if_fail (center_top_bar_widget == NULL || GTK_IS_WIDGET (center_top_bar_widget));
+
+  EosTopBarPrivate *priv = self->priv;
+
+  if (priv->center_top_bar_widget == center_top_bar_widget)
+    return;
+
+  if (priv->center_top_bar_widget)
+    gtk_container_remove (GTK_CONTAINER (priv->center_top_bar_attach),
+                          priv->center_top_bar_widget);
+
+  priv->center_top_bar_widget = center_top_bar_widget;
+  if (center_top_bar_widget)
+    {
+      gtk_container_add (GTK_CONTAINER (priv->center_top_bar_attach),
+                         priv->center_top_bar_widget);
+    }
 }

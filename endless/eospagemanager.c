@@ -101,6 +101,8 @@ struct _EosPageManagerPageInfo
   gboolean fake_page_actions_visible;
   GtkWidget *custom_toolbox_widget;
   gchar *background_uri;
+  GtkWidget *left_topbar_widget;
+  GtkWidget *center_topbar_widget;
 };
 
 struct _EosPageManagerPrivate
@@ -149,6 +151,8 @@ enum
   CHILD_PROP_PAGE_ACTIONS,
   CHILD_PROP_CUSTOM_TOOLBOX_WIDGET,
   CHILD_PROP_BACKGROUND_URI,
+  CHILD_PROP_LEFT_TOPBAR_WIDGET,
+  CHILD_PROP_CENTER_TOPBAR_WIDGET,
   NCHILDPROPS
 };
 
@@ -162,6 +166,16 @@ page_info_free (EosPageManagerPageInfo *info)
   g_free (info->background_uri);
   g_slice_free (EosPageManagerPageInfo, info);
 }
+
+/*
+ * TODO
+static void
+top_bars_unref (EosPageManagerPageInfo *info)
+{
+  g_object_unref (GTK_WIDGET (info->left_topbar_widget));
+  g_object_unref (GTK_WIDGET (info->center_topbar_widget));
+}
+*/
 
 /*
  * find_page_info_by_widget:
@@ -312,6 +326,18 @@ eos_page_manager_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
 }
+
+/*
+static void
+eos_page_manager_dispose (GObject *object)
+{
+  EosPageManager *self = EOS_PAGE_MANAGER (object);
+
+  g_list_foreach (self->priv->page_info, (GFunc)top_bars_unref, NULL);
+
+  G_OBJECT_CLASS (eos_page_manager_parent_class)->dispose (object);
+}
+*/
 
 static void
 eos_page_manager_finalize (GObject *object)
@@ -541,6 +567,18 @@ eos_page_manager_get_child_property (GtkContainer *container,
                                                                            child));
       break;
 
+    case CHILD_PROP_LEFT_TOPBAR_WIDGET:
+      g_value_set_object (value,
+                          eos_page_manager_get_page_left_topbar_widget (self,
+                                                                        child));
+      break;
+
+    case CHILD_PROP_CENTER_TOPBAR_WIDGET:
+      g_value_set_object (value,
+                          eos_page_manager_get_page_center_topbar_widget (self,
+                                                                          child));
+      break;
+
     default:
       GTK_CONTAINER_WARN_INVALID_CHILD_PROPERTY_ID (container,
                                                     property_id, pspec);
@@ -577,6 +615,16 @@ eos_page_manager_set_child_property (GtkContainer *container,
                                                        g_value_get_object (value));
       break;
 
+    case CHILD_PROP_LEFT_TOPBAR_WIDGET:
+      eos_page_manager_set_page_left_topbar_widget (self, child,
+                                                    g_value_get_object (value));
+      break;
+
+    case CHILD_PROP_CENTER_TOPBAR_WIDGET:
+      eos_page_manager_set_page_center_topbar_widget (self, child,
+                                                    g_value_get_object (value));
+      break;
+
     default:
       GTK_CONTAINER_WARN_INVALID_CHILD_PROPERTY_ID (container,
                                                     property_id, pspec);
@@ -594,6 +642,7 @@ eos_page_manager_class_init (EosPageManagerClass *klass)
 
   object_class->get_property = eos_page_manager_get_property;
   object_class->set_property = eos_page_manager_set_property;
+  // object_class->dispose = eos_page_manager_dispose;
   object_class->finalize = eos_page_manager_finalize;
 
   /* Pass all size requesting and allocation on to the stack */
@@ -713,6 +762,32 @@ eos_page_manager_class_init (EosPageManagerClass *klass)
   eos_page_manager_child_props[CHILD_PROP_CUSTOM_TOOLBOX_WIDGET] =
     g_param_spec_object ("custom-toolbox-widget", "Custom toolbox widget",
                          "Custom toolbox widget displayed left of the page",
+                         GTK_TYPE_WIDGET,
+                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * EosPageManager:left-topbar-widget:
+   *
+   * The left topbar widget belonging to this page, to be displayed on the
+   * left portion of the top bar when the page is displaying. Setting this to
+   * %NULL indicates that there should be no left topbar widget.
+   */
+  eos_page_manager_child_props[CHILD_PROP_LEFT_TOPBAR_WIDGET] =
+    g_param_spec_object ("left-topbar-widget", "Left topbar widget",
+                         "Left topbar widget displayed left of the topbar",
+                         GTK_TYPE_WIDGET,
+                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * EosPageManager:center-topbar-widget:
+   *
+   * The center topbar widget belonging to this page, to be displayed on the
+   * middle portion of the top bar when the page is displaying. Setting this to
+   * %NULL indicates that there should be no center topbar widget.
+   */
+  eos_page_manager_child_props[CHILD_PROP_CENTER_TOPBAR_WIDGET] =
+    g_param_spec_object ("center-topbar-widget", "Center topbar widget",
+                         "Center topbar widget displayed in the middle of the topbar",
                          GTK_TYPE_WIDGET,
                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
@@ -1073,6 +1148,122 @@ eos_page_manager_set_page_custom_toolbox_widget (EosPageManager *self,
 
   gtk_container_child_notify (GTK_CONTAINER (self), page,
                               "custom-toolbox-widget");
+}
+
+/**
+ * eos_page_manager_get_page_left_topbar_widget:
+ * @self: the page manager
+ * @page: the page to be queried
+ *
+ * Retrieves @page's left topbar widget, if it has one.
+ * See #EosPageManager:left-topbar-widget for more information.
+ * 
+ * Returns: (transfer none): the left topbar #GtkWidget of @page, or %NULL if there is none.
+ */
+GtkWidget *
+eos_page_manager_get_page_left_topbar_widget (EosPageManager *self,
+                                              GtkWidget      *page)
+{
+  g_return_val_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self), NULL);
+  g_return_val_if_fail (page != NULL && GTK_IS_WIDGET (page), NULL);
+
+  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
+  g_return_val_if_fail (info != NULL, NULL);
+
+  return info->left_topbar_widget;
+}
+
+/**
+ * eos_page_manager_set_page_left_topbar_widget:
+ * @self: the page manager
+ * @page: the page
+ * @left_topbar_widget: (allow-none): left topbar widget for @page
+ * 
+ * Sets the left topbar widget to be displayed for this @page. 
+ * See #EosPageManager:left-topbar-widget for more information.
+ */
+void
+eos_page_manager_set_page_left_topbar_widget (EosPageManager *self,
+                                              GtkWidget      *page,
+                                              GtkWidget      *left_topbar_widget)
+{
+  g_return_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self));
+  g_return_if_fail (page != NULL && GTK_IS_WIDGET (page));
+  g_return_if_fail (left_topbar_widget == NULL ||
+                    GTK_IS_WIDGET (left_topbar_widget));
+
+  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
+  g_return_if_fail (info != NULL);
+
+  if (info->left_topbar_widget == left_topbar_widget)
+    return;
+
+  if (info->left_topbar_widget)
+    g_object_unref (info->left_topbar_widget);
+
+  g_object_ref (left_topbar_widget);
+  info->left_topbar_widget = left_topbar_widget;
+
+  gtk_container_child_notify (GTK_CONTAINER (self), page,
+                              "left-topbar-widget");
+}
+
+/**
+ * eos_page_manager_get_page_center_topbar_widget:
+ * @self: the page manager
+ * @page: the page to be queried
+ * 
+ * Retrieves @page's center topbar widget, if it has one.
+ * See #EosPageManager:center-topbar-widget for more information.
+ * 
+ * Returns: (transfer none): the center topbar #GtkWidget of @page, or %NULL if there is none.
+ */
+ GtkWidget *
+ eos_page_manager_get_page_center_topbar_widget (EosPageManager *self,
+                                                 GtkWidget      *page)
+{
+  g_return_val_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self), NULL);
+  g_return_val_if_fail (page != NULL && GTK_IS_WIDGET (page), NULL);
+
+  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
+  g_return_val_if_fail (info != NULL, NULL);
+
+  return info->center_topbar_widget;
+}
+
+/**
+ * eos_page_manager_set_page_center_topbar_widget:
+ * @self: the page manager
+ * @page: the page
+ * @center_topbar_widget: (allow-none): center topbar widget for @page
+ * 
+ * Sets the center topbar widget to be displayed for this @page.
+ * See #EosPageManager:center-topbar-widget for more information.
+ */
+void
+eos_page_manager_set_page_center_topbar_widget (EosPageManager *self,
+                                                GtkWidget      *page,
+                                                GtkWidget      *center_topbar_widget)
+{
+  g_return_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self));
+  g_return_if_fail (page != NULL && GTK_IS_WIDGET (page));
+  g_return_if_fail (center_topbar_widget == NULL ||
+                    GTK_IS_WIDGET (center_topbar_widget));
+
+  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
+  g_return_if_fail (info != NULL);
+
+  if (info->center_topbar_widget == center_topbar_widget)
+    return;
+
+  if (info->center_topbar_widget)
+    g_object_unref (info->center_topbar_widget);
+
+  g_object_ref (center_topbar_widget);
+  info->center_topbar_widget = center_topbar_widget;
+
+  gtk_container_child_notify (GTK_CONTAINER (self), page,
+                              "center-topbar-widget");
 }
 
 /**
