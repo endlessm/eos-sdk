@@ -167,12 +167,15 @@ page_info_free (EosPageManagerPageInfo *info)
   g_slice_free (EosPageManagerPageInfo, info);
 }
 
+/*
+ * TODO
 static void
 top_bars_unref (EosPageManagerPageInfo *info)
 {
-  g_object_unref (info->left_topbar_widget);
-  g_object_unref (info->center_topbar_widget);
+  g_object_unref (GTK_WIDGET (info->left_topbar_widget));
+  g_object_unref (GTK_WIDGET (info->center_topbar_widget));
 }
+*/
 
 /*
  * find_page_info_by_widget:
@@ -324,6 +327,7 @@ eos_page_manager_set_property (GObject      *object,
     }
 }
 
+/*
 static void
 eos_page_manager_dispose (GObject *object)
 {
@@ -333,6 +337,7 @@ eos_page_manager_dispose (GObject *object)
 
   G_OBJECT_CLASS (eos_page_manager_parent_class)->dispose (object);
 }
+*/
 
 static void
 eos_page_manager_finalize (GObject *object)
@@ -637,7 +642,7 @@ eos_page_manager_class_init (EosPageManagerClass *klass)
 
   object_class->get_property = eos_page_manager_get_property;
   object_class->set_property = eos_page_manager_set_property;
-  object_class->dispose = eos_page_manager_dispose;
+  // object_class->dispose = eos_page_manager_dispose;
   object_class->finalize = eos_page_manager_finalize;
 
   /* Pass all size requesting and allocation on to the stack */
