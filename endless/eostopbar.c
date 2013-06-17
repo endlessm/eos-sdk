@@ -29,6 +29,8 @@ G_DEFINE_TYPE (EosTopBar, eos_top_bar, GTK_TYPE_EVENT_BOX)
 struct _EosTopBarPrivate
 {
   GtkWidget *actions_hbox;
+  GtkWidget *left_top_bar_hbox;
+  GtkWidget *center_top_bar_hbox;
 
   GtkWidget *left_top_bar_widget;
   GtkWidget *center_top_bar_widget;
@@ -119,8 +121,23 @@ eos_top_bar_init (EosTopBar *self)
 
   gtk_widget_set_hexpand (GTK_WIDGET (self), TRUE);
 
-  self->priv->actions_hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  self->priv->actions_hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_set_hexpand (self->priv->actions_hbox, TRUE);
+
+  self->priv->left_top_bar_hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+  self->priv->center_top_bar_hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+  
+  // Global properties for top_bar_hbox'es ...
+  gtk_widget_set_halign (GTK_WIDGET (self->priv->left_top_bar_hbox), 
+                         GTK_ALIGN_CENTER);
+  gtk_widget_set_valign (GTK_WIDGET (self->priv->left_top_bar_hbox), 
+                         GTK_ALIGN_CENTER);
+
+  gtk_widget_set_hexpand (self->priv->center_top_bar_hbox, TRUE);
+  gtk_widget_set_halign (GTK_WIDGET (self->priv->center_top_bar_hbox), 
+                         GTK_ALIGN_CENTER);
+  gtk_widget_set_valign (GTK_WIDGET (self->priv->center_top_bar_hbox), 
+                         GTK_ALIGN_CENTER);
 
   /* TODO implement adding actions and widgets to the actions_hbox */
 
@@ -139,6 +156,13 @@ eos_top_bar_init (EosTopBar *self)
                                     GTK_ICON_SIZE_SMALL_TOOLBAR);
   gtk_button_set_image (GTK_BUTTON (self->priv->close_button),
                         self->priv->close_icon);
+
+  gtk_box_pack_start (GTK_BOX (self->priv->actions_hbox),
+                      self->priv->left_top_bar_hbox,
+                      FALSE, FALSE, _EOS_TOP_BAR_BUTTON_PADDING_PX);
+  gtk_box_pack_start (GTK_BOX (self->priv->actions_hbox),
+                      self->priv->center_top_bar_hbox,
+                      FALSE, FALSE, _EOS_TOP_BAR_BUTTON_PADDING_PX);
 
   gtk_box_pack_end (GTK_BOX (self->priv->actions_hbox),
                       self->priv->close_button,
@@ -175,6 +199,9 @@ void
 eos_top_bar_set_left_widget (EosTopBar *self,
                              GtkWidget *left_top_bar_widget)
 {
+  /* TODO Remove */
+  GdkRGBA gray = {0.75, 0.75, 0.75, 1.0};
+
   g_return_if_fail (EOS_IS_TOP_BAR (self));
   g_return_if_fail (left_top_bar_widget == NULL || GTK_IS_WIDGET (left_top_bar_widget));
 
@@ -189,12 +216,14 @@ eos_top_bar_set_left_widget (EosTopBar *self,
   priv->left_top_bar_widget = left_top_bar_widget;
   if (left_top_bar_widget)
     {
-      gtk_widget_set_halign (GTK_WIDGET (left_top_bar_widget), GTK_ALIGN_CENTER);
-      gtk_widget_set_valign (GTK_WIDGET (left_top_bar_widget), GTK_ALIGN_CENTER);
+      /* TODO Remove */
+      gtk_widget_override_color (priv->left_top_bar_hbox,
+                                 GTK_STATE_FLAG_NORMAL,
+                                 &gray);
 
-      gtk_box_pack_start (GTK_BOX (priv->actions_hbox),
+      gtk_box_pack_start (GTK_BOX (priv->left_top_bar_hbox),
                           left_top_bar_widget,
-                          TRUE, TRUE, 0);
+                          FALSE, FALSE, 0);
     }
 }
 
@@ -209,6 +238,9 @@ void
 eos_top_bar_set_center_widget (EosTopBar *self,
                                GtkWidget *center_top_bar_widget)
 {
+  /* TODO Remove */
+  GdkRGBA gray = {0.75, 0.75, 0.75, 1.0};
+
   g_return_if_fail (EOS_IS_TOP_BAR (self));
   g_return_if_fail (center_top_bar_widget == NULL || GTK_IS_WIDGET (center_top_bar_widget));
 
@@ -223,12 +255,13 @@ eos_top_bar_set_center_widget (EosTopBar *self,
   priv->center_top_bar_widget = center_top_bar_widget;
   if (center_top_bar_widget)
     {
-      gtk_widget_set_halign (GTK_WIDGET (center_top_bar_widget), GTK_ALIGN_CENTER);
-      gtk_widget_set_valign (GTK_WIDGET (center_top_bar_widget), GTK_ALIGN_CENTER);
-      gtk_widget_set_hexpand (GTK_WIDGET (center_top_bar_widget), TRUE);
+      /* TODO Remove */
+      gtk_widget_override_color (priv->center_top_bar_hbox,
+                                 GTK_STATE_FLAG_NORMAL,
+                                 &gray);
 
-      gtk_box_pack_start (GTK_BOX (priv->actions_hbox),
+      gtk_box_pack_start (GTK_BOX (priv->center_top_bar_hbox),
                           center_top_bar_widget,
-                          TRUE, TRUE, 0);
+                          FALSE, FALSE, 0);
     }
 }
