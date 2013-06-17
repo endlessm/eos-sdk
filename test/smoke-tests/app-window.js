@@ -108,6 +108,36 @@ const Toolbox = new Lang.Class ({
     }
 });
 
+const LeftTopbar = new Lang.Class ({
+    Name: 'LeftTopBar',
+    Extends: Gtk.Grid,
+
+    _init: function(props) {
+        props = props || {};
+        props.orientation = Gtk.Orientation.VERTICAL;
+        this.parent(props);
+
+        this._label = new Gtk.Label({ label: 'The Left Topbar' });
+
+        this.add(this._label);
+    }
+});
+
+const CenterTopbar = new Lang.Class ({
+    Name: 'CenterTopBar',
+    Extends: Gtk.Grid,
+
+    _init: function(props) {
+        props = props || {};
+        props.orientation = Gtk.Orientation.VERTICAL;
+        this.parent(props);
+
+        this._label = new Gtk.Label({ label: 'The Center Topbar' });
+
+        this.add(this._label);
+    }
+});
+
 const TestApplication = new Lang.Class ({
     Name: 'TestApplication',
     Extends: Endless.Application,
@@ -154,15 +184,24 @@ const TestApplication = new Lang.Class ({
                 this._toolbox.switch2.active);
         }));
 
+        this._left_topbar = new LeftTopbar();
+
+        this._center_topbar = new CenterTopbar();
+
         this._pm.add(this._page0, {
             name: "page0",
             background_uri: CAT_BACKGROUND_PATH,
-            custom_toolbox_widget: this._toolbox
+            custom_toolbox_widget: this._toolbox,
+            left_topbar_widget: this._left_topbar,
+            center_topbar_widget: this._center_topbar 
         });
+
         this._pm.add(this._page1, {
             name: "page1",
             background_uri: DOG_BACKGROUND_PATH,
             custom_toolbox_widget: this._toolbox,
+            left_topbar_widget: this._left_topbar,
+            center_topbar_widget: this._center_topbar,
             page_actions: true
         });
 
