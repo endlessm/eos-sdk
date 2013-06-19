@@ -1,0 +1,76 @@
+<?xml version="1.0"?><!--*- mode: nxml; indent-tabs-mode: nil -*-->
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<!-- vim:set ts=2 expandtab: -->
+<moduleset>
+
+<!--
+
+Moduleset to build EndlessOS SDK from an up-to-date Ubuntu 13.04 with
+the EndlessOS shell installed.
+
+This moduleset is created under the assumptions that:
+
+ 1) Dependencies will be installed from distro repos as much as possible
+
+ 2) Dependencies will always be built using tagged versions, rather than
+    trunk versions.
+
+Extra packages needed for this moduleset alone:
+$ sudo apt-get install git gnome-common gtk-doc-tools libgirepository1.0-dev libgtk2.0-dev librsvg2-dev
+
+-->
+
+
+<!-- repos -->
+
+  <!-- Github git -->
+  <repository type="git" name="github.com"
+      href="https://github.com/"/>
+
+
+<!-- modules -->
+
+  <!-- EOS weather -->
+  <!-- Weather has no autotools, so for now we have a hack to skip it but still download the repo -->
+  <autotools id="eos-weather" skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch repo="github.com" module="endlessm/eos-weather.git"
+            revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <!-- EOS english -->
+  <!-- english has no autotools, so for now we have a hack to skip it but still download the repo -->
+  <autotools id="eos-english" skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch repo="github.com" module="endlessm/eos-english.git"
+            revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <!-- EOS shell -->
+  <autotools id="eos-sdk">
+    <branch repo="github.com" module="endlessm/eos-sdk.git"
+            revision="dev"/>
+    <dependencies>
+      <dep package="eos-theme"/>
+      <dep package="pstack"/>
+    </dependencies>
+  </autotools>
+
+  <!-- EOS shell -->
+  <autotools id="pstack">
+    <branch repo="github.com" module="ptomato/pstack.git"
+            revision="master"/>
+  </autotools>
+
+  <!-- EOS Theme -->
+  <autotools id="eos-theme">
+    <branch repo="github.com" module="endlessm/eos-theme.git"
+            revision="dev"/>
+  </autotools>
+
+</moduleset>

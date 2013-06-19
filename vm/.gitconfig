@@ -1,0 +1,9 @@
+[color]
+	status = auto
+	commit = auto
+	diff = auto
+	branch = auto
+[credential]
+	helper = cache --timeout=28800
+[push]
+	default = simple
