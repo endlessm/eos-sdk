@@ -88,6 +88,9 @@
  * the page manager, so you should make a point of giving all your pages names.
  */
 
+#define DEFAULT_BACKGROUND_SIZE "100% 100%"
+#define DEFAULT_BACKGROUND_POSITION "0% 0%"
+
 G_DEFINE_TYPE (EosPageManager, eos_page_manager, GTK_TYPE_CONTAINER)
 
 #define PAGE_MANAGER_PRIVATE(o) \
@@ -100,9 +103,12 @@ struct _EosPageManagerPageInfo
   gchar *name;
   gboolean fake_page_actions_visible;
   GtkWidget *custom_toolbox_widget;
-  gchar *background_uri;
   GtkWidget *left_topbar_widget;
   GtkWidget *center_topbar_widget;
+  gchar *background_uri;
+  gchar *background_size;
+  gchar *background_position;
+  gboolean background_repeats;
 };
 
 struct _EosPageManagerPrivate
@@ -150,9 +156,12 @@ enum
   CHILD_PROP_NAME,
   CHILD_PROP_PAGE_ACTIONS,
   CHILD_PROP_CUSTOM_TOOLBOX_WIDGET,
-  CHILD_PROP_BACKGROUND_URI,
   CHILD_PROP_LEFT_TOPBAR_WIDGET,
   CHILD_PROP_CENTER_TOPBAR_WIDGET,
+  CHILD_PROP_BACKGROUND_URI,
+  CHILD_PROP_BACKGROUND_SIZE,
+  CHILD_PROP_BACKGROUND_POSITION,
+  CHILD_PROP_BACKGROUND_REPEATS,
   NCHILDPROPS
 };
 
@@ -164,6 +173,8 @@ page_info_free (EosPageManagerPageInfo *info)
 {
   g_free (info->name);
   g_free (info->background_uri);
+  g_free (info->background_size);
+  g_free (info->background_position);
   g_slice_free (EosPageManagerPageInfo, info);
 }
 
@@ -463,6 +474,9 @@ eos_page_manager_add (GtkContainer *container,
 
   gtk_container_add (GTK_CONTAINER (self->priv->stack), new_page);
   EosPageManagerPageInfo *info = g_slice_new0 (EosPageManagerPageInfo);
+  info->background_size = g_strdup (DEFAULT_BACKGROUND_SIZE);
+  info->background_position = g_strdup (DEFAULT_BACKGROUND_POSITION);
+  info->background_repeats = TRUE;
   info->page = new_page;
   self->priv->page_info = g_list_prepend (self->priv->page_info, info);
   g_hash_table_insert (self->priv->pages_by_widget, new_page, info);
@@ -556,6 +570,24 @@ eos_page_manager_get_child_property (GtkContainer *container,
                                                                     child));
       break;
 
+    case CHILD_PROP_BACKGROUND_SIZE:
+      g_value_set_string (value,
+                          eos_page_manager_get_page_background_size (self,
+                                                                     child));
+      break;
+
+    case CHILD_PROP_BACKGROUND_POSITION:
+      g_value_set_string (value,
+                          eos_page_manager_get_page_background_position (self,
+                                                                         child));
+      break;
+
+    case CHILD_PROP_BACKGROUND_REPEATS:
+      g_value_set_boolean (value,
+                          eos_page_manager_get_page_background_repeats (self,
+                                                                        child));
+      break;
+
     case CHILD_PROP_PAGE_ACTIONS:
       g_value_set_boolean (value,
                            eos_page_manager_get_page_actions (self, child));
@@ -603,6 +635,21 @@ eos_page_manager_set_child_property (GtkContainer *container,
     case CHILD_PROP_BACKGROUND_URI:
       eos_page_manager_set_page_background_uri (self, child,
                                                 g_value_get_string (value));
+      break;
+
+    case CHILD_PROP_BACKGROUND_SIZE:
+      eos_page_manager_set_page_background_size (self, child,
+                                                 g_value_get_string (value));
+      break;
+
+    case CHILD_PROP_BACKGROUND_POSITION:
+      eos_page_manager_set_page_background_position (self, child,
+                                                     g_value_get_string (value));
+      break;
+
+    case CHILD_PROP_BACKGROUND_REPEATS:
+      eos_page_manager_set_page_background_repeats (self, child,
+                                                    g_value_get_boolean (value));
       break;
 
     case CHILD_PROP_PAGE_ACTIONS:
@@ -801,6 +848,44 @@ eos_page_manager_class_init (EosPageManagerClass *klass)
     g_param_spec_string ("background-uri", "Background URI",
                          "URI for background of the page",
                          NULL,
+                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * EosPageManager:background-size:
+   *
+   * The size of the page background, given as a css snippet string. This
+   * string can be set to any valid css value for the background-size
+   * property. See https://developer.mozilla.org/en-US/docs/Web/CSS/background-size
+   */
+  eos_page_manager_child_props[CHILD_PROP_BACKGROUND_SIZE] =
+    g_param_spec_string ("background-size", "Background Size",
+                         "Size of background of the page",
+                         DEFAULT_BACKGROUND_SIZE,
+                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * EosPageManager:background-position:
+   *
+   * The position of the page background, given as a css snippet string. This
+   * string can be set to any valid css position value. See
+   * https://developer.mozilla.org/en-US/docs/Web/CSS/position_value
+   */
+  eos_page_manager_child_props[CHILD_PROP_BACKGROUND_POSITION] =
+    g_param_spec_string ("background-position", "Background Position",
+                         "Position of background of the page",
+                         DEFAULT_BACKGROUND_POSITION,
+                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * EosPageManager:background-repeats:
+   *
+   * This child property controls whether or not the background of the page
+   * will tile when drawn. Defaults to TRUE.
+   */
+  eos_page_manager_child_props[CHILD_PROP_BACKGROUND_REPEATS] =
+    g_param_spec_boolean ("background-repeats", "Background Repeats",
+                         "If page background repeats",
+                         TRUE,
                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /* Install child properties all at once, because there is no
@@ -1318,6 +1403,161 @@ eos_page_manager_set_page_background_uri (EosPageManager *self,
 
   info->background_uri = g_strdup (background);
   gtk_container_child_notify (GTK_CONTAINER (self), page, "background-uri");
+}
+
+/**
+ * eos_page_manager_get_page_background_size:
+ * @self: the page manager
+ * @page: the page to be queried
+ *
+ * Gets the size of the background image of @page, which must previously have
+ * been added to the page manager.
+ * See #EosPageManager:background-size for more information.
+ *
+ * Returns: the size of @page, as an EosSizePercentage.
+ */
+const gchar *
+eos_page_manager_get_page_background_size (EosPageManager *self,
+                                          GtkWidget      *page)
+{
+  g_return_val_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self), NULL);
+  g_return_val_if_fail (page != NULL && GTK_IS_WIDGET (page), NULL);
+
+  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
+  g_return_val_if_fail (info != NULL, NULL);
+
+  return info->background_size;
+}
+
+/**
+ * eos_page_manager_set_page_background_size:
+ * @self: the page manager
+ * @page: the page to be modified
+ * @size: the desired size of the background image of this page.
+ *
+ * Changes the size of the background of @page, which must previously have
+ * been added to the page manager. See #EosPageManager:background-size for
+ * more information.
+ */
+void
+eos_page_manager_set_page_background_size (EosPageManager *self,
+                                          GtkWidget      *page,
+                                          const gchar    *size)
+{
+  g_return_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self));
+  g_return_if_fail (page != NULL && GTK_IS_WIDGET (page));
+
+  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
+  g_return_if_fail (info != NULL);
+
+  if (g_strcmp0 (info->background_size, size) == 0)
+    return;
+
+  info->background_size = g_strdup (size);
+  gtk_container_child_notify (GTK_CONTAINER (self), page, "background-size");
+}
+
+
+/**
+ * eos_page_manager_get_page_background_position:
+ * @self: the page manager
+ * @page: the page to be queried
+ *
+ * Gets the position of the background image of @page, which must previously have
+ * been added to the page manager.
+ * See #EosPageManager:background-position for more information.
+ *
+ * Returns: the position of @page, as an EosSizePercentage.
+ */
+const gchar *
+eos_page_manager_get_page_background_position (EosPageManager *self,
+                                              GtkWidget      *page)
+{
+  g_return_val_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self), NULL);
+  g_return_val_if_fail (page != NULL && GTK_IS_WIDGET (page), NULL);
+
+  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
+  g_return_val_if_fail (info != NULL, NULL);
+
+  return info->background_position;
+}
+
+/**
+ * eos_page_manager_set_page_background_position:
+ * @self: the page manager
+ * @page: the page to be modified
+ * @position: the desired position of the background image of this page.
+ *
+ * Changes the position of the background of @page, which must previously have
+ * been added to the page manager. See #EosPageManager:background-position for
+ * more information.
+ */
+void
+eos_page_manager_set_page_background_position (EosPageManager *self,
+                                              GtkWidget      *page,
+                                              const gchar    *position)
+{
+  g_return_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self));
+  g_return_if_fail (page != NULL && GTK_IS_WIDGET (page));
+
+  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
+  g_return_if_fail (info != NULL);
+
+  if (g_strcmp0 (info->background_position, position) == 0)
+    return;
+
+  info->background_position = g_strdup (position);
+  gtk_container_child_notify (GTK_CONTAINER (self), page, "background-position");
+}
+
+
+/**
+ * eos_page_manager_get_page_background_repeats:
+ * @self: the page manager
+ * @page: the page to be queried
+ *
+ * Gets whether or not the background image of @page will tile when drawn.
+ * @page must previously have been added to the page manager. See
+ * #EosPageManager:background-repeats for more information.
+ *
+ * Returns: True if the background of @page will repeat.
+ */
+gboolean
+eos_page_manager_get_page_background_repeats (EosPageManager *self,
+                                              GtkWidget      *page)
+{
+  g_return_val_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self), FALSE);
+  g_return_val_if_fail (page != NULL && GTK_IS_WIDGET (page), FALSE);
+
+  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
+  g_return_val_if_fail (info != NULL, FALSE);
+
+  return info->background_repeats;
+}
+
+/**
+ * eos_page_manager_set_page_background_repeats:
+ * @self: the page manager
+ * @page: the page to be modified
+ * @repeats: True if the background of @page will repeat.
+ *
+ * Sets whether or not the background image of @page will tile when drawn.
+ * @page must previously have been added to the page manager. See
+ * #EosPageManager:background-repeats for more information.
+ */
+void
+eos_page_manager_set_page_background_repeats (EosPageManager *self,
+                                              GtkWidget      *page,
+                                              gboolean        repeats)
+{
+  g_return_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self));
+  g_return_if_fail (page != NULL && GTK_IS_WIDGET (page));
+
+  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
+  g_return_if_fail (info != NULL);
+
+  info->background_repeats = repeats;
+  gtk_container_child_notify (GTK_CONTAINER (self), page, "background-repeats");
 }
 
 /**
