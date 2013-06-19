@@ -35,10 +35,10 @@ AC_INIT([Open Endless SDK], [_EOS_SDK_VERSION_MACRO],
 # Verify that the source directory can be found
 dnl AC_CONFIG_SRCDIR([src/hello.c])
 # Initialize Automake: enable all warnings and do not insist on GNU standards
-# Automake >= 1.11 required for silent rules
+# Automake >= 1.13 required for serial-tests
 # no-portability suppresses warnings about syntax specific to GNU make
 # serial-tests uses the old-style test suite
-AM_INIT_AUTOMAKE([-Wall -Wno-portability foreign 1.11 serial-tests])
+AM_INIT_AUTOMAKE([-Wall -Wno-portability foreign 1.13 serial-tests])
 # Avoid spewing garbage over the terminal ('make V=1' to see the garbage)
 AM_SILENT_RULES([yes])
 # Initialize Libtool; don't build static libraries
