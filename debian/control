@@ -4,6 +4,7 @@ Priority: standard
 Maintainer: Endless Mobile <maintainers@endlessm.com>
 Build-Depends: debhelper (>= 8.0.0),
                autotools-dev,
+               automake (>= 1.13),
                gettext (>= 0.18.1),
                pkg-config (>= 0.24),
                gtk-doc-tools (>= 1.18),
