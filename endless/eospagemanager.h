@@ -174,6 +174,33 @@ void         eos_page_manager_set_page_background_uri             (EosPageManage
                                                                    const gchar    *background);
 
 EOS_SDK_ALL_API_VERSIONS
+const gchar *eos_page_manager_get_page_background_size            (EosPageManager *self,
+                                                                   GtkWidget      *page);
+
+EOS_SDK_ALL_API_VERSIONS
+void         eos_page_manager_set_page_background_size            (EosPageManager *self,
+                                                                   GtkWidget      *page,
+                                                                   const gchar *size);
+
+EOS_SDK_ALL_API_VERSIONS
+const gchar *eos_page_manager_get_page_background_position        (EosPageManager *self,
+                                                                   GtkWidget      *page);
+
+EOS_SDK_ALL_API_VERSIONS
+void         eos_page_manager_set_page_background_position        (EosPageManager *self,
+                                                                   GtkWidget      *page,
+                                                                   const gchar *position);
+
+EOS_SDK_ALL_API_VERSIONS
+gboolean     eos_page_manager_get_page_background_repeats         (EosPageManager *self,
+                                                                   GtkWidget      *page);
+
+EOS_SDK_ALL_API_VERSIONS
+void         eos_page_manager_set_page_background_repeats         (EosPageManager *self,
+                                                                   GtkWidget      *page,
+                                                                   gboolean        repeats);
+
+EOS_SDK_ALL_API_VERSIONS
 void         eos_page_manager_remove_page_by_name                 (EosPageManager *self,
                                                                    const gchar    *name);
 

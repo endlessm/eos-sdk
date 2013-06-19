@@ -7,8 +7,8 @@ const GObject = imports.gi.GObject;
 
 const TEST_APPLICATION_ID = 'com.endlessm.example.test';
 
-const CAT_BACKGROUND_PATH = './test/smoke-tests/images/cat_eye.jpg';
 const DOG_BACKGROUND_PATH = './test/smoke-tests/images/dog_eye.jpg';
+const CAT_BACKGROUND_PATH = './test/smoke-tests/images/cat_eye.jpg';
 
 const Page0 = new Lang.Class ({
     Name: 'Page0',
@@ -80,8 +80,12 @@ const Page1 = new Lang.Class ({
         this.add(this.button1);
         this.button2 = new Gtk.Button({ label: 'Go to page named "page0"' });
         this.add(this.button2);
-        this.button3 = new Gtk.Button({ label: 'Swap this page background' });
+        this.button3 = new Gtk.Button({ label: 'Sync page backgrounds' });
         this.add(this.button3);
+        this.button4 = new Gtk.Button({ label: 'Crazy background' });
+        this.add(this.button4);
+        this.button5 = new Gtk.Button({ label: 'Reset background' });
+        this.add(this.button5);
     }
 });
 
@@ -165,12 +169,13 @@ const TestApplication = new Lang.Class ({
             this._pm.visible_page_name = "page0";
         }));
         this._page1.button3.connect('clicked', Lang.bind(this, function () {
-            let background_uri = this._pm.get_page_background_uri(this._page1);
-            if (background_uri === CAT_BACKGROUND_PATH)
-                background_uri = DOG_BACKGROUND_PATH;
-            else
-                background_uri = CAT_BACKGROUND_PATH;
-            this._pm.set_page_background_uri(this._page1, background_uri);
+            this._setupDogBackground(this._page1);
+        }));
+        this._page1.button4.connect('clicked', Lang.bind(this, function () {
+            this._setupCrazyDogBackground(this._page1);
+        }));
+        this._page1.button5.connect('clicked', Lang.bind(this, function () {
+            this._setupCatBackground(this._page1);
         }));
 
 
@@ -198,18 +203,41 @@ const TestApplication = new Lang.Class ({
 
         this._pm.add(this._page1, {
             name: "page1",
-            background_uri: DOG_BACKGROUND_PATH,
             custom_toolbox_widget: this._toolbox,
             left_topbar_widget: this._left_topbar,
             center_topbar_widget: this._center_topbar,
             page_actions: true
         });
 
+        this._setupDogBackground(this._page0);
+        this._setupCatBackground(this._page1);
+
         this._window = new Endless.Window({
             application: this,
             page_manager: this._pm
         });
         this._window.show_all();
+    },
+
+    _setupDogBackground: function (page) {
+        this._pm.set_page_background_uri(page, DOG_BACKGROUND_PATH);
+        this._pm.set_page_background_size(page, "auto");
+        this._pm.set_page_background_position(page, "center");
+        this._pm.set_page_background_repeats(page, false);
+    },
+
+    _setupCrazyDogBackground: function (page) {
+        this._pm.set_page_background_uri(page, DOG_BACKGROUND_PATH);
+        this._pm.set_page_background_size(page, "100px 100px");
+        this._pm.set_page_background_position(page, "0% 0%");
+        this._pm.set_page_background_repeats(page, true);
+    },
+
+    _setupCatBackground: function (page) {
+        this._pm.set_page_background_uri(page, CAT_BACKGROUND_PATH);
+        this._pm.set_page_background_size(page, "auto");
+        this._pm.set_page_background_position(page, "center");
+        this._pm.set_page_background_repeats(page, false);
     },
 
     _onButtonClicked: function () {

@@ -38,9 +38,17 @@
 
 #define BACKGROUND_FRAME_NAME_TEMPLATE "_eos-window-background-%d"
 
-#define BACKGROUND_FRAME_CSS_TEMPLATE "#%s { background-image: url(\"%s\");" \
-                                           " background-size: 100%% 100%%;" \
-                                           " border-width: 0px; }"
+#define TRANSPARENT_FRAME_CSS_PROPERTIES "{ background-image: none;\n" \
+                                          " background-color: transparent\n;" \
+                                          " border-width: 0px; }\n"
+
+#define BACKGROUND_FRAME_CSS_PROPERTIES_TEMPLATE "{ background-image: url(\"%s\");\n" \
+                                                  " background-size: %s;\n" \
+                                                  " background-position: %s;\n" \
+                                                  " background-repeat: %s;\n" \
+                                                  " border-width: 0px; }\n"
+
+#define CSS_TEMPLATE "#%s %s #%s %s"
 
 G_DEFINE_TYPE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
 
@@ -62,13 +70,9 @@ struct _EosWindowPrivate
 
   /* For keeping track of what to display alongside the current page */
   GtkWidget *current_page;
-  gulong child_page_actions_handler;
-  gulong child_custom_toolbox_handler;
-  gulong child_left_topbar_handler;
-  gulong child_center_topbar_handler;
-  gulong child_background_handler;
+  gulong visible_page_property_handler;
   GtkCssProvider *background_provider;
-  const gchar *current_background_uri;
+  gchar *current_background_css_props;
 };
 
 enum
@@ -195,21 +199,27 @@ sync_stack_animation (EosWindow *self)
                                    eos_page_manager_get_transition_duration (pm));
 }
 
-// Helper to generate css override
+// Helper to generate frame css override
 static gchar *
-format_background_css (GtkWidget *widget, const gchar *background_uri)
+format_background_css (EosPageManager *pm,
+                       GtkWidget *page)
 {
-  // If background uri is NULL (unset) our css override is empty. The frame
-  // will be transparent by default so any css styling of EosWindow will "show
-  // through" the pages.
+  const gchar *background_uri = eos_page_manager_get_page_background_uri (pm, page);
+  const gchar *background_size = eos_page_manager_get_page_background_size (pm, page);
+  const gchar *background_position = eos_page_manager_get_page_background_position (pm, page);
+  gboolean background_repeats = eos_page_manager_get_page_background_repeats (pm, page);
+  const gchar *background_repeats_string = background_repeats ? "repeat" : "no-repeat";
 
-  // TODO: Enforce transparent frame background with CSS in case the user has
-  // overriden default frame styling.
+  // If background uri is NULL (unset) our css override forces the frame to be
+  // transparent. So any css styling of EosWindow will "show through" the
+  // pages.
   if (background_uri == NULL)
-    return "";
-  return g_strdup_printf (BACKGROUND_FRAME_CSS_TEMPLATE,
-                          gtk_widget_get_name (widget),
-                          background_uri);
+    return TRANSPARENT_FRAME_CSS_PROPERTIES;
+  return g_strdup_printf (BACKGROUND_FRAME_CSS_PROPERTIES_TEMPLATE,
+                          background_uri,
+                          background_size,
+                          background_position,
+                          background_repeats_string);
 }
 
 /*
@@ -224,23 +234,21 @@ update_page_background (EosWindow *self)
 {
   EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
   GtkWidget *page = self->priv->current_page;
-  // If no page set, no override
+  // If no page set, do not transition
   if (page == NULL)
     return;
-
-  const gchar *next_background_uri = eos_page_manager_get_page_background_uri (pm, page);
-  // If backgrounds are the same, do not transition.
-  if (g_strcmp0 (next_background_uri, self->priv->current_background_uri) == 0)
-    return;
   // Set up css override for transition background...
-  gchar *next_background_css = format_background_css (self->priv->next_background,
-                                                      next_background_uri);
-  gchar *current_background_css = format_background_css (self->priv->current_background,
-                                                         self->priv->current_background_uri);
-  gchar *background_css = g_strconcat(next_background_css,
-                                      current_background_css,
-                                      NULL);
-
+  gchar *next_background_css_props = format_background_css (pm,
+                                                            page);
+  // If page background are exactly the same, do not transition
+  if (g_strcmp0 (self->priv->current_background_css_props, next_background_css_props) == 0)
+    return;
+  gchar *background_css = g_strdup_printf(CSS_TEMPLATE,
+                                          gtk_widget_get_name (self->priv->current_background),
+                                          self->priv->current_background_css_props,
+                                          gtk_widget_get_name (self->priv->next_background),
+                                          next_background_css_props);
+  // Override the css
   GtkStyleProvider *provider =
     GTK_STYLE_PROVIDER (self->priv->background_provider);
   GdkScreen *screen = gdk_screen_get_default ();
@@ -256,7 +264,38 @@ update_page_background (EosWindow *self)
   GtkWidget *temp = self->priv->next_background;
   self->priv->next_background = self->priv->current_background;
   self->priv->current_background = temp;
-  self->priv->current_background_uri = next_background_uri;
+  self->priv->current_background_css_props = next_background_css_props;
+}
+
+/*
+ * update_visible_page_properties:
+ * @widget: the page
+ * @child_property: the property that changed
+ * @user_data: pointer to the window
+ *
+ * Updates the currently displaying page when one of its child properties
+ * changes.
+ */
+static void
+update_visible_page_properties (GtkWidget  *widget,
+                                GParamSpec *child_property,
+                                gpointer    data)
+{
+  EosWindow *self = (EosWindow *)data;
+  const gchar *property_name = child_property->name;
+  if (g_strcmp0 (property_name, "page-actions") == 0)
+    update_page_actions (self);
+  else if (g_strcmp0 (property_name, "custom-toolbox-widget") == 0)
+    update_page_toolbox (self);
+  else if (g_strcmp0 (property_name, "left-topbar-widget") == 0)
+    update_page_left_topbar (self);
+  else if (g_strcmp0 (property_name, "center-topbar-widget") == 0)
+    update_page_center_topbar (self);
+  else if (g_strcmp0 (property_name, "background-uri") == 0
+           || g_strcmp0 (property_name, "background-size") == 0
+           || g_strcmp0 (property_name, "background-position") == 0
+           || g_strcmp0 (property_name, "background-repeats") == 0)
+    update_page_background (self);
 }
 
 /*
@@ -274,17 +313,8 @@ update_page (EosWindow *self)
   if (self->priv->current_page)
     {
       g_signal_handler_disconnect (self->priv->current_page,
-                                   self->priv->child_page_actions_handler);
-      g_signal_handler_disconnect (self->priv->current_page,
-                                   self->priv->child_custom_toolbox_handler);
-      g_signal_handler_disconnect (self->priv->current_page,
-                                   self->priv->child_background_handler);
-      g_signal_handler_disconnect (self->priv->current_page,
-                                   self->priv->child_left_topbar_handler);
-      g_signal_handler_disconnect (self->priv->current_page,
-                                   self->priv->child_center_topbar_handler);
+                                   self->priv->visible_page_property_handler);
     }
-
   self->priv->current_page = eos_page_manager_get_visible_page (pm);
 
   update_page_actions (self);
@@ -298,31 +328,11 @@ update_page (EosWindow *self)
 
   if (self->priv->current_page)
     {
-      self->priv->child_page_actions_handler =
-        g_signal_connect_swapped (self->priv->current_page,
-                                  "child-notify::page-actions",
-                                  G_CALLBACK (update_page_actions),
-                                  self);
-      self->priv->child_custom_toolbox_handler =
-        g_signal_connect_swapped (self->priv->current_page,
-                                  "child-notify::custom-toolbox-widget",
-                                  G_CALLBACK (update_page_toolbox),
-                                  self);
-      self->priv->child_left_topbar_handler =
-        g_signal_connect_swapped (self->priv->current_page,
-                                  "child-notify::left-topbar-widget",
-                                  G_CALLBACK (update_page_left_topbar),
-                                  self);
-      self->priv->child_center_topbar_handler =
-        g_signal_connect_swapped (self->priv->current_page,
-                                  "child-notify::center-topbar-widget",
-                                  G_CALLBACK (update_page_center_topbar),
-                                  self);
-      self->priv->child_background_handler =
-        g_signal_connect_swapped (self->priv->current_page,
-                                  "child-notify::background-uri",
-                                  G_CALLBACK (update_page_background),
-                                  self);
+      self->priv->visible_page_property_handler =
+        g_signal_connect (self->priv->current_page,
+                          "child-notify",
+                          G_CALLBACK (update_visible_page_properties),
+                          self);
     }
 }
 
@@ -557,6 +567,7 @@ eos_window_init (EosWindow *self)
   self->priv = WINDOW_PRIVATE (self);
 
   self->priv->background_provider = gtk_css_provider_new ();
+  self->priv->current_background_css_props = TRANSPARENT_FRAME_CSS_PROPERTIES;
 
   self->priv->top_bar = eos_top_bar_new ();
   gtk_widget_set_parent (self->priv->top_bar, GTK_WIDGET (self));
