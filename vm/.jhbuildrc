@@ -21,7 +21,7 @@ os.environ['CFLAGS'] = '-g -O0'
 
 #autogenargs=''
 module_autogenargs = {}
-module_autogenargs['eos-sdk'] = '--enable-gtk-doc --enable-strict-flags'
+module_autogenargs['eos-sdk'] = '--enable-gtk-doc --enable-gir-doc --enable-strict-flags'
 
 # A string listing additional arguments to be passed to make.
 #makeargs = ''
