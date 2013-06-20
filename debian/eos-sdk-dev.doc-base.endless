@@ -5,5 +5,5 @@ Abstract: API documentation for the Open Endless SDK, API version 0
 Section: Programming/C
 
 Format: HTML
-Index: /usr/share/gtk-doc/html/eos-sdk/index.html
-Files: /usr/share/gtk-doc/html/eos-sdk/*.html
+Index: /usr/share/gtk-doc/html/endless-0/index.html
+Files: /usr/share/gtk-doc/html/endless-0/*.html
