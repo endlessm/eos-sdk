@@ -37,7 +37,7 @@ am_ver=`automake --version | grep -m 1 -o '[^ ]*$'`
 # defines HAS_SERIAL_TESTS_OPTION so we can keep our configure.ac forward
 # compatible
 case $am_ver in
-    *\ 1.11*|*\ 1.12*) ;;
+    1.11*|1.12*) echo '';;
     *) echo 'm4_define([HAS_SERIAL_TESTS_OPTION], [1])';;
 esac > m4/serial-tests.m4
 
