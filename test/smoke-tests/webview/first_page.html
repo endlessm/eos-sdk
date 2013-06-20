@@ -1,0 +1,50 @@
+<html>
+
+<head>
+<title>First page</title>
+
+<style>
+p, form {
+	width: 50%;
+	padding: 1em;
+	background: #FFFFFF;
+}
+
+body {
+	background: #EEEEEE;
+}
+</style>
+</head>
+
+<body>
+
+<h1>First page</h1>
+
+<p>
+<a href="endless://moveToPage?name=page2">Move to page 2</a>
+</p>
+
+<p>
+<a href="endless://showMessageFromParameter?msg=This%20is%20a%20message%20from%20the%20URL%20parameter">Show message from parameter in this URL</a>
+</p>
+
+<form action="endless://showMessageFromParameter">
+<input name="msg" value="I am in a form!"/>
+<input type="submit" value="Show message using a form"/>
+</form>
+
+<p>
+<input id="inputformessage" value="my ID is inputformessage"/>
+<a href="endless://showMessageFromInputField?id=inputformessage">Show message using the &lt;input&gt;'s ID</a>
+</p>
+
+<p>
+<a href="http://wikipedia.org">Regular link to a Web site</a>
+</p>
+
+<p>
+<a href="endless://addStars?id=starspan">I want stars!</a> <span id="starspan" />
+</p>
+
+</body>
+</html>
