@@ -10,7 +10,7 @@
 
 #define _EOS_STYLE_CLASS_ACTION_MENU "action-menu"
 
-/**
+/*
  * SECTION:action-menu
  * @short_description: Adding actions to the page
  * @title: Action Menu
@@ -94,7 +94,7 @@ eos_action_menu_finalize (GObject *object)
 
 /* ******* ACTION GROUP MGMT ******* */
 
-/**
+/*
  * eos_action_menu_add_action:
  * @menu: a #EosActionMenu
  * @action: a #GtkAction: name, label, icon-name, is-important.
@@ -131,7 +131,7 @@ eos_action_menu_add_action (EosActionMenu *menu,
     }
 }
 
-/**
+/*
  * eos_action_menu_get_action:
  * @menu: an #EosActionMenu
  * @name: the name of the action to retrieve
@@ -151,14 +151,14 @@ eos_action_menu_get_action (EosActionMenu *menu,
   return gtk_action_group_get_action (priv->action_group, name);
 }
 
-/**
- * eos_action_list_actions:
+/*
+ * eos_action_menu_list_actions:
  * @menu: an #EosActionMenu
  *
  * Returns: (element-type GList) (transfer container): an allocated list of the action objects in the action group
  */
 GList *
-eos_action_list_actions (EosActionMenu *menu)
+eos_action_menu_list_actions (EosActionMenu *menu)
 {
   EosActionMenuPrivate *priv;
   g_return_val_if_fail (EOS_IS_ACTION_MENU (menu), NULL);
@@ -167,7 +167,7 @@ eos_action_list_actions (EosActionMenu *menu)
   return gtk_action_group_list_actions (priv->action_group);
 }
 
-/**
+/*
  * eos_action_menu_remove_action:
  * @menu: an #EosActionMenu
  * @action: the action to remove
@@ -185,7 +185,7 @@ eos_action_menu_remove_action (EosActionMenu *menu,
   gtk_action_group_remove_action(priv->action_group, action);
 }
 
-/**
+/*
  * eos_action_menu_remove_action_by_name:
  * @menu: an #EosActionMenu
  * @name: the name of the action to remove

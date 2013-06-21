@@ -20,11 +20,11 @@ function _init() {
     // GtkAction from the developer, as that will be deprecated in the future.
     Endless.ActionMenu.prototype._add_action_real = Endless.ActionMenu.prototype.add_action;
     Endless.ActionMenu.prototype.add_action = function(dict, callback) {
-	let action = new Gtk.Action(dict);
-	this._add_action_real(action);
+        let action = new Gtk.Action(dict);
+        this._add_action_real(action);
 
-	if (typeof callback === "function") {
-	    action.connect('activate', callback);
-	}
+        if (typeof callback === "function") {
+            action.connect('activate', callback);
+        }
     }
 }

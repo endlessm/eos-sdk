@@ -47,29 +47,22 @@ struct _EosActionMenuClass
   GtkGridClass parent_class;
 };
 
-EOS_SDK_ALL_API_VERSIONS
 GType        eos_action_menu_get_type              (void) G_GNUC_CONST;
 
-EOS_SDK_ALL_API_VERSIONS
 GtkWidget   *eos_action_menu_new                   ();
 
-EOS_SDK_ALL_API_VERSIONS
 void eos_action_menu_add_action                    (EosActionMenu *menu,
                                                     GtkAction     *action);
 
-EOS_SDK_ALL_API_VERSIONS
 GtkAction   *eos_action_menu_get_action            (EosActionMenu *menu,
                                                     const gchar   *name);
 
-EOS_SDK_ALL_API_VERSIONS
-GList       *eos_action_list_actions               (EosActionMenu *menu);
+GList       *eos_action_menu_list_actions          (EosActionMenu *menu);
 
 
-EOS_SDK_ALL_API_VERSIONS
 void         eos_action_menu_remove_action         (EosActionMenu *menu,
                                                     GtkAction *action);
 
-EOS_SDK_ALL_API_VERSIONS
 void         eos_action_menu_remove_action_by_name (EosActionMenu *menu,
                                                     const gchar   *name);
 
