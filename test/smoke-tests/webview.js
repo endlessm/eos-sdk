@@ -16,9 +16,16 @@ const TestApplication = new Lang.Class({
 
     /* *** CONVENIENCE LIBRARY *** */
     
+    _onLoadStatus: function (web_view) {
+        if (web_view.load_status == WebKit.LoadStatus.FINISHED) {
+            // now we translate to Brazilian Portuguese
+            this._translateHTML (web_view, 'pt_BR');
+        }
+    },
+    
     _onNavigationPolicyDecisionRequested: function(web_view, frame, request,
-                                                    navigation_action, policy_decision,
-                                                    user_data) {
+                                                   navigation_action, policy_decision,
+                                                   user_data) {
 	// lame way of getting function name and parameters, without error check
 	
         let uri = request.get_uri();
@@ -61,8 +68,25 @@ const TestApplication = new Lang.Class({
 	// WebKit.DOMDocument
 	let dom = webview.get_dom_document();
 	
-	// WebKitDOMElement
+	// WebKit.DOMElement
 	return dom.get_element_by_id(id);
+    },
+    
+    _translateHTML: function(webview, lang) {
+        let dom = webview.get_dom_document();
+        
+        // WebKit.DOMNodeList
+        let translatable = dom.get_elements_by_name('translatable');
+        
+        for (var i = 0 ; i < translatable.get_length() ; i++) {
+            // WebKit.DOMNode
+            let element = translatable.item(i);
+            
+            if (element.lang != lang) {
+                // TODO here is where we would do the translation
+                element.inner_text = '(TRANSLATE FROM '+element.lang+' TO '+lang+')';
+            }
+        }
     },
     
     /* *** APP-SPECIFIC FUNCTIONS *** */
@@ -118,6 +142,9 @@ const TestApplication = new Lang.Class({
         let cwd = GLib.get_current_dir();
         let target = cwd + '/test/smoke-tests/webview/first_page.html';
         this._webview.load_uri(GLib.filename_to_uri(target, null));
+        
+        this._webview.connect('notify::load-status', 
+                              Lang.bind(this, this._onLoadStatus));
         
         this._webview.connect('navigation-policy-decision-requested', 
                                Lang.bind(this, this._onNavigationPolicyDecisionRequested));
