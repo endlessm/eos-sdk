@@ -12,9 +12,10 @@ test_run_tests_SOURCES = \
 	test/test-init.c \
 	test/test-hello.c \
 	test/test-application.c \
-  test/test-page-manager.c \
+	test/test-page-manager.c \
 	test/test-splash-page-manager.c \
-	test/test-window.c
+	test/test-window.c \
+	test/test-action-menu.c
 test_run_tests_CPPFLAGS = $(TEST_FLAGS)
 test_run_tests_LDADD = $(TEST_LIBS)
 

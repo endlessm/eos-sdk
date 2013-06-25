@@ -13,22 +13,54 @@ const TestApplication = new Lang.Class ({
     vfunc_startup: function() {
         this.parent();
 
-        this._page = new Gtk.Grid();
+        this._page = new Gtk.Grid ();
         
-        /* should be using Endless.EOS_ACTION_BUTTON_SIZE_PRIMARY */
+        this._content = new Gtk.Label ({name: 'content', label: 'Content'});
+        
+        this._menu = new Endless.ActionMenu ();
+        
+        // put the ActionMenu in a panel, as GtkGrid doesn't expand if none of its children want to
+        this._menu_panel = new Gtk.Frame ({name: 'menu'});
+        this._menu_panel.add (this._menu);
+        this._menu_panel.set_hexpand (true);
+        this._menu_panel.set_vexpand (true);
 
-        this._eosButton0 = new Endless.ActionButton({size: 0, label: 'SMILE', 'icon-id': 'face-smile-symbolic' });
-        this._page.attach(this._eosButton0, 0, 0, 1, 1);
+        // the ActionMenu takes 1/6 of the width
+        this._page.set_column_homogeneous (true);
+        this._page.attach (this._content, 0, 0, 5, 1);
+        this._page.attach (this._menu_panel, 5, 0, 1, 1);
         
-        this._eosButton1 = new Endless.ActionButton({size: 1, label: 'POUT', 'icon-id': 'face-sad-symbolic' });
-        this._page.attach(this._eosButton1, 0, 1, 1, 1);
-        
-        this._eosButton2 = new Endless.ActionButton({size: 2, label: '', 'icon-id': 'edit-delete-symbolic' });
-        this._page.attach(this._eosButton2, 0, 2, 1, 1);
-        
-        this._eosButton3 = new Endless.ActionButton({size: 3, label: '', 'icon-id': 'object-select-symbolic' });
-        this._page.attach(this._eosButton3, 0, 3, 1, 1);
-        
+        this._menu.add_action ({
+            name: 'select',
+            'icon-name': 'object-select-symbolic',
+            label: 'select stuff',
+            'is-important': true },
+            Lang.bind(this, function () {
+        	var md = new Gtk.MessageDialog({modal:true, title:"Information",
+        	    message_type:Gtk.MessageType.INFO,
+        	    buttons:Gtk.ButtonsType.OK, text:"Select button pressed!"});
+        	md.run();
+        	md.destroy();
+            }));
+
+        this._menu.add_action ({
+            name: 'delete',
+            'icon-name': 'edit-delete-symbolic',
+            label: 'delete stuff',
+            'is-important': false });
+
+        this._menu.add_action ({
+            name: 'smile',
+            'icon-name': 'face-smile-symbolic',
+            label: 'smile',
+            'is-important': false });
+
+        this._menu.add_action ({
+            name: 'sadface',
+            'icon-name': 'face-sad-symbolic',
+            label: 'sadface',
+            'is-important': false });
+
         this._pm = new Endless.PageManager();
         this._pm.add(this._page, { name: "page" });
         
@@ -37,7 +69,7 @@ const TestApplication = new Lang.Class ({
         
         this._window = new Endless.Window({
             application: this,
-            border_width: 16,
+            border_width: 1,
             page_manager: this._pm
         });
         

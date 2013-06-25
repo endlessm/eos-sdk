@@ -1,3 +1,5 @@
+/* ****** ACTION BUTTONS ****** */
+
 EosActionButton {
 	background-color: transparent;
 	border-color: #012345;
@@ -53,4 +55,18 @@ EosActionButton:focused {
 
 EosActionButton:inconsistent {
 	border-color: #6789AB;
+}
+
+/* ****** ACTION MENU ****** */
+
+GtkFrame#menu {
+	background-color: #D3D7CF;
+	border-color: #E1E2DE;
+	border-width: 0 0 0 6px;
+}
+
+GtkLabel#content {
+	color: #BABDB6;
+	font-size: 48pt;
+	background: #EEEEEC;
 }

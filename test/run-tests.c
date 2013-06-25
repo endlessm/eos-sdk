@@ -92,6 +92,7 @@ main (int    argc,
   add_window_tests ();
   add_page_manager_tests ();
   add_splash_page_manager_tests ();
+  add_action_menu_tests ();
 
   return g_test_run ();
 }

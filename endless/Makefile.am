@@ -11,7 +11,8 @@ endless_private_installed_headers = \
 	endless/eossplashpagemanager.h \
 	endless/eostypes.h \
 	endless/eoswindow.h \
-	endless/eosactionbutton-private.h
+	endless/eosactionbutton-private.h \
+	endless/eosactionmenu-private.h
 
 endless_library_sources = \
 	endless/eosapplication.c \
@@ -22,6 +23,7 @@ endless_library_sources = \
 	endless/eossplashpagemanager.c \
 	endless/eostopbar.c endless/eostopbar-private.h \
 	endless/eosactionbutton.c \
+	endless/eosactionmenu.c \
 	endless/eoswindow.c
 
 # Endless GUI library
