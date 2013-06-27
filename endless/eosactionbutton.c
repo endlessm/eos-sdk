@@ -595,7 +595,7 @@ eos_action_button_draw (GtkWidget *widget,
   GtkAllocation allocation;
   GtkStyleContext *context;
   GtkStateFlags state;
-  gint width, height, border_width, border_height;
+  gint width, border_width, border_height, border_thickness;
   GtkBorder margin;
 
   context = gtk_widget_get_style_context (widget);
@@ -615,25 +615,30 @@ eos_action_button_draw (GtkWidget *widget,
   x = 0;
   y = 0;
   width = allocation.width;
-  height = allocation.height;
 
   border_width = icon_sizes[priv->size].width;
   border_height = icon_sizes[priv->size].height;
+  border_thickness = icon_sizes[priv->size].border_width;
 
   cairo_save (cr);
 
   gtk_render_frame (context, cr,
                     x + (width - border_width)/2,
-                    margin.top,
+                    y + margin.top,
                     border_width, border_height);
 
-  if (gtk_widget_has_visible_focus (widget))
-    {
-      gtk_render_focus (context, cr,
-                        x, y, width, height);
-    }
-
   // TODO is it really needed to restore and save the cairo_t here?
+  cairo_restore (cr);
+  cairo_save (cr);
+
+  // GTK+ tries to paint the background inside the border, we work around this
+  //because we want to draw the inset shadow over the border itself
+  gtk_render_background (context, cr,
+                         x + (width - border_width)/2 - border_thickness,
+                         y + margin.top - border_thickness,
+                         border_width + 2*border_thickness,
+                         border_height + 2*border_thickness);
+
   cairo_restore (cr);
   cairo_save (cr);
 

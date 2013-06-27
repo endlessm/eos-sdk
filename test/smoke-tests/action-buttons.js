@@ -15,7 +15,22 @@ const TestApplication = new Lang.Class ({
 
         this._page = new Gtk.Grid ();
         
-        this._content = new Gtk.Label ({name: 'content', label: 'Content'});
+        this._content = new Gtk.Grid ({
+            hexpand: true,
+            halign: Gtk.Align.CENTER,
+            vexpand: true,
+            valign: Gtk.Align.CENTER});
+
+        this._darkSwitch = new Gtk.Switch ({active: false});
+        this._darkSwitch.connect ('notify::active', Lang.bind (this, function (active) {
+            if (this._darkSwitch.get_active()) {
+                this._menu_panel.get_style_context().add_class('dark');
+            } else {
+                this._menu_panel.get_style_context().remove_class('dark');
+            }
+        }));
+        this._content.add(new Gtk.Label ({label: 'Dark action menu'}), 0, 0, 1, 1);
+        this._content.add(this._darkSwitch, 0, 1, 1, 1);
         
         this._menu = new Endless.ActionMenu ();
         
