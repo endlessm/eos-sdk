@@ -48,9 +48,15 @@ EosActionButton:focused {
 	            0px -1px 1px alpha(white, 0.65);
 }
 
+EosActionButton GtkImage,
+EosActionButton GtkImage:selected,
+EosActionButton GtkImage:focused {
+	color: alpha(#323232, 0.5);
+}
+
 EosActionButton GtkLabel,
-EosActionButton:selected GtkLabel,
-EosActionButton:focused GtkLabel {
+EosActionButton GtkLabel:selected,
+EosActionButton GtkLabel:focused {
 	color: alpha(#323232, 0.65);
 }
 
@@ -60,7 +66,11 @@ EosActionButton:hover {
 	box-shadow: 1px 1px 1px alpha(black, 0.8) inset;
 }
 
-EosActionButton:hover GtkLabel {
+EosActionButton GtkImage:hover {
+	color: alpha(#282828, 0.8);
+}
+
+EosActionButton GtkLabel:hover {
 	color: alpha(#1E1E1E, 0.8);
 }
 
@@ -70,7 +80,11 @@ EosActionButton:active {
 	box-shadow: 1px 1px 1px alpha(black, 0.8) inset;
 }	
 
-EosActionButton:active {
+EosActionButton GtkImage:active {
+	color: alpha(#282828, 0.65);
+}
+
+EosActionButton GtkLabel:active {
 	color: alpha(#1E1E1E, 0.8);
 }
 
@@ -93,9 +107,12 @@ EosActionButton:inconsistent {
 	            0px -1px 1px alpha(white, 0.5) inset;
 }
 
+.dark EosActionButton GtkImage,
+.dark EosActionButton GtkImage:selected,
+.dark EosActionButton GtkImage:selected,
 .dark EosActionButton GtkLabel,
-.dark EosActionButton:selected GtkLabel,
-.dark EosActionButton:focused GtkLabel {
+.dark EosActionButton GtkLabel:selected,
+.dark EosActionButton GtkLabel:focused {
 	color: alpha(#E6E6E6, 0.5);
 }
 
@@ -106,9 +123,9 @@ EosActionButton:inconsistent {
 	            0px -1px 1px alpha(white, 0.85) inset;
 }
 
-.dark EosActionButton:hover GtkLabel {
+.dark EosActionButton GtkImage:hover,
+.dark EosActionButton GtkLabel:hover {
 	color: alpha(white, 0.8);
-	font-style: italic;
 }
 
 /* pressed */
@@ -118,7 +135,11 @@ EosActionButton:inconsistent {
 	            0px -1px 1px alpha(white, 0.7) inset;
 }	
 
-.dark EosActionButton:active {
+.dark EosActionButton GtkImage:active {
+	color: alpha(white, 0.65);
+}
+
+.dark EosActionButton GtkLabel:active {
 	color: alpha(white, 0.8);
 }
 
