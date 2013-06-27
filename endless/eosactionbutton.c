@@ -49,7 +49,6 @@ struct _EosActionButtonPrivate
   /* internal */
   GtkWidget *grid;
   GtkWidget *icon_image;
-  GdkPixbuf *icon_pixbuf;
   GtkWidget *label_widget;
 };
 
@@ -279,56 +278,24 @@ static void
 eos_action_button_load_icon (EosActionButton *button)
 {
   EosActionButtonPrivate *priv;
-  GtkIconInfo *icon_info;
-  GdkPixbuf *new_icon = NULL;
-  gboolean was_symbolic = TRUE;
-  GError *error = NULL;
 
   g_return_if_fail (EOS_IS_ACTION_BUTTON (button));
 
   priv = button->priv;
 
-  // TODO maybe use gtk_image_set_from_icon_set
-
   if (priv->icon_id != NULL)
     {
-      icon_info = gtk_icon_theme_lookup_icon (gtk_icon_theme_get_default (),
-                                              priv->icon_id,
-                                              icon_sizes[priv->size].icon_size,
-                                              GTK_ICON_LOOKUP_FORCE_SIZE
-                                              | GTK_ICON_LOOKUP_GENERIC_FALLBACK
-                                              | GTK_ICON_LOOKUP_USE_BUILTIN );
+      gtk_image_set_from_icon_name (GTK_IMAGE (priv->icon_image),
+                                    priv->icon_id,
+                                    GTK_ICON_SIZE_BUTTON);
 
-      new_icon = gtk_icon_info_load_symbolic_for_context (icon_info,
-                                                          gtk_widget_get_style_context (GTK_WIDGET(button)),
-                                                          &was_symbolic,
-                                                          &error);
-
-      if (!was_symbolic)
-        {
-          g_warning ("Icon for %s is not symbolic\n", priv->icon_id);
-        }
-      if (error != NULL)
-        {
-          g_warning ("Unable to load icon for %s : %s\n", priv->icon_id, error->message);
-          g_error_free (error);
-        }
-      g_object_ref (new_icon);
-      g_object_unref (icon_info);
+      gtk_image_set_pixel_size (GTK_IMAGE (priv->icon_image),
+                                icon_sizes[priv->size].icon_size);
     }
   else
     {
-      new_icon = NULL;
+      gtk_image_clear (GTK_IMAGE (priv->icon_image));
     }
-
-  if (priv->icon_pixbuf != NULL)
-    {
-      g_object_unref (priv->icon_pixbuf);
-    }
-
-  priv->icon_pixbuf = new_icon;
-
-  gtk_image_set_from_pixbuf (GTK_IMAGE (priv->icon_image), priv->icon_pixbuf);
 }
 
 /**
