@@ -52,8 +52,8 @@ const TestApplication = new Lang.Class({
         	});
             }
             
-            if(this.actions[function_name])
-        	Lang.bind(this, this.actions[function_name])(parameters);
+            if(this._html_actions[function_name])
+        	Lang.bind(this, this._html_actions[function_name])(parameters);
             else
         	print('Unknown function '+function_name);
             
@@ -89,9 +89,9 @@ const TestApplication = new Lang.Class({
         }
     },
     
-    /* *** APP-SPECIFIC FUNCTIONS *** */
+    /* *** ACTIONS AVAILABLE FROM HTML *** */
     
-    actions: {
+    _html_actions: {
 	/* dict['name'] is the name of the page to move to */
 	'moveToPage': function(dict) {
 	    print('move to page '+dict['name']);
