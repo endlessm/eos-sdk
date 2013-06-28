@@ -118,6 +118,8 @@ AC_PATH_PROG([GIRDOCTOOL], [g-ir-doc-tool], [notfound])
 AC_ARG_VAR([GIRDOCTOOL], [Path to g-ir-doc-tool])
 AC_PATH_PROG([YELPBUILD], [yelp-build], [notfound])
 AC_ARG_VAR([YELPBUILD], [Path to yelp-build])
+GLIB_COMPILE_RESOURCES=`$PKG_CONFIG --variable glib_compile_resources gio-2.0`
+AC_SUBST(GLIB_COMPILE_RESOURCES)
 
 AC_CACHE_SAVE
 
