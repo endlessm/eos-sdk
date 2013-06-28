@@ -3,6 +3,7 @@
 EosActionButton {
 	background-color: transparent;
 	border-style: solid;
+	border-image: none;
 	margin: 10px;
 
 	border-radius: 40px;
