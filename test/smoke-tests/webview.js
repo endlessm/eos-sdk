@@ -82,10 +82,8 @@ const TestApplication = new Lang.Class({
             // WebKit.DOMNode
             let element = translatable.item(i);
 
-            if (element.lang != lang) {
-                // TODO here is where we would do the translation
-                element.inner_text = '(TRANSLATE FROM '+element.lang+' TO '+lang+')';
-            }
+            // TODO here is where we would do the translation
+            element.inner_html = '<i>' + element.inner_text + '</i>';
         }
     },
 
