@@ -4,6 +4,7 @@ endless_public_installed_headers = endless/endless.h
 
 endless_private_installed_headers = \
 	endless/eosversion.h \
+	endless/eosactionbutton.h \
 	endless/eosapplication.h \
 	endless/eosenums.h \
 	endless/eosmacros.h \
@@ -11,7 +12,6 @@ endless_private_installed_headers = \
 	endless/eossplashpagemanager.h \
 	endless/eostypes.h \
 	endless/eoswindow.h \
-	endless/eosactionbutton-private.h \
 	endless/eosactionmenu-private.h
 
 endless_library_sources = \

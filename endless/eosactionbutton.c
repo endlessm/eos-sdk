@@ -1,11 +1,36 @@
 /* Copyright 2013 Endless Mobile, Inc. */
 
 #include "config.h"
-#include "eosactionbutton-private.h"
+#include "eosactionbutton.h"
 
 #include <glib-object.h>
 #include <gtk/gtk.h>
 #include <math.h>
+
+/**
+ * SECTION:action-button
+ * @short_description: Buttons that the user recognizes as performing actions
+ * @title: Action buttons
+ *
+ * Any time you want to inform your user which actions are available, use an
+ * action button.
+ * For example, suppose you had a page in your application where the user could
+ * draw a picture.
+ * After finishing the picture, the user could save it or share it on Facebook.
+ * In that case, you would use two action buttons, labeled for example
+ * <quote>SAVE</quote> and <quote>SHARE</quote>, and containing icons
+ * representing saving and sharing.
+ *
+ * The buttons have a recognizable style and round border, so that it is
+ * instantly clear to the user that they represent actions.
+ *
+ * Generally, you should set the #EosPageManager:actions property on the page
+ * that you want to use action buttons on; this neatly arranges the actions
+ * in an action area on the right-hand side of the screen, placing the main
+ * action in a prominent place, and actions such as <quote>cancel</quote> on the
+ * bottom.
+ * However, you can also manually place action buttons anywhere on a page.
+ */
 
 #define _EOS_STYLE_CLASS_ACTION_BUTTON "action-button"
 
@@ -102,6 +127,14 @@ eos_action_button_class_init (EosActionButtonClass *klass)
   widget_class->get_preferred_width  = eos_action_button_get_preferred_width;
   widget_class->get_preferred_height = eos_action_button_get_preferred_height;
 
+  /**
+   * EosActionButton:size:
+   *
+   * Size for the action button; use #EosActionButtonSize to specify that the
+   * button represents a primary action, secondary, tertiary, or quaternary.
+   * #EOS_ACTION_BUTTON_SIZE_PRIMARY is the largest, and
+   * #EOS_ACTION_BUTTON_SIZE_QUATERNARY is the smallest (seldom used.)
+   */
   g_object_class_install_property (object_class,
                                    PROP_SIZE,
                                    g_param_spec_int ("size",
@@ -112,6 +145,11 @@ eos_action_button_class_init (EosActionButtonClass *klass)
                                                      EOS_ACTION_BUTTON_SIZE_SECONDARY,
                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
+  /**
+   * EosActionButton:label:
+   *
+   * Text for the label that is placed below or to the side of the button.
+   */
   g_object_class_install_property (object_class,
                                    PROP_LABEL,
                                    g_param_spec_string ("label",
@@ -120,6 +158,11 @@ eos_action_button_class_init (EosActionButtonClass *klass)
                                                         NULL,
                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
+  /**
+   * EosActionButton:icon-id:
+   *
+   * Icon name for the icon that is drawn within the circular button.
+   */
   g_object_class_install_property (object_class,
                                    PROP_ICON_ID,
                                    g_param_spec_string ("icon-id",
@@ -195,6 +238,17 @@ eos_action_button_init (EosActionButton *self)
 
 /* ******* LIFECYCLE ******* */
 
+/**
+ * eos_action_button_new:
+ * @size: size for the button: primary, secondary, et cetera
+ * @label: text to place under or beside the action button
+ * @icon_id: icon name for the icon inside the action button
+ *
+ * Convenience function for creating an action button with the size, label, and
+ * icon already set.
+ *
+ * Returns: a pointer to the newly-created widget.
+ */
 GtkWidget *
 eos_action_button_new (EosActionButtonSize size,
                        const gchar *label,
@@ -277,6 +331,14 @@ eos_action_button_load_icon (EosActionButton *button)
   gtk_image_set_from_pixbuf (GTK_IMAGE (priv->icon_image), priv->icon_pixbuf);
 }
 
+/**
+ * eos_action_button_set_size:
+ * @button: the button
+ * @size: a value from #EosActionButtonSize
+ *
+ * Sets the size of the button (e.g. secondary).
+ * See #EosActionButton:size for more information.
+ */
 void
 eos_action_button_set_size  (EosActionButton *button,
                              EosActionButtonSize size)
@@ -305,6 +367,15 @@ eos_action_button_set_size  (EosActionButton *button,
     }
 }
 
+/**
+ * eos_action_button_get_size:
+ * @button: the button
+ *
+ * Gets the size of the button (e.g. secondary).
+ * See #EosActionButton:size for more information.
+ *
+ * Returns: the size as a value from #EosActionButtonSize
+ */
 EosActionButtonSize
 eos_action_button_get_size (EosActionButton *button)
 {
@@ -317,6 +388,14 @@ eos_action_button_get_size (EosActionButton *button)
   return priv->size;
 }
 
+/**
+ * eos_action_button_set_label:
+ * @button: the button
+ * @label: text for the label
+ *
+ * Sets the text showing below or beside the button.
+ * See #EosActionButton:label for more information.
+ */
 void
 eos_action_button_set_label (EosActionButton *button, const gchar *label)
 {
@@ -335,6 +414,15 @@ eos_action_button_set_label (EosActionButton *button, const gchar *label)
   g_object_notify (G_OBJECT (button), "label");
 }
 
+/**
+ * eos_action_button_get_label:
+ * @button: the button
+ *
+ * Gets the text showing below or beside the button.
+ * See #EosActionButton:label for more information.
+ *
+ * Returns: the label text
+ */
 const gchar *
 eos_action_button_get_label (EosActionButton *button)
 {
@@ -347,6 +435,14 @@ eos_action_button_get_label (EosActionButton *button)
   return priv->label;
 }
 
+/**
+ * eos_action_button_set_icon_id:
+ * @button: the button
+ * @icon_id: an icon name
+ *
+ * Sets a new icon showing in the button, specified by icon name.
+ * See #EosActionButton:icon-id for more information.
+ */
 void
 eos_action_button_set_icon_id (EosActionButton *button,
                                const gchar* icon_id)
@@ -366,6 +462,15 @@ eos_action_button_set_icon_id (EosActionButton *button,
     }
 }
 
+/**
+ * eos_action_button_get_icon_id:
+ * @button: the button
+ *
+ * Gets the icon name for the icon showing in the button.
+ * See #EosActionButton:icon-id for more information.
+ *
+ * Returns: an icon name
+ */
 const gchar *
 eos_action_button_get_icon_id (EosActionButton *button)
 {

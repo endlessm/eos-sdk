@@ -9,7 +9,7 @@
 
 /* Shared typedefs for enumerations */
 
-/**
+/*
  * SECTION:enums
  * @Short_description: Public enumerated types used throughout the Endless SDK
  * @Title: Standard Enumerations
