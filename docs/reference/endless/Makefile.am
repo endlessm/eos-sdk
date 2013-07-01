@@ -52,7 +52,6 @@ EXTRA_HFILES=
 IGNORE_HFILES= eosinit-private.h \
                eostopbar-private.h \
                eosmainarea-private.h \
-               eosactionbutton-private.h \
                eosactionmenu-private.h \
                eospagemanager-private.h
 
