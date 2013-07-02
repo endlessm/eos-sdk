@@ -38,5 +38,6 @@ void add_window_tests                        (void);
 void add_page_manager_tests                  (void);
 void add_splash_page_manager_tests           (void);
 void add_action_menu_tests                   (void);
+void add_action_button_tests                 (void);
 
 #endif /* RUN_TESTS_H */

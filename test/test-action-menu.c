@@ -1,7 +1,6 @@
 #include <gtk/gtk.h>
 #include <endless/endless.h>
 
-#include <endless/eosactionbutton-private.h>
 #include <endless/eosactionmenu-private.h>
 
 #include "run-tests.h"

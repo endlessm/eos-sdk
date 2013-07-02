@@ -3,7 +3,7 @@
 #include "config.h"
 #include "eosactionmenu-private.h"
 
-#include "eosactionbutton-private.h"
+#include "eosactionbutton.h"
 #include <glib-object.h>
 #include <gtk/gtk.h>
 #include <math.h>
