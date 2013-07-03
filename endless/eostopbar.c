@@ -20,7 +20,7 @@
 #define _EOS_STYLE_CLASS_TOP_BAR "top-bar"
 #define _EOS_TOP_BAR_HEIGHT_PX 36
 #define _EOS_TOP_BAR_BUTTON_PADDING_PX 3
-#define _EOS_TOP_BAR_MINIMIZE_ICON_NAME "list-remove-symbolic"
+#define _EOS_TOP_BAR_MINIMIZE_ICON_NAME "window-minimize-symbolic"
 #define _EOS_TOP_BAR_CLOSE_ICON_NAME "window-close-symbolic"
 
 G_DEFINE_TYPE (EosTopBar, eos_top_bar, GTK_TYPE_EVENT_BOX)
