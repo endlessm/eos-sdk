@@ -20,6 +20,8 @@
 #define _EOS_STYLE_CLASS_TOP_BAR "top-bar"
 #define _EOS_TOP_BAR_HEIGHT_PX 36
 #define _EOS_TOP_BAR_BUTTON_PADDING_PX 3
+#define _EOS_TOP_BAR_MINIMIZE_ICON_NAME "list-remove-symbolic"
+#define _EOS_TOP_BAR_CLOSE_ICON_NAME "window-close-symbolic"
 
 G_DEFINE_TYPE (EosTopBar, eos_top_bar, GTK_TYPE_EVENT_BOX)
 
@@ -139,7 +141,7 @@ eos_top_bar_init (EosTopBar *self)
   self->priv->minimize_button = gtk_button_new ();
   gtk_widget_set_valign (self->priv->minimize_button, GTK_ALIGN_CENTER);
   self->priv->minimize_icon =
-    gtk_image_new_from_icon_name ("list-remove-symbolic",
+    gtk_image_new_from_icon_name (_EOS_TOP_BAR_MINIMIZE_ICON_NAME,
                                   GTK_ICON_SIZE_SMALL_TOOLBAR);
   gtk_button_set_image (GTK_BUTTON (self->priv->minimize_button),
                         self->priv->minimize_icon);
@@ -147,7 +149,7 @@ eos_top_bar_init (EosTopBar *self)
   self->priv->close_button = gtk_button_new ();
   gtk_widget_set_valign (self->priv->close_button, GTK_ALIGN_CENTER);
   self->priv->close_icon =
-      gtk_image_new_from_icon_name ("window-close-symbolic",
+      gtk_image_new_from_icon_name (_EOS_TOP_BAR_CLOSE_ICON_NAME,
                                     GTK_ICON_SIZE_SMALL_TOOLBAR);
   gtk_button_set_image (GTK_BUTTON (self->priv->close_button),
                         self->priv->close_icon);
