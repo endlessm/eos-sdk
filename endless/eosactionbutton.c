@@ -45,6 +45,7 @@ struct _EosActionButtonPrivate
   EosActionButtonSize size;
   gchar *label;
   gchar *icon_id;
+  GtkPositionType label_pos;
 
   /* internal */
   GtkWidget *grid;
@@ -72,6 +73,7 @@ enum {
   PROP_0,
   PROP_SIZE,
   PROP_LABEL,
+  PROP_LABEL_POS,
   PROP_ICON_ID
 };
 
@@ -158,6 +160,20 @@ eos_action_button_class_init (EosActionButtonClass *klass)
                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
   /**
+   * EosActionButton:label-position:
+   *
+   * Position of the label in the button.
+   */
+  g_object_class_install_property (object_class,
+                                   PROP_LABEL_POS,
+                                   g_param_spec_enum ("label-position",
+                                                      "Label position",
+                                                      "Position of the label inside the button",
+                                                      GTK_TYPE_POSITION_TYPE,
+                                                      GTK_POS_BOTTOM,
+                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
+  /**
    * EosActionButton:icon-id:
    *
    * Icon name for the icon that is drawn within the circular button.
@@ -222,12 +238,15 @@ eos_action_button_init (EosActionButton *self)
 
   priv->grid = gtk_grid_new ();
   gtk_grid_attach(GTK_GRID (priv->grid), priv->icon_image, 0, 0, 1, 1);
-  gtk_grid_attach(GTK_GRID (priv->grid), priv->label_widget, 0, 1, 1, 1);
+
+  // TODO positioning is not really working right, it will be done manually in draw ()
+  // which means that this will not work as intended:
+  gtk_grid_attach_next_to (GTK_GRID (priv->grid),
+                           priv->label_widget, priv->icon_image,
+                           priv->label_pos, 1, 1);
 
   gtk_container_add (GTK_CONTAINER (self),
                      GTK_WIDGET (priv->grid));
-
-  // TODO positioning is not really working right, it will be done manually in draw ()
 
   gtk_widget_set_hexpand (GTK_WIDGET(self), FALSE);
   gtk_widget_set_halign (GTK_WIDGET(self), GTK_ALIGN_CENTER);
@@ -402,6 +421,55 @@ eos_action_button_get_label (EosActionButton *button)
   return priv->label;
 }
 
+void
+eos_action_button_set_label_position (EosActionButton *button,
+                                      GtkPositionType position)
+{
+  EosActionButtonPrivate *priv;
+
+  g_return_if_fail (EOS_IS_ACTION_BUTTON (button));
+
+  priv = button->priv;
+
+  if (priv->label_pos != position) {
+      g_object_ref (G_OBJECT (priv->label_widget));
+      gtk_container_remove (GTK_CONTAINER (priv->grid), priv->label_widget);
+      gtk_grid_attach_next_to (GTK_GRID (priv->grid),
+                               priv->label_widget, priv->icon_image,
+                               position, 1, 1);
+      g_object_unref (G_OBJECT (priv->label_widget));
+
+      priv->label_pos = position;
+
+      // we need to keep the buttons aligned
+      if (priv->label_pos == GTK_POS_LEFT)
+        {
+          gtk_widget_set_halign (GTK_WIDGET(button), GTK_ALIGN_END);
+        }
+
+      else if (priv->label_pos == GTK_POS_RIGHT)
+        {
+          gtk_widget_set_halign (GTK_WIDGET(button), GTK_ALIGN_START);
+        }
+      else
+        {
+          gtk_widget_set_halign (GTK_WIDGET(button), GTK_ALIGN_CENTER);
+        }
+  }
+}
+
+GtkPositionType
+eos_action_button_get_label_position (EosActionButton *button)
+{
+  EosActionButtonPrivate *priv;
+
+  g_return_val_if_fail (EOS_IS_ACTION_BUTTON (button), -1);
+
+  priv = button->priv;
+
+  return priv->label_pos;
+}
+
 /**
  * eos_action_button_set_icon_id:
  * @button: the button
@@ -463,6 +531,9 @@ eos_action_button_get_property (GObject    *object,
   case PROP_LABEL:
     g_value_set_string (value, priv->label);
     break;
+  case PROP_LABEL_POS :
+    g_value_set_enum (value, priv->label_pos);
+    break;
   case PROP_ICON_ID:
     g_value_set_string (value, priv->icon_id);
     break;
@@ -486,6 +557,9 @@ eos_action_button_set_property (GObject      *object,
     break;
   case PROP_LABEL :
     eos_action_button_set_label (button, g_value_get_string (value));
+    break;
+  case PROP_LABEL_POS :
+    eos_action_button_set_label_position (button, g_value_get_enum (value));
     break;
   case PROP_ICON_ID :
     eos_action_button_set_icon_id (button, g_value_get_string (value));
@@ -514,6 +588,8 @@ eos_action_button_get_real_size (GtkWidget      *widget,
                                &margin);
 
   gtk_widget_get_allocation (priv->label_widget, &label_allocation);
+
+  // TODO : needs to take "label-position" into account
 
   if (minimum_size && orientation == GTK_ORIENTATION_HORIZONTAL)
     *minimum_size = MAX (icon_sizes[priv->size].width + margin.left + margin.right,
