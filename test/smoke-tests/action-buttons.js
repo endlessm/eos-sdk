@@ -24,26 +24,20 @@ const TestApplication = new Lang.Class ({
         this._darkSwitch = new Gtk.Switch ({active: false});
         this._darkSwitch.connect ('notify::active', Lang.bind (this, function (active) {
             if (this._darkSwitch.get_active()) {
-                this._menu_panel.get_style_context().add_class('dark');
+                this._menu.get_style_context().add_class('dark');
             } else {
-                this._menu_panel.get_style_context().remove_class('dark');
+                this._menu.get_style_context().remove_class('dark');
             }
         }));
         this._content.add(new Gtk.Label ({label: 'Dark action menu'}), 0, 0, 1, 1);
         this._content.add(this._darkSwitch, 0, 1, 1, 1);
         
-        this._menu = new Endless.ActionMenu ();
+        this._menu = new Endless.ActionMenu ({name: 'menu'});
         
-        // put the ActionMenu in a panel, as GtkGrid doesn't expand if none of its children want to
-        this._menu_panel = new Gtk.Frame ({name: 'menu'});
-        this._menu_panel.add (this._menu);
-        this._menu_panel.set_hexpand (true);
-        this._menu_panel.set_vexpand (true);
-
         // the ActionMenu takes 1/6 of the width
         this._page.set_column_homogeneous (true);
         this._page.attach (this._content, 0, 0, 5, 1);
-        this._page.attach (this._menu_panel, 5, 0, 1, 1);
+        this._page.attach (this._menu, 5, 0, 1, 1);
         
         this._menu.add_action ({
             name: 'select',

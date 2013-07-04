@@ -17,13 +17,14 @@
  */
 
 
-G_DEFINE_TYPE (EosActionMenu, eos_action_menu, GTK_TYPE_GRID)
+G_DEFINE_TYPE (EosActionMenu, eos_action_menu, GTK_TYPE_FRAME)
 
 #define EOS_ACTION_MENU_PRIVATE(o) \
   (G_TYPE_INSTANCE_GET_PRIVATE ((o), EOS_TYPE_ACTION_MENU, EosActionMenuPrivate))
 
 struct _EosActionMenuPrivate
 {
+  GtkWidget *grid;
   GtkActionGroup *action_group;
 };
 
@@ -58,13 +59,21 @@ eos_action_menu_init (EosActionMenu *self)
   context = gtk_widget_get_style_context (GTK_WIDGET (self));
   gtk_style_context_add_class (context, _EOS_STYLE_CLASS_ACTION_MENU);
 
+  priv->grid = gtk_grid_new ();
+  g_object_set (G_OBJECT (priv->grid),
+                "hexpand", TRUE,
+                "hexpand", TRUE,
+                "halign", GTK_ALIGN_CENTER,
+                "valign", GTK_ALIGN_CENTER,
+                NULL);
+  gtk_container_add (GTK_CONTAINER (self),
+                     GTK_WIDGET (priv->grid));
+
   // TODO : name?
   priv->action_group = gtk_action_group_new ("EosActionMenu");
 
   gtk_widget_set_hexpand (GTK_WIDGET (self), TRUE);
   gtk_widget_set_vexpand (GTK_WIDGET (self), TRUE);
-  gtk_widget_set_halign (GTK_WIDGET (self), GTK_ALIGN_CENTER);
-  gtk_widget_set_valign (GTK_WIDGET (self), GTK_ALIGN_CENTER);
 }
 
 /* ******* LIFECYCLE ******* */
@@ -126,7 +135,7 @@ eos_action_menu_add_action (EosActionMenu *menu,
       gtk_activatable_set_related_action (GTK_ACTIVATABLE (action_button), action);
 
       // TODO : maybe we need a finer control, taking is-important into account?
-      gtk_grid_attach_next_to (GTK_GRID (menu), action_button, NULL,
+      gtk_grid_attach_next_to (GTK_GRID (priv->grid), action_button, NULL,
                                GTK_POS_BOTTOM, 1, 1);
     }
 }
@@ -205,7 +214,7 @@ eos_action_menu_remove_action_by_name (EosActionMenu *menu,
   action = gtk_action_group_get_action (priv->action_group, name);
   if (action)
     {
-      gtk_action_group_remove_action (priv->action_group, action);
+      eos_action_menu_remove_action (menu, action);
     }
 }
 

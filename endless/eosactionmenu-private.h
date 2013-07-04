@@ -37,21 +37,21 @@ typedef struct _EosActionMenuPrivate EosActionMenuPrivate;
 
 struct _EosActionMenu
 {
-  GtkGrid parent;
+  GtkFrame parent;
 
   EosActionMenuPrivate *priv;
 };
 
 struct _EosActionMenuClass
 {
-  GtkGridClass parent_class;
+  GtkFrameClass parent_class;
 };
 
 GType        eos_action_menu_get_type              (void) G_GNUC_CONST;
 
 GtkWidget   *eos_action_menu_new                   ();
 
-void eos_action_menu_add_action                    (EosActionMenu *menu,
+void         eos_action_menu_add_action            (EosActionMenu *menu,
                                                     GtkAction     *action);
 
 GtkAction   *eos_action_menu_get_action            (EosActionMenu *menu,
