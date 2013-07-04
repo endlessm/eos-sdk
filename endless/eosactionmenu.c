@@ -188,10 +188,34 @@ eos_action_menu_remove_action (EosActionMenu *menu,
                                GtkAction *action)
 {
   EosActionMenuPrivate *priv;
+  GList *children, *i;
+  GtkWidget *target_child = NULL;
+
   g_return_if_fail (EOS_IS_ACTION_MENU (menu));
+  g_return_if_fail (GTK_IS_ACTION (action));
   priv = menu->priv;
 
   gtk_action_group_remove_action(priv->action_group, action);
+
+  children = gtk_container_get_children (GTK_CONTAINER (priv->grid));
+
+  for (i = children; i != NULL; i = i->next)
+    {
+      GtkWidget *child = i->data;
+      GtkAction *childs_action = gtk_activatable_get_related_action (GTK_ACTIVATABLE (child));
+
+      if (childs_action != NULL &&
+          g_strcmp0 (gtk_action_get_name (childs_action), gtk_action_get_name (action)) == 0)
+        {
+          target_child = child;
+          break;
+        }
+    }
+
+  if (target_child != NULL)
+    {
+      gtk_widget_destroy (target_child);
+    }
 }
 
 /*
