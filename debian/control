@@ -32,3 +32,11 @@ Depends: eos-sdk (= ${binary:Version}),
          eos-pstack-dev
 Description: Open Endless SDK
  Development headers for the Open Endless SDK
+
+Package: eos-sdk-webhelper
+Section: libs
+Architecture: any
+Depends: eos-sdk (= ${binary:Version})
+Description: Open Endless SDK web helper
+ Internal convenience library to simplify creation of web apps using the
+ Open Endless SDK.
