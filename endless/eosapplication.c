@@ -7,6 +7,8 @@
 
 #include "eoswindow.h"
 
+#define CSS_THEME_URI "resource:///com/endlessm/sdk/css/endless-widgets.css"
+
 /**
  * SECTION:application
  * @short_description: Start here with your application
@@ -75,6 +77,28 @@ eos_application_activate (GApplication *application)
 }
 
 static void
+eos_application_startup (GApplication *application)
+{
+  G_APPLICATION_CLASS (eos_application_parent_class)->startup (application);
+
+  GtkCssProvider *provider = gtk_css_provider_new ();
+
+  /* Reset CSS for SDK applications and apply our own theme on top of it. This
+  is so that we do not interfere with existing, complicated Adwaita theming.
+  */
+  GFile *css_file = g_file_new_for_uri (CSS_THEME_URI);
+  gtk_css_provider_load_from_file (provider, css_file, NULL);
+  g_object_unref (css_file);
+
+  gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
+                                             GTK_STYLE_PROVIDER (provider),
+                                             GTK_STYLE_PROVIDER_PRIORITY_SETTINGS);
+  g_debug ("Initialized theme\n");
+
+  g_object_unref (provider);
+}
+
+static void
 eos_application_window_added (GtkApplication *application,
                               GtkWindow *window)
 {
@@ -130,6 +154,7 @@ eos_application_class_init (EosApplicationClass *klass)
   g_type_class_add_private (klass, sizeof (EosApplicationPrivate));
 
   g_application_class->activate = eos_application_activate;
+  g_application_class->startup = eos_application_startup;
   gtk_application_class->window_added = eos_application_window_added;
   gtk_application_class->window_removed = eos_application_window_removed;
 }

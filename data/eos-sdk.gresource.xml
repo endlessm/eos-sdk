@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/endlessm/sdk">
+    <file>css/reset.css</file>
+    <file>css/endless-widgets.css</file>
+  </gresource>
+</gresources>
