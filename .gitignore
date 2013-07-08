@@ -10,6 +10,7 @@ endless/eosresource-private.h
 data/eos-wikipedia-domain.gresource
 wikipedia/config.js
 tools/eos-run-test
+tools/eos-application-manifest/eos-application-manifest
 
 *.py[cod]
 
