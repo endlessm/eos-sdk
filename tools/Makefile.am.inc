@@ -28,4 +28,7 @@ commandsdir = $(libexecdir)/eos-application-manifest/commands
 dist_commands_DATA = \
 	tools/eos-application-manifest/commands/help.js \
 	tools/eos-application-manifest/commands/version.js \
+	tools/eos-application-manifest/commands/init.js \
 	$(NULL)
+
+EXTRA_DIST += $(tools_test_modules)
