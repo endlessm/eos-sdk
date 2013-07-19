@@ -446,7 +446,6 @@ eos_action_button_set_label_position (EosActionButton *button,
         {
           gtk_widget_set_halign (GTK_WIDGET(button), GTK_ALIGN_END);
         }
-
       else if (priv->label_pos == GTK_POS_RIGHT)
         {
           gtk_widget_set_halign (GTK_WIDGET(button), GTK_ALIGN_START);
@@ -589,23 +588,49 @@ eos_action_button_get_real_size (GtkWidget      *widget,
 
   gtk_widget_get_allocation (priv->label_widget, &label_allocation);
 
-  // TODO : needs to take "label-position" into account
+  if (orientation == GTK_ORIENTATION_HORIZONTAL)
+    {
+      gint hsize = 0;
 
-  if (minimum_size && orientation == GTK_ORIENTATION_HORIZONTAL)
-    *minimum_size = MAX (icon_sizes[priv->size].width + margin.left + margin.right,
-                         label_allocation.width);
+      if (priv->label_pos == GTK_POS_LEFT || priv->label_pos == GTK_POS_RIGHT)
+        {
+          hsize = margin.left + label_allocation.width
+                  + margin.left + icon_sizes[priv->size].width + margin.right;
+        }
+      else if (priv->label_pos == GTK_POS_TOP || priv->label_pos == GTK_POS_BOTTOM)
+        {
+          hsize = margin.left + margin.right + MAX (icon_sizes[priv->size].width,
+                                                    label_allocation.width);
+        }
 
-  if (minimum_size && orientation == GTK_ORIENTATION_VERTICAL)
-    *minimum_size = margin.top + icon_sizes[priv->size].height + margin.bottom +
-                      label_allocation.height + margin.bottom;
+      if (minimum_size)
+        *minimum_size = hsize;
 
-  if (natural_size && orientation == GTK_ORIENTATION_HORIZONTAL)
-    *natural_size = MAX (icon_sizes[priv->size].width + margin.left + margin.right,
-                         label_allocation.width);
+      if (natural_size)
+        *natural_size = hsize;
+    }
+  else if (orientation == GTK_ORIENTATION_VERTICAL)
+    {
+      gint vsize = 0;
 
-  if (natural_size && orientation == GTK_ORIENTATION_VERTICAL)
-    *natural_size = margin.top + icon_sizes[priv->size].height + margin.bottom +
-                      label_allocation.height + margin.bottom;
+      if (priv->label_pos == GTK_POS_LEFT || priv->label_pos == GTK_POS_RIGHT)
+        {
+          vsize = margin.top + margin.bottom + MAX (icon_sizes[priv->size].height,
+                                                    label_allocation.height);
+        }
+      else if (priv->label_pos == GTK_POS_TOP || priv->label_pos == GTK_POS_BOTTOM)
+        {
+          vsize = margin.top + icon_sizes[priv->size].height + margin.bottom
+                  + label_allocation.height + margin.bottom;
+        }
+
+      if (minimum_size)
+        *minimum_size = vsize;
+
+      if (natural_size)
+        *natural_size = vsize;
+
+    }
 }
 
 static void
@@ -632,53 +657,102 @@ eos_action_button_draw (GtkWidget *widget,
 {
   EosActionButton *button = EOS_ACTION_BUTTON (widget);
   EosActionButtonPrivate *priv = button->priv;
+
   gint x, y;
-  gint focus_width;
-  gint focus_pad;
-  GtkAllocation allocation;
+  gint frame_x = 0, frame_y = 0, bg_x = 0, bg_y = 0, icon_x = 0, icon_y = 0, label_x = 0, label_y = 0;
+  gint width, height, border_width, border_height, border_thickness;
+  GtkBorder margin;
+  GtkAllocation allocation, icon_allocation, label_allocation;
   GtkStyleContext *context;
   GtkStateFlags state;
-  gint width, border_width, border_height, border_thickness;
-  GtkBorder margin;
 
   context = gtk_widget_get_style_context (widget);
   state = gtk_style_context_get_state (context);
 
-  gtk_style_context_get_style (context,
-                               "focus-line-width", &focus_width,
-                               "focus-padding", &focus_pad,
-                               NULL);
-
-  gtk_style_context_get_margin(context,
-                               state,
-                               &margin);
+  gtk_style_context_get_margin(context, state, &margin);
 
   gtk_widget_get_allocation (widget, &allocation);
 
   x = 0;
   y = 0;
   width = allocation.width;
+  height = allocation.height;
 
   border_width = icon_sizes[priv->size].width;
   border_height = icon_sizes[priv->size].height;
   border_thickness = icon_sizes[priv->size].border_width;
 
+  // calculate the location of background frame, icon and text label
+  gtk_widget_get_allocation (priv->icon_image, &icon_allocation);
+  gtk_widget_get_allocation (priv->label_widget, &label_allocation);
+
+  if (priv->label_pos == GTK_POS_BOTTOM)
+    {
+      frame_x = x + (width - border_width)/2;
+      frame_y = y + margin.top;
+
+      bg_x = frame_x - border_thickness;
+      bg_y = frame_y - border_thickness;
+
+      icon_x = x + (width - icon_allocation.width) / 2;
+      icon_y = frame_y + (icon_sizes[priv->size].height - icon_allocation.height) / 2;
+
+      label_x = x + (width - label_allocation.width)/2;
+      label_y = frame_y + icon_sizes[priv->size].height + margin.bottom;
+    }
+  else if (priv->label_pos == GTK_POS_TOP)
+    {
+      frame_x = x + (width - border_width)/2;
+      frame_y = y + margin.top + label_allocation.height + margin.bottom;
+
+      bg_x = frame_x - border_thickness;
+      bg_y = frame_y - border_thickness;
+
+      icon_x = x + (width - icon_allocation.width) / 2;
+      icon_y = frame_y + (icon_sizes[priv->size].height - icon_allocation.height) / 2;
+
+      label_x = x + (width - label_allocation.width)/2;
+      label_y = y + margin.top;
+    }
+  else if (priv->label_pos == GTK_POS_LEFT)
+      {
+        frame_x = x + margin.left + label_allocation.width + margin.left;
+        frame_y = y + (height - border_height)/2;
+
+        bg_x = frame_x - border_thickness;
+        bg_y = frame_y - border_thickness;
+
+        icon_x = frame_x + (icon_sizes[priv->size].width - icon_allocation.width) / 2;
+        icon_y = y + (height - icon_allocation.height) / 2;;
+
+        label_x = x + margin.left;
+        label_y = y + (height - label_allocation.height)/2;;
+      }
+  else if (priv->label_pos == GTK_POS_RIGHT)
+      {
+        frame_x = x + margin.left;
+        frame_y = y + (height - border_height)/2;
+
+        bg_x = frame_x - border_thickness;
+        bg_y = frame_y - border_thickness;
+
+        icon_x = frame_x + (icon_sizes[priv->size].width - icon_allocation.width) / 2;
+        icon_y = y + (height - icon_allocation.height) / 2;;
+
+        label_x = x + margin.left + icon_sizes[priv->size].width + margin.left;
+        label_y = y + (height - label_allocation.height)/2;;
+      }
+
   cairo_save (cr);
 
-  gtk_render_frame (context, cr,
-                    x + (width - border_width)/2,
-                    y + margin.top,
-                    border_width, border_height);
+  gtk_render_frame (context, cr, frame_x, frame_y, border_width, border_height);
 
-  // TODO is it really needed to restore and save the cairo_t here?
   cairo_restore (cr);
   cairo_save (cr);
 
   // GTK+ tries to paint the background inside the border, we work around this
   //because we want to draw the inset shadow over the border itself
-  gtk_render_background (context, cr,
-                         x + (width - border_width)/2 - border_thickness,
-                         y + margin.top - border_thickness,
+  gtk_render_background (context, cr, bg_x, bg_y,
                          border_width + 2*border_thickness,
                          border_height + 2*border_thickness);
 
@@ -687,22 +761,16 @@ eos_action_button_draw (GtkWidget *widget,
 
   // *** image
 
-  gtk_widget_get_allocation (priv->icon_image, &allocation);
-  cairo_translate (cr,
-                   (width - allocation.width) / 2,
-                   margin.top + (icon_sizes[priv->size].height - allocation.height) / 2);
+  cairo_translate (cr, icon_x, icon_y);
 
   gtk_widget_draw (GTK_WIDGET (priv->icon_image), cr);
 
-  // TODO same as previous
   cairo_restore (cr);
   cairo_save (cr);
 
   // *** label
 
-  gtk_widget_get_allocation (priv->label_widget, &allocation);
-  cairo_translate (cr, x + (width - allocation.width)/2,
-                   margin.top + icon_sizes[priv->size].height + margin.bottom);
+  cairo_translate (cr, label_x, label_y);
 
   gtk_widget_draw (GTK_WIDGET (priv->label_widget), cr);
 
