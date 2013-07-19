@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/endlessm/brazil">
+    <file compressed="true">brazil_categories.json</file>
+    <file compressed="true">css/endless_brazil.css</file>
+    <file>category_images/cuisine.jpg</file>
+    <file>category_images/history.jpg</file>
+  </gresource>
+</gresources>
