@@ -1,0 +1,28 @@
+* {
+    font-family: "Benton Sans";
+}
+
+.title {
+    font-size: 48pt;
+}
+
+.title.category.front-page {
+    font-size: 36pt;
+    color: #a0a0a0;
+}
+
+Gjs_ArticleList .button {
+    border-top: 1px solid #555753;
+    padding: 10px;
+    background-color: #d3d7cf;
+    color: black;
+}
+
+Gjs_ArticleList .button:hover {
+    color: #555753;
+}
+
+.articles-page {
+    color: black;
+    background-color: #babdb6;
+}
