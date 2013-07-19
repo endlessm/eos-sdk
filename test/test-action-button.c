@@ -157,6 +157,34 @@ test_ab_prop_icon_name (ActionButtonFixture *fixture,
 }
 
 static void
+test_ab_get_set_label_position (ActionButtonFixture *fixture,
+                                gconstpointer        unused)
+{
+  GtkPositionType label_pos;
+
+  label_pos = eos_action_button_get_label_position (fixture->button);
+  g_assert (label_pos == GTK_POS_BOTTOM);
+
+  eos_action_button_set_label_position (fixture->button, GTK_POS_TOP);
+  label_pos = eos_action_button_get_label_position (fixture->button);
+  g_assert (label_pos == GTK_POS_TOP);
+}
+
+static void
+test_ab_prop_label_position (ActionButtonFixture *fixture,
+                             gconstpointer        unused)
+{
+  GtkPositionType label_pos;
+
+  g_object_get (fixture->button, "label-position", &label_pos, NULL);
+  g_assert (label_pos == GTK_POS_BOTTOM);
+
+  g_object_set (fixture->button, "label-position", GTK_POS_TOP, NULL);
+  g_object_get (fixture->button, "label-position", &label_pos, NULL);
+  g_assert (label_pos == GTK_POS_TOP);
+}
+
+static void
 test_ab_label_agrees (ActionButtonFixture *fixture,
                       gconstpointer        unused)
 {
@@ -189,5 +217,9 @@ add_action_button_tests (void)
                           test_ab_get_set_icon_name);
   ADD_ACTION_BUTTON_TEST ("/action-button/prop-icon-name",
                           test_ab_prop_icon_name);
+  ADD_ACTION_BUTTON_TEST ("/action-button/get-set-label-position",
+                          test_ab_get_set_label_position);
+  ADD_ACTION_BUTTON_TEST ("/action-button/prop-label-position",
+                          test_ab_prop_label_position);
   ADD_ACTION_BUTTON_TEST ("/action-button/label-agrees", test_ab_label_agrees);
 }
