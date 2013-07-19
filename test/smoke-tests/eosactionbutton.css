@@ -1,5 +1,9 @@
 /* ****** ACTION MENU ****** */
 
+GtkWindow {
+	background-color: mix(white, black, 0.1);
+}
+
 #menu {
 	background-color: mix(white, black, 0.2);
 	border-color: mix(white, black, 0.5);
