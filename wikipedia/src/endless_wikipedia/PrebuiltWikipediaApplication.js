@@ -4,6 +4,7 @@ const Lang = imports.lang;
 const Gtk = imports.gi.Gtk;
 
 const EndlessWikipedia = imports.endless_wikipedia.EndlessWikipedia;
+const WikipediaModel = imports.models.WikipediaModel;
 
 const _ = function(x) { return x; };
 
@@ -19,6 +20,9 @@ const PrebuiltWikipediaApplication = new Lang.Class({
 
     vfunc_startup: function() {
         this.parent();
+        print("in startup");
+
+        this._model = new WikipediaModel.WikipediaModel("brazil_categories.json");
 
         // Front page
         this._front_page = new EndlessWikipedia.PrebuiltFrontPage({
