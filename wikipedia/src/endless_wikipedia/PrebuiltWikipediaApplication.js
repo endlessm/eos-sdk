@@ -4,6 +4,7 @@ const Lang = imports.lang;
 const Gtk = imports.gi.Gtk;
 
 const EndlessWikipedia = imports.endless_wikipedia.EndlessWikipedia;
+const WikipediaModel = imports.models.WikipediaModel;
 
 const _ = function(x) { return x; };
 
@@ -20,11 +21,14 @@ const PrebuiltWikipediaApplication = new Lang.Class({
     vfunc_startup: function() {
         this.parent();
 
+        this._view = new WikipediaView.WikipediaView(this);
+        //this._presenter = new WikipediaPresenter.WikipediaPresenter(this._model, this._view);
+
         // Front page
         this._front_page = new EndlessWikipedia.PrebuiltFrontPage({
-            title: this.application_name
+            title: this._model.application_name
         });
-        this._front_page.setCategories(this.getCategories());
+        this._front_page.setCategories(this._model.getCategories());
         this._front_page.connect('category-chosen',
             Lang.bind(this, this._onCategoryClicked));
 
@@ -75,7 +79,7 @@ const PrebuiltWikipediaApplication = new Lang.Class({
 
         // Build window
         this._window = new Endless.Window({
-            title: this.application_name,
+            title: this._model.application_name,
             application: this
         });
         this._window.page_manager.transition_duration = 200;  // ms

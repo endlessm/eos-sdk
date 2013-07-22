@@ -1,6 +1,7 @@
 const Lang = imports.lang;
 const GObject = imports.gi.GObject;
 const Gio = imports.gi.Gio;
+const WikipediaModel = imports.models.WikipediaModel;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
@@ -9,7 +10,7 @@ const WikipediaApplication = new Lang.Class({
     Extends: Endless.Application,
     Properties: {
         // resource:// URI for the categories JSON file
-        'categories-uri': GObject.ParamSpec.string('categories-uri',
+        'application-uri': GObject.ParamSpec.string('application-uri',
             'Category file URI',
             'URI for the data file describing the categories and articles',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
@@ -24,8 +25,9 @@ const WikipediaApplication = new Lang.Class({
     },
 
     _init: function(props) {
-        this._categories_uri = null;
+        this._application_uri = null;
         this._categories = null;
+
         this.parent(props);
     },
 
@@ -36,7 +38,7 @@ const WikipediaApplication = new Lang.Class({
     },
 
     set categories_uri(value) {
-        this._categories_uri = value;
+        this._application_uri = value;
     },
 
     get application_name() {
@@ -49,10 +51,10 @@ const WikipediaApplication = new Lang.Class({
 
     vfunc_startup: function() {
         this.parent();
-
-        let category_file = Gio.File.new_for_uri(this.categories_uri);
-        let [success, category_json, etag] = category_file.load_contents(null);
-        this._categories = JSON.parse(category_json);
+        this._model = new WikipediaModel.WikipediaModel(this._application_uri);
+        //let category_file = Gio.File.new_for_uri(this._application_uri);
+        //let [success, category_json, etag] = category_file.load_contents(null);
+        //this._categories = JSON.parse(category_json);
 
         // Doesn't belong here
         let provider = new Gtk.CssProvider();
