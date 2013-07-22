@@ -22,7 +22,7 @@ const PrebuiltWikipediaApplication = new Lang.Class({
         this.parent();
         print("in startup");
 
-        this._model = new WikipediaModel.WikipediaModel("brazil_categories.json");
+        this._model = new WikipediaModel.WikipediaModel("pt-BR-brazil.json");
 
         // Front page
         this._front_page = new EndlessWikipedia.PrebuiltFrontPage({
