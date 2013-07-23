@@ -29,8 +29,33 @@ const TestApplication = new Lang.Class ({
                 this._menu_panel.get_style_context().remove_class('dark');
             }
         }));
-        this._content.add(new Gtk.Label ({label: 'Dark action menu'}), 0, 0, 1, 1);
-        this._content.add(this._darkSwitch, 0, 1, 1, 1);
+        this._content.attach(new Gtk.Label ({label: 'Dark action menu'}), 0, 0, 1, 1);
+        this._content.attach(this._darkSwitch, 1, 0, 1, 1);
+
+        this._content.attach (new Endless.ActionButton({
+            name: 'LEFT',
+            'icon-id': 'object-select-symbolic',
+            label: 'LEFT',
+            'label-position': Gtk.PositionType.LEFT
+        }), 0, 1, 1, 1);
+        this._content.attach (new Endless.ActionButton({
+            name: 'TOP',
+            'icon-id': 'object-select-symbolic',
+            label: 'TOP',
+            'label-position': Gtk.PositionType.TOP
+        }), 1, 1, 1, 1);
+        this._content.attach (new Endless.ActionButton({
+            name: 'BOTTOM',
+            'icon-id': 'object-select-symbolic',
+            label: 'BOTTOM',
+            'label-position': Gtk.PositionType.BOTTOM
+        }), 0, 2, 1, 1);
+        this._content.attach (new Endless.ActionButton({
+            name: 'RIGHT',
+            'icon-id': 'object-select-symbolic',
+            label: 'RIGHT',
+            'label-position': Gtk.PositionType.RIGHT
+        }), 1, 2, 1, 1);
         
         this._menu = new Endless.ActionMenu ();
         
