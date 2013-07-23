@@ -15,10 +15,12 @@ const PrebuiltWikipediaApplication = new Lang.Class({
     Extends: EndlessWikipedia.WikipediaApplication,
 
     _init: function(props) {
+        print("pre init");
         this.parent(props);
     },
 
     vfunc_startup: function() {
+        print(this.application_name);
         this.parent();
 
 
@@ -27,8 +29,13 @@ const PrebuiltWikipediaApplication = new Lang.Class({
 
         //this._presenter = new WikipediaPresenter.WikipediaPresenter(this._model, this._view);
 
+        this._view = new WikipediaView.WikipediaView(this);
+
+        this._presenter = new WikipediaPresenter.WikipediaPresenter(this._model, this._view);
+
 
         // Front page
+        print(this.application_name);
         this._front_page = new EndlessWikipedia.PrebuiltFrontPage({
             title: this._model.application_name
         });
