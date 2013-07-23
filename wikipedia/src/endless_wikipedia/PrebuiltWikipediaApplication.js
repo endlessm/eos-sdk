@@ -25,8 +25,5 @@ const PrebuiltWikipediaApplication = new Lang.Class({
         this._domain_wiki_view = new DomainWikiView.DomainWikiView(this);
         let filename = this.application_uri;
         this._domain_wiki_presenter = new DomainWikiPresenter.DomainWikiPresenter(this._domain_wiki_model, this._domain_wiki_view, filename);
-
-        //this._view = new WikipediaView.WikipediaView(this);
-
     }
 });

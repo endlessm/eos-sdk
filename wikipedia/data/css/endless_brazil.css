@@ -26,3 +26,17 @@ Gjs_ArticleList .button:hover {
     color: black;
     background-color: #babdb6;
 }
+
+#category_info{
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#category_description{
+    color:rgba(255, 255, 255, 1.0);
+    font-size: 16px;
+}
+
+#category_title{
+    font-size: 52px;
+    color: rgba(255, 255, 255, 0.9);
+}

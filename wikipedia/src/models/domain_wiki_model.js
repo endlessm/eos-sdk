@@ -17,7 +17,6 @@ const DomainWikiModel = new Lang.Class({
         'image-uri': GObject.ParamSpec.string('image-uri',
             'Application image URI',
             'URI describing a path to the image for this application.',
-
             GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE | GObject.ParamFlags.CONSTRUCT_ONLY,
             ''),
 
@@ -37,7 +36,6 @@ const DomainWikiModel = new Lang.Class({
     //categories should be a list of category models, already populated with article models.
     addCategories: function(categories){
         this._categories = categories;
-
     },
 
     getArticlesForCategoryIndex: function(index){
