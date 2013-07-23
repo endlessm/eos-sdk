@@ -5,7 +5,7 @@ const Json = imports.gi.Json;
 const Lang = imports.lang;
 
 // Local libraries
-const CategoryModel = imports.models.CategoryModel;
+const CategoryModel = imports.models.category_model;
 const Utils = imports.utils;
 const JsonUtils = imports.models.utils.json_utils;
 
@@ -15,14 +15,28 @@ const DEFAULT_METADATA_FILE = CONTENT_DIRECTORY +  "pt-BR-brazil.json";
 const WikipediaModel = new Lang.Class({
     Name: "WikipediaModel",
     Extends: GObject.Object,
+    Properties: {
+        // resource:// URI for the categories JSON file
+        'image-uri': GObject.ParamSpec.string('image-uri',
+            'Category file URI',
+            'URI for image of this cateogry',
+            GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            ''),
 
-    _init: function(f) {
-        print("in init");
+        // Name of the Wikipedia-based application, e.g. 'Brazil', 'Math'
+        'application-name': GObject.ParamSpec.string('application-name',
+            'Application name',
+            'Name of the Wikipedia-based application',
+            GObject.ParamFlags.READABLE,
+            '')
+    },
+
+    _init: function(filename) {
         let jsonFile;
-        if(f){
-            f = CONTENT_DIRECTORY + f
+        if(filename){
+            filename = CONTENT_DIRECTORY + filename
         }
-        jsonFile = f || DEFAULT_METADATA_FILE;
+        jsonFile = filename || DEFAULT_METADATA_FILE;
 
         this._categories = new Array();
 
@@ -33,7 +47,7 @@ const WikipediaModel = new Lang.Class({
         try {
 
             let app_content = JSON.parse(Utils.load_file (filename));
-            this._app_name = app_content['app_name'];
+            this._application_name = app_content['app_name'];
             this._image_uri = app_content['image_uri'];
             this._lang_code = filename.substring(0, 2);
             let categories = app_content['categories'];
@@ -60,11 +74,11 @@ const WikipediaModel = new Lang.Class({
         return this._categories;
     },
 
-    getAppName: function(){
-        return this._app_name;
+    get application_name(){
+        return this._application_name;
     },
 
-    getImageURI: function(){
+    get image_uri(){
         return this._image_uri;
     }
 });
