@@ -431,7 +431,8 @@ eos_action_button_set_label_position (EosActionButton *button,
 
   priv = button->priv;
 
-  if (priv->label_pos != position) {
+  if (priv->label_pos != position)
+    {
       g_object_ref (G_OBJECT (priv->label_widget));
       gtk_container_remove (GTK_CONTAINER (priv->grid), priv->label_widget);
       gtk_grid_attach_next_to (GTK_GRID (priv->grid),
@@ -454,7 +455,7 @@ eos_action_button_set_label_position (EosActionButton *button,
         {
           gtk_widget_set_halign (GTK_WIDGET(button), GTK_ALIGN_CENTER);
         }
-  }
+    }
 }
 
 GtkPositionType
@@ -715,33 +716,33 @@ eos_action_button_draw (GtkWidget *widget,
       label_y = y + margin.top;
     }
   else if (priv->label_pos == GTK_POS_LEFT)
-      {
-        frame_x = x + margin.left + label_allocation.width + margin.left;
-        frame_y = y + (height - border_height)/2;
+    {
+      frame_x = x + margin.left + label_allocation.width + margin.left;
+      frame_y = y + (height - border_height)/2;
 
-        bg_x = frame_x - border_thickness;
-        bg_y = frame_y - border_thickness;
+      bg_x = frame_x - border_thickness;
+      bg_y = frame_y - border_thickness;
 
-        icon_x = frame_x + (icon_sizes[priv->size].width - icon_allocation.width) / 2;
-        icon_y = y + (height - icon_allocation.height) / 2;;
+      icon_x = frame_x + (icon_sizes[priv->size].width - icon_allocation.width) / 2;
+      icon_y = y + (height - icon_allocation.height) / 2;;
 
-        label_x = x + margin.left;
-        label_y = y + (height - label_allocation.height)/2;;
-      }
+      label_x = x + margin.left;
+      label_y = y + (height - label_allocation.height)/2;;
+    }
   else if (priv->label_pos == GTK_POS_RIGHT)
-      {
-        frame_x = x + margin.left;
-        frame_y = y + (height - border_height)/2;
+    {
+      frame_x = x + margin.left;
+      frame_y = y + (height - border_height)/2;
 
-        bg_x = frame_x - border_thickness;
-        bg_y = frame_y - border_thickness;
+      bg_x = frame_x - border_thickness;
+      bg_y = frame_y - border_thickness;
 
-        icon_x = frame_x + (icon_sizes[priv->size].width - icon_allocation.width) / 2;
-        icon_y = y + (height - icon_allocation.height) / 2;;
+      icon_x = frame_x + (icon_sizes[priv->size].width - icon_allocation.width) / 2;
+      icon_y = y + (height - icon_allocation.height) / 2;;
 
-        label_x = x + margin.left + icon_sizes[priv->size].width + margin.left;
-        label_y = y + (height - label_allocation.height)/2;;
-      }
+      label_x = x + margin.left + icon_sizes[priv->size].width + margin.left;
+      label_y = y + (height - label_allocation.height)/2;;
+    }
 
   cairo_save (cr);
 
