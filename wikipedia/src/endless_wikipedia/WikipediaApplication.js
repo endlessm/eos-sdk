@@ -51,7 +51,7 @@ const WikipediaApplication = new Lang.Class({
 
     vfunc_startup: function() {
         this.parent();
-        this._domain_wiki_model = new DomainWikiModel.DomainWikiModel(this._application_uri);
+        this._domain_wiki_model = new DomainWikiModel.DomainWikiModel();
         //let category_file = Gio.File.new_for_uri(this._application_uri);
         //let [success, category_json, etag] = category_file.load_contents(null);
         //this._categories = JSON.parse(category_json);

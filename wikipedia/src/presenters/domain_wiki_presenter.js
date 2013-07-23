@@ -1,36 +1,20 @@
-const Endless = imports.gi.Endless;
-const Format = imports.format;
 const Lang = imports.lang;
-const Gtk = imports.gi.Gtk;
+const GObject = imports.gi.GObject;
 
-const EndlessWikipedia = imports.endless_wikipedia.EndlessWikipedia;
-const DomainWikiView = imports.views.domain_wiki_view;
-const DomainWikiModel = imports.models.domain_wiki_model;
-const DomainWikiPresenter = imports.presenters.domain_wiki_presenter;
+const DomainWikiPresenter = new Lang.Class({
+    Name: "DomainWikiPresenter",
+    Extends: GObject.Object,
 
-const _ = function(x) { return x; };
-
-String.prototype.format = Format.format;
-
-const PrebuiltWikipediaApplication = new Lang.Class({
-    Name: 'PrebuiltWikipediaApplication',
-    Extends: EndlessWikipedia.WikipediaApplication,
-
-    _init: function(props) {
-        this.parent(props);
-    },
-
-    vfunc_startup: function() {
-        this.parent();
-        this._domain_wiki_view = new DomainWikiView.DomainWikiView(this);
-        this._domain_wiki_presenter = new DomainWikiPresenter.DomainWikiPresenter(this._domain_wiki_model, this._domain_wiki_view);
-
-        this._domain_wiki_view.set_categories(categories);
-
+    _init: function(model, view) {
+        this._domain_wiki_model = model;
+        this._domain_wiki_view = view;
+        this._domain_wiki_view.set_presenter(this)
         this._domain_wiki_view.connect('category-chosen', Lang.bind(this, this._onCategoryClicked));
         this._domain_wiki_view.connect('article-chosen', Lang.bind(this, this._onArticleClicked));
 
-        //this._view = new WikipediaView.WikipediaView(this);
+        let categories = this._domain_wiki_model.getCategories();
+
+        this._domain_wiki_view.set_categories(categories);
     },
 
     _onCategoryClicked: function(page, title, index) {
@@ -46,13 +30,9 @@ const PrebuiltWikipediaApplication = new Lang.Class({
         this._domain_wiki_view.set_category_info(category, titles);
 
         this._domain_wiki_view.transition_page(Endless.PageManagerTransitionType.SLIDE_LEFT, 'category');
-
     },
 
     _onArticleClicked: function(article_list, title, index) {
-        // Need to know which category this came from!!
-        //this._article_view.title = title;
-        //this._article_view.article_uri = uri;
         let articles = this._domain_wiki_model.getArticlesForCategoryIndex(this._current_category);
         this._domain_wiki_view.set_article_info(articles[index]);
         this._domain_wiki_view.transition_page(Endless.PageManagerTransitionType.SLIDE_LEFT, 'article');
