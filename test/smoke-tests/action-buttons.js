@@ -42,7 +42,7 @@ const TestApplication = new Lang.Class ({
         this._menu.add_action ({
             name: 'select',
             'icon-name': 'object-select-symbolic',
-            label: 'select stuff',
+            label: 'SELECT',
             'is-important': true },
             Lang.bind(this, function () {
         	var md = new Gtk.MessageDialog({modal:true, title:"Information",
@@ -55,19 +55,20 @@ const TestApplication = new Lang.Class ({
         this._menu.add_action ({
             name: 'delete',
             'icon-name': 'edit-delete-symbolic',
-            label: 'delete stuff',
-            'is-important': false });
+            label: 'DELETE',
+            'is-important': false,
+            'stock-id': Gtk.STOCK_DELETE });
 
         this._menu.add_action ({
             name: 'smile',
             'icon-name': 'face-smile-symbolic',
-            label: 'smile',
+            label: 'SMILE',
             'is-important': false });
 
         this._menu.add_action ({
             name: 'sadface',
             'icon-name': 'face-sad-symbolic',
-            label: 'sadface',
+            label: 'SAD FACE',
             'is-important': false });
 
         this._pm = new Endless.PageManager();
