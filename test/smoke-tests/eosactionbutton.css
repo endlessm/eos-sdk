@@ -8,6 +8,7 @@ GtkWindow {
 	background-color: mix(white, black, 0.2);
 	border-color: mix(white, black, 0.5);
 	border-width: 0 0 0 6px;
+	padding: 30px;
 }
 
 .dark#menu {

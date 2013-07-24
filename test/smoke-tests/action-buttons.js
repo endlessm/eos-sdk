@@ -24,9 +24,9 @@ const TestApplication = new Lang.Class ({
         this._darkSwitch = new Gtk.Switch ({active: false});
         this._darkSwitch.connect ('notify::active', Lang.bind (this, function (active) {
             if (this._darkSwitch.get_active()) {
-                this._menu_panel.get_style_context().add_class('dark');
+                this._menu.get_style_context().add_class('dark');
             } else {
-                this._menu_panel.get_style_context().remove_class('dark');
+                this._menu.get_style_context().remove_class('dark');
             }
         }));
         this._content.attach(new Gtk.Label ({label: 'Dark action menu'}), 0, 0, 1, 1);
@@ -57,23 +57,17 @@ const TestApplication = new Lang.Class ({
             'label-position': Gtk.PositionType.RIGHT
         }), 1, 2, 1, 1);
         
-        this._menu = new Endless.ActionMenu ();
+        this._menu = new Endless.ActionMenu ({name: 'menu'});
         
-        // put the ActionMenu in a panel, as GtkGrid doesn't expand if none of its children want to
-        this._menu_panel = new Gtk.Frame ({name: 'menu'});
-        this._menu_panel.add (this._menu);
-        this._menu_panel.set_hexpand (true);
-        this._menu_panel.set_vexpand (true);
-
         // the ActionMenu takes 1/6 of the width
         this._page.set_column_homogeneous (true);
         this._page.attach (this._content, 0, 0, 5, 1);
-        this._page.attach (this._menu_panel, 5, 0, 1, 1);
+        this._page.attach (this._menu, 5, 0, 1, 1);
         
         this._menu.add_action ({
             name: 'select',
             'icon-name': 'object-select-symbolic',
-            label: 'select stuff',
+            label: 'SELECT',
             'is-important': true },
             Lang.bind(this, function () {
         	var md = new Gtk.MessageDialog({modal:true, title:"Information",
@@ -86,19 +80,20 @@ const TestApplication = new Lang.Class ({
         this._menu.add_action ({
             name: 'delete',
             'icon-name': 'edit-delete-symbolic',
-            label: 'delete stuff',
-            'is-important': false });
+            label: 'DELETE',
+            'is-important': false,
+            'stock-id': Gtk.STOCK_DELETE });
 
         this._menu.add_action ({
             name: 'smile',
             'icon-name': 'face-smile-symbolic',
-            label: 'smile',
+            label: 'SMILE',
             'is-important': false });
 
         this._menu.add_action ({
             name: 'sadface',
             'icon-name': 'face-sad-symbolic',
-            label: 'sadface',
+            label: 'SAD FACE',
             'is-important': false });
 
         this._pm = new Endless.PageManager();

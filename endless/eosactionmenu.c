@@ -17,13 +17,17 @@
  */
 
 
-G_DEFINE_TYPE (EosActionMenu, eos_action_menu, GTK_TYPE_GRID)
+G_DEFINE_TYPE (EosActionMenu, eos_action_menu, GTK_TYPE_FRAME)
 
 #define EOS_ACTION_MENU_PRIVATE(o) \
   (G_TYPE_INSTANCE_GET_PRIVATE ((o), EOS_TYPE_ACTION_MENU, EosActionMenuPrivate))
 
 struct _EosActionMenuPrivate
 {
+  GtkWidget *overlay;
+  GtkWidget *center_grid;
+  GtkWidget *bottom_grid;
+
   GtkActionGroup *action_group;
 };
 
@@ -58,13 +62,44 @@ eos_action_menu_init (EosActionMenu *self)
   context = gtk_widget_get_style_context (GTK_WIDGET (self));
   gtk_style_context_add_class (context, _EOS_STYLE_CLASS_ACTION_MENU);
 
+  priv->overlay = gtk_overlay_new ();
+  g_object_set (G_OBJECT (priv->overlay),
+                "halign", GTK_ALIGN_FILL,
+                "valign", GTK_ALIGN_FILL,
+                "hexpand", TRUE,
+                "vexpand", TRUE,
+                NULL);
+
+  priv->center_grid = gtk_grid_new ();
+  g_object_set (G_OBJECT (priv->center_grid),
+                "orientation", GTK_ORIENTATION_VERTICAL,
+                "halign", GTK_ALIGN_CENTER,
+                "valign", GTK_ALIGN_CENTER,
+                NULL);
+
+  priv->bottom_grid = gtk_grid_new ();
+  g_object_set (G_OBJECT (priv->bottom_grid),
+                "orientation", GTK_ORIENTATION_VERTICAL,
+                "halign", GTK_ALIGN_CENTER,
+                "valign", GTK_ALIGN_END,
+                NULL);
+
+  // this is ugly, but needed so the overlay takes all the available space
+  GtkWidget* placeholder = gtk_event_box_new();
+  gtk_widget_set_hexpand (placeholder, TRUE);
+  gtk_widget_set_vexpand (placeholder, TRUE);
+  gtk_container_add (GTK_CONTAINER (priv->overlay), placeholder);
+
+  gtk_overlay_add_overlay (GTK_OVERLAY (priv->overlay), priv->center_grid);
+  gtk_overlay_add_overlay (GTK_OVERLAY (priv->overlay), priv->bottom_grid);
+
+  gtk_container_add (GTK_CONTAINER (self), priv->overlay);
+
   // TODO : name?
   priv->action_group = gtk_action_group_new ("EosActionMenu");
 
   gtk_widget_set_hexpand (GTK_WIDGET (self), TRUE);
   gtk_widget_set_vexpand (GTK_WIDGET (self), TRUE);
-  gtk_widget_set_halign (GTK_WIDGET (self), GTK_ALIGN_CENTER);
-  gtk_widget_set_valign (GTK_WIDGET (self), GTK_ALIGN_CENTER);
 }
 
 /* ******* LIFECYCLE ******* */
@@ -99,8 +134,15 @@ eos_action_menu_finalize (GObject *object)
  * @menu: a #EosActionMenu
  * @action: a #GtkAction: name, label, icon-name, is-important.
  *
- * Adds an action to the #EosActionMenu, using its name, label, icon-name and
- * is-important properties.
+ * Adds an action to the #EosActionMenu, using its #GtkAction:name,
+ * #GtkAction:label, #GtkAction:icon-name, #GtkAction:is-important and
+ * #GtkAction:stock-id properties.
+ *
+ * Cancel, close and delete actions are placed at the bottom of the menu. To
+ * indicate this, set the #GtkAction:stock-id property to one of
+ * #GTK_STOCK_CANCEL, #GTK_STOCK_CLOSE or #GTK_STOCK_DELETE. All other values of
+ * this property will be ignored.
+ *
  */
 void
 eos_action_menu_add_action (EosActionMenu *menu,
@@ -125,9 +167,16 @@ eos_action_menu_add_action (EosActionMenu *menu,
 
       gtk_activatable_set_related_action (GTK_ACTIVATABLE (action_button), action);
 
-      // TODO : maybe we need a finer control, taking is-important into account?
-      gtk_grid_attach_next_to (GTK_GRID (menu), action_button, NULL,
-                               GTK_POS_BOTTOM, 1, 1);
+      if (g_strcmp0 (gtk_action_get_stock_id (action), GTK_STOCK_CANCEL) == 0 ||
+          g_strcmp0 (gtk_action_get_stock_id (action), GTK_STOCK_CLOSE) == 0  ||
+          g_strcmp0 (gtk_action_get_stock_id (action), GTK_STOCK_DELETE) == 0)
+        {
+          gtk_container_add (GTK_CONTAINER (priv->bottom_grid), action_button);
+        }
+      else
+        {
+          gtk_container_add (GTK_CONTAINER (priv->center_grid), action_button);
+        }
     }
 }
 
@@ -179,10 +228,37 @@ eos_action_menu_remove_action (EosActionMenu *menu,
                                GtkAction *action)
 {
   EosActionMenuPrivate *priv;
+  GList *children, *i;
+  GtkWidget *target_child = NULL;
+
   g_return_if_fail (EOS_IS_ACTION_MENU (menu));
+  g_return_if_fail (GTK_IS_ACTION (action));
   priv = menu->priv;
 
   gtk_action_group_remove_action(priv->action_group, action);
+
+  children = gtk_container_get_children (GTK_CONTAINER (priv->center_grid));
+
+  children = g_list_concat (children,
+                            gtk_container_get_children (GTK_CONTAINER (priv->bottom_grid)));
+
+  for (i = children; i != NULL; i = i->next)
+    {
+      GtkWidget *child = i->data;
+      GtkAction *childs_action = gtk_activatable_get_related_action (GTK_ACTIVATABLE (child));
+
+      if (childs_action != NULL &&
+          g_strcmp0 (gtk_action_get_name (childs_action), gtk_action_get_name (action)) == 0)
+        {
+          target_child = child;
+          break;
+        }
+    }
+
+  if (target_child != NULL)
+    {
+      gtk_widget_destroy (target_child);
+    }
 }
 
 /*
@@ -205,7 +281,7 @@ eos_action_menu_remove_action_by_name (EosActionMenu *menu,
   action = gtk_action_group_get_action (priv->action_group, name);
   if (action)
     {
-      gtk_action_group_remove_action (priv->action_group, action);
+      eos_action_menu_remove_action (menu, action);
     }
 }
 
