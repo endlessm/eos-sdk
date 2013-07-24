@@ -126,6 +126,13 @@ gjsoverridedir = ${datadir}/gjs-1.0/overrides
 dist_gjsoverride_DATA = 		\
 	overrides/Endless.js
 
+# # # INSTALLED M4 MACROS # # #
+
+m4dir = ${datadir}/aclocal
+m4_DATA = \
+	m4/eos-gir.m4 \
+	$(NULL)
+
 # # # TESTS # # #
 
 include $(top_srcdir)/test/Makefile.am
