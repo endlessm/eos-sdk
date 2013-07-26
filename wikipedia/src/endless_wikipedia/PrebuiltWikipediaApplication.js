@@ -22,19 +22,15 @@ const PrebuiltWikipediaApplication = new Lang.Class({
 
     vfunc_startup: function() {
         this.parent();
-
         this._domain_wiki_view = new DomainWikiView.DomainWikiView(this);
-
+        this._domain_wiki_presenter = new DomainWikiPresenter.DomainWikiPresenter(this._domain_wiki_model, this._domain_wiki_view);
 
         this._domain_wiki_view.set_categories(categories);
 
         this._domain_wiki_view.connect('category-chosen', Lang.bind(this, this._onCategoryClicked));
         this._domain_wiki_view.connect('article-chosen', Lang.bind(this, this._onArticleClicked));
 
-        //this._domain_wiki_model = new DomainWikiModel.DomainWikiModel();
-        //this._domain_wiki_presenter = new DomainPresenter.DomainWikiPresenter(this._wiki_model, this._wiki_view);
-
-        this._view = new WikipediaView.WikipediaView(this);
+        //this._view = new WikipediaView.WikipediaView(this);
 
     },
 
