@@ -37,6 +37,21 @@ const range = function(a, b, step) {
 /*
  * ...Taken from utils.js from the eos-weather branch...
  */
+function load_file_from_resource(filename) {
+    // Return the text stored in the file at filename
+    var file = Gio.file_new_for_uri(filename);
+    var fstream = file.read(null);
+    var dstream = new Gio.DataInputStream({
+        base_stream: fstream
+    });
+    var data = dstream.read_until("", null);
+    fstream.close(null);
+    return data[0];
+}
+
+/*
+ * ...Taken from utils.js from the eos-weather branch...
+ */
 function load_file(filename) {
     // Return the text stored in the file at filename
     var file = Gio.file_new_for_path(filename);

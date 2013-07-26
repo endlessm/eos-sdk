@@ -4,6 +4,16 @@ const GObject = imports.gi.GObject;
 //Local Libraries
 const Utils = imports.utils;
 
+const CategoryModel = imports.models.category_model;
+const ArticleModel = imports.models.article_model;
+
+
+function _resourceUriToPath(uri) {
+    if(uri.startsWith('resource://'))
+        return uri.slice('resource://'.length);
+    throw new Error('Resource URI did not start with "resource://"');
+}
+
 const DomainWikiPresenter = new Lang.Class({
     Name: "DomainWikiPresenter",
     Extends: GObject.Object,
@@ -35,21 +45,22 @@ const DomainWikiPresenter = new Lang.Class({
     },
 
     initFromJsonFile: function(filename) {
-        let app_content = JSON.parse(Utils.load_file (filename));
+        //filename = "../data/brazil_categories.json";
+        let app_content = JSON.parse(Utils.load_file_from_resource(filename));
         this._application_name = app_content['app_name'];
         this._image_uri = app_content['image_uri'];
         this._lang_code = filename.substring(0, 2);
         let categories = app_content['categories'];
         let cat_length = categories.length
-        categories = new Array();
+        let category_models = new Array();
         for(let i = 0; i < cat_length; i++){
             let category = categories[i];
-            let categoryModel = initCategory(category);
+            let categoryModel = this.initCategory(category);
             let articles = category['articles'];
-            categoryModel.addArticles(initArticleModels(articles));
-            categories.push(categoryModel);
+            categoryModel.addArticles(this.initArticleModels(articles));
+            category_models.push(categoryModel);
         }
-        this._domain_wiki_model.addCategories(categories);
+        this._domain_wiki_model.addCategories(category_models);
     },
 
     initCategory: function(category){
