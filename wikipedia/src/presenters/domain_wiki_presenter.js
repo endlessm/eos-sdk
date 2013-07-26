@@ -1,20 +1,60 @@
 const Lang = imports.lang;
 const GObject = imports.gi.GObject;
 
+//Local Libraries
+const Utils = imports.utils;
+
 const DomainWikiPresenter = new Lang.Class({
     Name: "DomainWikiPresenter",
     Extends: GObject.Object,
 
-    _init: function(model, view) {
+    _init: function(model, view, filename) {
         this._domain_wiki_model = model;
         this._domain_wiki_view = view;
         this._domain_wiki_view.set_presenter(this)
         this._domain_wiki_view.connect('category-chosen', Lang.bind(this, this._onCategoryClicked));
         this._domain_wiki_view.connect('article-chosen', Lang.bind(this, this._onArticleClicked));
 
+        this.initFromJsonFile(filename);
+
         let categories = this._domain_wiki_model.getCategories();
 
         this._domain_wiki_view.set_categories(categories);
+    },
+
+
+    initArticleModels: function(articles) {
+        let _articles = new Array();
+        for(let i = 0; i < articles.length; i++) {
+            let humanTitle = articles[i].title;
+            let wikipediaURL = articles[i].url;
+            let newArticle = new ArticleModel.ArticleModel({ title: humanTitle, uri: wikipediaURL});
+            _articles.push(newArticle);
+        }
+      return _articles;
+    },
+
+    initFromJsonFile: function(filename) {
+        let app_content = JSON.parse(Utils.load_file (filename));
+        this._application_name = app_content['app_name'];
+        this._image_uri = app_content['image_uri'];
+        this._lang_code = filename.substring(0, 2);
+        let categories = app_content['categories'];
+        let cat_length = categories.length
+        categories = new Array();
+        for(let i = 0; i < cat_length; i++){
+            let category = categories[i];
+            let categoryModel = initCategory(category);
+            let articles = category['articles'];
+            categoryModel.addArticles(initArticleModels(articles));
+            categories.push(categoryModel);
+        }
+        this._domain_wiki_model.addCategories(categories);
+    },
+
+    initCategory: function(category){
+        let params = {description:category['content_text'], image_uri:category['image_uri'], title:category['category_name']};
+        return new CategoryModel.CategoryModel(params);
     },
 
     _onCategoryClicked: function(page, title, index) {
