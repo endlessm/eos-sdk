@@ -55,3 +55,4 @@ const DomainWikiModel = new Lang.Class({
         return this._image_uri;
     }
 });
+

@@ -1,7 +1,7 @@
 const Lang = imports.lang;
 const GObject = imports.gi.GObject;
 const Gio = imports.gi.Gio;
-const WikipediaModel = imports.models.WikipediaModel;
+const DomainWikiModel = imports.models.domain_wiki_model;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
@@ -52,7 +52,7 @@ const WikipediaApplication = new Lang.Class({
 
     vfunc_startup: function() {
         this.parent();
-        this._model = new WikipediaModel.WikipediaModel(this._application_uri);
+        this._domain_wiki_model = new DomainWikiModel.DomainWikiModel(this._application_uri);
         //let category_file = Gio.File.new_for_uri(this._application_uri);
         //let [success, category_json, etag] = category_file.load_contents(null);
         //this._categories = JSON.parse(category_json);

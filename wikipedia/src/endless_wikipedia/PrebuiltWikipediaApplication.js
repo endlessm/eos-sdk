@@ -27,6 +27,10 @@ const PrebuiltWikipediaApplication = new Lang.Class({
 
         //this._presenter = new WikipediaPresenter.WikipediaPresenter(this._model, this._view);
 
+        this._view = new WikipediaView.WikipediaView(this);
+
+        //this._presenter = new WikipediaPresenter.WikipediaPresenter(this._model, this._view);
+
 
         // Front page
         this._front_page = new EndlessWikipedia.PrebuiltFrontPage({
