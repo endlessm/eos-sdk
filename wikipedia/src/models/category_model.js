@@ -26,9 +26,9 @@ const CategoryModel = new Lang.Class({
 
     addArticles: function(articles) {
         this._articles = articles;
-    }
+    },
 
     getArticles: function() {
         return this._articles;
-    },
+    }
 });
