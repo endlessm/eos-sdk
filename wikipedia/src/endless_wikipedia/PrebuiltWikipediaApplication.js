@@ -23,7 +23,8 @@ const PrebuiltWikipediaApplication = new Lang.Class({
     vfunc_startup: function() {
         this.parent();
         this._domain_wiki_view = new DomainWikiView.DomainWikiView(this);
-        this._domain_wiki_presenter = new DomainWikiPresenter.DomainWikiPresenter(this._domain_wiki_model, this._domain_wiki_view);
+        let filename = this.application_uri;
+        this._domain_wiki_presenter = new DomainWikiPresenter.DomainWikiPresenter(this._domain_wiki_model, this._domain_wiki_view, filename);
 
         this._domain_wiki_view.set_categories(categories);
 
