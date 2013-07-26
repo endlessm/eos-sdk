@@ -1,0 +1,19 @@
+/* ****** ACTION MENU ****** */
+
+#page {
+	background-image: url("./images/road.jpg");
+	background-repeat: no-repeat;
+    background-position: 0 0;
+    
+    transition: background-position 2s linear;
+}
+
+GtkFrame {
+	padding: 200px;
+	background: #F3F3F6;
+}
+
+GtkFrame * {
+	color: black;
+	font-size: xx-large;
+}
