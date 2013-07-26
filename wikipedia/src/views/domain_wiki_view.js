@@ -37,7 +37,7 @@ const DomainWikiView = new Lang.Class({
             name: 'front'
         });
 
-                // Add category page to page manager
+        // Add category page to page manager
         this._window.page_manager.add(this._category_page, {
             name: 'category',
             left_topbar_widget: this._category_back_button

@@ -31,27 +31,11 @@ const WikipediaApplication = new Lang.Class({
 
     },
 
-    // PROPERTIES
-
-    get categories_uri() {
-        return this._categories_uri;
-    },
-
-    set categories_uri(value) {
-        this._application_uri = value;
-    },
-
-    get application_name() {
-        if(this._categories)
-            return this._categories.app_name;
-        return undefined;
-    },
-
     // VIRTUAL FUNCTIONS
 
     vfunc_startup: function() {
         this.parent();
-        this._domain_wiki_model = new DomainWikiModel.DomainWikiModel({});
+        this._domain_wiki_model = new DomainWikiModel.DomainWikiModel();
         //let category_file = Gio.File.new_for_uri(this._application_uri);
         //let [success, category_json, etag] = category_file.load_contents(null);
         //this._categories = JSON.parse(category_json);
@@ -62,27 +46,6 @@ const WikipediaApplication = new Lang.Class({
         let css_file = Gio.File.new_for_uri('resource:///com/endlessm/brazil/css/endless_brazil.css')
         provider.load_from_file(css_file);
         Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-    },
-
-    // PUBLIC API
-
-    getCategories: function() {
-        let category_list = this._categories.categories.map(function(element, index, obj) {
-            return {
-                title: element.category_name,
-                image_uri: element.image_uri,
-                content: element.content_text
-            };
-        })
-        return category_list;
-    },
-
-    getArticlesForCategory: function(category_title) {
-        //...
-    },
-
-    getArticlesForCategoryIndex: function(index) {
-        return this._categories.categories[index].articles;
     }
 
 });

@@ -14,7 +14,6 @@ const DomainWikiModel = new Lang.Class({
     Name: "DomainWikiModel",
     Extends: GObject.Object,
     Properties: {
-
         'image-uri': GObject.ParamSpec.string('image-uri',
             'Application image URI',
             'URI describing a path to the image for this application.',
@@ -48,13 +47,6 @@ const DomainWikiModel = new Lang.Class({
 
     getCategories: function() {
         return this._categories;
-    },
-
-    get application_name(){
-        return this._application_name;
-    },
-
-    get image_uri(){
-        return this._image_uri;
     }
+
 });
