@@ -2,6 +2,7 @@
 const Endless = imports.gi.Endless;
 const Gio = imports.gi.Gio;
 const GObject = imports.gi.GObject;
+
 const Lang = imports.lang;
 
 // Local libraries
@@ -17,6 +18,7 @@ const DomainWikiModel = new Lang.Class({
         'image-uri': GObject.ParamSpec.string('image-uri',
             'Application image URI',
             'URI describing a path to the image for this application.',
+
             GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE | GObject.ParamFlags.CONSTRUCT_ONLY,
             ''),
 
@@ -36,6 +38,7 @@ const DomainWikiModel = new Lang.Class({
     //categories should be a list of category models, already populated with article models.
     addCategories: function(categories){
         this._categories = categories;
+
     },
 
     getArticlesForCategoryIndex: function(index){
@@ -55,4 +58,3 @@ const DomainWikiModel = new Lang.Class({
         return this._image_uri;
     }
 });
-

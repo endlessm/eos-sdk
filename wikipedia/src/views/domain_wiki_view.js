@@ -4,8 +4,6 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Endless = imports.gi.Endless;
 
-//const SplashPage = imports.views.splash_page;
-
 const _ = Gettext.gettext;
 
 const DomainWikiView = new Lang.Class({
@@ -28,10 +26,6 @@ const DomainWikiView = new Lang.Class({
             application: application,
             title: _("Endless Domain Wikis")
         });
-        //this._pm = this._window.page_manager;
-        //this._splash_page = new SplashPage.SplashPage();
-        //this._pm.add(this._splash_page);
-        //this._window.show_all();
 
         // These need to be called first
         this.create_front_page();
@@ -66,7 +60,6 @@ const DomainWikiView = new Lang.Class({
             title: "Brazil App"
         });
 
-        //this._front_page.setCategories(this._model.getCategories());
         this._front_page.connect('category-chosen',
             Lang.bind(this, this._onCategoryClicked));
     },
@@ -152,27 +145,10 @@ const DomainWikiView = new Lang.Class({
 
     _onCategoryClicked: function(page, title, index) {
         this.emit('category-chosen', title, index);
-
-        // let category = this.getCategories()[index];
-        // let articles = this.getArticlesForCategoryIndex(index);
-
-        // this._category_view.title = category.title;
-        // this._category_view.description = category.content;
-        // this._category_article_list.setArticles(articles);
-        // this._article_list.setArticles(articles);
-        // this._article_back_button.label = category.title.toUpperCase();
-
-        // this._window.page_manager.transition_type = Endless.PageManagerTransitionType.SLIDE_LEFT;
-        // this._window.page_manager.visible_page_name = 'category';
     },
 
     _onArticleClicked: function(article_list, title, index) {
         this.emit('article-chosen', title, index);
-        // this._article_view.title = title;
-        // this._article_view.article_uri = uri;
-
-        // this._window.page_manager.transition_type = Endless.PageManagerTransitionType.SLIDE_LEFT;
-        // this._window.page_manager.visible_page_name = 'article'; 
     },
 
     _onCategoryBackClicked: function(button) {
