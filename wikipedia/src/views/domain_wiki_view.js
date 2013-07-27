@@ -116,7 +116,7 @@ const DomainWikiView = new Lang.Class({
     set_category_info: function(category, articles) {
         this._category_view.title = category.title;
         this._category_view.description = category.description;
-
+        this._category_view.image_uri = category.image_uri;
         this._category_article_list.setArticles(articles);
         this._article_list.setArticles(articles);
         this._article_back_button.label = category.title.toUpperCase();
