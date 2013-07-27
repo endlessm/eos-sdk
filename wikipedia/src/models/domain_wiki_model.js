@@ -44,13 +44,5 @@ const DomainWikiModel = new Lang.Class({
 
     getCategories: function() {
         return this._categories;
-    },
-
-    get application_name(){
-        return this._application_name;
-    },
-
-    get image_uri(){
-        return this._image_uri;
     }
 });
