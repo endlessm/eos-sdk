@@ -37,7 +37,6 @@ const DomainWikiView = new Lang.Class({
             name: 'front'
         });
 
-        // Add category page to page manager
         this._window.page_manager.add(this._category_page, {
             name: 'category',
             left_topbar_widget: this._category_back_button
@@ -47,8 +46,6 @@ const DomainWikiView = new Lang.Class({
             name: 'article',
             left_topbar_widget: this._article_back_button
         })
-
-        // Build window
      
         this._window.show_all();
     },
@@ -57,7 +54,6 @@ const DomainWikiView = new Lang.Class({
         this._front_page = new EndlessWikipedia.PrebuiltFrontPage({
             title: "Brazil App"
         });
-
         this._front_page.connect('category-chosen',
             Lang.bind(this, this._onCategoryClicked));
     },
