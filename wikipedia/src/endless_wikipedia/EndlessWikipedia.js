@@ -22,6 +22,9 @@ this.ArticleList = _ArticleList.ArticleList;
 const _BackButton = imports.endless_wikipedia.BackButton;
 this.BackButton = _BackButton.BackButton;
 
+const _BoxWithBg = imports.endless_wikipedia.BoxWithBg;
+this.BoxWithBg = _BoxWithBg.BoxWithBg; 
+
 const STYLE_CLASS_TITLE = 'title';
 const STYLE_CLASS_PREBUILT = 'prebuilt';
 const STYLE_CLASS_CATEGORY = 'category';

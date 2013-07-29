@@ -5,5 +5,6 @@
     <file compressed="true">css/endless_brazil.css</file>
     <file>category_images/cuisine.jpg</file>
     <file>category_images/history.jpg</file>
+    <file>assets/introduction_title_separator.png</file>
   </gresource>
 </gresources>
