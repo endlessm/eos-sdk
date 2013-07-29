@@ -3,10 +3,11 @@
 const Lang = imports.lang;
 const Endless = imports.gi.Endless;
 const Gtk = imports.gi.Gtk;
+const GObject = imports.gi.GObject;
 
 const TEST_APPLICATION_ID = 'com.endlessm.example.test-horizontal-layout';
 
-const ANIMATION_DURATION = 2 * 1000000; // 2 seconds
+const ANIMATION_DURATION = 1 * 1000000; // 1 second
 
 const TestApplication = new Lang.Class ({
     Name: 'TestApplication',
@@ -19,7 +20,6 @@ const TestApplication = new Lang.Class ({
             let hadj = widget.get_hadjustment();
             let start = hadj.get_lower ();
             let end = hadj.get_upper() - hadj.get_page_size();
-            let value = hadj.get_value();
             let now = frameClock.get_frame_time() - this._start_time;
             
             if (forward) {
@@ -33,41 +33,67 @@ const TestApplication = new Lang.Class ({
     
     vfunc_startup: function() {
         this.parent();
-
-        this._page = new Gtk.ScrolledWindow({ name: "page",
-            'vscrollbar-policy': Gtk.PolicyType.NEVER,
-            valign: Gtk.Align.FILL});
-        
-        this._content = new Gtk.Grid({'column-homogeneous': true,
-                                      'column-spacing': 100,
-                                      vexpand: true,
-                                      valign: Gtk.Align.FILL});
         
         this._goButton = new Gtk.Button({label: 'GO', valign: Gtk.Align.CENTER});
-        this._content.add(new Gtk.Frame({child: this._goButton}));
-        
-        this._content.add(new Gtk.Frame());
-        this._content.add(new Gtk.Frame());
-        this._content.add(new Gtk.Frame());
-        
-        this._backButton = new Gtk.Button({label: 'BACK', valign: Gtk.Align.CENTER});
-        this._content.add(new Gtk.Frame({child: this._backButton}));
-
-        this._page.add(this._content);
-
-        this._hadjustment = this._page.get_hadjustment();
-        this._css = new Gtk.CssProvider();
-        this._page.get_style_context().add_provider (this._css, Gtk.STYLE_PROVIDER_PRIORITY_USER);
-
         this._goButton.connect('clicked', Lang.bind (this, function () {
             this.animate_scroll(this._page, true);
-            this._css.load_from_data('#page { background-position: -500px 0; }');
         }));
-        
+
+        this._backButton = new Gtk.Button({label: 'BACK', valign: Gtk.Align.CENTER});
         this._backButton.connect('clicked', Lang.bind (this, function () {
             this.animate_scroll(this._page, false);
-            this._css.load_from_data('#page { background-position: 0px 0; }');
         }));
+
+        this._left = new Gtk.Frame({name: 'left',
+                                    child: this._goButton,
+                                    expand: true });
+        
+        this._center = new Gtk.Frame({name: 'center',
+                                      vexpand: true,
+                                      hexpand: false,
+                                      'width-request': 256});
+
+        this._right = new Gtk.Frame({name: 'right',
+                                     child: this._backButton,
+                                     expand: true });
+
+        this._content = new Gtk.Grid({'column-spacing': 24,
+                                      vexpand: true,
+                                      valign: Gtk.Align.FILL});
+
+        this._content.add(this._left);
+        this._content.add(this._center);
+        this._content.add(this._right);
+
+        this._page = new Gtk.Viewport({name: "page",
+                                       'shadow-type': Gtk.ShadowType.NONE,
+                                       'border-width': 0,
+                                       halign: Gtk.Align.FILL,
+                                       valign: Gtk.Align.FILL});
+
+        /*
+         * Note: We call resize_children() because otherwise changes in the size
+         * request of the viewport's child are not propagated immediately (which
+         * is probably a GTK+ bug). Since this causes a new size allocation, we
+         * should disable our own callback so that it is not called twice.
+         * 
+         * Another option would be to set Gtk.ResizeMode.IMMEDIATE in the
+         * viewport, although this is theoretically deprecated.
+         */
+        
+        this._page.add(this._content);
+        this._size_allocate_handler = this._page.connect("size-allocate",
+                                                         Lang.bind(this, function(widget, allocation) {
+            let expanded_width = allocation.width - this._center.width_request - this._content.column_spacing;
+            if (this._content.get_mapped() && expanded_width > 0) {
+                this._content.width_request = 2*expanded_width + this._center.width_request + 2*this._content.column_spacing;
+                //GObject.signal_handler_block(this._page, this._size_allocate_handler);        
+                this._page.resize_children();
+                //GObject.signal_handler_unblock(this._page, this._size_allocate_handler);
+            }
+        }));
+
+        this._hadjustment = this._page.get_hadjustment();
         
         this._pm = new Endless.PageManager();
         this._pm.add(this._page, { name: "page" });
