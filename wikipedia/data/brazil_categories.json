@@ -1,5 +1,5 @@
 {
-    "app_name":"Hello",
+    "app_name":"Brazil",
     "image_uri":"resource:///com/endlessm/brazil/category_images/cuisine.jpg",
     "categories":
     [
@@ -10,13 +10,13 @@
             "articles":
             [
                 {
-                    "title":"Indonesia",
-                    "url":"Indonesia"
+                    "title":"Cachaça",
+                    "url":"Cachaça"
                 },
 
                 {
-                    "title":"Protestant",
-                    "url":"Protestant"
+                    "title":"Feijoada",
+                    "url":"Feijoada"
                 }
 
             ]
@@ -29,13 +29,13 @@
             "articles":
             [
                 {
-                    "title":"World Cup",
+                    "title":"Regime militar no Brasil",
                     "url":"Peplum_movie"
                 },
 
                 {
-                    "title":"Some title",
-                    "url":"some_title"
+                    "title":"Getúlio Vargas",
+                    "url":"Getúlio_Vargas"
                 }
 
             ]
