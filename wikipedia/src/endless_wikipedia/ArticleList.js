@@ -1,10 +1,11 @@
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
-
+const HOVER_ARROW_URI = "/com/endlessm/brazil/assets/submenu_hover_arrow.png";
 const ArticleList = new Lang.Class({
     Name: 'ArticleList',
     Extends: Gtk.ScrolledWindow,
+    
     Signals: {
         'article-chosen': {
             param_types: [GObject.TYPE_STRING, GObject.TYPE_INT]
@@ -16,11 +17,13 @@ const ArticleList = new Lang.Class({
         props.hscrollbar_policy = Gtk.PolicyType.NEVER;
         props.vscrollbar_policy = Gtk.PolicyType.AUTOMATIC,
         this.parent(props);
-
         this._grid = new Gtk.Grid({
             orientation: Gtk.Orientation.VERTICAL,
             vexpand: true
         });
+
+        //width is set per designs, height is set arbitrarily for now but doesn't matter because it's just a min size
+        this.set_size_request(258, 500);
         this.add(this._grid);
     },
 
@@ -33,16 +36,11 @@ const ArticleList = new Lang.Class({
 
         // Create new ones
         articles.forEach(function(title, index, obj) {
-            var button = Gtk.Button.new_with_label(title.toUpperCase());
-            button.image = Gtk.Image.new_from_icon_name('go-next-symbolic',
-                Gtk.IconSize.BUTTON);
-            button.always_show_image = true; // Don't do this, see BackButton.js
-            button.image_position = Gtk.PositionType.RIGHT;
-            button.xalign = 0;
+            let button = new EndlessWikipedia.TextButton(HOVER_ARROW_URI, title, {hexpand:true});
             button.connect('clicked', Lang.bind(this, function() {
                 this.emit('article-chosen', title, index);
             }));
-            button.show();
+            
             this._grid.add(button);
         }, this);
     }

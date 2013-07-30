@@ -49,11 +49,12 @@ const PrebuiltCategoryPage = new Lang.Class({
             expand: true,
         });
 
-        this._grid = new Gtk.Grid({
-            orientation: Gtk.Orientation.VERTICAL,
+        this._layout_grid = new Gtk.Grid({
+            orientation: Gtk.Orientation.HORIZONTAL,
             expand: true,
             halign: Gtk.Align.END
         });
+
         this._title_label = new Gtk.Label({
             name:"category_title",
             vexpand: false,
@@ -66,7 +67,16 @@ const PrebuiltCategoryPage = new Lang.Class({
             vexpand: false
         });
 
-        this._separator = new Gtk.Image({
+        this._submenu_separator = new Gtk.Image({
+            halign:Gtk.Align.END,
+            resource: "/com/endlessm/brazil/assets/submenu_separator_shadow_a.png"
+        });
+
+        this._splash_separator = new Gtk.Image({
+            resource: "/com/endlessm/brazil/assets/category_splash_separator_shadow.png"
+        });
+
+        this._description_separator = new Gtk.Image({
             resource: "/com/endlessm/brazil/assets/introduction_title_separator.png"
         });
 
@@ -80,17 +90,21 @@ const PrebuiltCategoryPage = new Lang.Class({
         this._description_label.set_line_wrap(true);
         this._description_label.set_max_width_chars(40);
 
-        this._grid.set_size_request(100, 100);
-
         this.parent(props);
 
         this._vbox.pack_start(this._title_label, false, false, 0);
-        this._vbox.pack_start(this._separator, false, false, 0);
-        this._vbox.pack_start(this._description_label, true, true, 0);
-        this._grid.add(this._vbox);
+        this._vbox.pack_start(this._description_separator, false, false, 0);
+        this._vbox.pack_start(this._description_label, true, true, 0);        
 
+        this._layout_grid.add(this._splash_separator);
+        this._layout_grid.add(this._vbox);
+        
+        this._overlay = new Gtk.Overlay({halign:Gtk.Align.END});
+        this._overlay.add(this._layout_grid);
+        this._overlay.add_overlay(this._submenu_separator);
+
+        this._frame.add(this._overlay);
         this.add(this._frame);
-        this._frame.add(this._grid);
         this._category_provider = new Gtk.CssProvider();
 
     },

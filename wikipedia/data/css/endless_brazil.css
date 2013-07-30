@@ -1,5 +1,5 @@
 * {
-    font-family: "Benton Sans";
+    font-family: "BentonSans Regular";
 }
 
 .title {
@@ -11,15 +11,29 @@
     color: #a0a0a0;
 }
 
+Gjs_ArticleList{
+    background-image: url('resource:///com/endlessm/brazil/assets/submenu_background.jpg');
+}
+
 Gjs_ArticleList .button {
-    border-top: 1px solid #555753;
-    padding: 10px;
-    background-color: #d3d7cf;
-    color: black;
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 15px;
+    color: #464646;
+    background-image: url('resource:///com/endlessm/brazil/assets/submenu_bg_normal.jpg');
+    background-size: cover;
 }
 
 Gjs_ArticleList .button:hover {
     color: #555753;
+    background-image: url('resource:///com/endlessm/brazil/assets/submenu_bg_hover.png');
+}
+
+Gjs_ArticleList .button:active {
+    color: #555753;
+    background-image: url('resource:///com/endlessm/brazil/assets/submenu_bg_pressed.png');
 }
 
 .articles-page {
@@ -37,6 +51,7 @@ Gjs_ArticleList .button:hover {
 }
 
 #category_title{
+    font-family: "BentonSans Light";
     font-size: 52px;
     color: rgba(255, 255, 255, 0.9);
 }
