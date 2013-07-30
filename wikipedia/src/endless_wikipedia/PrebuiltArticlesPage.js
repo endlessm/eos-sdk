@@ -3,6 +3,7 @@ const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
 const EndlessWikipedia = imports.endless_wikipedia.EndlessWikipedia;
+const WikipediaView = imports.views.wikipedia_view;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
@@ -24,6 +25,7 @@ const PrebuiltArticlesPage = new Lang.Class({
 
     _init: function(props) {
         this._title = null;
+        //We don't use article_uri now since the database only needs to readable title.
         this._article_uri = null;
 
         // Create widgets
@@ -39,9 +41,7 @@ const PrebuiltArticlesPage = new Lang.Class({
             orientation: Gtk.Orientation.HORIZONTAL,
             vexpand: false
         });
-        this._wiki_view = new Gtk.Label({
-            vexpand: true
-        });
+        this._wiki_view = new WikipediaView.WikipediaView();
 
         this.parent(props);
 
@@ -57,8 +57,6 @@ const PrebuiltArticlesPage = new Lang.Class({
         context.add_class(EndlessWikipedia.STYLE_CLASS_ARTICLES_PAGE);
         context.add_class(EndlessWikipedia.STYLE_CLASS_PREBUILT);
         let context = this._separator.get_style_context();
-        context.add_class(EndlessWikipedia.STYLE_CLASS_ARTICLES_PAGE);
-        let context = this._wiki_view.get_style_context();
         context.add_class(EndlessWikipedia.STYLE_CLASS_ARTICLES_PAGE);
         let context = this.get_style_context();
         context.add_class(EndlessWikipedia.STYLE_CLASS_ARTICLES_PAGE);
@@ -80,8 +78,5 @@ const PrebuiltArticlesPage = new Lang.Class({
 
     set article_uri(value) {
         this._article_uri = value;
-        if(this._wiki_view)
-            this._wiki_view.label = 'This is a "webview" displaying the ' +
-                'article http://en.wikipedia.org/wiki/%s'.format(value);
     }
 });
