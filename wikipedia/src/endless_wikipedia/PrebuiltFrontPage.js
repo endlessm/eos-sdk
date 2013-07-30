@@ -3,6 +3,7 @@ const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
 const EndlessWikipedia = imports.endless_wikipedia.EndlessWikipedia;
+const CategorySelectorView = imports.views.category_selector_view;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
@@ -34,10 +35,10 @@ const PrebuiltFrontPage = new Lang.Class({
         context.add_class(EndlessWikipedia.STYLE_CLASS_TITLE);
         context.add_class(EndlessWikipedia.STYLE_CLASS_PREBUILT);
         context.add_class(EndlessWikipedia.STYLE_CLASS_FRONT_PAGE);
-        this._category_selector = new EndlessWikipedia.CategorySelector();
+        this._category_selector = new CategorySelectorView.CategorySelectorView();
 
         props = props || {};
-        props.orientation = Gtk.Orientation.VERTICAL;
+        props.orientation = Gtk.Orientation.HORIZONTAL;
         this.parent(props);
 
         this.add(this._title_label);

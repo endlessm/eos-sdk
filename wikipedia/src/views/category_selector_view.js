@@ -2,11 +2,15 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const CategoryButton = imports.endless_wikipedia.CategoryButton;
+const CategoryButton = imports.views.category_button;
+const CategoryLayoutManager = imports.views.category_layout_manager;
 
-const CategorySelector = new Lang.Class({
-    Name: 'CategorySelector',
-    Extends: Gtk.Grid,
+const CATEGORY_COLUMN_SPACING = 10;  // pixels
+const CATEGORY_ROW_SPACING = 10;  // pixels
+
+const CategorySelectorView = new Lang.Class({
+    Name: 'CategorySelectorView',
+    Extends: CategoryLayoutManager.CategoryLayoutManager,
     Signals: {
         'category-chosen': {
             param_types: [GObject.TYPE_STRING, GObject.TYPE_INT]
@@ -15,8 +19,8 @@ const CategorySelector = new Lang.Class({
 
     _init: function(props) {
         props = props || {};
-        props.row_homogeneous = true;
-        props.column_homogeneous = true;
+        props.column_spacing = CATEGORY_COLUMN_SPACING;
+        props.row_spacing = CATEGORY_ROW_SPACING;
         this.parent(props);
     },
 
