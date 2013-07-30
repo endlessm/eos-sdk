@@ -23,7 +23,10 @@ const _BackButton = imports.endless_wikipedia.BackButton;
 this.BackButton = _BackButton.BackButton;
 
 const _BoxWithBg = imports.endless_wikipedia.BoxWithBg;
-this.BoxWithBg = _BoxWithBg.BoxWithBg; 
+this.BoxWithBg = _BoxWithBg.BoxWithBg;
+
+const _TextButton = imports.endless_wikipedia.textButton;
+this.TextButton = _TextButton.TextButton;  
 
 const STYLE_CLASS_TITLE = 'title';
 const STYLE_CLASS_PREBUILT = 'prebuilt';
