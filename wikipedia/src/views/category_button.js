@@ -3,13 +3,8 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
-function _resourceUriToPath(uri) {
-    if(uri.startsWith('resource://'))
-        return uri.slice('resource://'.length);
-    throw new Error('Resource URI did not start with "resource://"');
-}
+GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
 const CategoryButton = new Lang.Class({
     Name: 'CategoryButton',
@@ -79,7 +74,7 @@ const CategoryButton = new Lang.Class({
     set image_uri(value) {
         this._image_uri = value;
         if(this._image) {
-            let res_path = _resourceUriToPath(value);
+            let res_path = Utils.resourceUriToPath(value);
             let allocation = this.get_allocation();
             this._updateImage(res_path, allocation.width, allocation.height);
         }
@@ -99,7 +94,7 @@ const CategoryButton = new Lang.Class({
 
     vfunc_size_allocate: function(allocation) {
         this.parent(allocation);
-        this._updateImage(_resourceUriToPath(this._image_uri),
+        this._updateImage(Utils.resourceUriToPath(this._image_uri),
             allocation.width, allocation.height);
     },
 
