@@ -42,12 +42,18 @@ const PrebuiltArticlesPage = new Lang.Class({
             vexpand: false
         });
         this._wiki_view = new WikipediaView.WikipediaView();
+        // Put the webview in a scrolledWindow to handle large page sizes
+        let scrolledWindow = new Gtk.ScrolledWindow ({
+            hscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
+            vscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
+            expand: true});
+        scrolledWindow.add(this._wiki_view);
 
         this.parent(props);
 
         this._grid.add(this._title_label);
         this._grid.add(this._separator);
-        this._grid.add(this._wiki_view);
+        this._grid.add(scrolledWindow);
         this.add(this._grid);
 
         // Add style contexts for CSS
