@@ -2,13 +2,16 @@
     font-family: "BentonSans Regular";
 }
 
-.title {
-    font-size: 48pt;
+.title.front-page {
+    font-family: "BentonSans Thin";
+    font-size: 100px;
+    color: #ffffff;
+    text-shadow: 0px 1px 0px alpha(#23326e, 0.15);
 }
 
 .title.category.front-page {
-    font-size: 36pt;
-    color: #a0a0a0;
+    font-family: "BentonSans ExtraLight";
+    font-size: 40px;
 }
 
 Gjs_ArticleList{

@@ -52,7 +52,7 @@ const DomainWikiView = new Lang.Class({
 
     create_front_page: function(){
         this._front_page = new EndlessWikipedia.PrebuiltFrontPage({
-            title: "Brazil App"
+            title: "Brazil"
         });
         this._front_page.connect('category-chosen',
             Lang.bind(this, this._onCategoryClicked));
