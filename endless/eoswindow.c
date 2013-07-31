@@ -85,6 +85,21 @@ enum
 
 static GParamSpec *eos_window_props[NPROPS] = { NULL, };
 
+static void
+override_background_css(EosWindow *self, gchar *background_css)
+{
+  // Override the css
+  GtkStyleProvider *provider =
+    GTK_STYLE_PROVIDER (self->priv->background_provider);
+  GdkScreen *screen = gdk_screen_get_default ();
+  GError *error = NULL;
+  gtk_style_context_remove_provider_for_screen (screen, provider);
+  gtk_css_provider_load_from_data (self->priv->background_provider,
+                                   background_css, -1, &error);
+  gtk_style_context_add_provider_for_screen (screen, provider,
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+}
+
 /*
  * update_page_actions:
  * @self: the window
@@ -248,16 +263,7 @@ update_page_background (EosWindow *self)
                                           self->priv->current_background_css_props,
                                           gtk_widget_get_name (self->priv->next_background),
                                           next_background_css_props);
-  // Override the css
-  GtkStyleProvider *provider =
-    GTK_STYLE_PROVIDER (self->priv->background_provider);
-  GdkScreen *screen = gdk_screen_get_default ();
-  GError *error = NULL;
-  gtk_style_context_remove_provider_for_screen (screen, provider);
-  gtk_css_provider_load_from_data (self->priv->background_provider,
-                                   background_css, -1, &error);
-  gtk_style_context_add_provider_for_screen (screen, provider,
-                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  override_background_css (self, background_css);
   p_stack_set_visible_child (P_STACK (self->priv->background_stack),
                                       self->priv->next_background);
   // Swap our background frames for next animation
@@ -566,9 +572,6 @@ eos_window_init (EosWindow *self)
 {
   self->priv = WINDOW_PRIVATE (self);
 
-  self->priv->background_provider = gtk_css_provider_new ();
-  self->priv->current_background_css_props = TRANSPARENT_FRAME_CSS_PROPERTIES;
-
   self->priv->top_bar = eos_top_bar_new ();
   gtk_widget_set_parent (self->priv->top_bar, GTK_WIDGET (self));
 
@@ -587,6 +590,16 @@ eos_window_init (EosWindow *self)
   gchar *background_name0 = g_strdup_printf (BACKGROUND_FRAME_NAME_TEMPLATE, 0);
   self->priv->current_background = g_object_new (GTK_TYPE_FRAME, "name", background_name0, NULL);
   gtk_container_add (GTK_CONTAINER (self->priv->background_stack), self->priv->current_background);
+
+  self->priv->background_provider = gtk_css_provider_new ();
+  // We start all the background frames transparent with no styling
+  self->priv->current_background_css_props = TRANSPARENT_FRAME_CSS_PROPERTIES;
+  gchar *background_css = g_strdup_printf(CSS_TEMPLATE,
+                                          gtk_widget_get_name (self->priv->current_background),
+                                          TRANSPARENT_FRAME_CSS_PROPERTIES,
+                                          gtk_widget_get_name (self->priv->next_background),
+                                          TRANSPARENT_FRAME_CSS_PROPERTIES);
+  override_background_css (self, background_css);
 
   self->priv->main_area = eos_main_area_new ();
   gtk_overlay_add_overlay (GTK_OVERLAY (self->priv->overlay), self->priv->main_area);
