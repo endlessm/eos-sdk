@@ -47,7 +47,8 @@ Gjs_ArticleList .button:active {
 
 #category_description{
     color:rgba(255, 255, 255, 1.0);
-    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0);
+    font-size: 12px;
 }
 
 #category_title{
