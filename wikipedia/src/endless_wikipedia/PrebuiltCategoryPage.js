@@ -80,21 +80,28 @@ const PrebuiltCategoryPage = new Lang.Class({
             resource: "/com/endlessm/brazil/assets/introduction_title_separator.png"
         });
 
-        this._description_label = new Gtk.Label({
+        this._description_text_view = new Gtk.TextView({
             name:"category_description",
-            valign: Gtk.Align.START,
-            halign: Gtk.Align.START,
-            margin_left:45,
-            margin_right:45
+            sensitive: false,
+            editable: false,
+            cursor_visible: false
         });
-        this._description_label.set_line_wrap(true);
-        this._description_label.set_max_width_chars(40);
+
+        this._description_text_view.set_pixels_inside_wrap(10);
+        this._description_text_view.set_wrap_mode(Gtk.WrapMode.WORD);
+
+        this._description_scrolled_window = new Gtk.ScrolledWindow({
+            margin_left: 45,
+            margin_right: 45
+        });
+
+        this._description_scrolled_window.add(this._description_text_view);
 
         this.parent(props);
 
         this._vbox.pack_start(this._title_label, false, false, 0);
         this._vbox.pack_start(this._description_separator, false, false, 0);
-        this._vbox.pack_start(this._description_label, true, true, 0);        
+        this._vbox.pack_start(this._description_scrolled_window, true, true, 0);        
 
         this._layout_grid.add(this._splash_separator);
         this._layout_grid.add(this._vbox);
@@ -125,8 +132,8 @@ const PrebuiltCategoryPage = new Lang.Class({
 
     set description(value) {
         this._description = value;
-        if(this._description_label)
-            this._description_label.label = value;
+        if(this._description_text_view)
+            this._description_text_view.buffer.set_text(value, -1);
     },
 
     get image_uri(){
