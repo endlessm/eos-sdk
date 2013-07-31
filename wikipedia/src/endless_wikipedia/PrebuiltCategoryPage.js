@@ -4,6 +4,7 @@ const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
 const EndlessWikipedia = imports.endless_wikipedia.EndlessWikipedia;
+const ScaledImage = imports.scaled_image;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
@@ -67,17 +68,21 @@ const PrebuiltCategoryPage = new Lang.Class({
             vexpand: false
         });
 
-        this._submenu_separator = new Gtk.Image({
-            halign:Gtk.Align.END,
-            resource: "/com/endlessm/brazil/assets/submenu_separator_shadow_a.png"
+        this._submenu_separator = new ScaledImage.ScaledImage({
+            resource: "/com/endlessm/brazil/assets/submenu_separator_shadow_a.png",
+            constraint: Gtk.Orientation.VERTICAL,
+            halign: Gtk.Align.END
         });
 
-        this._splash_separator = new Gtk.Image({
-            resource: "/com/endlessm/brazil/assets/category_splash_separator_shadow.png"
+        this._splash_separator = new ScaledImage.ScaledImage({
+            resource: "/com/endlessm/brazil/assets/category_splash_separator_shadow.png",
+            constraint: Gtk.Orientation.VERTICAL,
+            halign: Gtk.Align.END
         });
 
-        this._description_separator = new Gtk.Image({
-            resource: "/com/endlessm/brazil/assets/introduction_title_separator.png"
+        this._description_separator = new ScaledImage.ScaledImage({
+            resource: "/com/endlessm/brazil/assets/introduction_title_separator.png",
+            constraint: Gtk.Orientation.HORIZONTAL
         });
 
         this._description_label = new Gtk.Label({
