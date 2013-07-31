@@ -119,7 +119,9 @@ const CategoryButton = new Lang.Class({
             source_width = -1;
         let source_pixbuf = GdkPixbuf.Pixbuf.new_from_resource_at_scale(res_path,
             source_width, source_height, true);
-        let cropped_pixbuf = source_pixbuf.new_subpixbuf(0, 0, width, height);
+        let cropped_pixbuf = source_pixbuf;
+        if(width < source_pixbuf.width || height < source_pixbuf.height)
+            cropped_pixbuf = source_pixbuf.new_subpixbuf(0, 0, width, height);
         this._image.set_from_pixbuf(cropped_pixbuf);
     }
 });
