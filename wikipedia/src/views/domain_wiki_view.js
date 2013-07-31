@@ -113,6 +113,17 @@ const DomainWikiView = new Lang.Class({
         this._presenter = presenter;
     },
 
+    set_front_page_info: function(image_uri) {
+        /*
+        *  TODO: This is a stub function that sets the front page
+        *  info. The front page needs its domain-specific image set.
+        *  Currently, the domain-specific image for the Brazil App is
+        *  the same image used in the food category.
+        */
+
+        return;
+    },
+
     set_category_info: function(category, articles) {
         this._category_view.title = category.title;
         this._category_view.description = category.description;
