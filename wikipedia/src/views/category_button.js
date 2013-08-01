@@ -3,6 +3,12 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
+const Utils = imports.utils;
+
+const CATEGORY_LABEL_LEFT_MARGIN = 25;  // pixels
+const CATEGORY_LABEL_BOTTOM_MARGIN = 20;  // pixels
+const CATEGORY_BUTTON_RIGHT_MARGIN = 20;  // pixels
+const CATEGORY_BUTTON_BOTTOM_MARGIN = 20;  // pixels
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
@@ -35,13 +41,40 @@ const CategoryButton = new Lang.Class({
 
         this._overlay = new Gtk.Overlay();
         this._eventbox = new Gtk.EventBox({
-            vexpand: false,
-            valign: Gtk.Align.END,
-            halign: Gtk.Align.FILL
-        })
+            expand: true
+        });
+        this._eventbox_grid = new Gtk.Grid({
+            orientation: Gtk.Orientation.HORIZONTAL,
+            hexpand: true,
+            valign: Gtk.Align.END
+        });
         this._label = new Gtk.Label({
+            margin_left: CATEGORY_LABEL_LEFT_MARGIN,
+            margin_bottom: CATEGORY_LABEL_BOTTOM_MARGIN,
+            hexpand: true,
             halign: Gtk.Align.START
         });
+        this._arrow = new Gtk.Image({
+            resource: '/com/endlessm/brazil/assets/category_hover_arrow.png',
+            margin_right: CATEGORY_BUTTON_RIGHT_MARGIN,
+            margin_bottom: CATEGORY_BUTTON_BOTTOM_MARGIN,
+            halign: Gtk.Align.END,
+            no_show_all: true
+        });
+
+        this._eventbox.add_events(Gdk.EventMask.ENTER_NOTIFY_MASK |
+            Gdk.EventMask.LEAVE_NOTIFY_MASK);
+        this._eventbox.connect('enter-notify-event',
+            Lang.bind(this, function(widget, event) {
+                this._eventbox.set_state_flags(Gtk.StateFlags.PRELIGHT, false);
+                this._arrow.show();
+            }));
+        this._eventbox.connect('leave-notify-event',
+            Lang.bind(this, function(widget, event) {
+                this._eventbox.unset_state_flags(Gtk.StateFlags.PRELIGHT);
+                this._arrow.hide();
+            }));
+
         let context = this._label.get_style_context();
         context.add_class(EndlessWikipedia.STYLE_CLASS_TITLE);
         context.add_class(EndlessWikipedia.STYLE_CLASS_CATEGORY);
@@ -58,7 +91,9 @@ const CategoryButton = new Lang.Class({
         // Put widgets together
         this.add(this._overlay);
         this._overlay.add(this._image);
-        this._eventbox.add(this._label);
+        this._eventbox_grid.add(this._label);
+        this._eventbox_grid.add(this._arrow);
+        this._eventbox.add(this._eventbox_grid);
         this._overlay.add_overlay(this._eventbox);
         this.show_all();
 

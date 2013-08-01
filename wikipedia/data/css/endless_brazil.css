@@ -59,3 +59,7 @@ Gjs_ArticleList .button:active {
     font-size: 52px;
     color: rgba(255, 255, 255, 0.9);
 }
+
+Gjs_CategoryButton GtkEventBox:hover {
+    background-color: alpha(#212121, 0.5);
+}
