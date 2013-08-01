@@ -176,3 +176,11 @@ function _clutter_allocation_printer(actor, box, flag) {
 function print_clutter_actor_allocation(actor) {
     actor.connect('allocation-changed', _clutter_allocation_printer);
 }
+
+// Convenience function to convert a resource URI to a resource path, for
+// APIs that expect a path rather than an URI
+function resourceUriToPath(uri) {
+    if(uri.startsWith('resource://'))
+        return uri.slice('resource://'.length);
+    throw new Error('Resource URI did not start with "resource://"');
+}

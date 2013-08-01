@@ -3,6 +3,10 @@ const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
 const EndlessWikipedia = imports.endless_wikipedia.EndlessWikipedia;
+const CategorySelectorView = imports.views.category_selector_view;
+const TitleLabelView = imports.views.title_label_view;
+
+const TITLE_CATEGORY_COLUMN_SPACING = 10;  // pixels
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
@@ -14,6 +18,11 @@ const PrebuiltFrontPage = new Lang.Class({
             'Front page title',
             'Name of the Wikipedia-based application',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+            ''),
+        'image-uri': GObject.ParamSpec.string('image-uri',
+            'Image URI',
+            'Image URI for title image',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
             '')
     },
     Signals: {
@@ -24,20 +33,18 @@ const PrebuiltFrontPage = new Lang.Class({
 
     _init: function(props) {
         this._title = null;
+        this._image_uri = null;
 
-        this._title_label = new Gtk.Label({
-            expand: true,
-            halign: Gtk.Align.START,
-            valign: Gtk.Align.END
-        });
+        this._title_label = new TitleLabelView.TitleLabelView();
         let context = this._title_label.get_style_context()
         context.add_class(EndlessWikipedia.STYLE_CLASS_TITLE);
         context.add_class(EndlessWikipedia.STYLE_CLASS_PREBUILT);
         context.add_class(EndlessWikipedia.STYLE_CLASS_FRONT_PAGE);
-        this._category_selector = new EndlessWikipedia.CategorySelector();
+        this._category_selector = new CategorySelectorView.CategorySelectorView();
 
         props = props || {};
-        props.orientation = Gtk.Orientation.VERTICAL;
+        props.orientation = Gtk.Orientation.HORIZONTAL;
+        props.column_spacing = TITLE_CATEGORY_COLUMN_SPACING;
         this.parent(props);
 
         this.add(this._title_label);
@@ -52,8 +59,16 @@ const PrebuiltFrontPage = new Lang.Class({
 
     set title(value) {
         this._title = value;
-        if(this._title_label)
-            this._title_label.label = value.toUpperCase();
+        this._title_label.title = value;
+    },
+
+    get image_uri() {
+        return this._image_uri;
+    },
+
+    set image_uri(value) {
+        this._image_uri = value;
+        this._title_label.image_uri = value;
     },
 
     setCategories: function(categories) {
