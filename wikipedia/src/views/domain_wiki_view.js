@@ -51,9 +51,7 @@ const DomainWikiView = new Lang.Class({
     },
 
     create_front_page: function(){
-        this._front_page = new EndlessWikipedia.PrebuiltFrontPage({
-            title: "Brazil App"
-        });
+        this._front_page = new EndlessWikipedia.PrebuiltFrontPage();
         this._front_page.connect('category-chosen',
             Lang.bind(this, this._onCategoryClicked));
     },
@@ -113,15 +111,9 @@ const DomainWikiView = new Lang.Class({
         this._presenter = presenter;
     },
 
-    set_front_page_info: function(image_uri) {
-        /*
-        *  TODO: This is a stub function that sets the front page
-        *  info. The front page needs its domain-specific image set.
-        *  Currently, the domain-specific image for the Brazil App is
-        *  the same image used in the food category.
-        */
-
-        return;
+    set_front_page_info: function(title, image_uri) {
+        this._front_page.title = title;
+        this._front_page.image_uri = image_uri;
     },
 
     set_category_info: function(category, articles) {

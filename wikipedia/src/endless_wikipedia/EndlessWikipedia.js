@@ -13,9 +13,6 @@ this.PrebuiltCategoryPage = _PrebuiltCategoryPage.PrebuiltCategoryPage;
 const _PrebuiltArticlesPage = imports.endless_wikipedia.PrebuiltArticlesPage;
 this.PrebuiltArticlesPage = _PrebuiltArticlesPage.PrebuiltArticlesPage;
 
-const _CategorySelector = imports.endless_wikipedia.CategorySelector;
-this.CategorySelector = _CategorySelector.CategorySelector;
-
 const _ArticleList = imports.endless_wikipedia.ArticleList;
 this.ArticleList = _ArticleList.ArticleList;
 

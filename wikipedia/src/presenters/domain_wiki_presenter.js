@@ -61,7 +61,7 @@ const DomainWikiPresenter = new Lang.Class({
             category_models.push(categoryModel);
         }
         this._domain_wiki_model.addCategories(category_models);
-        this._domain_wiki_view.set_front_page_info(this._image_uri);
+        this._domain_wiki_view.set_front_page_info(this._application_name, this._image_uri);
     },
 
     initCategory: function(category){
