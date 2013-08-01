@@ -23,7 +23,7 @@ const ArticleList = new Lang.Class({
         });
 
         //width is set per designs, height is set arbitrarily for now but doesn't matter because it's just a min size
-        this.set_size_request(258, 500);
+        this.set_size_request(258, -1);
         this.add(this._grid);
     },
 

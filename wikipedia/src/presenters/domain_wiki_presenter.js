@@ -45,7 +45,6 @@ const DomainWikiPresenter = new Lang.Class({
     },
 
     initFromJsonFile: function(filename) {
-        //filename = "../data/brazil_categories.json";
         let app_content = JSON.parse(Utils.load_file_from_resource(filename));
         this._application_name = app_content['app_name'];
         this._image_uri = app_content['image_uri'];

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/com/endlessm/brazil">
+    <file compressed="true">pt-br-brazil-app.json</file>
     <file compressed="true">brazil_categories.json</file>
     <file compressed="true">css/endless_brazil.css</file>
     <file>category_images/cuisine.jpg</file>
     <file>category_images/history.jpg</file>
+    <file>category_images/bg_brazil_sports.jpg</file>
     <file>assets/introduction_title_separator.png</file>
     <file>assets/submenu_bg_hover.png</file>
     <file>assets/submenu_bg_pressed.png</file>
@@ -15,5 +17,6 @@
     <file>assets/submenu_background.jpg</file>
     <file>assets/category_splash_separator_shadow.png</file>
     <file>assets/category_hover_arrow.png</file>
+    <file>assets/image_strip_back_button.png</file>
   </gresource>
 </gresources>
