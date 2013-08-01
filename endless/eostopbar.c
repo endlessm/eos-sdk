@@ -19,7 +19,11 @@
  */
 #define _EOS_STYLE_CLASS_TOP_BAR "top-bar"
 #define _EOS_TOP_BAR_HEIGHT_PX 36
-#define _EOS_TOP_BAR_BUTTON_PADDING_PX 3
+#define _EOS_TOP_BAR_BUTTON_PADDING_PX 4
+#define _EOS_TOP_BAR_ICON_SIZE_PX 16
+#define _EOS_TOP_BAR_HORIZONTAL_BUTTON_MARGIN_PX 7
+#define _EOS_TOP_BAR_BUTTON_SEPARATION_PX 8
+#define _EOS_TOP_BAR_VERTICAL_BUTTON_MARGIN_PX 6
 #define _EOS_TOP_BAR_MINIMIZE_ICON_NAME "window-minimize-symbolic"
 #define _EOS_TOP_BAR_CLOSE_ICON_NAME "window-close-symbolic"
 
@@ -30,7 +34,7 @@ G_DEFINE_TYPE (EosTopBar, eos_top_bar, GTK_TYPE_EVENT_BOX)
 
 struct _EosTopBarPrivate
 {
-  GtkWidget *actions_hbox;
+  GtkWidget *actions_grid;
   GtkWidget *left_top_bar_attach;
   GtkWidget *center_top_bar_attach;
 
@@ -123,52 +127,65 @@ eos_top_bar_init (EosTopBar *self)
 
   gtk_widget_set_hexpand (GTK_WIDGET (self), TRUE);
 
-  self->priv->actions_hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_widget_set_hexpand (self->priv->actions_hbox, TRUE);
+  self->priv->actions_grid =
+    g_object_new (GTK_TYPE_GRID,
+                  "orientation", GTK_ORIENTATION_HORIZONTAL,
+                  "hexpand", TRUE,
+                  "halign", GTK_ALIGN_FILL,
+                  "column-spacing", _EOS_TOP_BAR_BUTTON_SEPARATION_PX,
+                  "margin-top", _EOS_TOP_BAR_VERTICAL_BUTTON_MARGIN_PX,
+                  "margin-bottom", _EOS_TOP_BAR_VERTICAL_BUTTON_MARGIN_PX,
+                  "margin-left", _EOS_TOP_BAR_HORIZONTAL_BUTTON_MARGIN_PX,
+                  "margin-right", _EOS_TOP_BAR_HORIZONTAL_BUTTON_MARGIN_PX,
+                  NULL);
 
   self->priv->left_top_bar_attach = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
   self->priv->center_top_bar_attach = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
+  gtk_widget_set_hexpand (self->priv->center_top_bar_attach, TRUE);
+  gtk_widget_set_halign (self->priv->center_top_bar_attach, GTK_ALIGN_CENTER);
 
-  /* TODO Remove foreground override; for now, it is useful for smoke tests */
-  GdkRGBA gray = {0.75, 0.75, 0.75, 1.0};
-  gtk_widget_override_color (self->priv->left_top_bar_attach,
-                             GTK_STATE_FLAG_NORMAL, &gray);
-  gtk_widget_override_color (self->priv->center_top_bar_attach,
-                             GTK_STATE_FLAG_NORMAL, &gray);
+  /* TODO implement adding actions and widgets to the actions_grid */
 
-  /* TODO implement adding actions and widgets to the actions_hbox */
-
-  self->priv->minimize_button = gtk_button_new ();
-  gtk_widget_set_valign (self->priv->minimize_button, GTK_ALIGN_CENTER);
+  self->priv->minimize_button =
+    g_object_new (GTK_TYPE_BUTTON,
+                  "halign", GTK_ALIGN_END,
+                  "valign", GTK_ALIGN_CENTER,
+                  NULL);
   self->priv->minimize_icon =
     gtk_image_new_from_icon_name (_EOS_TOP_BAR_MINIMIZE_ICON_NAME,
                                   GTK_ICON_SIZE_SMALL_TOOLBAR);
-  gtk_button_set_image (GTK_BUTTON (self->priv->minimize_button),
-                        self->priv->minimize_icon);
+  g_object_set(self->priv->minimize_icon,
+               "pixel-size", _EOS_TOP_BAR_ICON_SIZE_PX,
+               "margin", _EOS_TOP_BAR_BUTTON_PADDING_PX,
+               NULL);
+  gtk_container_add (GTK_CONTAINER (self->priv->minimize_button),
+                     self->priv->minimize_icon);
 
-  self->priv->close_button = gtk_button_new ();
-  gtk_widget_set_valign (self->priv->close_button, GTK_ALIGN_CENTER);
+  self->priv->close_button =
+    g_object_new (GTK_TYPE_BUTTON,
+                  "halign", GTK_ALIGN_END,
+                  "valign", GTK_ALIGN_CENTER,
+                  NULL);
   self->priv->close_icon =
       gtk_image_new_from_icon_name (_EOS_TOP_BAR_CLOSE_ICON_NAME,
                                     GTK_ICON_SIZE_SMALL_TOOLBAR);
-  gtk_button_set_image (GTK_BUTTON (self->priv->close_button),
-                        self->priv->close_icon);
+  g_object_set(self->priv->close_icon,
+               "pixel-size", _EOS_TOP_BAR_ICON_SIZE_PX,
+               "margin", _EOS_TOP_BAR_BUTTON_PADDING_PX,
+               NULL);
+  gtk_container_add (GTK_CONTAINER (self->priv->close_button),
+                     self->priv->close_icon);
 
-  gtk_box_pack_start (GTK_BOX (self->priv->actions_hbox),
-                      self->priv->left_top_bar_attach,
-                      FALSE, FALSE, _EOS_TOP_BAR_BUTTON_PADDING_PX);
-  gtk_box_pack_start (GTK_BOX (self->priv->actions_hbox),
-                      self->priv->center_top_bar_attach,
-                      TRUE, FALSE, _EOS_TOP_BAR_BUTTON_PADDING_PX);
+  gtk_container_add (GTK_CONTAINER (self->priv->actions_grid),
+                     self->priv->left_top_bar_attach);
+  gtk_container_add (GTK_CONTAINER (self->priv->actions_grid),
+                     self->priv->center_top_bar_attach);
+  gtk_container_add (GTK_CONTAINER (self->priv->actions_grid),
+                     self->priv->minimize_button);
+  gtk_container_add (GTK_CONTAINER (self->priv->actions_grid),
+                     self->priv->close_button);
 
-  gtk_box_pack_end (GTK_BOX (self->priv->actions_hbox),
-                      self->priv->close_button,
-                      FALSE, FALSE, _EOS_TOP_BAR_BUTTON_PADDING_PX);
-  gtk_box_pack_end (GTK_BOX (self->priv->actions_hbox),
-                      self->priv->minimize_button,
-                      FALSE, FALSE, _EOS_TOP_BAR_BUTTON_PADDING_PX);
-
-  gtk_container_add (GTK_CONTAINER (self), self->priv->actions_hbox);
+  gtk_container_add (GTK_CONTAINER (self), self->priv->actions_grid);
 
   gtk_widget_set_hexpand (GTK_WIDGET (self), TRUE);
   gtk_widget_set_halign (GTK_WIDGET (self), GTK_ALIGN_FILL);
