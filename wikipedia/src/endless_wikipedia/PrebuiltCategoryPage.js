@@ -39,7 +39,8 @@ const PrebuiltCategoryPage = new Lang.Class({
     _init: function(props) {
         this._vbox = new EndlessWikipedia.BoxWithBg({
             name: "category_info",
-            orientation: Gtk.Orientation.VERTICAL
+            orientation: Gtk.Orientation.VERTICAL,
+            expand:true
         });
 
         this._title = null;
@@ -63,6 +64,8 @@ const PrebuiltCategoryPage = new Lang.Class({
             margin_left:45,
             margin_right:45
         });
+        this._title_label.set_size_request(460, -1);
+        
         this._separator = new Gtk.Separator({
             orientation: Gtk.Orientation.HORIZONTAL,
             vexpand: false
@@ -101,6 +104,7 @@ const PrebuiltCategoryPage = new Lang.Class({
         });
 
         this._description_scrolled_window.add(this._description_text_view);
+        this._description_scrolled_window.set_policy(Gtk.PolicyType.ALWAYS, Gtk.PolicyType.ALWAYS);
 
         this.parent(props);
 

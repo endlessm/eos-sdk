@@ -15,7 +15,9 @@ const TextButton = new Lang.Class({
 
         this._hover_icon_pixbuf = GdkPixbuf.Pixbuf.new_from_resource(hover_icon_path);
 
-        this._image = new Gtk.Image();
+        this._image = new Gtk.Image({
+            no_show_all: true
+        });
         this._image.set_from_pixbuf(this._hover_icon_pixbuf);
 
         this._box = new Gtk.Box({
@@ -32,7 +34,6 @@ const TextButton = new Lang.Class({
         this.add(this._box);
         this.connect('state-changed', Lang.bind(this, this._update_appearance));
         this.show_all();
-        this._image.hide();
     },
 
     _update_appearance: function(widget, state) {

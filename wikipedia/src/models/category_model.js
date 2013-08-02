@@ -17,7 +17,10 @@ const CategoryModel = new Lang.Class({
                 ""),
         'image_uri': GObject.ParamSpec.string('image_uri', 'Category Image URI', 'Path to image for this category in the GResource', 
             GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE | GObject.ParamFlags.CONSTRUCT,
-                "")
+                ""),
+        'image_thumbnail_uri': GObject.ParamSpec.string('image_thumbnail_uri', 'Category Thumbnail Image URI', 'Path to thumbnail image for this category in the GResource', 
+            GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE | GObject.ParamFlags.CONSTRUCT,
+                ""),
     },
 
     _init: function(params) {

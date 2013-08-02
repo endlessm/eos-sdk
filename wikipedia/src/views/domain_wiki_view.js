@@ -4,6 +4,8 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Endless = imports.gi.Endless;
 
+const SIDEBAR_BACK_BUTTON_URI = "/com/endlessm/brazil/assets/image_strip_back_button.png";
+
 const _ = Gettext.gettext;
 
 const DomainWikiView = new Lang.Class({
@@ -61,13 +63,46 @@ const DomainWikiView = new Lang.Class({
         this._article_page = new Gtk.Grid({
             orientation: Gtk.Orientation.HORIZONTAL
         });
+
+        this._sidebar_frame = new Gtk.Frame({
+            name: "sidebar_frame"
+        });
+        this._sidebar_frame.set_size_request(40, -1);
+
+        this._article_sidebar_back_button = new EndlessWikipedia.SideBarButton(SIDEBAR_BACK_BUTTON_URI,{
+            name: "side_bar_button",
+            vexpand: true
+        });
         this._article_view = new EndlessWikipedia.PrebuiltArticlesPage();
         this._article_list = new EndlessWikipedia.ArticleList({
             halign: Gtk.Align.START,
             hexpand: false
         });
+
+        this._submenu_separator_a = new Gtk.Image({
+            halign: Gtk.Align.END,
+            resource: "/com/endlessm/brazil/assets/submenu_separator_shadow_a.png"
+        });
+
+        this._submenu_separator_b = new Gtk.Image({
+            halign: Gtk.Align.START,
+            resource: "/com/endlessm/brazil/assets/submenu_separator_shadow_b.png"
+        });
+
+        this._overlay_left = new Gtk.Overlay();
+        this._overlay_left.add(this._sidebar_frame);
+        this._overlay_left.add_overlay(this._submenu_separator_a);
+        this._overlay_left.add_overlay(this._article_sidebar_back_button);
+
+        this._overlay_right = new Gtk.Overlay();
+        this._overlay_right.add(this._article_view);
+        this._overlay_right.add_overlay(this._submenu_separator_b); 
+
+        this._article_page.add(this._overlay_left);
+
         this._article_page.add(this._article_list);
-        this._article_page.add(this._article_view);
+
+        this._article_page.add(this._overlay_right);
 
         this._article_back_button = new EndlessWikipedia.BackButton();
         this._article_back_button.show();
@@ -76,6 +111,9 @@ const DomainWikiView = new Lang.Class({
             Lang.bind(this, this._onArticleClicked));
         this._article_back_button.connect('clicked',
             Lang.bind(this, this._onArticleBackClicked));
+        this._article_sidebar_back_button.connect('clicked', Lang.bind(this, function() {
+            this._onArticleBackClicked();
+        }));
     },
 
     create_category_page: function(){
@@ -107,6 +145,14 @@ const DomainWikiView = new Lang.Class({
             Lang.bind(this, this._onCategoryBackClicked));
     },
 
+    _set_article_sidebar_uri: function(uri){
+        let frame_css = "#sidebar_frame{background-image: url('" + uri + "');background-repeat:no-repeat;background-size:cover;}";
+        let provider = new Gtk.CssProvider();
+        provider.load_from_data(frame_css);
+        let context = this._sidebar_frame.get_style_context();
+        context.add_provider(provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+    },
+
     set_presenter: function(presenter) {
         this._presenter = presenter;
     },
@@ -120,15 +166,16 @@ const DomainWikiView = new Lang.Class({
         this._category_view.title = category.title;
         this._category_view.description = category.description;
         this._category_view.image_uri = category.image_uri;
+
+        this._set_article_sidebar_uri(category.image_uri);
+
         this._category_article_list.setArticles(articles);
         this._article_list.setArticles(articles);
         this._article_back_button.label = category.title.toUpperCase();
     },
 
     set_article_info: function(article){
-        this._article_view.title = article.title;
-        this._article_view.article_uri = article.uri;
-        this._article_view._wiki_view.loadArticleByTitle(article.title);
+        this._article_view.article_title = article.title;
     },
 
     transition_page: function(transition_type, page_name){

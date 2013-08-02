@@ -45,10 +45,13 @@ const DomainWikiPresenter = new Lang.Class({
     },
 
     initFromJsonFile: function(filename) {
-        //filename = "../data/brazil_categories.json";
         let app_content = JSON.parse(Utils.load_file_from_resource(filename));
         this._application_name = app_content['app_name'];
         this._image_uri = app_content['image_uri'];
+        // HACK until we get app image 
+        if(this._image_uri === undefined || this._image_uri === ""){
+            this._image_uri = "resource:///com/endlessm/brazil/category_images/bg_brazil_sports.jpg"            
+        }
         this._lang_code = filename.substring(0, 2);
         let categories = app_content['categories'];
         let cat_length = categories.length
@@ -65,7 +68,11 @@ const DomainWikiPresenter = new Lang.Class({
     },
 
     initCategory: function(category){
-        let params = {description:category['content_text'], image_uri:category['image_uri'], title:category['category_name']};
+        let image_uri = category['image_uri'];
+        let image_thumbnail_uri = category['image_thumbnail_uri'];
+
+        let params = {description:category['content_text'], image_uri:image_uri, 
+            image_thumbnail_uri:image_thumbnail_uri, title:category['category_name']};
         return new CategoryModel.CategoryModel(params);
     },
 

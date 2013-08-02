@@ -12,6 +12,6 @@ let resource = Gio.Resource.load(Endless.getCurrentFileDir() + '/../data/endless
 resource._register();
 
 let app = new EndlessWikipedia.PrebuiltWikipediaApplication({
-    application_uri: 'resource:///com/endlessm/brazil/brazil_categories.json'
+	application_uri: 'resource:///com/endlessm/brazil/pt-br-brazil-app.json'
 });
 app.run(ARGV);
