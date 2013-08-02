@@ -104,6 +104,7 @@ const PrebuiltCategoryPage = new Lang.Class({
         });
 
         this._description_scrolled_window.add(this._description_text_view);
+        this._description_scrolled_window.set_policy(Gtk.PolicyType.ALWAYS, Gtk.PolicyType.ALWAYS);
 
         this.parent(props);
 
