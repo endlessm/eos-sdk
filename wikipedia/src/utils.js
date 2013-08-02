@@ -49,6 +49,11 @@ function load_file_from_resource(filename) {
     return data[0];
 }
 
+function write_contents_to_file(filename, content){
+    let file = Gio.file_new_for_path(filename);
+    file.replace_contents(content, null, false, 0, null);
+}
+
 /*
  * ...Taken from utils.js from the eos-weather branch...
  */

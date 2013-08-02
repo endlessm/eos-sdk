@@ -21,8 +21,8 @@ Gjs_ArticleList{
 Gjs_ArticleList .button {
     padding-left: 25px;
     padding-right: 25px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 15px;
+    padding-bottom: 15px;
     font-size: 15px;
     color: #464646;
     background-image: url('resource:///com/endlessm/brazil/assets/submenu_bg_normal.jpg');
@@ -30,12 +30,10 @@ Gjs_ArticleList .button {
 }
 
 Gjs_ArticleList .button:hover {
-    color: #555753;
     background-image: url('resource:///com/endlessm/brazil/assets/submenu_bg_hover.png');
 }
 
 Gjs_ArticleList .button:active {
-    color: #555753;
     background-image: url('resource:///com/endlessm/brazil/assets/submenu_bg_pressed.png');
 }
 
@@ -55,6 +53,8 @@ Gjs_ArticleList .button:active {
 }
 
 #category_title{
+    /* Top padding is hack because we have bad version of BentonSans */
+    padding-top: 20px;
     font-family: "BentonSans Light";
     font-size: 52px;
     color: rgba(255, 255, 255, 0.9);
@@ -62,4 +62,8 @@ Gjs_ArticleList .button:active {
 
 Gjs_CategoryButton GtkEventBox:hover {
     background-color: alpha(#212121, 0.5);
+}
+
+#side_bar_button:hover{
+    background-color: rgba(0, 0, 0, 0.2);
 }

@@ -55,8 +55,10 @@ const TitleLabelView = new Lang.Class({
 
     vfunc_size_allocate: function(allocation) {
         this.parent(allocation);
-        this._updateImage(Utils.resourceUriToPath(this._image_uri),
-            allocation.width, allocation.height);
+        if(this._image_uri !== "" && this._image_uri != null) {
+            this._updateImage(Utils.resourceUriToPath(this._image_uri),
+                allocation.width, allocation.height);
+        }
     },
 
     // PROPERTIES

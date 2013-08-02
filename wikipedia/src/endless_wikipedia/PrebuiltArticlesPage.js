@@ -11,78 +11,37 @@ const PrebuiltArticlesPage = new Lang.Class({
     Name: 'PrebuiltArticlesPage',
     Extends: Gtk.Frame,
     Properties: {
-        'title': GObject.ParamSpec.string('title',
+        'article-title': GObject.ParamSpec.string('article-title',
             'Article title',
             'Human-readable title for the article to be displayed',
-            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
-            ''),
-        'article-uri': GObject.ParamSpec.string('article-uri',
-            'Article URI',
-            'Last component of the Wikipedia URI for the article',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
             '')
     },
 
     _init: function(props) {
-        this._title = null;
-        //We don't use article_uri now since the database only needs to readable title.
-        this._article_uri = null;
+        this._article_title = null;
 
-        // Create widgets
-        this._grid = new Gtk.Grid({
-            orientation: Gtk.Orientation.VERTICAL,
-            expand: true
+        this._wiki_view = new WikipediaView.WikipediaView({
+            expand:true,
         });
-        this._title_label = new Gtk.Label({
-            vexpand: false,
-            halign: Gtk.Align.START
-        });
-        this._separator = new Gtk.Separator({
-            orientation: Gtk.Orientation.HORIZONTAL,
-            vexpand: false
-        });
-        this._wiki_view = new WikipediaView.WikipediaView();
-        // Put the webview in a scrolledWindow to handle large page sizes
-        let scrolledWindow = new Gtk.ScrolledWindow ({
-            hscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
-            vscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
-            expand: true});
-        scrolledWindow.add(this._wiki_view);
 
         this.parent(props);
 
-        this._grid.add(this._title_label);
-        this._grid.add(this._separator);
-        this._grid.add(scrolledWindow);
-        this.add(this._grid);
+        this.add(this._wiki_view);
 
         // Add style contexts for CSS
-        let context = this._title_label.get_style_context();
-        context.add_class(EndlessWikipedia.STYLE_CLASS_TITLE);
-        context.add_class(EndlessWikipedia.STYLE_CLASS_ARTICLE);
-        context.add_class(EndlessWikipedia.STYLE_CLASS_ARTICLES_PAGE);
-        context.add_class(EndlessWikipedia.STYLE_CLASS_PREBUILT);
-        let context = this._separator.get_style_context();
-        context.add_class(EndlessWikipedia.STYLE_CLASS_ARTICLES_PAGE);
         let context = this.get_style_context();
         context.add_class(EndlessWikipedia.STYLE_CLASS_ARTICLES_PAGE);
     },
 
-    get title() {
-        return this._title;
+    get article_title() {
+        return this._article_title;
     },
 
-    set title(value) {
-        this._title = value;
-        if(this._title_label)
-            this._title_label.label = value.toUpperCase();
-    },
-
-    get article_uri() {
-        return this._article_uri;
-    },
-
-    set article_uri(value) {
-        this._article_uri = value;
+    set article_title(value) {
+        this._article_title = value;
+        if(value !== null && value !== "") {
+            this._wiki_view.loadArticleByTitle(this._article_title);
+        }
     }
 });
