@@ -1,6 +1,4 @@
 const Gio = imports.gi.Gio;
-const Clutter = imports.gi.Clutter;
-const Cogl = imports.gi.Cogl;
 const GdkPixbuf = imports.gi.GdkPixbuf;
 
 const set_default = function(obj, key, val) {
