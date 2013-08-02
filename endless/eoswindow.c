@@ -50,6 +50,8 @@
 
 #define CSS_TEMPLATE "#%s %s #%s %s"
 
+#define _EOS_TOP_BAR_EDGE_FINISHING_HEIGHT_PX 2
+
 G_DEFINE_TYPE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
 
 #define WINDOW_PRIVATE(o) \
@@ -62,6 +64,7 @@ struct _EosWindowPrivate
   GtkWidget *top_bar;
   GtkWidget *main_area;
   GtkWidget *overlay;
+  GtkWidget *edge_finishing;
   GtkWidget *current_background;
   GtkWidget *next_background;
   GtkWidget *background_stack;
@@ -567,6 +570,39 @@ on_close_clicked_cb (GtkWidget* top_bar,
     }
 }
 
+/* Make sure that the edge finishing does not catch input events */
+static void
+after_edge_finishing_realize_cb (GtkWidget *edge_finishing)
+{
+  cairo_rectangle_int_t empty = { 0, 0, 0, 0 };
+  cairo_region_t *empty_region = cairo_region_create_rectangle (&empty);
+  gdk_window_input_shape_combine_region (gtk_widget_get_window (edge_finishing),
+                                         empty_region, 0, 0);
+  cairo_region_destroy (empty_region);
+}
+
+/* Draw the edge finishing on the two lines on top of the window's content;
+see eos_top_bar_draw() for the two lines inside the top bar */
+static gboolean
+on_edge_finishing_draw_cb (GtkWidget *edge_finishing,
+                           cairo_t   *cr)
+{
+  gint width = gtk_widget_get_allocated_width (edge_finishing);
+  cairo_set_line_width (cr, 1.0);
+  /* Shadow 1: #000000, opacity 15% */
+  cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.15);
+  cairo_move_to (cr, 0, 0.5);
+  cairo_rel_line_to (cr, width, 0);
+  cairo_stroke (cr);
+  /* Shadow 2: #000000, opacity 5% */
+  cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.05);
+  cairo_move_to (cr, 0, 1.5);
+  cairo_rel_line_to (cr, width, 0);
+  cairo_stroke (cr);
+
+  return GDK_EVENT_PROPAGATE;
+}
+
 static void
 eos_window_init (EosWindow *self)
 {
@@ -603,6 +639,20 @@ eos_window_init (EosWindow *self)
 
   self->priv->main_area = eos_main_area_new ();
   gtk_overlay_add_overlay (GTK_OVERLAY (self->priv->overlay), self->priv->main_area);
+
+  self->priv->edge_finishing = gtk_drawing_area_new ();
+  gtk_widget_set_vexpand (self->priv->edge_finishing, FALSE);
+  gtk_widget_set_valign (self->priv->edge_finishing, GTK_ALIGN_START);
+  /* has_window == FALSE is necessary for not catching input events */
+  gtk_widget_set_has_window (self->priv->edge_finishing, FALSE);
+  gtk_widget_set_size_request (self->priv->edge_finishing,
+                               -1, _EOS_TOP_BAR_EDGE_FINISHING_HEIGHT_PX);
+  g_signal_connect_after (self->priv->edge_finishing, "realize",
+                          G_CALLBACK (after_edge_finishing_realize_cb), NULL);
+  g_signal_connect (self->priv->edge_finishing, "draw",
+                    G_CALLBACK (on_edge_finishing_draw_cb), NULL);
+  gtk_overlay_add_overlay (GTK_OVERLAY (self->priv->overlay),
+                           self->priv->edge_finishing);
 
   gtk_window_set_decorated (GTK_WINDOW (self), FALSE);
   gtk_window_maximize (GTK_WINDOW (self));

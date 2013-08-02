@@ -66,6 +66,30 @@ eos_top_bar_get_preferred_height (GtkWidget *widget,
     *natural = _EOS_TOP_BAR_HEIGHT_PX;
 }
 
+/* Draw the edge finishing on the two lines inside the topbar; see
+after_draw_cb() in eoswindow.c for the two lines outside the topbar */
+static gboolean
+eos_top_bar_draw (GtkWidget *self_widget,
+                  cairo_t   *cr)
+{
+  GTK_WIDGET_CLASS (eos_top_bar_parent_class)->draw (self_widget, cr);
+
+  gint width = gtk_widget_get_allocated_width (self_widget);
+  cairo_set_line_width (cr, 1.0);
+  /* Highlight: #ffffff, opacity 5% */
+  cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 0.05);
+  cairo_move_to (cr, 0, _EOS_TOP_BAR_HEIGHT_PX - 1.5);
+  cairo_rel_line_to (cr, width, 0);
+  cairo_stroke (cr);
+  /* Baseline: #0a0a0a, opacity 100% */
+  cairo_set_source_rgb (cr, 0.039, 0.039, 0.039);
+  cairo_move_to (cr, 0, _EOS_TOP_BAR_HEIGHT_PX - 0.5);
+  cairo_rel_line_to (cr, width, 0);
+  cairo_stroke (cr);
+
+  return GDK_EVENT_PROPAGATE;
+}
+
 static void
 eos_top_bar_class_init (EosTopBarClass *klass)
 {
@@ -75,6 +99,7 @@ eos_top_bar_class_init (EosTopBarClass *klass)
   g_type_class_add_private (klass, sizeof (EosTopBarPrivate));
 
   widget_class->get_preferred_height = eos_top_bar_get_preferred_height;
+  widget_class->draw = eos_top_bar_draw;
 
   /*
    * Emitted when the minimize button has been activated.
