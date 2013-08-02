@@ -25,12 +25,21 @@ Endless.Wikipedia = Endless.Wikipedia || {};
                     $inside_content.html(pageHtml);
                     $header_content.html('<h1>' + titlePage + '</h1>');
                     $('#inside-content').prepend('<hr class="hr-title">');
-                    // Eventually we want to resurrect his code when we have links in page
-                    // $('#inside-content [src^="//"]').each(function() {
-                    //     var oldSrc = $(this).attr('src');
-                    //     var newSrc = oldSrc.replace("//", "http://");
-                    //     $(this).attr('src', newSrc);
-                    // });
+
+                    $('#inside-content [src^="//"]').each(function() {
+                        var parent = $(this).parent();
+                        if($(this).is("img")){
+                            var url = $(this).attr("src");
+                            var theSplit = url.split("/");
+                            var filename = theSplit[theSplit.length - 2];
+                            if(filename.length == 2){
+                                filename = theSplit[theSplit.length - 1];
+                            }
+                            var newSrc = "article_images/" + encodeURI(filename)
+                            $(this).attr('src', newSrc);
+                        }
+                        
+                    });
                 }
             },
 
