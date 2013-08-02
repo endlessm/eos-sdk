@@ -2,8 +2,16 @@
 <gresources>
   <gresource prefix="/com/endlessm/brazil">
     <file compressed="true">pt-br-brazil-app.json</file>
-    <file compressed="true">brazil_categories.json</file>
+    <!-- file compressed="true">brazil_categories.json</file -->
     <file compressed="true">css/endless_brazil.css</file>
+    <file>category_images/thumb_arts.jpg</file>
+    <file>category_images/thumb_cities.jpg</file>
+    <file>category_images/thumb_culinary.jpg</file>
+    <file>category_images/thumb_events.jpg</file>
+    <file>category_images/thumb_history.jpg</file>
+    <file>category_images/thumb_music.jpg</file>
+    <file>category_images/thumb_nature.jpg</file>
+    <file>category_images/thumb_sports.jpg</file>
     <file>category_images/cuisine.jpg</file>
     <file>category_images/history.jpg</file>
     <file>category_images/bg_brazil_sports.jpg</file>

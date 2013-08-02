@@ -29,7 +29,7 @@ const CategorySelectorView = new Lang.Class({
         categories.forEach(function(category, index, obj) {
             let button = new CategoryButton.CategoryButton({
                 category_title: category.title,
-                image_uri: category.image_uri
+                image_uri: category.image_thumbnail_uri
             });
             button.index = index;
             button.connect('clicked', Lang.bind(this, this._onButtonClicked));

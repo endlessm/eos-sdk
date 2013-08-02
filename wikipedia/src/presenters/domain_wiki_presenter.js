@@ -68,8 +68,11 @@ const DomainWikiPresenter = new Lang.Class({
     },
 
     initCategory: function(category){
-        let image_uri = category['image_file'];
-        let params = {description:category['content_text'], image_uri:image_uri, title:category['category_name']};
+        let image_uri = category['image_uri'];
+        let image_thumbnail_uri = category['image_thumbnail_uri'];
+
+        let params = {description:category['content_text'], image_uri:image_uri, 
+            image_thumbnail_uri:image_thumbnail_uri, title:category['category_name']};
         return new CategoryModel.CategoryModel(params);
     },
 
