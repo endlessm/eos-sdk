@@ -591,12 +591,12 @@ on_edge_finishing_draw_cb (GtkWidget *edge_finishing,
   cairo_set_line_width (cr, 1.0);
   /* Shadow 1: #000000, opacity 15% */
   cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.15);
-  cairo_move_to (cr, 0, 0);
+  cairo_move_to (cr, 0, 0.5);
   cairo_rel_line_to (cr, width, 0);
   cairo_stroke (cr);
   /* Shadow 2: #000000, opacity 5% */
   cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.05);
-  cairo_move_to (cr, 0, 1);
+  cairo_move_to (cr, 0, 1.5);
   cairo_rel_line_to (cr, width, 0);
   cairo_stroke (cr);
 

@@ -78,12 +78,12 @@ eos_top_bar_draw (GtkWidget *self_widget,
   cairo_set_line_width (cr, 1.0);
   /* Highlight: #ffffff, opacity 5% */
   cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 0.05);
-  cairo_move_to (cr, 0, _EOS_TOP_BAR_HEIGHT_PX - 2);
+  cairo_move_to (cr, 0, _EOS_TOP_BAR_HEIGHT_PX - 1.5);
   cairo_rel_line_to (cr, width, 0);
   cairo_stroke (cr);
   /* Baseline: #0a0a0a, opacity 100% */
   cairo_set_source_rgb (cr, 0.039, 0.039, 0.039);
-  cairo_move_to (cr, 0, _EOS_TOP_BAR_HEIGHT_PX - 1);
+  cairo_move_to (cr, 0, _EOS_TOP_BAR_HEIGHT_PX - 0.5);
   cairo_rel_line_to (cr, width, 0);
   cairo_stroke (cr);
 
