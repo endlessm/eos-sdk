@@ -1,80 +1,313 @@
 {
-    "app_name":"Brazil",
-    "image_uri":"resource:///com/endlessm/brazil/category_images/cuisine.jpg",
-    "categories":
-    [
+  "app_name": "Brazil App",
+  "categories": [
+    {
+      "category_name": "Esportes",
+      "content_text": "Desporto, desporte, esporte (portugu\u00eas brasileiro) ou desporto (portugu\u00eas europeu) \u00e9 toda a forma de praticar atividade f\u00edsica que, atrav\u00e9s de participa\u00e7\u00e3o ocasional ou organizada, visa equilibrar a sa\u00fade ou melhorar a aptid\u00e3o f\u00edsica e proporcionar entretenimento aos participantes. Pode ser competitivo, onde o vencedor ou vencedores podem ser identificados por obten\u00e7\u00e3o de um objectivo, e pode exigir um grau de habilidade, especialmente em n\u00edveis mais elevados. S\u00e3o centenas os tipos de desportos existentes, incluindo aqueles para um \u00fanico participante, at\u00e9 aqueles com centenas de participantes simult\u00e2neos, em equipas ou individualmente. Algumas actividades n\u00e3o-f\u00edsicas, como jogos de tabuleiro e jogos de cartas s\u00e3o muitas vezes referidos como desportos, mas um desporto \u00e9 geralmente reconhecido como sendo baseada na actividade f\u00edsica.",
+      "image_file": "resource:///com/endlessm/brazil/category_images/camisa-Uniforme-de-futebol-da-sele\u00e7\u00e3o-brasileira2.jpg",
+      "image_thumb_uri" : "resource:///com/endlessm/brazil/category_images/thumb_sports.jpg",
+      "articles": [
         {
-            "category_name":"Sports",
-            "content_text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed imperdiet rutrum lectus, quis tincidunt eros venenatis nec. Cras porta aliquam arcu fermentum imperdiet. Praesent ut facilisis quam, at interdum elit. Morbi commodo tellus ut varius ultricies. Nam sodales sapien non scelerisque bibendum. Ut ultrices metus sed mauris lacinia pharetra. In magna lorem, hendrerit quis blandit a, congue sit amet arcu. Mauris vulputate hendrerit justo, ut luctus lectus. Praesent placerat dapibus hendrerit. Pellentesque neque nunc, egestas vel faucibus vitae, accumsan in nisi. Aenean at commodo mauris. Mauris congue facilisis iaculis. Aenean at dapibus quam. Maecenas sit amet pharetra ligula. Vestibulum mollis condimentum mollis. Nulla facilisi. Suspendisse vel consequat nisl. Proin et pretium lectus. Mauris tempor luctus venenatis. Vestibulum diam metus, hendrerit et blandit quis, iaculis quis mi. Integer cursus fringilla eros, id eleifend nisl malesuada laoreet. Fusce vitae lacus eget arcu sodales porta non eu augue. Sed vel eleifend tellus. Pellentesque vel velit augue. Mauris sagittis dictum sem, sit amet pharetra sem cursus eget. Nam enim diam, tempus id cursus eu, varius in velit. Aliquam ut feugiat lorem. Proin egestas laoreet rutrum.",
-            "image_uri":"resource:///com/endlessm/brazil/category_images/bg_brazil_sports.jpg",
-            "articles":
-            [
-                {
-                    "title":"Brasil",
-                    "url":"Cachaça"
-                },
-
-                {
-                    "title":"Ronaldo",
-                    "url":"Feijoada"
-                },
-                {
-                    "title":"Facebook",
-                    "url":"Cachaça"
-                },
-
-                {
-                    "title":"SheiKra",
-                    "url":"Feijoada"
-                },
-                {
-                    "title":"James Dean",
-                    "url":"Cachaça"
-                },
-
-                {
-                    "title":"Quidditch",
-                    "url":"Feijoada"
-                },
-                {
-                    "title":"Curling",
-                    "url":"Cachaça"
-                },
-
-                {
-                    "title":"Skating",
-                    "url":"Feijoada"
-                },
-                {
-                    "title":"Neymar",
-                    "url":"Cachaça"
-                },
-
-                {
-                    "title":"Brazil 2014",
-                    "url":"Feijoada"
-                }
-
-            ]
+          "title": "Sele\u00e7\u00e3o Brasileira de Futebol",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Sele%C3%A7%C3%A3o_Brasileira_de_Futebol"
         },
-
         {
-            "category_name":"History",
-            "content_text":"Brazil has a long and interesting history.",
-            "image_uri":"resource:///com/endlessm/brazil/category_images/history.jpg",
-            "articles":
-            [
-                {
-                    "title":"Regime militar no Brasil",
-                    "url":"Peplum_movie"
-                },
-
-                {
-                    "title":"Getúlio Vargas",
-                    "url":"Getúlio_Vargas"
-                }
-
-            ]
+          "title": "Futebol",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Futebol_do_Brasil"
+        },
+        {
+          "title": "Futebol de Areia",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Futebol_de_areia"
+        },
+        {
+          "title": "Futebol de sal\u00e3o",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Futebol_de_sal%C3%A3o_do_Brasil"
+        },
+        {
+          "title": "Capoeira",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Capoeira"
+        },
+        {
+          "title": "Jiu-jitsu Brasileiro",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Jiu-jitsu_brasileiro"
+        },
+        {
+          "title": "Basquetebol",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Basquetebol"
+        },
+        {
+          "title": "Nata\u00e7\u00e3o",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Nata%C3%A7%C3%A3o_do_Brasil"
+        },
+        {
+          "title": "Jud\u00f4 do Brasil",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Jud%C3%B4_do_Brasil"
+        },
+        {
+          "title": "T\u00eanis",
+          "url": "https:\/\/pt.wikipedia.org\/wiki\/T%C3%A9nis"
+        },
+        {
+          "title": "Voleibol",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Voleibol"
+        },
+        {
+          "title": "Voleibol de praia",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Voleibol_de_praia"
+        },
+        {
+          "title": "Handball",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Handball"
+        },
+        {
+          "title": "Skate",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Skate"
+        },
+        {
+          "title": "Surfe",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Surfe"
+        },
+        {
+          "title": "Automobilismo",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Automobilismo"
+        },
+        {
+          "title": "Ciclismo",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Ciclismo"
+        },
+        {
+          "title": "Paraquedismo",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Parachuting"
+        },
+        {
+          "title": "Escalada",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Escalada"
+        },
+        {
+          "title": "F\u00f3rmula 1",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/F%C3%B3rmula_1"
         }
-    ]
+      ]
+    },
+    {
+      "category_name": "Cidades",
+      "content_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus in eros quis tellus pellentesque sagittis. Praesent laoreet dignissim condimentum. Vivamus tellus nisi, mattis vitae congue sit amet, feugiat a tortor. Aliquam nec sem in dolor ullamcorper condimentum. Mauris malesuada fringilla leo in rutrum. Pellentesque vitae sapien eu lorem ultricies posuere auctor molestie mauris. Sed rutrum eros sed quam posuere, eu aliquam metus pellentesque. Vivamus elit nunc, facilisis imperdiet turpis eget, tempor aliquam dolor. Donec nec lacinia dolor. Duis faucibus tortor nec odio fermentum tincidunt. Quisque blandit, nisl non consequat molestie, nulla erat varius mi, non tincidunt elit odio quis elit. Cras pellentesque est ac dui ullamcorper fringilla. Nullam eleifend luctus tincidunt. Nulla facilisi. Nam sed lacinia leo, ac adipiscing nisl. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+      "image_file": "resource:///com/endlessm/brazil/category_images/rio_de_janeiro_by_night_2738x1825.jpg",
+      "image_thumb_uri" : "resource:///com/endlessm/brazil/category_images/thumb_cities.jpg",
+      "articles": [
+        {
+          "title": "Rio de Janeiro",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Rio_de_Janeiro_(cidade)"
+        },
+        {
+          "title": "S\u00e3o Paulo",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/S%C3%A3o_Paulo_(cidade)"
+        },
+        {
+          "title": "Salvador",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Salvador_(Bahia)"
+        },
+        {
+          "title": "Bras\u00edlia",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Bras%C3%ADlia"
+        },
+        {
+          "title": "Fortaleza",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Fortaleza"
+        },
+        {
+          "title": "Votuporanga",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Votuporanga"
+        }
+      ]
+    },
+    {
+      "category_name": "Culin\u00e1ria",
+      "content_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus in eros quis tellus pellentesque sagittis. Praesent laoreet dignissim condimentum. Vivamus tellus nisi, mattis vitae congue sit amet, feugiat a tortor. Aliquam nec sem in dolor ullamcorper condimentum. Mauris malesuada fringilla leo in rutrum. Pellentesque vitae sapien eu lorem ultricies posuere auctor molestie mauris. Sed rutrum eros sed quam posuere, eu aliquam metus pellentesque. Vivamus elit nunc, facilisis imperdiet turpis eget, tempor aliquam dolor. Donec nec lacinia dolor. Duis faucibus tortor nec odio fermentum tincidunt. Quisque blandit, nisl non consequat molestie, nulla erat varius mi, non tincidunt elit odio quis elit. Cras pellentesque est ac dui ullamcorper fringilla. Nullam eleifend luctus tincidunt. Nulla facilisi. Nam sed lacinia leo, ac adipiscing nisl. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+      "image_file": "resource:///com/endlessm/brazil/category_images/156356538.jpg",
+      "image_thumb_uri" : "resource:///com/endlessm/brazil/category_images/thumb_culinary.jpg",
+      "articles": [
+        {
+          "title": "Culin\u00e1ria do Brasil",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Culin%C3%A1ria_do_Brasil"
+        },
+        {
+          "title": "Culin\u00e1ria da Bahia",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Culin%C3%A1ria_da_Bahia"
+        },
+        {
+          "title": "Feijoada",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Feijoada_(Brasil)"
+        },
+        {
+          "title": "Culin\u00e1ria de MInas",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Culin%C3%A1ria_de_Minas_Gerais"
+        }
+      ]
+    },
+    {
+      "category_name": "Natureza",
+      "content_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus in eros quis tellus pellentesque sagittis. Praesent laoreet dignissim condimentum. Vivamus tellus nisi, mattis vitae congue sit amet, feugiat a tortor. Aliquam nec sem in dolor ullamcorper condimentum. Mauris malesuada fringilla leo in rutrum. Pellentesque vitae sapien eu lorem ultricies posuere auctor molestie mauris. Sed rutrum eros sed quam posuere, eu aliquam metus pellentesque. Vivamus elit nunc, facilisis imperdiet turpis eget, tempor aliquam dolor. Donec nec lacinia dolor. Duis faucibus tortor nec odio fermentum tincidunt. Quisque blandit, nisl non consequat molestie, nulla erat varius mi, non tincidunt elit odio quis elit. Cras pellentesque est ac dui ullamcorper fringilla. Nullam eleifend luctus tincidunt. Nulla facilisi. Nam sed lacinia leo, ac adipiscing nisl. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+      "image_file": "resource:///com/endlessm/brazil/category_images/red_parrot_close_up-Animal_photography_Wallpaper_1440x900.jpg",
+      "image_thumb_uri" : "resource:///com/endlessm/brazil/category_images/thumb_nature.jpg",
+      "articles": [
+        {
+          "title": "Biodiversidade",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Biodiversidade_no_Brasil"
+        },
+        {
+          "title": "Primatas",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Lista_de_primatas_do_Brasil"
+        },
+        {
+          "title": "Mam\u00edferos",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Lista_de_mam%C3%ADferos_do_Brasil"
+        },
+        {
+          "title": "Aves",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Lista_de_aves_do_Brasil"
+        }
+      ]
+    },
+    {
+      "category_name": "Artes",
+      "content_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam purus ipsum, adipiscing a egestas scelerisque, varius in urna. Donec nec eros nunc. Nam molestie orci quis pulvinar condimentum. Ut aliquam orci ac neque placerat, vel venenatis ligula feugiat. Aenean consequat lacus eget mauris pretium, eget mattis diam mattis. Sed consequat ipsum quam, at pretium nunc posuere vel. Duis condimentum neque vel velit tincidunt, at semper justo dignissim. Cras blandit vehicula leo, vel pellentesque dui cursus eu. Donec convallis rhoncus tincidunt. Donec eleifend dapibus vulputate.",
+      "image_file": "resource:///com/endlessm/brazil/category_images/Tarsila do Amaral 04.jpg",
+      "image_thumb_uri" : "resource:///com/endlessm/brazil/category_images/thumb_arts.jpg",
+      "articles": [
+        {
+          "title": "Rei Momo",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Rei_Momo"
+        },
+        {
+          "title": "Fotografia",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Fotografia_no_Brasil"
+        },
+        {
+          "title": "Sebasti\u00e3o Salgado",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Sebasti%C3%A3o_Salgado"
+        },
+        {
+          "title": "Pintura",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Pintura_no_Brasil"
+        },
+        {
+          "title": "Miss\u00e3o Artistica Francesa",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Miss%C3%A3o_Art%C3%ADstica_Francesa"
+        },
+        {
+          "title": "Academia Imperial de Belas Artes",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Academia_Imperial_de_Belas_Artes"
+        },
+        {
+          "title": "Semana de Arte Moderna",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Semana_de_Arte_Moderna"
+        },
+        {
+          "title": "Pintura no Rio Grande do Sul",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Pintura_no_Rio_Grande_do_Sul"
+        },
+        {
+          "title": "Bienal Internacional de Arte de S\u00e3o Paulo",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Bienal_Internacional_de_Arte_de_S%C3%A3o_Paulo"
+        }
+      ]
+    },
+    {
+      "category_name": "Events",
+      "content_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam purus ipsum, adipiscing a egestas scelerisque, varius in urna. Donec nec eros nunc. Nam molestie orci quis pulvinar condimentum. Ut aliquam orci ac neque placerat, vel venenatis ligula feugiat. Aenean consequat lacus eget mauris pretium, eget mattis diam mattis. Sed consequat ipsum quam, at pretium nunc posuere vel. Duis condimentum neque vel velit tincidunt, at semper justo dignissim. Cras blandit vehicula leo, vel pellentesque dui cursus eu. Donec convallis rhoncus tincidunt. Donec eleifend dapibus vulputate.",
+      "image_file": "resource:///com/endlessm/brazil/category_images/8fev2013---desfile-da-escola-rosas-de-ouro-no-sambodromo-do-anhembi-em-sao-paulo-1360409445571_1920x1080.jpg",
+      "image_thumb_uri" : "resource:///com/endlessm/brazil/category_images/thumb_events.jpg",
+      "articles": [
+        {
+          "title": "Feriados",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Feriados_no_Brasil"
+        },
+        {
+          "title": "Carnaval",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Carnaval_do_Brasil"
+        },
+        {
+          "title": "Festa Junina",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Festa_junina"
+        },
+        {
+          "title": "Rock in Rio",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Rock_in_Rio"
+        }
+      ]
+    },
+    {
+      "category_name": "Hist\u00f3ria",
+      "content_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam purus ipsum, adipiscing a egestas scelerisque, varius in urna. Donec nec eros nunc. Nam molestie orci quis pulvinar condimentum. Ut aliquam orci ac neque placerat, vel venenatis ligula feugiat. Aenean consequat lacus eget mauris pretium, eget mattis diam mattis. Sed consequat ipsum quam, at pretium nunc posuere vel. Duis condimentum neque vel velit tincidunt, at semper justo dignissim. Cras blandit vehicula leo, vel pellentesque dui cursus eu. Donec convallis rhoncus tincidunt. Donec eleifend dapibus vulputate.",
+      "image_file": "resource:///com/endlessm/brazil/category_images/Oscar_Pereira_da_Silva_-_Desembarque_de_Pedro_\u00c1lvares_Cabral_em_Porto_Seguro_em_1500.jpg",
+      "image_thumb_uri" : "resource:///com/endlessm/brazil/category_images/thumb_history.jpg",
+      "articles": [
+        {
+          "title": "Hist\u00f3ria do Brasil",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Hist\u00f3ria_do_Brasil\u200e"
+        },
+        {
+          "title": "Hist\u00f3ria pr\u00e9-cabralina do Brasil",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Pr%C3%A9-Hist%C3%B3ria_do_Brasil"
+        },
+        {
+          "title": "Descoberta do Brasil",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Descoberta_do_Brasil"
+        },
+        {
+          "title": "Proclama\u00e7\u00e3o da Rep\u00fablica do Brasil",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Proclama%C3%A7%C3%A3o_da_Rep%C3%BAblica_do_Brasil"
+        },
+        {
+          "title": "Independ\u00eancia do Brasil",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Independ%C3%AAncia_do_Brasil"
+        }
+      ]
+    },
+    {
+      "category_name": "Musica",
+      "content_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras turpis sem, consequat ac erat quis, fringilla auctor diam. Morbi in leo mattis, ornare mi sit amet, cursus libero. Cras dapibus lorem vitae dui ullamcorper semper. Suspendisse tortor dui, ullamcorper sed porttitor at, vehicula ut mauris. Aliquam interdum elit dolor. Etiam arcu enim, faucibus ut scelerisque quis, ullamcorper a ipsum. Ut hendrerit vehicula dolor, quis placerat augue. Mauris libero mi, rutrum et convallis eu, ultricies a nisl. Quisque tempus vitae risus sed porta. Suspendisse congue urna lectus, eu hendrerit ligula placerat id. Proin vulputate velit ut libero suscipit, molestie dapibus metus blandit. Cras gravida libero pretium ipsum vulputate molestie. In fringilla tellus rhoncus lorem scelerisque ornare. Cras elit sapien, elementum ut accumsan non, rhoncus a erat. Suspendisse placerat tortor rutrum venenatis dapibus. Nunc sit amet faucibus velit.",
+      "image_file": "resource:///com/endlessm/brazil/category_images/musica.jpg",
+      "image_thumb_uri" : "resource:///com/endlessm/brazil/category_images/thumb_music.jpg",
+      "articles": [
+        {
+          "title": "M\u00fasica do Brasil",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/M%C3%BAsica_do_Brasil"
+        },
+        {
+          "title": "M\u00fasica Popular Brasileira",
+          "url": "http:\/\/en.wikipedia.org\/wiki\/M%C3%BAsica_Popular_Brasileira"
+        },
+        {
+          "title": "M\u00fasica erudita brasileira",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/M%C3%BAsica_erudita_brasileira"
+        },
+        {
+          "title": "Choro",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Choro"
+        },
+        {
+          "title": "Samba",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Samba"
+        },
+        {
+          "title": "Bossa Nova",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Bossa_Nova"
+        },
+        {
+          "title": "Tropic\u00e1lia",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/Tropic%C3%A1lia"
+        },
+        {
+          "title": "MPB",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/MPB"
+        },
+        {
+          "title": "M\u00fasica ind\u00edgena brasileira",
+          "url": "http:\/\/pt.wikipedia.org\/wiki\/M%C3%BAsica_ind%C3%ADgena_brasileira"
+        }
+      ]
+    }
+  ]
 }

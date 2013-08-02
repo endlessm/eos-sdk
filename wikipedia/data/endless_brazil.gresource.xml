@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/com/endlessm/brazil">
-    <file compressed="true">pt-br-brazil-app.json</file>
+    <file compressed="true">app_info/pt-br-brazil-app.json</file>
     <!-- file compressed="true">brazil_categories.json</file -->
     <file compressed="true">css/endless_brazil.css</file>
     <file>category_images/thumb_arts.jpg</file>
