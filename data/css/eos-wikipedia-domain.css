@@ -15,7 +15,7 @@
 }
 
 Gjs_ArticleList{
-    background-image: url('resource:///com/endlessm/brazil/assets/submenu_background.jpg');
+    background-image: url('resource:///com/endlessm/wikipedia-domain/assets/submenu_background.jpg');
 }
 
 Gjs_ArticleList .button {
@@ -25,16 +25,16 @@ Gjs_ArticleList .button {
     padding-bottom: 15px;
     font-size: 15px;
     color: #464646;
-    background-image: url('resource:///com/endlessm/brazil/assets/submenu_bg_normal.jpg');
+    background-image: url('resource:///com/endlessm/wikipedia-domain/assets/submenu_bg_normal.jpg');
     background-size: cover;
 }
 
 Gjs_ArticleList .button:hover {
-    background-image: url('resource:///com/endlessm/brazil/assets/submenu_bg_hover.png');
+    background-image: url('resource:///com/endlessm/wikipedia-domain/assets/submenu_bg_hover.png');
 }
 
 Gjs_ArticleList .button:active {
-    background-image: url('resource:///com/endlessm/brazil/assets/submenu_bg_pressed.png');
+    background-image: url('resource:///com/endlessm/wikipedia-domain/assets/submenu_bg_pressed.png');
 }
 
 .articles-page {

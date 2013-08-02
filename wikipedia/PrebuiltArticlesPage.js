@@ -2,7 +2,7 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const EndlessWikipedia = imports.endless_wikipedia.EndlessWikipedia;
+const EndlessWikipedia = imports.wikipedia.EndlessWikipedia;
 const WikipediaView = imports.views.wikipedia_view;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;

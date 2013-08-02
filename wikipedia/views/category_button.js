@@ -9,6 +9,7 @@ const CATEGORY_LABEL_LEFT_MARGIN = 25;  // pixels
 const CATEGORY_LABEL_BOTTOM_MARGIN = 20;  // pixels
 const CATEGORY_BUTTON_RIGHT_MARGIN = 20;  // pixels
 const CATEGORY_BUTTON_BOTTOM_MARGIN = 20;  // pixels
+const _HOVER_ARROW_URI = '/com/endlessm/wikipedia-domain/assets/category_hover_arrow.png';
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
@@ -55,7 +56,7 @@ const CategoryButton = new Lang.Class({
             halign: Gtk.Align.START
         });
         this._arrow = new Gtk.Image({
-            resource: '/com/endlessm/brazil/assets/category_hover_arrow.png',
+            resource: _HOVER_ARROW_URI,
             margin_right: CATEGORY_BUTTON_RIGHT_MARGIN,
             margin_bottom: CATEGORY_BUTTON_BOTTOM_MARGIN,
             halign: Gtk.Align.END,

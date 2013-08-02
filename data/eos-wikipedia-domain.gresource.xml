@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/endlessm/wikipedia-domain">
+    <file compressed="true">css/eos-wikipedia-domain.css</file>
+    <file>assets/introduction_title_separator.png</file>
+    <file>assets/submenu_bg_hover.png</file>
+    <file>assets/submenu_bg_pressed.png</file>
+    <file>assets/submenu_bg_normal.jpg</file>
+    <file>assets/submenu_separator_shadow_a.png</file>
+    <file>assets/submenu_separator_shadow_b.png</file>
+    <file>assets/submenu_hover_arrow.png</file>
+    <file>assets/submenu_background.jpg</file>
+    <file>assets/category_splash_separator_shadow.png</file>
+    <file>assets/category_hover_arrow.png</file>
+    <file>assets/image_strip_back_button.png</file>
+  </gresource>
+</gresources>
