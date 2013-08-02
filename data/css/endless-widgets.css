@@ -6,50 +6,44 @@
 
 .top-bar {
     background-image: -gtk-gradient(linear, center top, center bottom,
-        from(#3c3c3c), to(#292929));
+        from(#464646), to(#1e1e1e));
+}
+
+.top-bar:backdrop {
+    background-image: -gtk-gradient(linear, center top, center bottom,
+        from(#282828), to(#1e1e1e));
 }
 
 .top-bar .button {
-    padding: 0px;
-    background-image: none;
-    border-width: 0px;
     border-radius: 2px;
-    border-image: none;
+    color: #8c8c8c;
+    icon-shadow: 0px -1px alpha(black, 0.25);
 }
 
 .top-bar .button:hover {
+    color: #dcdcdc;
+    icon-shadow: 0px -1px alpha(black, 0.35);
     background-image: -gtk-gradient(linear, left bottom, left top,
-        color-stop(0.98, rgb(131,131,131)),
-        color-stop(0.95, rgb(108,108,108)),
-        color-stop(0, rgb(68,68,68)));
+        color-stop(0.98, rgb(131, 131, 131)),
+        color-stop(0.95, rgb(108, 108, 108)),
+        color-stop(0, rgb(68, 68, 68)));
 }
 
 .top-bar .button:active {
+    color: #787878;
+    icon-shadow: none;
     background-image: -gtk-gradient(linear, left bottom, left top,
-        color-stop(0.98, rgb(79,79,79)),
-        color-stop(0.95, rgb(71,71,71)),
-        color-stop(0, rgb(67,67,67)));
+        color-stop(0.98, rgb(79, 79, 79)),
+        color-stop(0.95, rgb(71, 71, 71)),
+        color-stop(0, rgb(67, 67, 67)));
 }
 
-.top-bar .button:backdrop {
-    color: #8a8a8a;
-    background-image: none;
-    background-color: transparent;
+.top-bar .button:backdrop
+.top-bar .button:backdrop:hover,
+.top-bar .button:backdrop:active {
+    color: #646464;
+    icon-shadow: none;
 }
-
-/* Topbar icon colors */
-.top-bar .button * {
-    color: #8a8a8a;
-}
-
-.top-bar .button *:hover {
-    color: #ffffff;
-}
-
-.top-bar .button *:active {
-    color: #8a8a8a;
-}
-
 
 /* Endless action button */
 
