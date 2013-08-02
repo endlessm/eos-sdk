@@ -1,9 +1,10 @@
+const EndlessWikipedia = imports.wikipedia.EndlessWikipedia;
 const GObject = imports.gi.GObject;
 const GdkPixbuf = imports.gi.GdkPixbuf;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const EndlessWikipedia = imports.endless_wikipedia.EndlessWikipedia;
+const BoxWithBg = imports.BoxWithBg;
 const ScaledImage = imports.scaled_image;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
@@ -37,7 +38,7 @@ const PrebuiltCategoryPage = new Lang.Class({
     },
 
     _init: function(props) {
-        this._vbox = new EndlessWikipedia.BoxWithBg({
+        this._vbox = new BoxWithBg.BoxWithBg({
             name: "category_info",
             orientation: Gtk.Orientation.VERTICAL,
             expand:true

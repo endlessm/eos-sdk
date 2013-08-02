@@ -58,7 +58,7 @@ const ScaledImage = new Lang.Class({
 
     vfunc_get_preferred_height_for_width: function(width) {
         if(!this._pixbuf)
-            return this.parent(height);
+            return this.parent(width);
         let source_width = this._pixbuf.width;
         let source_height = this._pixbuf.height;
         let height = (width / source_width) * source_height;

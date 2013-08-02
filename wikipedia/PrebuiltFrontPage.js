@@ -2,7 +2,7 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const EndlessWikipedia = imports.endless_wikipedia.EndlessWikipedia;
+const EndlessWikipedia = imports.wikipedia.EndlessWikipedia;
 const CategorySelectorView = imports.views.category_selector_view;
 const TitleLabelView = imports.views.title_label_view;
 

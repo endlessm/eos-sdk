@@ -1,12 +1,18 @@
+const EndlessWikipedia = imports.wikipedia.EndlessWikipedia;
 const Gettext = imports.gettext;
 const Lang = imports.lang;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Endless = imports.gi.Endless;
 
-const SIDEBAR_BACK_BUTTON_URI = "/com/endlessm/brazil/assets/image_strip_back_button.png";
+const BackButton = imports.BackButton;
+const SideBarButton = imports.SideBarButton;
 
 const _ = Gettext.gettext;
+
+const SIDEBAR_BACK_BUTTON_URI = "/com/endlessm/wikipedia-domain/assets/image_strip_back_button.png";
+const SUBMENU_SEPARATOR_A_URI = "/com/endlessm/brazil/assets/submenu_separator_shadow_a.png";
+const SUBMENU_SEPARATOR_B_URI = "/com/endlessm/brazil/assets/submenu_separator_shadow_b.png";
 
 const DomainWikiView = new Lang.Class({
     Name: "DomainWikiView",
@@ -69,7 +75,7 @@ const DomainWikiView = new Lang.Class({
         });
         this._sidebar_frame.set_size_request(40, -1);
 
-        this._article_sidebar_back_button = new EndlessWikipedia.SideBarButton(SIDEBAR_BACK_BUTTON_URI,{
+        this._article_sidebar_back_button = new SideBarButton.SideBarButton(SIDEBAR_BACK_BUTTON_URI, {
             name: "side_bar_button",
             vexpand: true
         });
@@ -81,12 +87,12 @@ const DomainWikiView = new Lang.Class({
 
         this._submenu_separator_a = new Gtk.Image({
             halign: Gtk.Align.END,
-            resource: "/com/endlessm/brazil/assets/submenu_separator_shadow_a.png"
+            resource: SUBMENU_SEPARATOR_A_URI
         });
 
         this._submenu_separator_b = new Gtk.Image({
             halign: Gtk.Align.START,
-            resource: "/com/endlessm/brazil/assets/submenu_separator_shadow_b.png"
+            resource: SUBMENU_SEPARATOR_B_URI
         });
 
         this._overlay_left = new Gtk.Overlay();
@@ -104,7 +110,7 @@ const DomainWikiView = new Lang.Class({
 
         this._article_page.add(this._overlay_right);
 
-        this._article_back_button = new EndlessWikipedia.BackButton();
+        this._article_back_button = new BackButton.BackButton();
         this._article_back_button.show();
 
         this._article_list.connect('article-chosen',
@@ -132,7 +138,7 @@ const DomainWikiView = new Lang.Class({
         this._category_page.add(this._category_view);
         this._category_page.add(this._category_article_list);
 
-        this._category_back_button = new EndlessWikipedia.BackButton({
+        this._category_back_button = new BackButton.BackButton({
             label: _('START')
         });
         this._category_back_button.show();

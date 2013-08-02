@@ -1,7 +1,12 @@
+const EndlessWikipedia = imports.wikipedia.EndlessWikipedia;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
-const HOVER_ARROW_URI = "/com/endlessm/brazil/assets/submenu_hover_arrow.png";
+
+const TextButton = imports.textButton;
+
+const HOVER_ARROW_URI = "/com/endlessm/wikipedia-domain/assets/submenu_hover_arrow.png";
+
 const ArticleList = new Lang.Class({
     Name: 'ArticleList',
     Extends: Gtk.ScrolledWindow,
@@ -36,7 +41,7 @@ const ArticleList = new Lang.Class({
 
         // Create new ones
         articles.forEach(function(title, index, obj) {
-            let button = new EndlessWikipedia.TextButton(HOVER_ARROW_URI, title, {hexpand:true});
+            let button = new TextButton.TextButton(HOVER_ARROW_URI, title, {hexpand:true});
             button.connect('clicked', Lang.bind(this, function() {
                 this.emit('article-chosen', title, index);
             }));
