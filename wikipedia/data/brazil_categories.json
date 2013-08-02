@@ -4,18 +4,54 @@
     "categories":
     [
         {
-            "category_name":"Cuisine",
-            "content_text":"Brazilian food is really great.Brazilian food is really great.Brazilian food is really great.Brazilian food is really great.Brazilian food is really great.Brazilian food is really great. Brazilian food is really great. Brazilian food is really great. Brazilian food is really great. Brazilian food is really great. Brazilian food is really great. Brazilian food is really great. Brazilian food is really great.",
-            "image_uri":"resource:///com/endlessm/brazil/category_images/cuisine.jpg",
+            "category_name":"Sports",
+            "content_text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed imperdiet rutrum lectus, quis tincidunt eros venenatis nec. Cras porta aliquam arcu fermentum imperdiet. Praesent ut facilisis quam, at interdum elit. Morbi commodo tellus ut varius ultricies. Nam sodales sapien non scelerisque bibendum. Ut ultrices metus sed mauris lacinia pharetra. In magna lorem, hendrerit quis blandit a, congue sit amet arcu. Mauris vulputate hendrerit justo, ut luctus lectus. Praesent placerat dapibus hendrerit. Pellentesque neque nunc, egestas vel faucibus vitae, accumsan in nisi. Aenean at commodo mauris. Mauris congue facilisis iaculis. Aenean at dapibus quam. Maecenas sit amet pharetra ligula. Vestibulum mollis condimentum mollis. Nulla facilisi. Suspendisse vel consequat nisl. Proin et pretium lectus. Mauris tempor luctus venenatis. Vestibulum diam metus, hendrerit et blandit quis, iaculis quis mi. Integer cursus fringilla eros, id eleifend nisl malesuada laoreet. Fusce vitae lacus eget arcu sodales porta non eu augue. Sed vel eleifend tellus. Pellentesque vel velit augue. Mauris sagittis dictum sem, sit amet pharetra sem cursus eget. Nam enim diam, tempus id cursus eu, varius in velit. Aliquam ut feugiat lorem. Proin egestas laoreet rutrum.",
+            "image_uri":"resource:///com/endlessm/brazil/category_images/bg_brazil_sports.jpg",
             "articles":
             [
                 {
-                    "title":"Cachaça",
+                    "title":"Brasil",
                     "url":"Cachaça"
                 },
 
                 {
-                    "title":"Feijoada",
+                    "title":"Ronaldo",
+                    "url":"Feijoada"
+                },
+                {
+                    "title":"Facebook",
+                    "url":"Cachaça"
+                },
+
+                {
+                    "title":"SheiKra",
+                    "url":"Feijoada"
+                },
+                {
+                    "title":"James Dean",
+                    "url":"Cachaça"
+                },
+
+                {
+                    "title":"Quidditch",
+                    "url":"Feijoada"
+                },
+                {
+                    "title":"Curling",
+                    "url":"Cachaça"
+                },
+
+                {
+                    "title":"Skating",
+                    "url":"Feijoada"
+                },
+                {
+                    "title":"Neymar",
+                    "url":"Cachaça"
+                },
+
+                {
+                    "title":"Brazil 2014",
                     "url":"Feijoada"
                 }
 
