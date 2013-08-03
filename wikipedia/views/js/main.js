@@ -36,6 +36,9 @@ Endless.Wikipedia = Endless.Wikipedia || {};
                                 filename = theSplit[theSplit.length - 1];
                             }
                             var newSrc = "article_images/" + encodeURI(filename)
+                            if(newSrc.substring(newSrc.length - 4) == ".svg"){
+                                newSrc += ".png";
+                            }
                             $(this).attr('src', newSrc);
                         }
                         

@@ -47,7 +47,7 @@ const DomainWikiPresenter = new Lang.Class({
     initFromJsonFile: function(filename) {
         let app_content = JSON.parse(Utils.load_file_from_resource(filename));
         this._application_name = app_content['app_name'];
-        this._image_uri = app_content['image_uri'];
+        this._image_uri = app_content['app_image_uri'];
         // HACK until we get app image 
         if(this._image_uri === undefined || this._image_uri === ""){
             this._image_uri = "resource:///com/endlessm/brazil/category_images/bg_brazil_sports.jpg"            
