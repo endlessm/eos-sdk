@@ -11,8 +11,8 @@ const SideBarButton = imports.SideBarButton;
 const _ = Gettext.gettext;
 
 const SIDEBAR_BACK_BUTTON_URI = "/com/endlessm/wikipedia-domain/assets/image_strip_back_button.png";
-const SUBMENU_SEPARATOR_A_URI = "/com/endlessm/brazil/assets/submenu_separator_shadow_a.png";
-const SUBMENU_SEPARATOR_B_URI = "/com/endlessm/brazil/assets/submenu_separator_shadow_b.png";
+const SUBMENU_SEPARATOR_A_URI = "/com/endlessm/wikipedia-domain/assets/submenu_separator_shadow_a.png";
+const SUBMENU_SEPARATOR_B_URI = "/com/endlessm/wikipedia-domain/assets/submenu_separator_shadow_b.png";
 
 const DomainWikiView = new Lang.Class({
     Name: "DomainWikiView",
