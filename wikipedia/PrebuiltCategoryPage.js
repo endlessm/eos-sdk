@@ -7,6 +7,10 @@ const Lang = imports.lang;
 const BoxWithBg = imports.BoxWithBg;
 const ScaledImage = imports.scaled_image;
 
+const SUBMENU_SEPARATOR_A_URI = "/com/endlessm/wikipedia-domain/assets/submenu_separator_shadow_a.png";
+const SPLASH_SEPARATOR_URI = "/com/endlessm/wikipedia-domain/assets/category_splash_separator_shadow.png";
+const INTRO_TITLE_SEPARATOR_URI = "/com/endlessm/wikipedia-domain/assets/introduction_title_separator.png";
+
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
 function _resourceUriToPath(uri) {
@@ -73,19 +77,19 @@ const PrebuiltCategoryPage = new Lang.Class({
         });
 
         this._submenu_separator = new ScaledImage.ScaledImage({
-            resource: "/com/endlessm/brazil/assets/submenu_separator_shadow_a.png",
+            resource: SUBMENU_SEPARATOR_A_URI,
             constraint: Gtk.Orientation.VERTICAL,
             halign: Gtk.Align.END
         });
 
         this._splash_separator = new ScaledImage.ScaledImage({
-            resource: "/com/endlessm/brazil/assets/category_splash_separator_shadow.png",
+            resource: SPLASH_SEPARATOR_URI,
             constraint: Gtk.Orientation.VERTICAL,
             halign: Gtk.Align.END
         });
 
         this._description_separator = new ScaledImage.ScaledImage({
-            resource: "/com/endlessm/brazil/assets/introduction_title_separator.png",
+            resource: INTRO_TITLE_SEPARATOR_URI,
             constraint: Gtk.Orientation.HORIZONTAL
         });
 
