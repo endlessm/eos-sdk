@@ -1,0 +1,11 @@
+a{
+   pointer-events: none;
+   cursor: default;
+   color:#464646;
+   text-decoration: none;
+}
+
+.toc a{
+	cursor:pointer;
+	pointer-events: auto;
+}
