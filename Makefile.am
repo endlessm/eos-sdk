@@ -57,6 +57,9 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = @EOS_SDK_API_NAME@.pc
 DISTCLEANFILES += @EOS_SDK_API_NAME@.pc
 
+# Open Endless Wikipedia SDK library
+include $(top_srcdir)/wikipedia/Makefile.am.inc
+
 # # # INTROSPECTION FILES # # #
 
 -include $(INTROSPECTION_MAKEFILE)
@@ -117,6 +120,21 @@ CLEANFILES += \
 	docs/reference/endless-js/html/*.css \
 	docs/reference/endless-js/html/*.js
 endif
+
+# # # SECONDARY GRESOURCES # # #
+
+wikipedia_resource_files = $(shell $(GLIB_COMPILE_RESOURCES) --sourcedir=$(srcdir)/data --generate-dependencies $(srcdir)/data/eos-wikipedia-domain.gresource.xml)
+data/eos-wikipedia-domain.gresource: data/eos-wikipedia-domain.gresource.xml $(wikipedia_resource_files)
+	$(AM_V_GEN) $(MKDIR_P) $(builddir)/data && \
+	$(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(srcdir)/data  $<
+
+wikipediadatadir = $(datadir)/eos-wikipedia-domain
+wikipediadata_DATA = data/eos-wikipedia-domain.gresource
+EXTRA_DIST += \
+	$(wikipedia_resource_files) \
+	data/eos-wikipedia-domain.gresource.xml \
+	$(NULL)
+CLEANFILES += data/eos-wikipedia-domain.gresource
 
 # # # GJS OVERRIDES # # #
 
