@@ -6,6 +6,8 @@ Endless-0.gir
 Endless-0.typelib
 endless/eosresource.c
 endless/eosresource-private.h
+data/eos-wikipedia-domain.gresource
+wikipedia/config.js
 
 *.py[cod]
 

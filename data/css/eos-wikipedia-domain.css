@@ -1,0 +1,69 @@
+* {
+    font-family: "BentonSans Regular";
+}
+
+.title.front-page {
+    font-family: "BentonSans Thin";
+    font-size: 100px;
+    color: #ffffff;
+    text-shadow: 0px 1px 0px alpha(#23326e, 0.15);
+}
+
+.title.category.front-page {
+    font-family: "BentonSans ExtraLight";
+    font-size: 40px;
+}
+
+Gjs_ArticleList{
+    background-image: url('resource:///com/endlessm/wikipedia-domain/assets/submenu_background.jpg');
+}
+
+Gjs_ArticleList .button {
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    font-size: 15px;
+    color: #464646;
+    background-image: url('resource:///com/endlessm/wikipedia-domain/assets/submenu_bg_normal.jpg');
+    background-size: cover;
+}
+
+Gjs_ArticleList .button:hover {
+    background-image: url('resource:///com/endlessm/wikipedia-domain/assets/submenu_bg_hover.png');
+}
+
+Gjs_ArticleList .button:active {
+    background-image: url('resource:///com/endlessm/wikipedia-domain/assets/submenu_bg_pressed.png');
+}
+
+.articles-page {
+    color: black;
+    background-color: #babdb6;
+}
+
+#category_info{
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#category_description{
+    color:rgba(255, 255, 255, 1.0);
+    background-color: rgba(0, 0, 0, 0);
+    font-size: 12px;
+}
+
+#category_title{
+    /* Top padding is hack because we have bad version of BentonSans */
+    padding-top: 20px;
+    font-family: "BentonSans Light";
+    font-size: 52px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+Gjs_CategoryButton GtkEventBox:hover {
+    background-color: alpha(#212121, 0.5);
+}
+
+#side_bar_button:hover{
+    background-color: rgba(0, 0, 0, 0.2);
+}
