@@ -32,3 +32,11 @@ Depends: eos-sdk (= ${binary:Version}),
          eos-pstack-dev
 Description: Open Endless SDK
  Development headers for the Open Endless SDK
+
+Package: eos-sdk-wikipedia
+Section: libdevel
+Architecture: any
+Depends: eos-sdk (= ${binary:Version}),
+         gjs
+Description: Open Endless SDK Wikipedia library
+ GJS libraries for the Open Endless SDK Wikipedia library
