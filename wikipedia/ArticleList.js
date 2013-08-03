@@ -3,7 +3,7 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const TextButton = imports.textButton;
+const TextButton = imports.TextButton;
 
 const HOVER_ARROW_URI = "/com/endlessm/wikipedia-domain/assets/submenu_hover_arrow.png";
 
