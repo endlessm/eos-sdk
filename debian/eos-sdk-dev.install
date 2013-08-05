@@ -5,3 +5,4 @@ usr/lib/libendless*.so
 usr/share/gir-1.0/Endless*.gir
 usr/share/gjs-1.0/overrides/*
 usr/share/gtk-doc/html/endless*/*
+usr/share/aclocal/eos-*.m4
