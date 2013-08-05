@@ -5,6 +5,8 @@ const WebKit = imports.gi.WebKit2;
 const Utils = imports.utils;
 
 const getPageURL = "http://localhost:3000/getArticleByTitle?title=";
+const PATH_TO_INDEX = "web_view/index.html";
+const PATH_TO_TEMP = "web_view/temp.html";
 
 const WikipediaView = new Lang.Class({
     Name: 'EndlessWikipediaView',
@@ -31,15 +33,14 @@ const WikipediaView = new Lang.Class({
             let article = JSON.parse(articleJSON);
             let articleHTML = article["text"];
             let title = article['title'];
-            let skeletonHTML = Utils.load_file("views/index.html");
+            let skeletonHTML = Utils.load_file(PATH_TO_INDEX);
             skeletonHTML = skeletonHTML + "<div id='wiki_content' name='"+ title +"'>" + articleHTML + "</div>"
-            Utils.write_contents_to_file("views/temp.html", skeletonHTML);
-
+            Utils.write_contents_to_file(PATH_TO_TEMP, skeletonHTML);
             // TODO: Ask about how we can load directly from HTML. Right now, WebKit can't seem to open 
             // CSS file correctly. All characters in CSS file are in Chinese
-
+            let temp_uri = Utils.get_uri_for_relative_path(PATH_TO_TEMP)
             if(this._is_first_time) {
-                this.load_uri("file:///home/endless/checkout/eos-sdk/wikipedia/src/views/temp.html", null);
+                this.load_uri(temp_uri);
                 this._is_first_time = false;
             } else {
                 this.reload();

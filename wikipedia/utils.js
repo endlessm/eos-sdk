@@ -47,6 +47,11 @@ function load_file_from_resource(filename) {
     return data[0];
 }
 
+function get_uri_for_relative_path(relative_path){
+    let file = Gio.file_new_for_path(relative_path);
+    return file.get_uri();
+}
+
 function write_contents_to_file(filename, content){
     let file = Gio.file_new_for_path(filename);
     file.replace_contents(content, null, false, 0, null);
