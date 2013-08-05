@@ -34,7 +34,8 @@ endless_private_installed_headers = \
 	endless/eossplashpagemanager.h \
 	endless/eostypes.h \
 	endless/eoswindow.h \
-	endless/eosactionmenu-private.h
+	endless/eosactionmenu-private.h \
+	endless/eosscrolledpage-private.h
 
 endless_library_sources = \
 	endless/eosapplication.c \
@@ -47,7 +48,8 @@ endless_library_sources = \
 	endless/eostopbar.c endless/eostopbar-private.h \
 	endless/eosactionbutton.c \
 	endless/eosactionmenu.c \
-	endless/eoswindow.c
+	endless/eoswindow.c \
+	endless/eosscrolledpage.c
 
 # Endless GUI library
 lib_LTLIBRARIES = libendless-@EOS_SDK_API_VERSION@.la
