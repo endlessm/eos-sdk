@@ -1,4 +1,6 @@
 const Endless = imports.gi.Endless;
+const Gdk = imports.gi.Gdk;
+const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 const GObject = imports.gi.GObject;
 const Gio = imports.gi.Gio;
