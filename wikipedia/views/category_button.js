@@ -1,3 +1,4 @@
+const Gdk = imports.gi.Gdk;
 const GdkPixbuf = imports.gi.GdkPixbuf;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
