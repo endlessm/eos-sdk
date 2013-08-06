@@ -85,7 +85,6 @@ const WikipediaView = new Lang.Class({
             documentHTML = documentHTML + this._get_script_html(current_dir, scripts);
 
             let temp_uri = Utils.write_contents_to_temp_file("wiki.html", documentHTML);
-            
             // TODO: Ask about how we can load directly from HTML using load_html. 
             // Right now, this doesn't work, regardless of what we put in for base_uri
             this.load_uri(temp_uri);

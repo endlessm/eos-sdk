@@ -60,7 +60,7 @@ function write_contents_to_file(filename, content){
 }
 
 function write_contents_to_temp_file(name, content){
-    let file = Gio.file_new_tmp(name + "XXXXXX")[0];
+    let file = Gio.file_new_tmp("XXXXXX" + name)[0];
     file.replace_contents(content, null, false, 0, null);
     return file.get_uri();
 }
