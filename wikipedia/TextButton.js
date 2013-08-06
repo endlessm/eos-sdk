@@ -2,6 +2,11 @@ const Lang = imports.lang;
 const Gdk = imports.gi.Gdk;
 const GdkPixbuf = imports.gi.GdkPixbuf;
 const Gtk = imports.gi.Gtk;
+const Pango = imports.gi.Pango;
+
+// This is an approximate number of characters that will keep the label from
+// going over its specified 258px
+const ARTICLE_LABEL_MAX_WIDTH_CHARS = 18;
 
 const TextButton = new Lang.Class({
     Name: 'EndlessTextButton',
@@ -25,7 +30,9 @@ const TextButton = new Lang.Class({
         });
 
         this._label = new Gtk.Label({
-            label: label_text.toUpperCase()
+            label: label_text.toUpperCase(),
+            max_width_chars: ARTICLE_LABEL_MAX_WIDTH_CHARS,
+            ellipsize: Pango.EllipsizeMode.END
         });
 
         this._box.pack_start(this._label, false, false, 0);
