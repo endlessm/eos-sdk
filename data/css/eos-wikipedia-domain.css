@@ -1,9 +1,9 @@
 * {
-    font-family: "BentonSans Regular";
+    font-family: "Source Sans Pro";
 }
 
 .title.front-page {
-    font-family: "BentonSans Thin";
+    font-family: "BentonSans ExtraLight";
     font-size: 100px;
     color: #ffffff;
     text-shadow: 0px 1px 0px alpha(#23326e, 0.15);
@@ -57,7 +57,7 @@ Gjs_ArticleList .button:active {
 #category_title{
     /* Top padding is hack because we have bad version of BentonSans */
     padding-top: 20px;
-    font-family: "BentonSans Light";
+    font-family: "BentonSans ExtraLight";
     font-size: 52px;
     color: rgba(255, 255, 255, 0.9);
 }
