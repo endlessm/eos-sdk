@@ -50,7 +50,6 @@ js_sources = \
 	$(NULL)
 
 parafernalia_sources = \
-	wikipedia/views/index.html \
 	wikipedia/views/css/first_load.css \
 	wikipedia/views/css/main.css \
 	wikipedia/views/css/nolinks.css \
