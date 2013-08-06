@@ -14,10 +14,51 @@ const WikipediaView = new Lang.Class({
         this._httpSession = new Soup.Session();
         this.parent(params);
         // For debugging
-        // let settings = this.get_settings();
-        // settings.set_enable_developer_extras(true);
-        // this.set_settings(settings);
-        this._is_first_time = true;
+        //let settings = this.get_settings();
+        //settings.set_enable_developer_extras(true);
+        //this.set_settings(settings);
+    },
+
+    _get_body_html:function(articleHTML, title, image_path){
+        let html = "";
+        html += "<div id='main'>";
+        html += "<section id='main-content'>";
+        html += "<header id='header-content'>";
+        html += "<h1>" + title + "</h1>";
+        html += "</header>";
+        html += "<section image_path=" + image_path +" id='inside-content'>";
+        html += "<hr class='hr-title'>";
+        html += articleHTML;
+        html += "</section>";
+        html += "</section>";
+        html += "</div>";
+        return html;
+    },
+
+    _get_style_sheet_html: function(current_dir, sheets){
+        let html = "";
+        for(let i = 0; i < sheets.length; i++){
+            html += "<link rel='stylesheet' href=" + current_dir + "/css/" + sheets[i] + ">";
+        }
+        return html;
+    },
+
+    _get_script_html:function(current_dir, scripts){
+        let html = "";
+        for(let i = 0; i < scripts.length; i++){
+            html += "<script src='" + current_dir + "/js/" + scripts[i] + "'></script>";
+        }
+        return html;
+    },
+
+    _get_meta_html:function(){
+        let html = "";
+        html += "<meta charset='utf-8'>";
+        html += "<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>";
+        html += "<meta name='description' content=''>";
+        html += "<title></title>";
+        html += "<meta name='viewport' content='width=device-width'>";
+        return html;
     },
 
     loadArticleByTitle: function(title) {
@@ -31,19 +72,23 @@ const WikipediaView = new Lang.Class({
             let article = JSON.parse(articleJSON);
             let articleHTML = article["text"];
             let title = article['title'];
-            let skeletonHTML = Utils.load_file("views/index.html");
-            skeletonHTML = skeletonHTML + "<div id='wiki_content' name='"+ title +"'>" + articleHTML + "</div>"
-            Utils.write_contents_to_file("views/temp.html", skeletonHTML);
+            let current_dir = Endless.getCurrentFileDir();
+            let cur_exec = Utils.get_path_for_relative_path(".");
+            let image_path = cur_exec + "/web_view/article_images/";
 
-            // TODO: Ask about how we can load directly from HTML. Right now, WebKit can't seem to open 
-            // CSS file correctly. All characters in CSS file are in Chinese
+            let documentHTML = this._get_meta_html() + this._get_body_html(articleHTML, title, image_path);
 
-            if(this._is_first_time) {
-                this.load_uri("file:///home/endless/checkout/eos-sdk/wikipedia/src/views/temp.html", null);
-                this._is_first_time = false;
-            } else {
-                this.reload();
-            }
+            let sheets = new Array("first_load.css", "second_load.css","main.css","wikipedia.css","nolinks.css");
+            documentHTML = this._get_style_sheet_html(current_dir, sheets) + documentHTML;
+
+            let scripts = new Array("jquery-min.js", "main.js");
+            documentHTML = documentHTML + this._get_script_html(current_dir, scripts);
+
+            let temp_uri = Utils.write_contents_to_temp_file("wiki.html", documentHTML);
+            
+            // TODO: Ask about how we can load directly from HTML using load_html. 
+            // Right now, this doesn't work, regardless of what we put in for base_uri
+            this.load_uri(temp_uri);
         }));
     }
 });

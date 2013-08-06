@@ -1,5 +1,6 @@
 const Gio = imports.gi.Gio;
 const GdkPixbuf = imports.gi.GdkPixbuf;
+const GLib = imports.gi.GLib;
 
 const set_default = function(obj, key, val) {
     // Similar to python's dict.setdefault(key, val)
@@ -47,9 +48,25 @@ function load_file_from_resource(filename) {
     return data[0];
 }
 
+function get_path_for_relative_path(relative_path){
+    let file = Gio.file_new_for_path(relative_path);
+    return file.get_path();
+}
+
 function write_contents_to_file(filename, content){
     let file = Gio.file_new_for_path(filename);
     file.replace_contents(content, null, false, 0, null);
+    return file.get_uri();
+}
+
+function write_contents_to_temp_file(name, content){
+    let file = Gio.file_new_tmp(name + "XXXXXX")[0];
+    file.replace_contents(content, null, false, 0, null);
+    return file.get_uri();
+}
+
+function make_temp_dir(name){
+    return GLib.dir_make_tmp(name + "XXXXXX");
 }
 
 /*

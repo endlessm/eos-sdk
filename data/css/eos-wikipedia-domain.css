@@ -25,6 +25,7 @@ Gjs_ArticleList .button {
     padding-bottom: 15px;
     font-size: 15px;
     color: #464646;
+    font-family: "Source Sans Pro";
     background-image: url('resource:///com/endlessm/wikipedia-domain/assets/submenu_bg_normal.jpg');
     background-size: cover;
 }
@@ -50,6 +51,7 @@ Gjs_ArticleList .button:active {
     color:rgba(255, 255, 255, 1.0);
     background-color: rgba(0, 0, 0, 0);
     font-size: 12px;
+    font-family: "Source Sans Pro";
 }
 
 #category_title{
