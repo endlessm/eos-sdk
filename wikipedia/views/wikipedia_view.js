@@ -17,6 +17,7 @@ const WikipediaView = new Lang.Class({
         //let settings = this.get_settings();
         //settings.set_enable_developer_extras(true);
         //this.set_settings(settings);
+        this.connect('context-menu', Lang.bind(this, function(){return true}));
     },
 
     _get_body_html:function(articleHTML, title, image_path){
