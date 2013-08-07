@@ -139,7 +139,7 @@ const DomainWikiView = new Lang.Class({
         this._category_page.add(this._category_article_list);
 
         this._category_back_button = new BackButton.BackButton({
-            label: _('START')
+            label: _('INICIO')
         });
         this._category_back_button.show();
 
