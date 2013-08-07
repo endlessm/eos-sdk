@@ -15,11 +15,17 @@ const PrebuiltArticlesPage = new Lang.Class({
             'Article title',
             'Human-readable title for the article to be displayed',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+            ''),
+        'article-uri': GObject.ParamSpec.string('article-uri',
+            'Article URI',
+            'Wikipedia URI for the article to be displayed',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
             '')
     },
 
     _init: function(props) {
         this._article_title = null;
+        this._article_uri = null;
 
         this._wiki_view = new WikipediaView.WikipediaView({
             expand:true,
@@ -40,8 +46,19 @@ const PrebuiltArticlesPage = new Lang.Class({
 
     set article_title(value) {
         this._article_title = value;
+    },
+
+    get article_uri() {
+        return this._article_uri;
+    },
+
+    set article_uri(value) {
+        this._article_uri = value;
         if(value !== null && value !== "") {
-            this._wiki_view.loadArticleByTitle(this._article_title);
+            this._wiki_view.loadArticleByTitle(this._article_uri, this._article_title);
         }
-    }
+    },
+
+
+
 });

@@ -181,7 +181,9 @@ const DomainWikiView = new Lang.Class({
     },
 
     set_article_info: function(article){
+        // Note: Must set article title first
         this._article_view.article_title = article.title;
+        this._article_view.article_uri = article.uri;
     },
 
     transition_page: function(transition_type, page_name){
