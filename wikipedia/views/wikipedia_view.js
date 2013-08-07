@@ -4,7 +4,7 @@ const Soup = imports.gi.Soup;
 const WebKit = imports.gi.WebKit2;
 const Utils = imports.utils;
 
-const getPageURL = "http://localhost:3000/getArticleByTitle?title=";
+const getPageURL = "http://127.0.0.1:3000/getArticleByTitle?title=";
 
 const WikipediaView = new Lang.Class({
     Name: 'EndlessWikipediaView',
