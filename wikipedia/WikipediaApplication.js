@@ -26,13 +26,17 @@ const WikipediaApplication = new Lang.Class({
             'Application name',
             'Name of the Wikipedia-based application',
             GObject.ParamFlags.READABLE,
+            ''),
+
+        // Name of the Wikipedia-based application, e.g. 'Brazil', 'Math'
+        'application-base-path': GObject.ParamSpec.string('application-base-path',
+            'Application Base Path',
+            'Path to base directory where execution began',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
             '')
     },
 
     _init: function(props) {
-        this._application_uri = null;
-        this._categories = null;
-
         this.parent(props);
     },
 
