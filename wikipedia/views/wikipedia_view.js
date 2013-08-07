@@ -77,7 +77,8 @@ const WikipediaView = new Lang.Class({
             let articleHTML = article["text"];
             let title = article['title'];
             let current_dir = Endless.getCurrentFileDir();
-            let cur_exec = Utils.get_path_for_relative_path(".");
+
+            let cur_exec = this.get_toplevel().get_application().application_base_path;
             let image_path = cur_exec + "/web_view/article_images/";
 
             let documentHTML = this._get_meta_html() + this._get_body_html(articleHTML, human_title, image_path);
