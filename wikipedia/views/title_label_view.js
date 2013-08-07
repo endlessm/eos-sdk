@@ -8,6 +8,7 @@ const Utils = imports.utils;
 const TITLE_LABEL_SCREEN_WIDTH_PERCENTAGE = 0.37;
 const TITLE_LABEL_LEFT_MARGIN = 20;  // pixels
 const TITLE_LABEL_BOTTOM_MARGIN = 20;  // pixels
+const TITLE_LABEL_BENTON_SANS_CORRECTION = 20; // pixels
 
 const TitleLabelView = new Lang.Class({
     Name: 'TitleLabelView',
@@ -32,7 +33,7 @@ const TitleLabelView = new Lang.Class({
             halign: Gtk.Align.START,
             valign: Gtk.Align.END,
             margin_left: TITLE_LABEL_LEFT_MARGIN,
-            margin_bottom: TITLE_LABEL_BOTTOM_MARGIN
+            margin_bottom: TITLE_LABEL_BOTTOM_MARGIN - TITLE_LABEL_BENTON_SANS_CORRECTION
         });
         this._image = new Gtk.Image();
 
