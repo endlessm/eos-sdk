@@ -36,6 +36,9 @@ const TitleLabelView = new Lang.Class({
         });
         this._image = new Gtk.Image();
 
+        let context = this._label.get_style_context()
+        context.add_class(EndlessWikipedia.STYLE_CLASS_TITLE);
+
         this.parent(props);
 
         this.add(this._image);
