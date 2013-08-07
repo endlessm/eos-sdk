@@ -5,6 +5,7 @@ const Lang = imports.lang;
 
 const TextButton = imports.TextButton;
 
+const ARTICLE_LIST_SIZE_REQUEST = 320;
 const HOVER_ARROW_URI = "/com/endlessm/wikipedia-domain/assets/submenu_hover_arrow.png";
 
 const ArticleList = new Lang.Class({
@@ -27,8 +28,9 @@ const ArticleList = new Lang.Class({
             vexpand: true
         });
 
-        //width is set per designs, height is set arbitrarily for now but doesn't matter because it's just a min size
-        this.set_size_request(258, -1);
+        // width is set per designs, height is set arbitrarily for now but
+        // doesn't matter because it's just a min size
+        this.set_size_request(ARTICLE_LIST_SIZE_REQUEST, -1);
         this.add(this._grid);
     },
 

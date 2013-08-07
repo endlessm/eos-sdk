@@ -5,8 +5,8 @@ const Gtk = imports.gi.Gtk;
 const Pango = imports.gi.Pango;
 
 // This is an approximate number of characters that will keep the label from
-// going over its specified 258px
-const ARTICLE_LABEL_MAX_WIDTH_CHARS = 18;
+// going over its specified width
+const ARTICLE_LABEL_MAX_WIDTH_CHARS = 24;
 
 const TextButton = new Lang.Class({
     Name: 'EndlessTextButton',
