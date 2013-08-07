@@ -61,7 +61,10 @@ const WikipediaView = new Lang.Class({
         return html;
     },
 
-    loadArticleByTitle: function(title) {
+    loadArticleByTitle: function(url, human_title) {
+        let parts = url.split("/");
+        let suffix = parts[parts.length - 1];
+        let title = decodeURI(suffix.replace("_", " ", 'g'));
         let request = Soup.Message.new("GET", getPageURL + title);
         this._httpSession.queue_message(request, Lang.bind(this, function(_httpSession, message) {
             if(message.status_code !== 200) {
@@ -76,7 +79,7 @@ const WikipediaView = new Lang.Class({
             let cur_exec = Utils.get_path_for_relative_path(".");
             let image_path = cur_exec + "/web_view/article_images/";
 
-            let documentHTML = this._get_meta_html() + this._get_body_html(articleHTML, title, image_path);
+            let documentHTML = this._get_meta_html() + this._get_body_html(articleHTML, human_title, image_path);
 
             let sheets = new Array("first_load.css", "second_load.css","main.css","wikipedia.css","nolinks.css");
             documentHTML = this._get_style_sheet_html(current_dir, sheets) + documentHTML;
