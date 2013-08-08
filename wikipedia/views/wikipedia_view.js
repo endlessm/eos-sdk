@@ -5,11 +5,12 @@ const Soup = imports.gi.Soup;
 const WebKit = imports.gi.WebKit2;
 const Utils = imports.utils;
 
-const getPageURL = "http://127.0.0.1:3000/getArticleByTitle?title=";
+const getPageURL = "http://127.0.0.1:3000/getDomainSpecificArticle?title=";
 
 // Interpret image:// URIs as wikipedia images
 WebKit.WebContext.get_default().register_uri_scheme('image', function(request) {
     let filename = request.get_uri().slice('image://'.length);
+    filename = decodeURI(filename);
     let pictures_dir = request.get_web_view()._getArticleImagesPath();
     let parent = Gio.File.new_for_path(pictures_dir);
     let file = parent.get_child(filename);
