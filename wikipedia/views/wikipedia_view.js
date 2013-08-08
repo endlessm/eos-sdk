@@ -1,3 +1,4 @@
+const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 const Soup = imports.gi.Soup;
@@ -5,6 +6,16 @@ const WebKit = imports.gi.WebKit2;
 const Utils = imports.utils;
 
 const getPageURL = "http://127.0.0.1:3000/getArticleByTitle?title=";
+
+// Interpret image:// URIs as wikipedia images
+WebKit.WebContext.get_default().register_uri_scheme('image', function(request) {
+    let filename = request.get_uri().slice('image://'.length);
+    let pictures_dir = request.get_web_view()._getArticleImagesPath();
+    let parent = Gio.File.new_for_path(pictures_dir);
+    let file = parent.get_child(filename);
+    let stream = file.read(null);
+    request.finish(stream, -1, 'image/png');
+});
 
 const WikipediaView = new Lang.Class({
     Name: 'EndlessWikipediaView',
@@ -78,8 +89,7 @@ const WikipediaView = new Lang.Class({
             let title = article['title'];
             let current_dir = Endless.getCurrentFileDir();
 
-            let cur_exec = this.get_toplevel().get_application().application_base_path;
-            let image_path = cur_exec + "/web_view/article_images/";
+            let image_path = this._getArticleImagesPath();
 
             let documentHTML = this._get_meta_html() + this._get_body_html(articleHTML, human_title, image_path);
 
@@ -94,5 +104,10 @@ const WikipediaView = new Lang.Class({
             // Right now, this doesn't work, regardless of what we put in for base_uri
             this.load_uri(temp_uri);
         }));
+    },
+
+    _getArticleImagesPath: function() {
+        let cur_exec = this.get_toplevel().get_application().application_base_path;
+        return cur_exec + "/web_view/article_images/";
     }
 });
