@@ -40,6 +40,11 @@ Gjs_ArticleList .button:active {
     background-image: url('resource:///com/endlessm/wikipedia-domain/assets/submenu_bg_pressed.png');
 }
 
+Gjs_ArticleList .scrollbar.slider {
+    border-radius: 6px;
+    background-color: alpha(#464646, 0.5);
+}
+
 .articles-page {
     color: black;
     background-color: #babdb6;
