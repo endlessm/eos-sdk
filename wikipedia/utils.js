@@ -162,39 +162,30 @@ const array_contains = function (arr, obj, same_type) {
   return false;
 };
 
-// Convenience function to parse a clutter color from a string
-function parse_clutter_color(color_string) {
-    let [res, color] = Clutter.Color.from_string(color_string);
-    return color;
-}
-
-// Convenience function to load a gresource image into a Clutter.Image
-function load_clutter_image_from_resource(resource_path) {
-    let pixbuf = GdkPixbuf.Pixbuf.new_from_resource(resource_path);
-    let image = new Clutter.Image();
-    if (pixbuf != null) {
-        image.set_data(pixbuf.get_pixels(),
-                       pixbuf.get_has_alpha()
-                           ? Cogl.PixelFormat.RGBA_8888
-                           : Cogl.PixelFormat.RGB_888,
-                       pixbuf.get_width(),
-                       pixbuf.get_height(),
-                       pixbuf.get_rowstride());
-    }
-    return image;
-}
-
-// Private function to format a clutter actors allocation and print it
-function _clutter_allocation_printer(actor, box, flag) {
-    print("Allocation for", actor);
-    print(" Xs:", box.x1, box.x2);
-    print(" Ys:", box.y1, box.y2);
-}
-
-// Call this function on a clutter actor to have it log it's allocation to
-// console
-function print_clutter_actor_allocation(actor) {
-    actor.connect('allocation-changed', _clutter_allocation_printer);
+/*
+ * Loads a pixbuf sized to cover the dest_width and dest_height with the
+ * image in res_path, while mataining the aspect ratio of the image
+ */
+function load_pixbuf_cover(res_path, dest_width, dest_height) {
+    let [load_width, load_height] = [dest_width, dest_height];
+    // TODO: We need to get the size of the source image, so right now we
+    // are loading the image twice, once to get the size, and the again at
+    // the proper size. We should eventually use a GdkPixbuf.Loader and
+    // connect to the size-prepared signal, as described in the
+    // documentation
+    let temp_pixbuf = GdkPixbuf.Pixbuf.new_from_resource(res_path);
+    let source_aspect = temp_pixbuf.width / temp_pixbuf.height;
+    let dest_aspect = dest_width / dest_height;
+    if(dest_aspect > source_aspect)
+        load_height = -1;
+    else
+        load_width = -1;
+    let source_pixbuf = GdkPixbuf.Pixbuf.new_from_resource_at_scale(res_path,
+        load_width, load_height, true);
+    let cropped_pixbuf = source_pixbuf;
+    if(dest_width < source_pixbuf.width || dest_height < source_pixbuf.height)
+        cropped_pixbuf = source_pixbuf.new_subpixbuf(0, 0, dest_width, dest_height);
+    return cropped_pixbuf;
 }
 
 // Convenience function to convert a resource URI to a resource path, for
