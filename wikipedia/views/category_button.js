@@ -112,9 +112,10 @@ const CategoryButton = new Lang.Class({
     set image_uri(value) {
         this._image_uri = value;
         if(this._image) {
-            let res_path = Utils.resourceUriToPath(value);
             let allocation = this.get_allocation();
-            this._updateImage(res_path, allocation.width, allocation.height);
+            let new_pixbuf = Utils.load_pixbuf_cover(Utils.resourceUriToPath(this._image_uri),
+                allocation.width, allocation.height);
+            this._image.set_from_pixbuf(new_pixbuf);
         }
     },
 
@@ -132,29 +133,14 @@ const CategoryButton = new Lang.Class({
 
     vfunc_size_allocate: function(allocation) {
         this.parent(allocation);
-        this._updateImage(Utils.resourceUriToPath(this._image_uri),
+        let new_pixbuf = Utils.load_pixbuf_cover(Utils.resourceUriToPath(this._image_uri),
             allocation.width, allocation.height);
+        this._image.set_from_pixbuf(new_pixbuf);
     },
 
     // HANDLERS
 
     _onButtonPress: function(widget, event) {
         this.emit('clicked')
-    },
-
-    // PRIVATE
-
-    _updateImage: function(res_path, width, height) {
-        let [source_width, source_height] = [width, height];
-        if(width > height)
-            source_height = -1;
-        else
-            source_width = -1;
-        let source_pixbuf = GdkPixbuf.Pixbuf.new_from_resource_at_scale(res_path,
-            source_width, source_height, true);
-        let cropped_pixbuf = source_pixbuf;
-        if(width < source_pixbuf.width || height < source_pixbuf.height)
-            cropped_pixbuf = source_pixbuf.new_subpixbuf(0, 0, width, height);
-        this._image.set_from_pixbuf(cropped_pixbuf);
     }
 });

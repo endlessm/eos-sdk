@@ -60,8 +60,9 @@ const TitleLabelView = new Lang.Class({
     vfunc_size_allocate: function(allocation) {
         this.parent(allocation);
         if(this._image_uri !== "" && this._image_uri != null) {
-            this._updateImage(Utils.resourceUriToPath(this._image_uri),
+            let new_pixbuf = Utils.load_pixbuf_cover(Utils.resourceUriToPath(this._image_uri),
                 allocation.width, allocation.height);
+            this._image.set_from_pixbuf(new_pixbuf);
         }
     },
 
@@ -86,31 +87,9 @@ const TitleLabelView = new Lang.Class({
         if(this._image) {
             let res_path = Utils.resourceUriToPath(value);
             let allocation = this.get_allocation();
-            this._updateImage(res_path, allocation.width, allocation.height);
+            let new_pixbuf = Utils.load_pixbuf_cover(Utils.resourceUriToPath(this._image_uri),
+                allocation.width, allocation.height);
+            this._image.set_from_pixbuf(new_pixbuf);
         }
-    },
-
-    // PRIVATE
-
-    _updateImage: function(res_path, dest_width, dest_height) {
-        let [source_width, source_height] = [dest_width, dest_height];
-        // TODO: We need to get the size of the source image, so right now we
-        // are loading the image twice, once to get the size, and the again at
-        // the proper size. We should eventually use a GdkPixbuf.Loader and
-        // connect to the size-prepared signal, as described in the
-        // documentation
-        let temp_pixbuf = GdkPixbuf.Pixbuf.new_from_resource(res_path);
-        let source_aspect = temp_pixbuf.width / temp_pixbuf.height;
-        let dest_aspect = dest_width / dest_height;
-        if(dest_aspect > source_aspect)
-            source_height = -1;
-        else
-            source_width = -1;
-        let source_pixbuf = GdkPixbuf.Pixbuf.new_from_resource_at_scale(res_path,
-            source_width, source_height, true);
-        let cropped_pixbuf = source_pixbuf;
-        if(dest_width < source_pixbuf.width || dest_height < source_pixbuf.height)
-            cropped_pixbuf = source_pixbuf.new_subpixbuf(0, 0, dest_width, dest_height);
-        this._image.set_from_pixbuf(cropped_pixbuf);
     }
 });
