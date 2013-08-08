@@ -63,6 +63,11 @@ Gjs_ArticleList .scrollbar.slider {
     font-family: "Source Sans Pro";
 }
 
+#category_scrolled_window .scrollbar.slider {
+    border-radius: 6px;
+    background-color: alpha(white, 0.3);
+}
+
 #category_title{
     /* Top padding is hack because we have bad version of BentonSans */
     padding-top: 20px;

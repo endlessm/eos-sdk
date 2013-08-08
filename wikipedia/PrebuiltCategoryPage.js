@@ -98,19 +98,23 @@ const PrebuiltCategoryPage = new Lang.Class({
 
         this._description_text_view.set_pixels_inside_wrap(10);
         this._description_text_view.set_wrap_mode(Gtk.WrapMode.WORD);
+        this._description_text_view.right_margin = 20;
 
         this._description_scrolled_window = new Gtk.ScrolledWindow({
+            name: 'category_scrolled_window',
             halign: Gtk.Align.FILL
         });
 
         this._description_scrolled_window.add(this._description_text_view);
-        this._description_scrolled_window.set_policy(Gtk.PolicyType.ALWAYS, Gtk.PolicyType.ALWAYS);
+        this._description_scrolled_window.set_policy(Gtk.PolicyType.NEVER,
+            Gtk.PolicyType.AUTOMATIC);
 
         this._inner_grid = new Gtk.Grid({
             orientation: Gtk.Orientation.VERTICAL,
             expand: true,
             margin_left: 45,
-            margin_right: 45
+            margin_right: 45,
+            margin_bottom: 15
         });
 
         this.parent(props);
