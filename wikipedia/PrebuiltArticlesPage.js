@@ -55,7 +55,7 @@ const PrebuiltArticlesPage = new Lang.Class({
     set article_uri(value) {
         this._article_uri = value;
         if(value !== null && value !== "") {
-            this._wiki_view.loadArticleByTitle(this._article_uri, this._article_title);
+            this._wiki_view.loadArticleByTitle(this._article_uri);
         }
     },
 
