@@ -22,17 +22,17 @@ EXTRA_DIST += wikipedia/config.js.in
 
 js_sources = \
 	wikipedia/ArticleList.js \
-	wikipedia/BackButton.js \
-	wikipedia/BoxWithBg.js \
+	wikipedia/widgets/BackButton.js \
+	wikipedia/widgets/BoxWithBg.js \
 	wikipedia/EndlessWikipedia.js \
 	wikipedia/PrebuiltArticlesPage.js \
 	wikipedia/PrebuiltCategoryPage.js \
 	wikipedia/PrebuiltFrontPage.js \
 	wikipedia/PrebuiltWikipediaApplication.js \
-	wikipedia/SideBarButton.js \
-	wikipedia/TextButton.js \
+	wikipedia/widgets/SideBarButton.js \
+	wikipedia/widgets/TextButton.js \
 	wikipedia/config.js \
-	wikipedia/scaled_image.js \
+	wikipedia/widgets/scaled_image.js \
 	wikipedia/utils.js \
 	wikipedia/WikipediaApplication.js \
 	wikipedia/models/article_model.js \
@@ -41,12 +41,12 @@ js_sources = \
 	wikipedia/models/utils/json_utils.js \
 	wikipedia/models/utils/locale_utils.js \
 	wikipedia/presenters/domain_wiki_presenter.js \
-	wikipedia/views/category_button.js \
-	wikipedia/views/category_layout_manager.js \
-	wikipedia/views/category_selector_view.js \
+	wikipedia/widgets/category_button.js \
+	wikipedia/widgets/category_layout_manager.js \
+	wikipedia/widgets/category_selector_view.js \
 	wikipedia/views/domain_wiki_view.js \
-	wikipedia/views/title_label_view.js \
-	wikipedia/views/wikipedia_view.js \
+	wikipedia/widgets/title_label_view.js \
+	wikipedia/WikipediaWebView.js \
 	$(NULL)
 
 parafernalia_sources = \

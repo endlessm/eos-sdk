@@ -6,9 +6,9 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Endless = imports.gi.Endless;
 
-const Config = imports.config;
-const BackButton = imports.BackButton;
-const SideBarButton = imports.SideBarButton;
+const Config = imports.wikipedia.config;
+const BackButton = imports.wikipedia.widgets.BackButton;
+const SideBarButton = imports.wikipedia.widgets.SideBarButton;
 
 const _ = function(string) { return GLib.dgettext('eos-sdk', string); };
 Gettext.bindtextdomain('eos-sdk', Config.DATADIR + '/locale');

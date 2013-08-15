@@ -2,10 +2,10 @@ const Lang = imports.lang;
 const GObject = imports.gi.GObject;
 
 //Local Libraries
-const Utils = imports.utils;
+const Utils = imports.wikipedia.utils;
 
-const CategoryModel = imports.models.category_model;
-const ArticleModel = imports.models.article_model;
+const CategoryModel = imports.wikipedia.models.category_model;
+const ArticleModel = imports.wikipedia.models.article_model;
 
 
 function _resourceUriToPath(uri) {

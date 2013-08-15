@@ -3,7 +3,6 @@ const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
 const EndlessWikipedia = imports.wikipedia.EndlessWikipedia;
-const WikipediaView = imports.views.wikipedia_view;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
@@ -27,8 +26,8 @@ const PrebuiltArticlesPage = new Lang.Class({
         this._article_title = null;
         this._article_uri = null;
 
-        this._wiki_view = new WikipediaView.WikipediaView({
-            expand:true,
+        this._wiki_view = new EndlessWikipedia.WikipediaWebView({
+            expand:true
         });
 
         this.parent(props);

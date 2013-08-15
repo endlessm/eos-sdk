@@ -5,8 +5,8 @@ const GObject = imports.gi.GObject;
 const Lang = imports.lang;
 
 // Local libraries
-const CategoryModel = imports.models.category_model;
-const Utils = imports.utils;
+const CategoryModel = imports.wikipedia.models.category_model;
+const Utils = imports.wikipedia.utils;
 
 const DomainWikiModel = new Lang.Class({
 
