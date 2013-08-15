@@ -165,11 +165,6 @@ const DomainWikiView = new Lang.Class({
         this._presenter = presenter;
     },
 
-    set_front_page_info: function(title, image_uri) {
-        this._front_page.title = title;
-        this._front_page.image_uri = image_uri;
-    },
-
     set_category_info: function(category, articles) {
         this._category_view.title = category.title;
         this._category_view.description = category.description;

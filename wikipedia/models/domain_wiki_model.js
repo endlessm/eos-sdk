@@ -12,20 +12,6 @@ const DomainWikiModel = new Lang.Class({
 
     Name: "DomainWikiModel",
     Extends: GObject.Object,
-    Properties: {
-        'image-uri': GObject.ParamSpec.string('image-uri',
-            'Application image URI',
-            'URI describing a path to the image for this application.',
-            GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE | GObject.ParamFlags.CONSTRUCT_ONLY,
-            ''),
-
-        // Name of the Wikipedia-based application, e.g. 'Brazil', 'Math'
-        'application-name': GObject.ParamSpec.string('application-name',
-            'Application name',
-            'Name of the Wikipedia-based application',
-            GObject.ParamFlags.READABLE,
-            '')
-    },
 
     //params should have the image-uri for the app's image, and the application name.
     _init: function(params) {

@@ -21,6 +21,9 @@ const CategoryModel = new Lang.Class({
         'image-thumbnail-uri': GObject.ParamSpec.string('image-thumbnail-uri', 'Category Thumbnail Image URI', 'Path to thumbnail image for this category in the GResource', 
             GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE | GObject.ParamFlags.CONSTRUCT,
                 ""),
+        'is-main-category': GObject.ParamSpec.boolean('is-main-category', 'Is Main Category boolean', 'Flag denoting whether this category is the main category for this app', 
+            GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE | GObject.ParamFlags.CONSTRUCT,
+                false),
     },
 
     _init: function(params) {
