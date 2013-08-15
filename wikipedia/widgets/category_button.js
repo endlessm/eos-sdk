@@ -4,7 +4,7 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const Utils = imports.utils;
+const Utils = imports.wikipedia.utils;
 
 const CATEGORY_LABEL_LEFT_MARGIN = 25;  // pixels
 const CATEGORY_LABEL_BOTTOM_MARGIN = 20;  // pixels

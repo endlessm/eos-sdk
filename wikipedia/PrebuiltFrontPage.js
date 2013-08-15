@@ -3,8 +3,8 @@ const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
 const EndlessWikipedia = imports.wikipedia.EndlessWikipedia;
-const CategorySelectorView = imports.views.category_selector_view;
-const TitleLabelView = imports.views.title_label_view;
+const CategorySelectorView = imports.wikipedia.widgets.category_selector_view;
+const TitleLabelView = imports.wikipedia.widgets.title_label_view;
 
 const TITLE_CATEGORY_COLUMN_SPACING = 10;  // pixels
 

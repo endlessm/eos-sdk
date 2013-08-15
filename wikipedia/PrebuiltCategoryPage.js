@@ -4,8 +4,8 @@ const GdkPixbuf = imports.gi.GdkPixbuf;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const BoxWithBg = imports.BoxWithBg;
-const ScaledImage = imports.scaled_image;
+const BoxWithBg = imports.wikipedia.widgets.BoxWithBg;
+const ScaledImage = imports.wikipedia.widgets.scaled_image;
 
 const CATEGORY_DESCRIPTION_WIDTH = 520;
 const SUBMENU_SEPARATOR_A_URI = "/com/endlessm/wikipedia-domain/assets/submenu_separator_shadow_a.png";

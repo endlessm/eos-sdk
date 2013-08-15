@@ -2,8 +2,8 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const CategoryButton = imports.views.category_button;
-const CategoryLayoutManager = imports.views.category_layout_manager;
+const CategoryButton = imports.wikipedia.widgets.category_button;
+const CategoryLayoutManager = imports.wikipedia.widgets.category_layout_manager;
 
 const CATEGORY_COLUMN_SPACING = 10;  // pixels
 const CATEGORY_ROW_SPACING = 10;  // pixels

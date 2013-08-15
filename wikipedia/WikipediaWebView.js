@@ -3,7 +3,7 @@ const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 const Soup = imports.gi.Soup;
 const WebKit = imports.gi.WebKit2;
-const Utils = imports.utils;
+const Utils = imports.wikipedia.utils;
 
 const getPageURL = "http://127.0.0.1:3000/getDomainSpecificArticle?title=";
 
@@ -18,8 +18,8 @@ WebKit.WebContext.get_default().register_uri_scheme('image', function(request) {
     request.finish(stream, -1, 'image/png');
 });
 
-const WikipediaView = new Lang.Class({
-    Name: 'EndlessWikipediaView',
+const WikipediaWebView = new Lang.Class({
+    Name: 'EndlessWikipediaWebView',
     Extends: WebKit.WebView,
 
     _init: function(params) {
