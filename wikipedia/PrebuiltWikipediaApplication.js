@@ -4,9 +4,9 @@ const Lang = imports.lang;
 const Gtk = imports.gi.Gtk;
 
 const EndlessWikipedia = imports.wikipedia.EndlessWikipedia;
-const DomainWikiView = imports.views.domain_wiki_view;
-const DomainWikiModel = imports.models.domain_wiki_model;
-const DomainWikiPresenter = imports.presenters.domain_wiki_presenter;
+const DomainWikiView = imports.wikipedia.views.domain_wiki_view;
+const DomainWikiModel = imports.wikipedia.models.domain_wiki_model;
+const DomainWikiPresenter = imports.wikipedia.presenters.domain_wiki_presenter;
 
 String.prototype.format = Format.format;
 

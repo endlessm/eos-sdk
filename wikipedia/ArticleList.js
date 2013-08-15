@@ -3,7 +3,7 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const TextButton = imports.TextButton;
+const TextButton = imports.wikipedia.widgets.TextButton;
 
 const ARTICLE_LIST_SIZE_REQUEST = 320;
 const HOVER_ARROW_URI = "/com/endlessm/wikipedia-domain/assets/submenu_hover_arrow.png";

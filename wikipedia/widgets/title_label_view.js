@@ -3,7 +3,7 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const Utils = imports.utils;
+const Utils = imports.wikipedia.utils;
 
 const TITLE_LABEL_SCREEN_WIDTH_PERCENTAGE = 0.37;
 const TITLE_LABEL_LEFT_MARGIN = 20;  // pixels

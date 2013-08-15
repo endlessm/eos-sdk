@@ -3,7 +3,7 @@ const GObject = imports.gi.GObject;
 const Lang = imports.lang;
 
 // Local libraries
-const ArticleModel = imports.models.article_model;
+const ArticleModel = imports.wikipedia.models.article_model;
 
 const CategoryModel = new Lang.Class({
     Name: "CategoryModel",

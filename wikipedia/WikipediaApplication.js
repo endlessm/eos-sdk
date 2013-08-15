@@ -5,8 +5,8 @@ const Lang = imports.lang;
 const GObject = imports.gi.GObject;
 const Gio = imports.gi.Gio;
 
-const Config = imports.config;
-const DomainWikiModel = imports.models.domain_wiki_model;
+const Config = imports.wikipedia.config;
+const DomainWikiModel = imports.wikipedia.models.domain_wiki_model;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
