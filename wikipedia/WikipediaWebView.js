@@ -1,7 +1,6 @@
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
-const Soup = imports.gi.Soup;
 const WebKit = imports.gi.WebKit2;
 const Utils = imports.wikipedia.utils;
 
@@ -14,8 +13,13 @@ WebKit.WebContext.get_default().register_uri_scheme('image', function(request) {
     let pictures_dir = request.get_web_view()._getArticleImagesPath();
     let parent = Gio.File.new_for_path(pictures_dir);
     let file = parent.get_child(filename);
-    let stream = file.read(null);
-    request.finish(stream, -1, 'image/png');
+    try {
+        let stream = file.read(null);
+        request.finish(stream, -1, 'image/png');
+    } catch (err) {
+        let stream = new Gio.MemoryInputStream();
+        request.finish(stream, 0, 'image/png');
+    }
 });
 
 const WikipediaWebView = new Lang.Class({
