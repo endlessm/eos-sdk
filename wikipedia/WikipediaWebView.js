@@ -4,7 +4,8 @@ const Lang = imports.lang;
 const WebKit = imports.gi.WebKit2;
 const Utils = imports.wikipedia.utils;
 
-const getPageURL = "http://127.0.0.1:3000/getDomainSpecificArticle?title=";
+const hostName = "http://127.0.0.1:3000/"
+const getPageURI = "getDomainSpecificArticle?title=";
 
 // Interpret image:// URIs as wikipedia images
 WebKit.WebContext.get_default().register_uri_scheme('image', function(request) {
@@ -33,17 +34,38 @@ const WikipediaWebView = new Lang.Class({
         //settings.set_enable_developer_extras(true);
         //this.set_settings(settings);
         this.connect('context-menu', Lang.bind(this, function(){return true}));
+
+        this.connect('decide-policy',
+            Lang.bind(this, this._onNavigation));
     },
 
-    loadArticleByTitle: function(url) {
-        let parts = url.split("/");
+    loadArticleByURI: function(uri) {
+        let parts = uri.split("/");
         let suffix = parts[parts.length - 1];
         let title = decodeURI(suffix.replace("_", " ", 'g'));
-        this.load_uri(getPageURL + title);
+        this.load_uri(hostName + getPageURI + title);
+    },
+
+    loadArticleByTitle: function(title) {
+        this.load_uri(hostName + getPageURI + title);
     },
 
     _getArticleImagesPath: function() {
         let cur_exec = this.get_toplevel().get_application().application_base_path;
         return cur_exec + "/web_view/article_images/";
+    },
+
+    _onNavigation: function(webview, decision, decision_type) {
+        if (decision_type == WebKit.PolicyDecisionType.NAVIGATION_ACTION) {
+            let uri = decision.request.uri;
+            if (uri.startsWith(hostName + "wiki/")) {
+                let parts = uri.split("/");
+                let suffix = parts[parts.length - 1];
+                let title = decodeURI(suffix.replace("_", " ", 'g'));
+                this.loadArticleByTitle(title);
+                return true;
+            }
+        }
+        return false; // not handled, default behavior
     }
 });
