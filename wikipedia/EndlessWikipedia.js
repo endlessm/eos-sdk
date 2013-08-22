@@ -10,6 +10,7 @@ this.ArticleList = imports.wikipedia.ArticleList.ArticleList;
 this.WikipediaWebView = imports.wikipedia.WikipediaWebView.WikipediaWebView;
 
 const STYLE_CLASS_TITLE = 'title';
+const STYLE_CLASS_MAIN = 'main-element';
 const STYLE_CLASS_PREBUILT = 'prebuilt';
 const STYLE_CLASS_CATEGORY = 'category';
 const STYLE_CLASS_ARTICLE = 'article';

@@ -46,8 +46,6 @@ const DomainWikiPresenter = new Lang.Class({
 
     initFromJsonFile: function(filename) {
         let app_content = JSON.parse(Utils.load_file_from_resource(filename));
-        this._application_name = app_content['app_name'];
-        this._image_uri = app_content['app_image_uri'];
         this._lang_code = filename.substring(0, 2);
         let categories = app_content['categories'];
         let cat_length = categories.length
@@ -56,18 +54,24 @@ const DomainWikiPresenter = new Lang.Class({
             let category = categories[i];
             let categoryModel = this.initCategory(category);
             let articles = category['articles'];
-            categoryModel.addArticles(this.initArticleModels(articles));
+            let articleModels = [];
+            if(!(articles.length == 0)) {
+                //if the category has no articles, then we cannot initialize them.
+                //This happens if the main category isn't clickable.
+                articleModels = this.initArticleModels(articles);
+            }
+            categoryModel.addArticles(articleModels);
             category_models.push(categoryModel);
         }
         this._domain_wiki_model.addCategories(category_models);
-        this._domain_wiki_view.set_front_page_info(this._application_name, this._image_uri);
     },
 
     initCategory: function(category){
         let image_uri = category['image_file'];
         let image_thumbnail_uri = category['image_thumb_uri'];
         let params = {description:category['content_text'], image_uri:image_uri, 
-            image_thumbnail_uri:image_thumbnail_uri, title:category['category_name']};
+            image_thumbnail_uri:image_thumbnail_uri, title:category['category_name'], 
+            is_main_category:category['is_main_category']};
         return new CategoryModel.CategoryModel(params);
     },
 
