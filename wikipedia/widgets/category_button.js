@@ -12,6 +12,7 @@ const CATEGORY_BUTTON_RIGHT_MARGIN = 20;  // pixels
 const CATEGORY_BUTTON_BOTTOM_MARGIN = 20;  // pixels
 const CATEGORY_LABEL_BENTON_SANS_CORRECTION = 0; // pixels
 const _HOVER_ARROW_URI = '/com/endlessm/wikipedia-domain/assets/category_hover_arrow.png';
+const MAIN_CATEGORY_SCREEN_WIDTH_PERCENTAGE = 0.37;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
@@ -31,7 +32,21 @@ const CategoryButton = new Lang.Class({
             'Category title',
             'Display name for the category',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
-            '')
+            ''),
+
+        // Boolean whether this button is clickable
+        'clickable-category': GObject.ParamSpec.boolean('clickable-category',
+            'Clickable Category',
+            'Flag whether this category button should be clickable',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            true),   
+
+        // Boolean whether this button is the main category
+        'is-main-category': GObject.ParamSpec.boolean('is-main-category',
+            'Is Main Category',
+            'Flag whether this category button is the main category',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            false)        
     },
     Signals: {
         'clicked': {}
@@ -41,6 +56,8 @@ const CategoryButton = new Lang.Class({
         // Get ready for property construction
         this._image_uri = null;
         this._category_title = null;
+        this._clickable_category = null;
+        this._is_main_category = null;
 
         this._overlay = new Gtk.Overlay();
         this._eventbox = new Gtk.EventBox({
@@ -64,19 +81,6 @@ const CategoryButton = new Lang.Class({
             halign: Gtk.Align.END,
             no_show_all: true
         });
-
-        this._eventbox.add_events(Gdk.EventMask.ENTER_NOTIFY_MASK |
-            Gdk.EventMask.LEAVE_NOTIFY_MASK);
-        this._eventbox.connect('enter-notify-event',
-            Lang.bind(this, function(widget, event) {
-                this._eventbox.set_state_flags(Gtk.StateFlags.PRELIGHT, false);
-                this._arrow.show();
-            }));
-        this._eventbox.connect('leave-notify-event',
-            Lang.bind(this, function(widget, event) {
-                this._eventbox.unset_state_flags(Gtk.StateFlags.PRELIGHT);
-                this._arrow.hide();
-            }));
 
         let context = this._label.get_style_context();
         context.add_class(EndlessWikipedia.STYLE_CLASS_TITLE);
@@ -129,13 +133,63 @@ const CategoryButton = new Lang.Class({
             this._label.set_text(value.toUpperCase());
     },
 
+    get clickable_category() {
+        return this._clickable_category;
+    },
+
+    set clickable_category(value) {
+        this._clickable_category = value;
+        if(this._clickable_category) {
+            //Hover events/effects only trigger if the button is clickable.
+            this._eventbox.add_events(Gdk.EventMask.ENTER_NOTIFY_MASK |
+                Gdk.EventMask.LEAVE_NOTIFY_MASK);
+            this._eventbox.connect('enter-notify-event',
+                Lang.bind(this, function(widget, event) {
+                    this._eventbox.set_state_flags(Gtk.StateFlags.PRELIGHT, false);
+                    this._arrow.show();
+                }));
+            this._eventbox.connect('leave-notify-event',
+                Lang.bind(this, function(widget, event) {
+                    this._eventbox.unset_state_flags(Gtk.StateFlags.PRELIGHT);
+                    this._arrow.hide();
+                }));
+        }
+    },
+
+    get is_main_category() {
+        return this._is_main_category;
+    },
+
+    set is_main_category(value) {
+        this._is_main_category = value;
+        if(this._is_main_category) {
+            let context = this._label.get_style_context();
+            context.add_class(EndlessWikipedia.STYLE_CLASS_MAIN);
+            this._label.margin_bottom = 0;
+        }
+    },
+
     // OVERRIDES
+
+    vfunc_get_preferred_width: function() {
+        if(this._is_main_category) {
+            let toplevel = this.get_toplevel();
+            if(toplevel == null)
+                return this.parent();
+            let width = toplevel.get_allocated_width() * MAIN_CATEGORY_SCREEN_WIDTH_PERCENTAGE;
+            return [width, width];
+        } else {
+            return this.parent();
+        }
+    },
 
     vfunc_size_allocate: function(allocation) {
         this.parent(allocation);
-        let new_pixbuf = Utils.load_pixbuf_cover(Utils.resourceUriToPath(this._image_uri),
-            allocation.width, allocation.height);
-        this._image.set_from_pixbuf(new_pixbuf);
+        if(this._image_uri !== "" && this._image_uri != null) {
+            let new_pixbuf = Utils.load_pixbuf_cover(Utils.resourceUriToPath(this._image_uri),
+                allocation.width, allocation.height);
+            this._image.set_from_pixbuf(new_pixbuf);
+        }
     },
 
     // HANDLERS

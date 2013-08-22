@@ -27,12 +27,20 @@ const CategorySelectorView = new Lang.Class({
     // Takes an array of dictionaries with keys 'title' and 'image_uri'
     setCategories: function(categories) {
         categories.forEach(function(category, index, obj) {
+            let isClickable = !category.getArticles().length == 0;
             let button = new CategoryButton.CategoryButton({
                 category_title: category.title,
-                image_uri: category.image_thumbnail_uri
+                image_uri: category.image_thumbnail_uri,
+                clickable_category: isClickable,
+                is_main_category: category.is_main_category,
+                hexpand: !category.is_main_category
             });
             button.index = index;
-            button.connect('clicked', Lang.bind(this, this._onButtonClicked));
+            //if the category has no articles, you shouldn't be able to click on it.
+            if(isClickable) {
+                button.connect('clicked', Lang.bind(this, this._onButtonClicked));              
+            }
+
             this.add(button);
         }, this);
     },
