@@ -61,7 +61,6 @@ if [ "$color_prompt" = yes ]; then
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
-unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
@@ -71,27 +70,6 @@ xterm*|rxvt*)
 *)
     ;;
 esac
-
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
-
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-fi
-
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -116,14 +94,20 @@ fi
 #jhbuild path
 PATH=$PATH:/home/endless/.local/bin
 
-#update alias
-alias eos-update="bash <(wget -q http://endlessdevelopment.com/install_eos.sh -O -)"
-
 #jhbuild reminder
-if [ "$LD_LIBRARY_PATH" != "/home/endless/install/lib" ]; then
-  insults=('gluttonous' 'glutenous' 'flatulent' 'boil-brained' 'onion-eyed' 'craven' 'rump-fed' 'shit-eating' 'raving' 'rancid' 'rank' 'cantankerous' 'pulchritudinous' 'moldy' 'molting' 'goat-kneading' 'MATLAB-loving' 'saucy' 'spicy' 'defenestrating' 'git-hating')
+if [ -z "$UNDER_JHBUILD" ]; then
+  insults=('gluttonous' 'glutenous' 'flatulent' 'boil-brained' 'onion-eyed' 'overly hirsute' 'craven' 'rump-fed' 'shit-eating' 'raving' 'rancid' 'rank' 'cantankerous' 'pulchritudinous' 'moldy' 'molting' 'goat-kneading' 'MATLAB-loving' 'saucy' 'spicy' 'defenestrating' 'git-hating')
   num_insults=${#insults[*]}
-  titles=('bum-bailey' 'pincushion' 'fart-monger' 'malt-worm' 'jezebel' 'proprietary-software-user' 'rapscallion' 'curmudgeon' 'bladder' 'usurper' 'Avogadro-admirer' 'sheep-biter' 'pomegranate' 'durian' 'flasher' 'reaver' 'mountain of mad flesh' 'bureaucrat' 'catamite' 'codpiece' 'baseball-scorner' 'harpy' 'loup-garou')
+  titles=('bum-bailey' 'pincushion' 'fart-monger' 'malt-worm' 'jezebel' "ne'er-do-well" 'lounge lizard' 'proprietary-software-user' 'rapscallion' 'curmudgeon' 'bladder' 'usurper' 'Avogadro-admirer' 'sheep-biter' 'pomegranate' 'durian' 'flasher' 'reaver' 'mountain of mad flesh' 'bureaucrat' 'catamite' 'codpiece' 'baseball-scorner' 'harpy' 'loup-garou')
   num_titles=${#titles[*]}
   echo "Run jhbuild shell you ${insults[$((RANDOM%$num_insults))]} ${titles[$((RANDOM%$num_titles))]}"
+else
+  # Change prompt if in jhbuild shell
+  if [ "$color_prompt" = yes ]; then
+    PS1="\[\e[0;31m\][jh]\[\e[m\] $PS1"
+  else
+    PS1="[jh] $PS1"
+  fi
 fi
+
+unset color_prompt force_color_prompt

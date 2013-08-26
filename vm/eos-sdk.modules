@@ -31,6 +31,25 @@ $ sudo apt-get install git gnome-common gtk-doc-tools libgirepository1.0-dev lib
 
 <!-- modules -->
 
+  <!-- Module of all apps -->
+  <metamodule id="endless-apps">
+    <dependencies>
+      <dep package="eos-weather"/>
+      <dep package="eos-english"/>
+      <dep package="eos-programming-app"/>
+      <dep package="eos-typing"/>
+      <dep package="eos-wikipedia-offline"/>
+      <dep package="eos-translation"/>
+      <dep package="eos-youtube"/>
+      <dep package="eos-khan-academy"/>
+      <dep package="eos-wikipedia"/>
+      <dep package="eos-photos"/>
+      <dep package="eos-wikipedia-brazil"/>
+      <dep package="eos-wikipedia-health"/>
+      <dep package="eos-dictionary"/>
+    </dependencies>
+  </metamodule>
+
   <!-- EOS weather -->
   <!-- Weather has no autotools, so for now we have a hack to skip it but still download the repo -->
   <autotools id="eos-weather" skip-autogen="true" makeargs="-v" skip-install="true">
@@ -42,14 +61,93 @@ $ sudo apt-get install git gnome-common gtk-doc-tools libgirepository1.0-dev lib
   </autotools>
 
   <!-- EOS english -->
-  <!-- english has no autotools, so for now we have a hack to skip it but still download the repo -->
-  <autotools id="eos-english" skip-autogen="true" makeargs="-v" skip-install="true">
+  <autotools id="eos-english">
     <branch repo="github.com" module="endlessm/eos-english.git"
             revision="dev"/>
     <dependencies>
       <dep package="eos-sdk"/>
     </dependencies>
   </autotools>
+
+  <autotools id="eos-programming-app">
+    <branch repo="github.com" module="endlessm/eos-programming-app.git"
+            revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-typing">
+    <branch repo="github.com" module="endlessm/eos-typing.git" revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-wikipedia-offline" skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch repo="github.com" module="endlessm/eos-wikipedia-offline.git" revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-translation" skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch repo="github.com" module="endlessm/eos-translation.git" revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-youtube" skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch repo="github.com" module="endlessm/eos-youtube.git" revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-khan-academy" skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch repo="github.com" module="endlessm/eos-khan-academy.git" revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-wikipedia" skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch repo="github.com" module="endlessm/eos-wikipedia.git" revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-photos" skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch repo="github.com" module="endlessm/eos-photos.git" revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-wikipedia-brazil">
+    <branch repo="github.com" module="endlessm/eos-wikipedia-brazil.git" revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-wikipedia-health">
+    <branch repo="github.com" module="endlessm/eos-wikipedia-health.git" revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-dictionary" skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch repo="github.com" module="endlessm/eos-dictionary.git" revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <!-- ********************************************************************* -->
 
   <!-- EOS shell -->
   <autotools id="eos-sdk">
