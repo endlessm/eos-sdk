@@ -5,10 +5,13 @@
 # repos['git.gnome.org'] = 'ssh://user@git.gnome.org/git/'
 
 # what module set should be used.
-moduleset = os.path.expanduser('~/eos-sdk.modules')
+moduleset = [
+    os.path.expanduser('~/eos-sdk.modules'),
+    'gnome-suites-core-3.10'
+]
 
 # A list of the modules to build.
-modules = [ 'eos-weather', 'eos-english' ]
+modules = [ 'endless-apps' ]
 
 # what directory should the source be checked out to?
 checkoutroot = os.path.expanduser('~/checkout')
