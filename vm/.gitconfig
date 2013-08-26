@@ -7,3 +7,8 @@
 	helper = cache --timeout=28800
 [push]
 	default = simple
+[alias]
+    st = status
+    ch = checkout
+    get = fetch --prune
+    publish = push --set-upstream origin HEAD
