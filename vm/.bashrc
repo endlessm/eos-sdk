@@ -61,7 +61,6 @@ if [ "$color_prompt" = yes ]; then
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
-unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
@@ -126,4 +125,13 @@ if [ -z "$UNDER_JHBUILD" ]; then
   titles=('bum-bailey' 'pincushion' 'fart-monger' 'malt-worm' 'jezebel' 'proprietary-software-user' 'rapscallion' 'curmudgeon' 'bladder' 'usurper' 'Avogadro-admirer' 'sheep-biter' 'pomegranate' 'durian' 'flasher' 'reaver' 'mountain of mad flesh' 'bureaucrat' 'catamite' 'codpiece' 'baseball-scorner' 'harpy' 'loup-garou')
   num_titles=${#titles[*]}
   echo "Run jhbuild shell you ${insults[$((RANDOM%$num_insults))]} ${titles[$((RANDOM%$num_titles))]}"
+else
+  # Change prompt if in jhbuild shell
+  if [ "$color_prompt" = yes ]; then
+    PS1="\[\e[0;31m\][jh]\[\e[m\] $PS1"
+  else
+    PS1="[jh] $PS1"
+  fi
 fi
+
+unset color_prompt force_color_prompt
