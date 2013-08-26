@@ -120,7 +120,7 @@ PATH=$PATH:/home/endless/.local/bin
 alias eos-update="bash <(wget -q http://endlessdevelopment.com/install_eos.sh -O -)"
 
 #jhbuild reminder
-if [ "$LD_LIBRARY_PATH" != "/home/endless/install/lib" ]; then
+if [ -z "$UNDER_JHBUILD" ]; then
   insults=('gluttonous' 'glutenous' 'flatulent' 'boil-brained' 'onion-eyed' 'craven' 'rump-fed' 'shit-eating' 'raving' 'rancid' 'rank' 'cantankerous' 'pulchritudinous' 'moldy' 'molting' 'goat-kneading' 'MATLAB-loving' 'saucy' 'spicy' 'defenestrating' 'git-hating')
   num_insults=${#insults[*]}
   titles=('bum-bailey' 'pincushion' 'fart-monger' 'malt-worm' 'jezebel' 'proprietary-software-user' 'rapscallion' 'curmudgeon' 'bladder' 'usurper' 'Avogadro-admirer' 'sheep-biter' 'pomegranate' 'durian' 'flasher' 'reaver' 'mountain of mad flesh' 'bureaucrat' 'catamite' 'codpiece' 'baseball-scorner' 'harpy' 'loup-garou')
