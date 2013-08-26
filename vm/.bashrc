@@ -121,9 +121,9 @@ alias eos-update="bash <(wget -q http://endlessdevelopment.com/install_eos.sh -O
 
 #jhbuild reminder
 if [ "$LD_LIBRARY_PATH" != "/home/endless/install/lib" ]; then
-  insults=('glutenous' 'flatulent' 'boil-brained' 'onion-eyed')
+  insults=('gluttonous' 'glutenous' 'flatulent' 'boil-brained' 'onion-eyed' 'craven' 'rump-fed' 'shit-eating' 'raving' 'rancid' 'rank' 'cantankerous' 'pulchritudinous' 'moldy' 'molting' 'goat-kneading' 'MATLAB-loving' 'saucy' 'spicy' 'defenestrating' 'git-hating')
   num_insults=${#insults[*]}
-  titles=('bum-bailey' 'pincushion' 'fart-monger' 'malt-worm' 'jezebel' 'proprietary-software-user')
+  titles=('bum-bailey' 'pincushion' 'fart-monger' 'malt-worm' 'jezebel' 'proprietary-software-user' 'rapscallion' 'curmudgeon' 'bladder' 'usurper' 'Avogadro-admirer' 'sheep-biter' 'pomegranate' 'durian' 'flasher' 'reaver' 'mountain of mad flesh' 'bureaucrat' 'catamite' 'codpiece' 'baseball-scorner' 'harpy' 'loup-garou')
   num_titles=${#titles[*]}
   echo "Run jhbuild shell you ${insults[$((RANDOM%$num_insults))]} ${titles[$((RANDOM%$num_titles))]}"
 fi
