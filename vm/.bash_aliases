@@ -1,7 +1,7 @@
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
+    alias ls='ls -h --color=auto'
     alias dir='dir --color=auto'
     alias vdir='vdir --color=auto'
 
@@ -15,8 +15,15 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 
+# Human-readable file sizes
+alias du='du -h'
+alias df='df -h'
+
 #update alias
 alias eos-update="bash <(wget -q http://endlessdevelopment.com/install_eos.sh -O -)"
+
+# Log in to jenkins
+alias jenkins="ssh ci@ci.endlessm.com -L 8080:localhost:8080"
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
