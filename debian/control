@@ -33,6 +33,13 @@ Depends: eos-sdk (= ${binary:Version}),
 Description: Open Endless SDK
  Development headers for the Open Endless SDK
 
+Package: gir1.2-endless-0
+Section: introspection
+Architecture: any
+Depends: ${gir:Depends}
+Description: Open Endless SDK
+ Introspection data for the Open Endless SDK
+
 Package: eos-sdk-wikipedia
 Section: libdevel
 Architecture: any
