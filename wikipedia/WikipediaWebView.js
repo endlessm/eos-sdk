@@ -1,12 +1,13 @@
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
+const GObject = imports.gi.GObject;
 const Lang = imports.lang;
 const WebKit = imports.gi.WebKit2;
 const Utils = imports.wikipedia.utils;
 
 const hostName = "http://127.0.0.1:3000/"
-const getPageByTitleURI = "getArticleByTitle?title=";
-const getPageByQueryURI = "getTopArticleByQuery?query=";
+const getPageByTitleURI = "getArticleByTitle?";
+const getPageByQueryURI = "getTopArticleByQuery?";
 
 // Interpret image:// URIs as wikipedia images
 WebKit.WebContext.get_default().register_uri_scheme('image', function(request) {
@@ -27,8 +28,15 @@ WebKit.WebContext.get_default().register_uri_scheme('image', function(request) {
 const WikipediaWebView = new Lang.Class({
     Name: 'EndlessWikipediaWebView',
     Extends: WebKit.WebView,
+    Properties: {
+        'hide-links': GObject.ParamSpec.boolean('hide-links',
+            'Hide article links',
+            'A boolean to determine whether links should be shown',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+            false)
+    },
 
-    _init: function(params) {
+    _init: function(params, links_to_show) {
         this.parent(params);
         // For debugging
         //let settings = this.get_settings();
@@ -36,8 +44,20 @@ const WikipediaWebView = new Lang.Class({
         //this.set_settings(settings);
         this.connect('context-menu', Lang.bind(this, function(){return true}));
 
+        this._links_to_show = links_to_show;
         this.connect('decide-policy',
             Lang.bind(this, this._onNavigation));
+        this.connect('load-changed',
+            Lang.bind(this, this._onLoadChange));
+    },
+
+    _getFullURL: function(base_url, params){
+        let full_url = base_url;
+        for(let key in params){
+            full_url += key + "=" + params[key] + "&";
+        }
+        full_url = full_url.slice(0, -1);
+        return full_url
     },
 
     loadArticleByURI: function(uri) {
@@ -48,11 +68,30 @@ const WikipediaWebView = new Lang.Class({
     },
 
     loadArticleByTitle: function(title) {
-        this.load_uri(hostName + getPageByTitleURI + title);
+        let params = {"title":title, "hideLinks":this.hide_links};
+        let url = this._getFullURL(hostName + getPageByTitleURI, params);
+        this.load_uri(url);
     },
 
     loadArticleBySearchQuery: function(query) {
-        this.load_uri(hostName + getPageByQueryURI + query);
+        let params = {"query":query, "hideLinks":this.hide_links};
+        let url = this._getFullURL(hostName + getPageByQueryURI, params);
+        this.load_uri(url);
+    },
+
+    scriptFinished: function(){
+        // NO OP
+    },
+
+    setAllowedLinks: function(){
+        // If you want to show all links, then
+        // no point in showing some subset of them as well
+        if(!this.hide_links){
+            return;
+        }
+        let str = JSON.stringify(this._links_to_show);
+        let script = "window.links_to_show = " + str;
+        this.run_javascript(script, null, this.scriptFinished, null);
     },
 
     _getArticleImagesPath: function() {
@@ -72,5 +111,9 @@ const WikipediaWebView = new Lang.Class({
             }
         }
         return false; // not handled, default behavior
+    },
+
+    _onLoadChange: function(webview, load_event, data){
+        this.setAllowedLinks();
     }
 });

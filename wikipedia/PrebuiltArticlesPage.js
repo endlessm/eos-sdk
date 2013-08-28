@@ -26,9 +26,11 @@ const PrebuiltArticlesPage = new Lang.Class({
         this._article_title = null;
         this._article_uri = null;
 
+        // Empty array is placeholder until we get baby page rank
         this._wiki_view = new EndlessWikipedia.WikipediaWebView({
-            expand:true
-        });
+            expand:true,
+            hide_links:true
+        }, []);
 
         this.parent(props);
 
