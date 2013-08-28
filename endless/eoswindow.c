@@ -376,8 +376,16 @@ set_application (EosWindow *self,
   gtk_window_set_application (GTK_WINDOW (self),
                               GTK_APPLICATION (self->priv->application));
   if (self->priv->application == NULL)
-    g_error ("In order to create a window, you must have an application "
-             "for it to connect to.");
+    {
+      g_error ("In order to create a window, you must have an application "
+               "for it to connect to.");
+      return;
+    }
+
+  /* Application's WM_CLASS hint should be the application ID */
+  const gchar *id;
+  id = g_application_get_application_id (G_APPLICATION (application));
+  gtk_window_set_wmclass (GTK_WINDOW (self), id, id);
 }
 
 static void
