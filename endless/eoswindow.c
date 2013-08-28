@@ -369,6 +369,26 @@ eos_window_get_property (GObject    *object,
 }
 
 static void
+set_application (EosWindow *self,
+                 EosApplication *application)
+{
+  self->priv->application = application;
+  gtk_window_set_application (GTK_WINDOW (self),
+                              GTK_APPLICATION (self->priv->application));
+  if (self->priv->application == NULL)
+    {
+      g_error ("In order to create a window, you must have an application "
+               "for it to connect to.");
+      return;
+    }
+
+  /* Application's WM_CLASS hint should be the application ID */
+  const gchar *id;
+  id = g_application_get_application_id (G_APPLICATION (application));
+  gtk_window_set_wmclass (GTK_WINDOW (self), id, id);
+}
+
+static void
 eos_window_set_property (GObject      *object,
                          guint         property_id,
                          const GValue *value,
@@ -379,12 +399,7 @@ eos_window_set_property (GObject      *object,
   switch (property_id)
     {
     case PROP_APPLICATION:
-      self->priv->application = g_value_get_object (value);
-      gtk_window_set_application (GTK_WINDOW (self),
-                                  GTK_APPLICATION (self->priv->application));
-      if (self->priv->application == NULL)
-        g_error ("In order to create a window, you must have an application "
-                 "for it to connect to.");
+      set_application (self, g_value_get_object (value));
       break;
 
     case PROP_PAGE_MANAGER:
