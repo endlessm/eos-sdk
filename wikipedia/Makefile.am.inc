@@ -45,54 +45,10 @@ js_sources = \
 	wikipedia/widgets/category_layout_manager.js \
 	wikipedia/widgets/category_selector_view.js \
 	wikipedia/views/domain_wiki_view.js \
-	wikipedia/widgets/title_label_view.js \
 	wikipedia/WikipediaWebView.js \
-	$(NULL)
-
-parafernalia_sources = \
-	wikipedia/views/css/first_load.css \
-	wikipedia/views/css/main.css \
-	wikipedia/views/css/nolinks.css \
-	wikipedia/views/css/second_load.css \
-	wikipedia/views/css/wikipedia.css \
-	wikipedia/views/fonts/BentonSans-Bold.eot \
-	wikipedia/views/fonts/BentonSans-Bold.svg \
-	wikipedia/views/fonts/BentonSans-Bold.ttf \
-	wikipedia/views/fonts/BentonSans-Bold.woff \
-	wikipedia/views/fonts/BentonSans-Book.eot \
-	wikipedia/views/fonts/BentonSans-Book.svg \
-	wikipedia/views/fonts/BentonSans-Book.ttf \
-	wikipedia/views/fonts/BentonSans-Book.woff \
-	wikipedia/views/fonts/BentonSans-Medium.eot \
-	wikipedia/views/fonts/BentonSans-Medium.svg \
-	wikipedia/views/fonts/BentonSans-Medium.ttf \
-	wikipedia/views/fonts/BentonSans-Medium.woff \
-	wikipedia/views/fonts/BentonSans-Regular.eot \
-	wikipedia/views/fonts/BentonSans-Regular.svg \
-	wikipedia/views/fonts/BentonSans-Regular.ttf \
-	wikipedia/views/fonts/BentonSans-Regular.woff \
-	wikipedia/views/fonts/BentonSans-Thin.eot \
-	wikipedia/views/fonts/BentonSans-Thin.svg \
-	wikipedia/views/fonts/BentonSans-Thin.ttf \
-	wikipedia/views/fonts/BentonSans-Thin.woff \
-	wikipedia/views/fonts/LinLibertine_R.eot \
-	wikipedia/views/fonts/LinLibertine_R.svg \
-	wikipedia/views/fonts/LinLibertine_R.ttf \
-	wikipedia/views/fonts/LinLibertine_R.woff \
-	wikipedia/views/fonts/MinionPro-Regular.eot \
-	wikipedia/views/fonts/MinionPro-Regular.svg \
-	wikipedia/views/fonts/MinionPro-Regular.ttf \
-	wikipedia/views/fonts/MinionPro-Regular.woff \
-	wikipedia/views/images/bg-main-content.png \
-	wikipedia/views/images/hr-separate.png \
-	wikipedia/views/images/index_list_arrow-down.svg \
-	wikipedia/views/images/title-line.jpg \
-	wikipedia/views/js/jquery-min.js \
-	wikipedia/views/js/main.js \
 	$(NULL)
 
 gjsmodulesdir = $(datadir)/gjs-1.0
 nobase_dist_gjsmodules_DATA = \
 	$(js_sources) \
-	$(parafernalia_sources) \
 	$(NULL)
