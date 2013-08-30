@@ -516,6 +516,15 @@ eos_window_forall (GtkContainer *container,
                                                          callback_data);
 }
 
+/* Our default delete event handler destroys the window. */
+static gboolean
+eos_window_default_delete (GtkWidget* window,
+                     gpointer user_data)
+{
+  gtk_widget_destroy (GTK_WIDGET (window));
+  return FALSE;
+}
+
 static void
 eos_window_class_init (EosWindowClass *klass)
 {
@@ -537,6 +546,7 @@ eos_window_class_init (EosWindowClass *klass)
   widget_class->unmap = eos_window_unmap;
   widget_class->show = eos_window_show;
   container_class->forall = eos_window_forall;
+  widget_class->delete_event = eos_window_default_delete;
 
   /**
    * EosWindow:application:
@@ -581,7 +591,10 @@ on_close_clicked_cb (GtkWidget* top_bar,
 {
   if (user_data != NULL)
     {
-      gtk_widget_destroy (GTK_WIDGET (user_data));
+      // We don't actually care about the return value, the default "delete-event" handler
+      // will take care of closing windows for us
+      gboolean dummy = FALSE;
+      g_signal_emit_by_name (G_OBJECT (user_data), "delete-event", NULL, &dummy);
     }
 }
 
