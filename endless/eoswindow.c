@@ -381,11 +381,6 @@ set_application (EosWindow *self,
                "for it to connect to.");
       return;
     }
-
-  /* Application's WM_CLASS hint should be the application ID */
-  const gchar *id;
-  id = g_application_get_application_id (G_APPLICATION (application));
-  gtk_window_set_wmclass (GTK_WINDOW (self), id, id);
 }
 
 static void

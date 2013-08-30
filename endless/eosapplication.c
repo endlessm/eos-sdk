@@ -146,6 +146,13 @@ eos_application_window_removed (GtkApplication *application,
 }
 
 static void
+on_app_id_set (EosApplication *self)
+{
+  const gchar *id = g_application_get_application_id (G_APPLICATION (self));
+  g_set_prgname (id);
+}
+
+static void
 eos_application_class_init (EosApplicationClass *klass)
 {
   GApplicationClass *g_application_class = G_APPLICATION_CLASS (klass);
@@ -163,6 +170,8 @@ static void
 eos_application_init (EosApplication *self)
 {
   self->priv = APPLICATION_PRIVATE (self);
+  g_signal_connect (self, "notify::application-id",
+                    G_CALLBACK (on_app_id_set), self);
 }
 
 /* Public API */
