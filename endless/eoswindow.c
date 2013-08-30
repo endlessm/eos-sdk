@@ -173,7 +173,6 @@ update_page_left_topbar (EosWindow *self)
       GtkWidget *left_topbar_widget = 
         GTK_WIDGET (eos_page_manager_get_page_left_topbar_widget (pm, page));
       eos_top_bar_set_left_widget (tb, left_topbar_widget);
-      gtk_widget_show (self->priv->top_bar);
     }
   else
     {
