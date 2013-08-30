@@ -30,7 +30,7 @@ const PrebuiltArticlesPage = new Lang.Class({
         this._wiki_view = new EndlessWikipedia.WikipediaWebView({
             expand:true,
             hide_links:true
-        }, []);
+        });
 
         this.parent(props);
 
@@ -39,6 +39,10 @@ const PrebuiltArticlesPage = new Lang.Class({
         // Add style contexts for CSS
         let context = this.get_style_context();
         context.add_class(EndlessWikipedia.STYLE_CLASS_ARTICLES_PAGE);
+    },
+
+    setShowableLinks: function(linked_articles){
+        this._wiki_view.setShowableLinks(linked_articles);
     },
 
     get article_title() {

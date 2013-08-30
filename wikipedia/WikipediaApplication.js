@@ -33,6 +33,13 @@ const WikipediaApplication = new Lang.Class({
             'Application Base Path',
             'Path to base directory where execution began',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            ''),
+
+        // resource:// URI for the linked articles JSON file
+        'linked-articles-uri': GObject.ParamSpec.string('linked-articles-uri',
+            'Linked articles file URI',
+            'URI for the data file describing which articles can have their links shown',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
             '')
     },
 

@@ -192,6 +192,10 @@ const DomainWikiView = new Lang.Class({
         this._front_page.setCategories(categories);
     },
 
+    set_showable_links: function(linked_articles){
+        this._article_view.setShowableLinks(linked_articles);
+    },
+
     _onCategoryClicked: function(page, title, index) {
         this.emit('category-chosen', title, index);
     },
