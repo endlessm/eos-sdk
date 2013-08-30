@@ -150,6 +150,13 @@ on_app_id_set (EosApplication *self)
 {
   const gchar *id = g_application_get_application_id (G_APPLICATION (self));
   g_set_prgname (id);
+
+  /* Just in case, since g_set_prgname() does not always update the GDK
+  program class, under mysterious circumstances */
+  gchar *capitalized_id = g_strdup (id);
+  if (capitalized_id != NULL && capitalized_id[0] != '\0')
+    capitalized_id[0] = g_ascii_toupper (capitalized_id[0]);
+  gdk_set_program_class (capitalized_id);
 }
 
 static void
