@@ -21,7 +21,8 @@ const PrebuiltWikipediaApplication = new Lang.Class({
     vfunc_startup: function() {
         this.parent();
         this._domain_wiki_view = new DomainWikiView.DomainWikiView(this);
-        let filename = this.application_uri;
-        this._domain_wiki_presenter = new DomainWikiPresenter.DomainWikiPresenter(this._domain_wiki_model, this._domain_wiki_view, filename);
+        let app_filename = this.application_uri;
+        let linked_articles_filename = this.linked_articles_uri;
+        this._domain_wiki_presenter = new DomainWikiPresenter.DomainWikiPresenter(this._domain_wiki_model, this._domain_wiki_view, app_filename, linked_articles_filename);
     }
 });

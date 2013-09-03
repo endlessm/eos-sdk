@@ -18,20 +18,22 @@ const DomainWikiPresenter = new Lang.Class({
     Name: "DomainWikiPresenter",
     Extends: GObject.Object,
 
-    _init: function(model, view, filename) {
+    _init: function(model, view, app_filename, linked_articles_filename) {
         this._domain_wiki_model = model;
         this._domain_wiki_view = view;
         this._domain_wiki_view.set_presenter(this)
         this._domain_wiki_view.connect('category-chosen', Lang.bind(this, this._onCategoryClicked));
         this._domain_wiki_view.connect('article-chosen', Lang.bind(this, this._onArticleClicked));
 
-        this.initFromJsonFile(filename);
+        this.initAppInfoFromJsonFile(app_filename);
+        this.initPageRankFromJsonFile(linked_articles_filename);
 
-        let categories = this._domain_wiki_model.getCategories();
+        this._domain_wiki_view.set_categories(this._domain_wiki_model.getCategories());
 
-        this._domain_wiki_view.set_categories(categories);
+        let linked_articles = this._domain_wiki_model.getLinkedArticles();
+        let to_show = linked_articles["app_articles"].concat(linked_articles["extra_linked_articles"]);
+        this._domain_wiki_view.set_showable_links(to_show);
     },
-
 
     initArticleModels: function(articles) {
         let _articles = new Array();
@@ -44,7 +46,12 @@ const DomainWikiPresenter = new Lang.Class({
       return _articles;
     },
 
-    initFromJsonFile: function(filename) {
+    initPageRankFromJsonFile: function(filename){
+        let articles = JSON.parse(Utils.load_file_from_resource(filename));
+        this._domain_wiki_model.setLinkedArticles(articles);
+    },
+
+    initAppInfoFromJsonFile: function(filename) {
         let app_content = JSON.parse(Utils.load_file_from_resource(filename));
         this._lang_code = filename.substring(0, 2);
         let categories = app_content['categories'];
