@@ -57,8 +57,10 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = @EOS_SDK_API_NAME@.pc
 DISTCLEANFILES += @EOS_SDK_API_NAME@.pc
 
-# Open Endless Wikipedia SDK library
+# SDK sublibraries
+gjsmodulesdir = $(datadir)/gjs-1.0
 include $(top_srcdir)/wikipedia/Makefile.am.inc
+include $(top_srcdir)/webhelper/Makefile.am.inc
 
 # # # INTROSPECTION FILES # # #
 

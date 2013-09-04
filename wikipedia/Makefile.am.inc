@@ -48,7 +48,7 @@ js_sources = \
 	wikipedia/WikipediaWebView.js \
 	$(NULL)
 
-gjsmodulesdir = $(datadir)/gjs-1.0
-nobase_dist_gjsmodules_DATA = \
+wikipediadir = $(gjsmodulesdir)
+nobase_dist_wikipedia_DATA = \
 	$(js_sources) \
 	$(NULL)
