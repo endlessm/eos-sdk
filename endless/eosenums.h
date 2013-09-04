@@ -7,6 +7,10 @@
 #error "Please do not include this header file directly."
 #endif
 
+#include <glib-object.h>
+
+G_BEGIN_DECLS
+
 /* Shared typedefs for enumerations */
 
 /*
@@ -36,5 +40,18 @@ typedef enum
   EOS_ACTION_BUTTON_SIZE_NUM_SIZES
 } EosActionButtonSize;
 
+#define EOS_TYPE_FLEXY_SHAPE		(eos_flexy_shape_get_type ())
+
+typedef enum
+{
+  EOS_FLEXY_SHAPE_SMALL,
+  EOS_FLEXY_SHAPE_MEDIUM_HORIZONTAL,
+  EOS_FLEXY_SHAPE_MEDIUM_VERTICAL,
+  EOS_FLEXY_SHAPE_LARGE
+} EosFlexyShape;
+
+GType eos_flexy_shape_get_type (void) G_GNUC_CONST;
+
+G_END_DECLS
 
 #endif /* EOS_ENUMS_H */
