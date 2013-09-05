@@ -36,7 +36,7 @@ const WikipediaWebView = new Lang.Class({
             false)
     },
 
-    _init: function(params, links_to_show) {
+    _init: function(params) {
         this.parent(params);
         // For debugging
         //let settings = this.get_settings();
@@ -44,11 +44,14 @@ const WikipediaWebView = new Lang.Class({
         //this.set_settings(settings);
         this.connect('context-menu', Lang.bind(this, function(){return true}));
 
-        this._links_to_show = links_to_show;
         this.connect('decide-policy',
             Lang.bind(this, this._onNavigation));
         this.connect('load-changed',
             Lang.bind(this, this._onLoadChange));
+    },
+
+    setShowableLinks: function(linked_articles){
+        this._links_to_show = linked_articles;
     },
 
     _getFullURL: function(base_url, params){

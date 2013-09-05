@@ -18,6 +18,14 @@ const DomainWikiModel = new Lang.Class({
         this.parent(params);
     },
 
+    setLinkedArticles:function(articles){
+        this._linked_articles = articles;
+    },
+
+    getLinkedArticles:function(){
+        return this._linked_articles;
+    },
+
     //categories should be a list of category models, already populated with article models.
     addCategories: function(categories){
         this._categories = categories;
