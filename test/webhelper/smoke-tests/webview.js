@@ -116,12 +116,12 @@ const TestApplication = new Lang.Class({
                               Lang.bind(this, function (web_view, status) {
                                   if (web_view.load_status == WebKit.LoadStatus.FINISHED) {
                                       // now we translate to Brazilian Portuguese
-                                      this._translateHTML (web_view, 'pt_BR');
+                                        this.translate_html(web_view);
                                   }
                               }));
 
         this._webview.connect('navigation-policy-decision-requested', 
-                              Lang.bind(this, this._onNavigationRequested));
+                              Lang.bind(this, this.web_actions_handler));
 
         this._page1 = new Gtk.ScrolledWindow();
         this._page1.add(this._webview);

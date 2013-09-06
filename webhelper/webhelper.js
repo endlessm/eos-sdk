@@ -16,13 +16,11 @@ const Application = new Lang.Class({
 
     _webActions: { },
 
-//  This callback does the translation from URI to action
-//  this._webview.connect('navigation-policy-decision-requested', 
-//  Lang.bind(this, this._webHelper.onNavigationRequested));
+    // This callback does the translation from URI to action
+    // webview.connect('navigation-policy-decision-requested',
+    //     Lang.bind(this, this.web_actions_handler));
 
-    _onNavigationRequested : function(web_view, frame, request,
-                                      navigation_action, policy_decision,
-                                      user_data) {
+    web_actions_handler: function(webview, frame, request, action, policy_decision) {
         let uri = request.get_uri();
 
         if(uri.indexOf(EOS_URI_SCHEME) == 0) {
@@ -69,7 +67,7 @@ const Application = new Lang.Class({
         return dom.get_element_by_id(id);
     },
 
-    _translateHTML: function(webview, lang) {
+    translate_html: function(webview) {
         let dom = webview.get_dom_document();
 
         // WebKit.DOMNodeList
