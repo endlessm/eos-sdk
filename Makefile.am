@@ -165,8 +165,13 @@ include $(top_srcdir)/test/Makefile.am
 TESTS = \
 	test/run-tests \
 	test/tools/eos-run-test/sanitycheck.js \
+	test/webhelper/testWebActions.js \
+	test/webhelper/testTranslate.js \
 	$(NULL)
 TEST_EXTENSIONS = .js
 JS_LOG_COMPILER = tools/eos-run-test
+AM_JS_LOG_FLAGS = \
+	--include-path=$(top_srcdir)/webhelper \
+	$(NULL)
 LOG_COMPILER = gtester
 AM_LOG_FLAGS = -k --verbose

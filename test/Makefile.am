@@ -27,5 +27,7 @@ test_smoke_tests_hello_LDADD = $(TEST_LIBS)
 
 javascript_tests = \
 	test/tools/eos-run-test/sanitycheck.js \
+	test/webhelper/testTranslate.js \
+	test/webhelper/testWebActions.js \
 	$(NULL)
 EXTRA_DIST += $(javascript_tests)
