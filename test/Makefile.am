@@ -24,3 +24,8 @@ test_run_tests_LDADD = $(TEST_LIBS)
 test_smoke_tests_hello_SOURCES = test/smoke-tests/hello.c
 test_smoke_tests_hello_CPPFLAGS = $(TEST_FLAGS)
 test_smoke_tests_hello_LDADD = $(TEST_LIBS)
+
+javascript_tests = \
+	test/tools/eos-run-test/sanitycheck.js \
+	$(NULL)
+EXTRA_DIST += $(javascript_tests)
