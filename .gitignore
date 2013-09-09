@@ -117,7 +117,8 @@ pip-log.txt
 .coverage
 .tox
 nosetests.xml
-test-results.xml
+*.log
+gtkdoc-test-dummy-file*
 
 # Translations
 *.mo

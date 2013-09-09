@@ -86,12 +86,17 @@ EXTRA_DIST +=
 # for --rebuild-sections in $(SCAN_OPTIONS) e.g. $(DOC_MODULE)-sections.txt
 #DISTCLEANFILES +=
 
-# Comment this out if you want 'make check' to test you doc status
-# and run some sanity checks
 if ENABLE_GTK_DOC
-TESTS_ENVIRONMENT = cd $(srcdir) && \
-  DOC_MODULE=$(DOC_MODULE) DOC_MAIN_SGML_FILE=$(DOC_MAIN_SGML_FILE) \
-  SRCDIR=$(abs_srcdir) BUILDDIR=$(abs_builddir)
-TESTS = $(GTKDOC_CHECK)
+AM_TESTS_ENVIRONMENT = \
+	export DOC_MODULE=$(DOC_MODULE); \
+	export DOC_MAIN_SGML_FILE=$(DOC_MAIN_SGML_FILE); \
+	export SRCDIR=$(abs_srcdir); \
+	export BUILDDIR=$(abs_builddir)
+TESTS = gtkdoc-test-dummy-file
+LOG_COMPILER = cd $(srcdir) && $(GTKDOC_CHECK)
+
+# Need a dummy file to feed to GTKDOC_CHECK in the parallel test harness
+gtkdoc-test-dummy-file:
+	$(AM_V_GEN)touch $@
 endif
 
