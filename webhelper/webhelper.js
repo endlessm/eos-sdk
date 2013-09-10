@@ -23,38 +23,39 @@ const Application = new Lang.Class({
     web_actions_handler: function(webview, frame, request, action, policy_decision) {
         let uri = request.get_uri();
 
-        if(uri.indexOf(EOS_URI_SCHEME) == 0) {
-            // get the name and parameters for the desired function
-            let f_call = uri.substring(EOS_URI_SCHEME.length, uri.length).split('?');
-            var function_name = f_call[0];
-            var parameters = {};
-
-            if(f_call[1]) {
-                // there are parameters
-                let params = f_call[1].split('&');
-                params.forEach(function(entry) {
-                    let param = entry.split('=');
-
-                    if(param.length == 2) {
-                        param[0] = decodeURIComponent(param[0]);
-                        param[1] = decodeURIComponent(param[1]);
-                        // and now we add it...
-                        parameters[param[0]] = param[1];
-                    }
-                });
-            }
-
-            if(this._webActions[function_name])
-                Lang.bind(this, this._webActions[function_name])(parameters);
-            else
-                print('Unknown function '+function_name);
-
-            policy_decision.ignore();
-            return true;
-        } else {
+        if(uri.indexOf(EOS_URI_SCHEME) !== 0) {
             // this is a regular URL, just navigate there
             return false;
         }
+
+        // get the name and parameters for the desired function
+        let f_call = uri.substring(EOS_URI_SCHEME.length, uri.length).split('?');
+        var function_name = f_call[0];
+        var parameters = {};
+
+        if(f_call[1]) {
+            // there are parameters
+            let params = f_call[1].split('&');
+            params.forEach(function(entry) {
+                let param = entry.split('=');
+
+                if(param.length == 2) {
+                    param[0] = decodeURIComponent(param[0]);
+                    param[1] = decodeURIComponent(param[1]);
+                    // and now we add it...
+                    parameters[param[0]] = param[1];
+                }
+            });
+        }
+
+        if(this._webActions[function_name])
+            Lang.bind(this, this._webActions[function_name])(parameters);
+        else
+            throw new Error("Undefined WebHelper action '%s'. Did you add it " +
+                "to your app's _webActions object?".format(function_name));
+
+        policy_decision.ignore();
+        return true;
     },
 
 //  convenience functions
