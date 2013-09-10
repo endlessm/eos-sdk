@@ -118,7 +118,6 @@ pip-log.txt
 .tox
 nosetests.xml
 *.log
-gtkdoc-test-dummy-file*
 
 # Translations
 *.mo

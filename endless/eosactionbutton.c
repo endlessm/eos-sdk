@@ -421,6 +421,15 @@ eos_action_button_get_label (EosActionButton *button)
   return priv->label;
 }
 
+/**
+ * eos_action_button_set_label_position:
+ * @button: the button
+ * @position: position of the label: top, bottom, left or right
+ *
+ * Changes the position of the label to be above, below, or to one side of the
+ * action button.
+ * See #EosActionButton:label-position for more information.
+ */
 void
 eos_action_button_set_label_position (EosActionButton *button,
                                       GtkPositionType position)
@@ -458,6 +467,15 @@ eos_action_button_set_label_position (EosActionButton *button,
     }
 }
 
+/**
+ * eos_action_button_get_label_position:
+ * @button: the button
+ *
+ * Gets the position of the label respective to the button.
+ * See #EosActionButton:label-position for more information.
+ *
+ * Returns: the position of the label: top, bottom, left, or right
+ */
 GtkPositionType
 eos_action_button_get_label_position (EosActionButton *button)
 {
