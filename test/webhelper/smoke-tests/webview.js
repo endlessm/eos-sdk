@@ -52,7 +52,7 @@ using the &lt;input&gt;\'s ID</a> \
 <p><a href="endless://addStars?id=starspan">I want \
 stars!</a> <span id="starspan"/></p> \
 \
-<p>This is text that will be translated: <span name="translatable">Hello, \
+<p>This is text that will be italicized: <span name="translatable">Hello, \
 world!</span></p> \
 \
 </body> \
@@ -61,6 +61,10 @@ world!</span></p> \
 const TestApplication = new Lang.Class({
     Name: 'TestApplication',
     Extends: WebHelper.Application,
+
+    _translationFunction: function(string) {
+        return string.italics();
+    },
 
     /* *** ACTIONS AVAILABLE FROM THE WEB VIEW *** */
 

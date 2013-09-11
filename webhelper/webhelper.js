@@ -78,8 +78,11 @@ const Application = new Lang.Class({
             // WebKit.DOMNode
             let element = translatable.item(i);
 
-            // TODO here is where we would do the translation
-            element.inner_html = '<i>' + element.inner_text + '</i>';
+            // Translate the text
+            if(typeof this._translationFunction !== 'function')
+                throw new Error("No suitable translation function was found. " +
+                    "Did you forget to set '_translationFunction' on your app?");
+            element.inner_html = this._translationFunction(element.inner_text);
         }
     }
 });
