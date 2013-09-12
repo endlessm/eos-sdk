@@ -47,3 +47,13 @@ Depends: eos-sdk (= ${binary:Version}),
          gjs
 Description: Open Endless SDK Wikipedia library
  GJS libraries for the Open Endless SDK Wikipedia library
+
+Package: eos-sdk-webhelper
+Section: libs
+Architecture: any
+Depends: eos-sdk (= ${binary:Version}),
+         gjs,
+         gir1.2-webkit-3.0
+Description: Open Endless SDK web helper
+ Internal convenience library to simplify creation of web apps using the
+ Open Endless SDK.
