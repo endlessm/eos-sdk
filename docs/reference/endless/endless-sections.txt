@@ -121,6 +121,8 @@ eos_action_button_get_label
 eos_action_button_set_label
 eos_action_button_get_size
 eos_action_button_set_size
+eos_action_button_get_label_position
+eos_action_button_set_label_position
 EosActionButtonSize
 <SUBSECTION Standard>
 EOS_ACTION_BUTTON
