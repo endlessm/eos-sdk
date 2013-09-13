@@ -11,6 +11,7 @@ EOS_ENUM_VALUE
 <FILE>application</FILE>
 EosApplication
 eos_application_new
+eos_application_get_config_dir
 <SUBSECTION Standard>
 EosApplicationClass
 EOS_APPLICATION
