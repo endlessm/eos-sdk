@@ -7,7 +7,7 @@ const Gtk = imports.gi.Gtk;
 const WebKit = imports.gi.WebKit;
 
 // WebHelper.js must be copied somewhere in GJS's imports.searchPath
-const WebHelper = imports.WebHelper; 
+const WebHelper = imports.webhelper;
 
 const TEST_APPLICATION_ID = 'com.endlessm.example.test-webview';
 
