@@ -1,0 +1,16 @@
+Some basic animation tests to help see what kinds of animation are possible on
+what architectures.
+
+Usage:
+  CLUTTER_SHOW_FPS=1 gjs clutter.js [crossfade/slide] [1080/720]
+  GDK_DEBUG=frames gjs gtk.js [crossfade/slide] [1080/720]
+
+You can choose between a cross fade and a slide, and a 1080 or 720 image asset
+to animate. (The screen resolution and not the asset size should really
+determine frame rate, but just in case.)
+
+Clutter will print out a proper frame rate, whereas GTK will print out
+a series of intervals between draw updates. During an animation these 
+should be at 16 milliseconds for 60 FPS.
+
+Click to trigger a slide. Press any key to quit.
