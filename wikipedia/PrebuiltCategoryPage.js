@@ -53,11 +53,6 @@ const PrebuiltCategoryPage = new Lang.Class({
         this._title = null;
         this._description = null;
 
-        this._frame = new Gtk.Frame({
-            name: "category_frame",
-            expand: true,
-        });
-
         this._layout_grid = new Gtk.Grid({
             orientation: Gtk.Orientation.HORIZONTAL,
             expand: true,
@@ -127,12 +122,13 @@ const PrebuiltCategoryPage = new Lang.Class({
         this._layout_grid.add(this._splash_separator);
         this._layout_grid.add(this._vbox);
         
-        this._overlay = new Gtk.Overlay({halign:Gtk.Align.END});
+        this._overlay = new Gtk.Overlay({
+            halign:Gtk.Align.END
+        });
         this._overlay.add(this._layout_grid);
         this._overlay.add_overlay(this._submenu_separator);
 
-        this._frame.add(this._overlay);
-        this.add(this._frame);
+        this.add(this._overlay);
         this._category_provider = new Gtk.CssProvider();
 
     },
@@ -165,7 +161,7 @@ const PrebuiltCategoryPage = new Lang.Class({
         this._image_uri = value;
         let frame_css = "#category_frame{background-image: url('" + value + "');background-repeat:no-repeat;background-size:cover;}";
         this._category_provider.load_from_data(frame_css);
-        let context = this._frame.get_style_context();
+        let context = this.get_style_context();
         context.add_provider(this._category_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
     }
 });

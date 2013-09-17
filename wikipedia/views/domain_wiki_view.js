@@ -129,7 +129,9 @@ const DomainWikiView = new Lang.Class({
         this._category_page = new Gtk.Grid({
             orientation: Gtk.Orientation.HORIZONTAL
         });
-        this._category_view = new EndlessWikipedia.PrebuiltCategoryPage();
+        this._category_view = new EndlessWikipedia.PrebuiltCategoryPage({
+            name: "category_frame"
+        });
         // _category_article_list is eventually going to be the same widget as
         // _article_list, so that's why it's not built into the
         // PrebuiltCategoryPage
