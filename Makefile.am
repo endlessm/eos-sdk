@@ -146,6 +146,10 @@ gjsoverridedir = ${datadir}/gjs-1.0/overrides
 dist_gjsoverride_DATA = 		\
 	overrides/Endless.js
 
+# # # SDK TOOLS # # #
+
+include $(top_srcdir)/tools/Makefile.am.inc
+
 # # # INSTALLED M4 MACROS # # #
 
 m4dir = ${datadir}/aclocal
@@ -156,8 +160,3 @@ m4_DATA = \
 # # # TESTS # # #
 
 include $(top_srcdir)/test/Makefile.am
-
-# Run tests when running 'make check'
-TESTS = test/run-tests
-LOG_COMPILER = gtester
-AM_LOG_FLAGS = -k --verbose
