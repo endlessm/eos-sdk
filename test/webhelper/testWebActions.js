@@ -45,12 +45,10 @@ function setUp() {
 
 function testWebActionIsCalled() {
     let actionWasCalled = false;
-    app._webActions = {
-        quitApplication: function() {
-            actionWasCalled = true;
-            app.quit();
-        }
-    };
+    app.define_web_action('quitApplication', function() {
+        actionWasCalled = true;
+        app.quit();
+    });
     app.webActionToTest = 'endless://quitApplication';
     app.run([]);
     assertTrue(actionWasCalled);
@@ -58,12 +56,10 @@ function testWebActionIsCalled() {
 
 function testWebActionIsCalledWithParameter() {
     let actionParameter;
-    app._webActions = {
-        getParameterAndQuit: function(dict) {
-            actionParameter = dict['param'];
-            app.quit();
-        }
-    };
+    app.define_web_action('getParameterAndQuit', function(dict) {
+        actionParameter = dict['param'];
+        app.quit();
+    });
     app.webActionToTest = 'endless://getParameterAndQuit?param=value';
     app.run([]);
     assertEquals('value', actionParameter);
@@ -71,14 +67,12 @@ function testWebActionIsCalledWithParameter() {
 
 function testWebActionIsCalledWithManyParameters() {
     let firstParameter, secondParameter, thirdParameter;
-    app._webActions = {
-        getParametersAndQuit: function(dict) {
-            firstParameter = dict['first'];
-            secondParameter = dict['second'];
-            thirdParameter = dict['third'];
-            app.quit();
-        }
-    };
+    app.define_web_action('getParametersAndQuit', function(dict) {
+        firstParameter = dict['first'];
+        secondParameter = dict['second'];
+        thirdParameter = dict['third'];
+        app.quit();
+    });
     app.webActionToTest = 'endless://getParametersAndQuit?first=thefirst&second=thesecond&third=thethird';
     app.run([]);
     assertEquals('thefirst', firstParameter);
@@ -89,12 +83,10 @@ function testWebActionIsCalledWithManyParameters() {
 function testParameterNameIsUriDecoded() {
     let expectedParameter = 'päräm💩';
     let parameterWasFound = false;
-    app._webActions = {
-        getUriDecodedParameterAndQuit: function(dict) {
-            parameterWasFound = (expectedParameter in dict);
-            app.quit();
-        }
-    };
+    app.define_web_action('getUriDecodedParameterAndQuit', function(dict) {
+        parameterWasFound = (expectedParameter in dict);
+        app.quit();
+    });
     app.webActionToTest = 'endless://getUriDecodedParameterAndQuit?p%C3%A4r%C3%A4m%F0%9F%92%A9=value';
     app.run([]);
     assertTrue(parameterWasFound);
@@ -103,12 +95,10 @@ function testParameterNameIsUriDecoded() {
 function testParameterValueIsUriDecoded() {
     let expectedValue = 'válué💩';
     let actualValue;
-    app._webActions = {
-        getUriDecodedValueAndQuit: function(dict) {
-            actualValue = dict['param'];
-            app.quit();
-        }
-    };
+    app.define_web_action('getUriDecodedValueAndQuit', function(dict) {
+        actualValue = dict['param'];
+        app.quit();
+    });
     app.webActionToTest = 'endless://getUriDecodedValueAndQuit?param=v%C3%A1lu%C3%A9%F0%9F%92%A9';
     app.run([]);
     assertEquals(expectedValue, actualValue);
@@ -124,17 +114,34 @@ function testParameterValueIsUriDecoded() {
 function testWebActionIsCalledWithBlankParameter() {
     let parameterWasFound = false;
     let parameterValue;
-    app._webActions = {
-        getBlankValueAndQuit: function(dict) {
-            parameterWasFound = ('param' in dict);
-            if(parameterWasFound)
-                parameterValue = dict['param'];
-            app.quit();
-        }
-    };
+    app.define_web_action('getBlankValueAndQuit', function(dict) {
+        parameterWasFound = ('param' in dict);
+        if(parameterWasFound)
+            parameterValue = dict['param'];
+        app.quit();
+    });
     app.webActionToTest = 'endless://getBlankValueAndQuit?param=';
     app.run([]);
     assertTrue(parameterWasFound);
     assertNotUndefined(parameterValue);
     assertEquals('', parameterValue);
+}
+
+function testDefineMultipleActionsOverride() {
+    let actionWasCalled = false;
+    app.define_web_actions({
+        quitApplication: function() {
+            actionWasCalled = true;
+            app.quit();
+        }
+    });
+    app.webActionToTest = 'endless://quitApplication';
+    app.run([]);
+    assertTrue(actionWasCalled);
+}
+
+function testDefineBadAction() {
+    assertRaises(function() {
+        app.define_web_action('badAction', 'not a function');
+    });
 }

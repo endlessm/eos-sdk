@@ -49,24 +49,47 @@ function setUp() {
 function testStringIsTranslated() {
     let translationFunctionWasCalled = false;
     let translationFunctionCalledWithString;
-    app._translationFunction = function(s) {
+    app.set_translation_function(function(s) {
         translationFunctionWasCalled = true;
         translationFunctionCalledWithString = s;
         return s;
-    };
+    });
     app.run([]);
     assertTrue(translationFunctionWasCalled);
     assertEquals('Translate Me', translationFunctionCalledWithString);
 }
 
-// The following two tests are commented out because GJS cannot catch exceptions
+// The following test is commented out because GJS cannot catch exceptions
 // across FFI interfaces (e.g. in GObject callbacks.)
 
 // function testMissingTranslationFunctionIsHandled() {
-//     assertRaises(app.run([]));
+//     assertRaises(function() {
+//         app.run([]);
+//     });
 // }
 
-// function testBadTranslationFunctionIsHandled() {
-//     app._translationFunction = "I am not a function";
-//     assertRaises(app.run([]));
-// }
+function testSetBadTranslationFunction() {
+    assertRaises(function() {
+        app.set_translation_function("I am not a function");
+    });
+}
+
+function testGetSetTranslationFunction() {
+    let translationFunction = function(string) {
+        return string;
+    };
+    app.set_translation_function(translationFunction);
+    let actualTranslationFunction = app.get_translation_function();
+    assertEquals(translationFunction, actualTranslationFunction);
+}
+
+function testTranslationFunctionIsNullByDefault() {
+    assertNull(app.get_translation_function());
+}
+
+function testGetSetNullTranslationFunction() {
+    app.set_translation_function(function (s) { return s; });
+    assertNotNull(app.get_translation_function());
+    app.set_translation_function(null);
+    assertNull(app.get_translation_function());
+}

@@ -60,58 +60,62 @@ const TestApplication = new Lang.Class({
     Name: 'TestApplication',
     Extends: WebHelper.Application,
 
-    _translationFunction: function(string) {
-        return string.italics();
-    },
-
     /* *** ACTIONS AVAILABLE FROM THE WEB VIEW *** */
 
-    _webActions: {
-        /* dict['name'] is the name of the page to move to */
-        moveToPage: function(dict) {
-            this._pm.visible_page_name = dict['name'];
-        },
+    /* dict['name'] is the name of the page to move to */
+    moveToPage: function(dict) {
+        this._pm.visible_page_name = dict['name'];
+    },
 
-        /* dict['msg'] is the message to display */
-        showMessageFromParameter: function(dict) {
-            let dialog = new Gtk.MessageDialog({
-                buttons: Gtk.ButtonsType.CLOSE,
-                message_type: Gtk.MessageType.INFO,
-                text: dict['msg']
-            });
-            dialog.set_transient_for(this._window);
-            dialog.run();
-            dialog.destroy();
-        },
+    /* dict['msg'] is the message to display */
+    showMessageFromParameter: function(dict) {
+        let dialog = new Gtk.MessageDialog({
+            buttons: Gtk.ButtonsType.CLOSE,
+            message_type: Gtk.MessageType.INFO,
+            text: dict['msg']
+        });
+        dialog.set_transient_for(this._window);
+        dialog.run();
+        dialog.destroy();
+    },
 
-        /* dict['id'] is the ID of the input field to use */
-        showMessageFromInputField: function(dict) {
-            let input = this._getElementById(this._webview, dict['id']);
+    /* dict['id'] is the ID of the input field to use */
+    showMessageFromInputField: function(dict) {
+        let input = this._getElementById(this._webview, dict['id']);
 
-            // WebKitDOMHTMLInputElement
-            let msg = input.get_value();
+        // WebKitDOMHTMLInputElement
+        let msg = input.get_value();
 
-            let dialog = new Gtk.MessageDialog({
-                buttons: Gtk.ButtonsType.CLOSE,
-                message_type: Gtk.MessageType.INFO,
-                text: msg
-            });
-            dialog.set_transient_for(this._window);
-            dialog.run();
-            dialog.destroy();
-        },
+        let dialog = new Gtk.MessageDialog({
+            buttons: Gtk.ButtonsType.CLOSE,
+            message_type: Gtk.MessageType.INFO,
+            text: msg
+        });
+        dialog.set_transient_for(this._window);
+        dialog.run();
+        dialog.destroy();
+    },
 
-        /* dict['id'] is the ID of the element to use */
-        addStars: function(dict) {
-            let e = this._getElementById(this._webview, dict['id']);
-            e.inner_text += '★ ';
-        }
+    /* dict['id'] is the ID of the element to use */
+    addStars: function(dict) {
+        let e = this._getElementById(this._webview, dict['id']);
+        e.inner_text += '★ ';
     },
 
     /* *************************** */
 
     vfunc_startup: function() {
         this.parent();
+
+        this.set_translation_function(function(string) {
+            return string.italics();
+        });
+        this.define_web_actions({
+            moveToPage: this.moveToPage,
+            showMessageFromParameter: this.showMessageFromParameter,
+            showMessageFromInputField: this.showMessageFromInputField,
+            addStars: this.addStars
+        });
 
         this._webview = new WebKit.WebView();
         this._webview.load_string(TEST_HTML, 'text/html', 'UTF-8', 'file://');
