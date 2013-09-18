@@ -743,6 +743,8 @@ eos_flexy_grid_enter_notify (GtkWidget        *widget,
                                                               event->x,
                                                               event->y);
   eos_flexy_grid_update_cell_prelight (EOS_FLEXY_GRID (widget), cell);
+
+  return GDK_EVENT_PROPAGATE;
 }
 
 static gboolean
