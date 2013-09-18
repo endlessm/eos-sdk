@@ -11,9 +11,60 @@ const WebHelper = imports.webhelper;
 
 const TEST_APPLICATION_ID = 'com.endlessm.example.test-webview';
 
+const TEST_HTML = '\
+<html> \
+<head> \
+<title>First page</title> \
+<style> \
+p, form { \
+    width: 50%; \
+    padding: 1em; \
+    background: #FFFFFF; \
+} \
+body { \
+    background: #EEEEEE; \
+} \
+</style> \
+</head> \
+\
+<body> \
+<h1>First page</h1> \
+\
+<p><a href="endless://moveToPage?name=page2">Move to page 2</a></p> \
+\
+<p><a \
+href="endless://showMessageFromParameter?msg=This%20is%20a%20message%20from%20the%20URL%20parameter">Show \
+message from parameter in this URL</a></p> \
+\
+<form action="endless://showMessageFromParameter"> \
+<input name="msg" value="I am in a form!"/> \
+<input type="submit" value="Show message using a form"/> \
+</form> \
+\
+<p> \
+<input id="inputformessage" value="my ID is inputformessage"/> \
+<a href="endless://showMessageFromInputField?id=inputformessage">Show message \
+using the &lt;input&gt;\'s ID</a> \
+</p> \
+\
+<p><a href="http://wikipedia.org">Regular link to a Web site</a></p> \
+\
+<p><a href="endless://addStars?id=starspan">I want \
+stars!</a> <span id="starspan"/></p> \
+\
+<p>This is text that will be italicized: <span name="translatable">Hello, \
+world!</span></p> \
+\
+</body> \
+</html>';
+
 const TestApplication = new Lang.Class({
     Name: 'TestApplication',
     Extends: WebHelper.Application,
+
+    _translationFunction: function(string) {
+        return string.italics();
+    },
 
     /* *** ACTIONS AVAILABLE FROM THE WEB VIEW *** */
 
@@ -64,21 +115,17 @@ const TestApplication = new Lang.Class({
         this.parent();
 
         this._webview = new WebKit.WebView();
-
-        let cwd = GLib.get_current_dir();
-        let target = cwd + '/test/smoke-tests/webview/first_page.html';
-        this._webview.load_uri(GLib.filename_to_uri(target, null));
-
-        this._webview.connect('notify::load-status', 
+        this._webview.load_string(TEST_HTML, 'text/html', 'UTF-8', 'file://');
+        this._webview.connect('notify::load-status',
                               Lang.bind(this, function (web_view, status) {
                                   if (web_view.load_status == WebKit.LoadStatus.FINISHED) {
                                       // now we translate to Brazilian Portuguese
-                                      this._translateHTML (web_view, 'pt_BR');
+                                        this.translate_html(web_view);
                                   }
                               }));
 
         this._webview.connect('navigation-policy-decision-requested', 
-                              Lang.bind(this, this._onNavigationRequested));
+                              Lang.bind(this, this.web_actions_handler));
 
         this._page1 = new Gtk.ScrolledWindow();
         this._page1.add(this._webview);

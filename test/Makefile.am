@@ -24,3 +24,23 @@ test_run_tests_LDADD = $(TEST_LIBS)
 test_smoke_tests_hello_SOURCES = test/smoke-tests/hello.c
 test_smoke_tests_hello_CPPFLAGS = $(TEST_FLAGS)
 test_smoke_tests_hello_LDADD = $(TEST_LIBS)
+
+javascript_tests = \
+	test/tools/eos-run-test/sanitycheck.js \
+	test/webhelper/testTranslate.js \
+	test/webhelper/testWebActions.js \
+	$(NULL)
+EXTRA_DIST += $(javascript_tests)
+
+# Run tests when running 'make check'
+TESTS = \
+	test/run-tests \
+	$(javascript_tests) \
+	$(NULL)
+TEST_EXTENSIONS = .js
+JS_LOG_COMPILER = tools/eos-run-test
+AM_JS_LOG_FLAGS = \
+	--include-path=$(top_srcdir)/webhelper \
+	$(NULL)
+LOG_COMPILER = gtester
+AM_LOG_FLAGS = -k --verbose

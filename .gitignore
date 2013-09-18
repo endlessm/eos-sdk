@@ -8,6 +8,7 @@ endless/eosresource.c
 endless/eosresource-private.h
 data/eos-wikipedia-domain.gresource
 wikipedia/config.js
+tools/eos-run-test
 
 *.py[cod]
 
