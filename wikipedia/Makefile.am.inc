@@ -31,7 +31,7 @@ js_sources = \
 	wikipedia/PrebuiltFrontPage.js \
 	wikipedia/PrebuiltWikipediaApplication.js \
 	wikipedia/widgets/SideBarButton.js \
-	wikipedia/widgets/TextButton.js \
+	wikipedia/widgets/ListTextButton.js \
 	wikipedia/config.js \
 	wikipedia/widgets/scaled_image.js \
 	wikipedia/utils.js \
