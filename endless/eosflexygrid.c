@@ -543,6 +543,7 @@ eos_flexy_grid_draw (GtkWidget *widget,
   GtkStyleContext *context;
   context = gtk_widget_get_style_context (widget);
   gtk_render_background (context, cr, 0, 0, allocation.width, allocation.height);
+  gtk_render_frame (context, cr, 0, 0, allocation.width, allocation.height);
 
   GTK_WIDGET_CLASS (eos_flexy_grid_parent_class)->draw (widget, cr);
 
