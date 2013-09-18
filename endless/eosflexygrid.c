@@ -366,7 +366,7 @@ eos_flexy_grid_get_preferred_height_for_width (GtkWidget *widget,
        iter = g_sequence_iter_next (iter))
     {
       EosFlexyGridCell *cell = g_sequence_get (iter);
-      int cell_height;
+      int cell_height, cell_width;
 
       if (!gtk_widget_get_visible (GTK_WIDGET (cell)))
         continue;
@@ -377,35 +377,38 @@ eos_flexy_grid_get_preferred_height_for_width (GtkWidget *widget,
         {
         case EOS_FLEXY_SHAPE_SMALL:
           /* b1 */
-          row_width += cell_size;
+          cell_width = cell_size;
           cell_height = cell_size;
           break;
 
         case EOS_FLEXY_SHAPE_MEDIUM_HORIZONTAL:
           /* b2h */
-          row_width += cell_size * 2;
+          cell_width = cell_size * 2;
           cell_height = cell_size;
           break;
 
         case EOS_FLEXY_SHAPE_MEDIUM_VERTICAL:
           /* b2v */
-          row_width += cell_size;
+          cell_width = cell_size;
           cell_height = cell_size * 2;
           break;
 
         case EOS_FLEXY_SHAPE_LARGE:
           /* b4 */
-          row_width += cell_size * 2;
+          cell_width = cell_size * 2;
           cell_height = cell_size * 2;
           break;
         }
+
+      row_width += cell_width;
 
       if (row_width > max_row_width)
         {
           height = row * row_height;
 
           row += 1;
-          row_width = 0;
+          row_width = cell_width;
+          row_height = MAX (cell_height, cell_size);
         }
       else
         row_height = MAX (row_height, cell_height);
