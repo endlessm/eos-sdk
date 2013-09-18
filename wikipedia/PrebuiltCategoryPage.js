@@ -5,12 +5,14 @@ const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
 const BoxWithBg = imports.wikipedia.widgets.BoxWithBg;
+const FixedSizeTextView = imports.wikipedia.widgets.FixedSizeTextView;
 const ScaledImage = imports.wikipedia.widgets.scaled_image;
 
-const CATEGORY_DESCRIPTION_WIDTH = 520;
 const SUBMENU_SEPARATOR_A_URI = "/com/endlessm/wikipedia-domain/assets/submenu_separator_shadow_a.png";
 const SPLASH_SEPARATOR_URI = "/com/endlessm/wikipedia-domain/assets/category_splash_separator_shadow.png";
 const INTRO_TITLE_SEPARATOR_URI = "/com/endlessm/wikipedia-domain/assets/introduction_title_separator.png";
+
+const LEFT_MARGIN_FOR_TEXT = 45;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
@@ -43,26 +45,26 @@ const PrebuiltCategoryPage = new Lang.Class({
     },
 
     _init: function(props) {
-        this._vbox = new BoxWithBg.BoxWithBg({
+        this._shaded_box = new BoxWithBg.BoxWithBg({
             name: "category_info",
             orientation: Gtk.Orientation.VERTICAL,
-            expand:true
+            vexpand: true
         });
-        this._vbox.set_size_request(CATEGORY_DESCRIPTION_WIDTH, -1);
 
         this._title = null;
         this._description = null;
 
         this._layout_grid = new Gtk.Grid({
             orientation: Gtk.Orientation.HORIZONTAL,
-            expand: true,
+            hexpand: true,
             halign: Gtk.Align.END
         });
 
         this._title_label = new Gtk.Label({
             name:"category_title",
             expand: false,
-            halign: Gtk.Align.START
+            halign: Gtk.Align.START,
+            margin_left: LEFT_MARGIN_FOR_TEXT
         });
 
         this._submenu_separator = new ScaledImage.ScaledImage({
@@ -82,9 +84,8 @@ const PrebuiltCategoryPage = new Lang.Class({
             constraint: Gtk.Orientation.HORIZONTAL
         });
 
-        this._description_text_view = new Gtk.TextView({
+        this._description_text_view = new FixedSizeTextView.FixedSizeTextView({
             name:"category_description",
-            expand: true,
             margin_left: 6, // stupid Benton Sans correction
             sensitive: false,
             editable: false,
@@ -97,30 +98,30 @@ const PrebuiltCategoryPage = new Lang.Class({
 
         this._description_scrolled_window = new Gtk.ScrolledWindow({
             name: 'category_scrolled_window',
-            halign: Gtk.Align.FILL
+            halign: Gtk.Align.FILL,
+            vexpand: true,
+            margin_left: LEFT_MARGIN_FOR_TEXT
         });
 
         this._description_scrolled_window.add(this._description_text_view);
+
         this._description_scrolled_window.set_policy(Gtk.PolicyType.NEVER,
             Gtk.PolicyType.AUTOMATIC);
 
-        this._inner_grid = new Gtk.Grid({
-            orientation: Gtk.Orientation.VERTICAL,
-            expand: true,
-            margin_left: 45,
-            margin_right: 45,
-            margin_bottom: 15
+        this._back_button = new Gtk.Button({
+            valign: Gtk.Align.CENTER,
+            hexpand: true,
+            child: new Gtk.Image({ resource: '/com/endlessm/wikipedia-domain/assets/play.png'})
         });
 
         this.parent(props);
 
-        this._inner_grid.add(this._title_label);
-        this._inner_grid.add(this._description_separator);
-        this._inner_grid.add(this._description_scrolled_window);
-        this._vbox.add(this._inner_grid);
+        this._shaded_box.add(this._title_label);
+        this._shaded_box.add(this._description_separator);
+        this._shaded_box.add(this._description_scrolled_window);
 
         this._layout_grid.add(this._splash_separator);
-        this._layout_grid.add(this._vbox);
+        this._layout_grid.add(this._shaded_box);
         
         this._overlay = new Gtk.Overlay({
             halign:Gtk.Align.END
@@ -128,9 +129,14 @@ const PrebuiltCategoryPage = new Lang.Class({
         this._overlay.add(this._layout_grid);
         this._overlay.add_overlay(this._submenu_separator);
 
-        this.add(this._overlay);
-        this._category_provider = new Gtk.CssProvider();
+        this._outer_most_grid = new Gtk.Grid({
+            orientation: Gtk.Orientation.HORIZONTAL
+        });
+        this._outer_most_grid.add(this._back_button);
+        this._outer_most_grid.add(this._overlay);
 
+        this.add(this._outer_most_grid);
+        this._category_provider = new Gtk.CssProvider();
     },
 
     get title() {

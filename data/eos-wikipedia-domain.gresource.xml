@@ -13,5 +13,6 @@
     <file>assets/category_splash_separator_shadow.png</file>
     <file>assets/category_hover_arrow.png</file>
     <file>assets/image_strip_back_button.png</file>
+    <file>assets/play.png</file>
   </gresource>
 </gresources>
