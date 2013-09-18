@@ -1,13 +1,11 @@
 //Copyright 2013 Endless Mobile, Inc.
 
-const Lang = imports.lang;
 const Endless = imports.gi.Endless;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
-const WebKit = imports.gi.WebKit;
-
-// WebHelper.js must be copied somewhere in GJS's imports.searchPath
+const Lang = imports.lang;
 const WebHelper = imports.webhelper;
+const WebKit = imports.gi.WebKit;
 
 const TEST_APPLICATION_ID = 'com.endlessm.example.test-webview';
 
@@ -70,24 +68,24 @@ const TestApplication = new Lang.Class({
 
     _webActions: {
         /* dict['name'] is the name of the page to move to */
-        'moveToPage': function(dict) {
-            print('move to page '+dict['name']);
+        moveToPage: function(dict) {
             this._pm.visible_page_name = dict['name'];
         },
 
         /* dict['msg'] is the message to display */
-        'showMessageFromParameter': function(dict) {
+        showMessageFromParameter: function(dict) {
             let dialog = new Gtk.MessageDialog({
                 buttons: Gtk.ButtonsType.CLOSE,
                 message_type: Gtk.MessageType.INFO,
-                text: dict['msg'] });
+                text: dict['msg']
+            });
             dialog.set_transient_for(this._window);
             dialog.run();
             dialog.destroy();
         },
 
         /* dict['id'] is the ID of the input field to use */
-        'showMessageFromInputField': function(dict) {
+        showMessageFromInputField: function(dict) {
             let input = this._getElementById(this._webview, dict['id']);
 
             // WebKitDOMHTMLInputElement
@@ -96,14 +94,15 @@ const TestApplication = new Lang.Class({
             let dialog = new Gtk.MessageDialog({
                 buttons: Gtk.ButtonsType.CLOSE,
                 message_type: Gtk.MessageType.INFO,
-                text: msg });
+                text: msg
+            });
             dialog.set_transient_for(this._window);
             dialog.run();
             dialog.destroy();
         },
 
         /* dict['id'] is the ID of the element to use */
-        'addStars': function(dict) {
+        addStars: function(dict) {
             let e = this._getElementById(this._webview, dict['id']);
             e.inner_text += '★ ';
         }
@@ -117,43 +116,41 @@ const TestApplication = new Lang.Class({
         this._webview = new WebKit.WebView();
         this._webview.load_string(TEST_HTML, 'text/html', 'UTF-8', 'file://');
         this._webview.connect('notify::load-status',
-                              Lang.bind(this, function (web_view, status) {
-                                  if (web_view.load_status == WebKit.LoadStatus.FINISHED) {
-                                      // now we translate to Brazilian Portuguese
-                                        this.translate_html(web_view);
-                                  }
-                              }));
+            Lang.bind(this, function (webview) {
+                if (webview.load_status == WebKit.LoadStatus.FINISHED)
+                    this.translate_html(webview);
+            }));
 
-        this._webview.connect('navigation-policy-decision-requested', 
-                              Lang.bind(this, this.web_actions_handler));
+        this._webview.connect('navigation-policy-decision-requested',
+            Lang.bind(this, this.web_actions_handler));
 
         this._page1 = new Gtk.ScrolledWindow();
         this._page1.add(this._webview);
 
         this._page2 = new Gtk.Grid();
-        let back_button = new Gtk.Button({label:"Go back to page 1"});
+        let back_button = new Gtk.Button({ label:"Go back to page 1" });
         back_button.connect('clicked', Lang.bind(this, function() {
             this._pm.visible_page_name = 'page1';
-        }))
+        }));
         this._page2.add(back_button);
-
-        this._pm = new Endless.PageManager();
-        this._pm.set_transition_type(Endless.PageManagerTransitionType.CROSSFADE)
-        this._pm.add(this._page1, { name: 'page1' });
-        this._pm.add(this._page2, { name: 'page2' });
-
-        this._pm.visible_page = this._page1;
 
         this._window = new Endless.Window({
             application: this,
-            border_width: 16,
-            page_manager: this._pm
+            border_width: 16
         });
+
+        this._pm = this._window.page_manager;
+        this._pm.set_transition_type(Endless.PageManagerTransitionType.CROSSFADE);
+        this._pm.add(this._page1, { name: 'page1' });
+        this._pm.add(this._page2, { name: 'page2' });
+        this._pm.visible_page = this._page1;
 
         this._window.show_all();
     }
 });
 
-let app = new TestApplication({ application_id: TEST_APPLICATION_ID,
-    flags: 0 });
+let app = new TestApplication({
+    application_id: TEST_APPLICATION_ID,
+    flags: 0
+});
 app.run(ARGV);
