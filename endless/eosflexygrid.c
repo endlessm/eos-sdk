@@ -271,16 +271,16 @@ eos_flexy_grid_get_request_mode (GtkWidget *widget)
 
 static void
 eos_flexy_grid_get_preferred_width (GtkWidget *widget,
-                                    gint      *minimum_width,
-                                    gint      *natural_width)
+                                    gint      *minimum_width_out,
+                                    gint      *natural_width_out)
 {
   EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (widget)->priv;
+  int minimum_width, natural_width;
 
   int target_column_size = priv->cell_size < 0 ? DEFAULT_CELL_SIZE : priv->cell_size;
 
   /* minimum width: the biggest possible cell width */
-  if (minimum_width != NULL)
-    *minimum_width = target_column_size * 2;
+  minimum_width = target_column_size * 2;
 
   int width = 0;
 
@@ -321,8 +321,12 @@ eos_flexy_grid_get_preferred_width (GtkWidget *widget,
         }
     }
 
-  if (natural_width != NULL)
-    *natural_width = width;
+  natural_width = width;
+
+  if (minimum_width_out)
+    *minimum_width_out = minimum_width;
+  if (natural_width_out)
+    * natural_width_out = MAX (natural_width, minimum_width);
 }
 
 static void
@@ -337,16 +341,16 @@ eos_flexy_grid_get_preferred_width_for_height (GtkWidget *widget,
 static void
 eos_flexy_grid_get_preferred_height_for_width (GtkWidget *widget,
                                                gint       for_width,
-                                               gint      *minimum_height,
-                                               gint      *natural_height)
+                                               gint      *minimum_height_out,
+                                               gint      *natural_height_out)
 {
   EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (widget)->priv;
+  int minimum_height, natural_height;
 
   int cell_size = priv->cell_size < 0 ? DEFAULT_CELL_SIZE : priv->cell_size;
 
   /* minimum height: the maximum height of all the cells on a single row */
-  if (minimum_height != NULL)
-    *minimum_height = cell_size * 2;
+  minimum_height = cell_size * 2;
 
   int max_row_width = for_width;
   int n_columns = MAX (max_row_width / cell_size, 2);
@@ -407,8 +411,12 @@ eos_flexy_grid_get_preferred_height_for_width (GtkWidget *widget,
         row_height = MAX (row_height, cell_height);
     }
 
-  if (natural_height != NULL)
-    *natural_height = MAX (height, cell_size);
+  natural_height = MAX (height, cell_size);
+
+  if (minimum_height_out)
+    *minimum_height_out = minimum_height;
+  if (natural_height_out)
+    *natural_height_out = MAX (natural_height, minimum_height);
 }
 
 static void
