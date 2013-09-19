@@ -81,7 +81,7 @@ main (int argc, char *argv[])
   gtk_container_add (GTK_CONTAINER (scroll), grid);
   gtk_widget_show (grid);
 
-  for (guint i; i < 8; i++)
+  for (guint i = 0; i < 8; i++)
     {
       GtkWidget *cell = eos_flexy_grid_cell_new ();
       eos_flexy_grid_cell_set_shape (EOS_FLEXY_GRID_CELL (cell), shapes[i]);
