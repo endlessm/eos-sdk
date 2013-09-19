@@ -984,7 +984,7 @@ eos_flexy_grid_new (void)
 /**
  * eos_flexy_grid_set_sort_func:
  * @grid: a #EosFlexyGrid
- * @sort_func: (scope notify) (allow-none): a sorting function, or
+ * @sort_func: (scope notified) (allow-none): a sorting function, or
  *   %NULL to unset an existing one
  * @data: (closure): data to pass to @sort_func and @notify
  * @notify: function called when @sort_func is unset, or the @grid
