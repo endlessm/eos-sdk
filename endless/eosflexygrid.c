@@ -4,6 +4,7 @@
 
 #include "eosflexygrid-private.h"
 
+#include <string.h>
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
@@ -14,14 +15,8 @@
 
 #ifdef VERBOSE
 #define DEBUG(x)        x
-#define CELL_DEBUG_SIZE(_cells,_i)      \
-  g_print ("Cell[%u] = { .cell = %p, .x = %d, .y = %d, .width = %d, .height = %d }\n", \
-           _i, \
-           _cells[_i].cell, \
-           _cells[_i].cell_x, _cells[_i].cell_y, _cells[_i].cell_width, _cells[_i].cell_height)
 #else
 #define DEBUG(x)
-#define CELL_DEBUG_SIZE(cells,i)
 #endif
 
 typedef struct {
@@ -31,12 +26,8 @@ typedef struct {
   gpointer sort_data;
   GDestroyNotify sort_notify;
 
-  GtkAdjustment *adjustment;
-
   int cell_size;
   int cell_spacing;
-
-  int n_visible_children;
 
   EosFlexyGridCell *prelight_cell;
   EosFlexyGridCell *active_cell;
@@ -128,139 +119,279 @@ eos_flexy_grid_update_cell_prelight (EosFlexyGrid *grid,
   gtk_widget_queue_draw (GTK_WIDGET (grid));
 }
 
-typedef struct _CellRequest
+static inline void
+add_new_empty_line (GArray *array,
+                    guint   n_cols)
 {
-  EosFlexyGridCell *cell;
+  static gboolean empty = TRUE;
 
-  int cell_x;
-  int cell_y;
-  int cell_width;
-  int cell_height;
-} CellRequest;
+  for (guint i = 0; i < n_cols; i++)
+    g_array_append_val (array, empty);
+}
+
+static guint
+get_next_free_slot (GArray *array,
+                    guint   pos,
+                    guint   n_cols)
+{
+  guint new_pos = pos;
+
+  if (new_pos >= array->len)
+    {
+      DEBUG (g_print ("Adding empty line to cover for %u\n", pos));
+      add_new_empty_line (array, n_cols);
+    }
+
+  while (g_array_index (array, gboolean, new_pos) == FALSE)
+    {
+      new_pos += 1;
+      if (new_pos >= array->len)
+        add_new_empty_line (array, n_cols);
+    }
+
+  DEBUG (g_print ("Next free slot after %u: %u\n", pos, new_pos));
+
+  return new_pos;
+}
+
+static gboolean
+check_free_slot (GArray *array,
+                 guint   pos,
+                 guint   n_cols)
+{
+  while (pos >= array->len)
+    {
+      DEBUG (g_print ("Adding empty line to cover for pos %u\n", pos));
+      add_new_empty_line (array, n_cols);
+    }
+
+  DEBUG (g_print ("Slot %u is %s\n", pos, g_array_index (array, gboolean, pos) ? "free" : "occupied"));
+
+  return g_array_index (array, gboolean, pos) == TRUE;
+}
+
+#define get_column(n_cols,pos)  ((pos) % (n_cols))
+#define get_line(n_cols,pos)    ((pos) / (n_cols))
 
 static inline void
-reset_cells (CellRequest *cells,
-             guint        n_cells)
+set_position (GtkAllocation *request,
+              guint          n_cols,
+              guint          pos,
+              guint          cell_width,
+              guint          spacing)
 {
-  for (guint i = 0; i < n_cells; i++)
-    {
-      cells[i].cell = NULL;
-      cells[i].cell_x = 0;
-      cells[i].cell_y = 0;
-      cells[i].cell_width = 0;
-      cells[i].cell_height = 0;
-    }
+  guint width = cell_width + spacing;
+
+  request->y = get_line (n_cols, pos) * width;
+  request->x = get_column (n_cols, pos) * width;
 }
 
-static inline guint
-mark_cell (CellRequest      *cells,
-           guint             n_cells,
-           guint             stride,
-           guint             index_,
-           guint             hspan,
-           guint             vspan,
-           EosFlexyGridCell *cell)
+static inline void
+mark_occupied_slot (GArray *array,
+                    guint   pos)
 {
-  guint i;
-
-  cells[index_].cell = cell;
-
-  i = 0;
-  while (i++ < vspan - 1)
-    {
-      DEBUG (g_print ("Marking vspan cell %u\n", index_ + (stride * i)));
-      cells[index_ + (stride * i)].cell = cell;
-    }
-
-  i = 0;
-  while (i++ < hspan - 1)
-    {
-      DEBUG (g_print ("Marking hspan cell %u\n", index_ + i));
-      cells[index_ + i].cell = cell;
-    }
-
-  guint next_slot = index_ + hspan;
-  while (next_slot < n_cells)
-    {
-      DEBUG (g_print ("next_slot: %u (index_: %u + hspan: %u)\n", next_slot, index_, hspan));
-      if (cells[next_slot].cell == NULL)
-        break;
-
-      next_slot += 1;
-    }
-
-  return next_slot;
+  g_array_index (array, gboolean, pos) = FALSE;
 }
 
-static void
-eos_flexy_grid_distribute_cell_request (CellRequest      *cells,
-                                        guint             n_cells,
-                                        guint             n_columns,
-                                        EosFlexyGridCell *cell,
-                                        guint             cur_index,
-                                        int               cell_size,
-                                        guint            *next_index)
+static guint
+allocate_small_cell (GArray        *array,
+                     guint          n_cols,
+                     guint          pos,
+                     guint          cell_width,
+                     guint          spacing,
+                     GtkAllocation *request)
 {
-  EosFlexyShape cell_shape = eos_flexy_grid_cell_get_shape (cell);
+  request->width = cell_width;
+  request->height = cell_width;
 
-  switch (cell_shape)
+  set_position (request, n_cols, pos, cell_width, spacing);
+  mark_occupied_slot (array, pos);
+
+  DEBUG (g_print ("1-Cell[%u (column %u of %u, line %u)] = { %d, %d - %d x %d }, next: %u\n",
+                  pos, get_column (n_cols, pos), n_cols, get_line (n_cols, pos),
+                  request->x,
+                  request->y,
+                  request->width,
+                  request->height,
+                  get_next_free_slot (array, pos, n_cols)));
+
+  return get_next_free_slot (array, pos, n_cols);
+}
+
+static guint
+allocate_medium_cell (GArray         *array,
+                      guint           n_cols,
+                      guint           pos,
+                      guint           cell_width,
+                      guint           spacing,
+                      GtkOrientation  orientation,
+                      GtkAllocation  *request)
+{
+  guint check_pos = pos;
+  guint check_column = get_column (n_cols, check_pos);
+
+  switch (orientation)
     {
-    case EOS_FLEXY_SHAPE_SMALL:
-      /* b1 */
-      cells[cur_index].cell_width = cell_size;
-      cells[cur_index].cell_height = cell_size;
-      cells[cur_index].cell_x = cur_index % n_columns * cell_size;
-      cells[cur_index].cell_y = cur_index / n_columns * cell_size;
+    case GTK_ORIENTATION_HORIZONTAL:
+      request->width = 2 * cell_width + spacing;
+      request->height = cell_width;
 
-      *next_index = mark_cell (cells, n_cells, n_columns,
-                               cur_index,
-                               1, 1,
-                               cell);
-      CELL_DEBUG_SIZE (cells, cur_index);
+      /* two adjacent cells on the same line must be free */
+      while (!(check_column < (n_cols - 1) && check_free_slot (array, check_pos + 1, n_cols)))
+        {
+          check_pos += 1;
+          check_pos = get_next_free_slot (array, check_pos, n_cols);
+          check_column = get_column (n_cols, check_pos);
+        }
+
+      set_position (request, n_cols, check_pos, cell_width, spacing);
+      mark_occupied_slot (array, check_pos);
+      mark_occupied_slot (array, check_pos + 1);
       break;
 
-    case EOS_FLEXY_SHAPE_MEDIUM_HORIZONTAL:
-      /* b2h */
-      cells[cur_index].cell_width = cell_size * 2;
-      cells[cur_index].cell_height = cell_size;
-      cells[cur_index].cell_x = cur_index % n_columns * cell_size;
-      cells[cur_index].cell_y = cur_index / n_columns * cell_size;
+    case GTK_ORIENTATION_VERTICAL:
+      request->width = cell_width;
+      request->height = 2 * cell_width + spacing;
 
-      *next_index = mark_cell (cells, n_cells, n_columns,
-                               cur_index,
-                               2, 1,
-                               cell);
-      CELL_DEBUG_SIZE (cells, cur_index);
-      break;
+      /* two adjacent cells on the same column must be free */
+      while (!check_free_slot (array, check_pos + n_cols, n_cols))
+        {
+          check_pos += 1;
+          check_pos = get_next_free_slot (array, check_pos, n_cols);
+          check_column = get_column (n_cols, check_pos);
+        }
 
-    case EOS_FLEXY_SHAPE_MEDIUM_VERTICAL:
-      /* b2v */
-      cells[cur_index].cell_width = cell_size;
-      cells[cur_index].cell_height = cell_size * 2;
-      cells[cur_index].cell_x = cur_index % n_columns * cell_size;
-      cells[cur_index].cell_y = cur_index / n_columns * cell_size;
-
-      *next_index = mark_cell (cells, n_cells, n_columns,
-                               cur_index,
-                               1, 2,
-                               cell);
-      CELL_DEBUG_SIZE (cells, cur_index);
-      break;
-
-    case EOS_FLEXY_SHAPE_LARGE:
-      /* b4 */
-      cells[cur_index].cell_width = cell_size * 2;
-      cells[cur_index].cell_height = cell_size * 2;
-      cells[cur_index].cell_x = cur_index % n_columns * cell_size;
-      cells[cur_index].cell_y = cur_index / n_columns * cell_size;
-
-      *next_index = mark_cell (cells, n_cells, n_columns,
-                               cur_index,
-                               2, 2,
-                               cell);
-      CELL_DEBUG_SIZE (cells, cur_index);
+      set_position (request, n_cols, check_pos, cell_width, spacing);
+      mark_occupied_slot (array, check_pos);
+      mark_occupied_slot (array, check_pos + n_cols);
       break;
     }
+
+  DEBUG (g_print ("2-Cell[%u (column %u of %u, line %u)] = { %d, %d - %d x %d }, next: %u\n",
+                  pos, get_column (n_cols, pos), n_cols, get_line (n_cols, pos),
+                  request->x,
+                  request->y,
+                  request->width,
+                  request->height,
+                  get_next_free_slot (array, pos, n_cols)));
+
+  return get_next_free_slot (array, pos, n_cols);
+}
+
+static guint
+allocate_large_cell (GArray        *array,
+                     guint          n_cols,
+                     guint          pos,
+                     guint          cell_width,
+                     guint          spacing,
+                     GtkAllocation *request)
+{
+  request->width = 2 * cell_width + spacing;
+  request->height = 2 * cell_width + spacing;
+
+  guint check_pos = pos;
+  guint check_column = get_column (n_cols, check_pos);
+
+  while (!(check_column < (n_cols - 1) &&
+           check_free_slot (array, check_pos + n_cols, n_cols) &&
+           check_free_slot (array, check_pos + 1, n_cols) &&
+           check_free_slot (array, check_pos + n_cols + 1, n_cols)))
+    {
+      check_pos += 1;
+      check_pos = get_next_free_slot (array, check_pos, n_cols);
+      check_column = get_column (n_cols, check_pos);
+    }
+
+  set_position (request, n_cols, check_pos, cell_width, spacing);
+  mark_occupied_slot (array, check_pos);
+  mark_occupied_slot (array, check_pos + 1);
+  mark_occupied_slot (array, check_pos + n_cols);
+  mark_occupied_slot (array, check_pos + n_cols + 1);
+
+  DEBUG (g_print ("4-Cell[%u (column %u of %u, line %u)] = { %d, %d - %d x %d }, next: %u\n",
+                  pos, get_column (n_cols, pos), n_cols, get_line (n_cols, pos),
+                  request->x,
+                  request->y,
+                  request->width,
+                  request->height,
+                  get_next_free_slot (array, pos, n_cols)));
+
+  return get_next_free_slot (array, pos, n_cols);
+}
+
+static int
+distribute_layout (GSequence *children,
+                   int        available_width,
+                   int        cell_width,
+                   int        spacing,
+                   gboolean   allocate)
+{
+  guint n_columns = MAX (available_width / (cell_width + spacing), 2);
+  guint real_width = cell_width;
+  GArray *array = g_array_new (FALSE, FALSE, sizeof (gboolean));
+  guint current_pos = 0;
+  int max_height = 0;
+
+  add_new_empty_line (array, n_columns);
+
+  GSequenceIter *iter;
+  for (iter = g_sequence_get_begin_iter (children);
+       !g_sequence_iter_is_end (iter);
+       iter = g_sequence_iter_next (iter))
+    {
+      EosFlexyGridCell *cell = g_sequence_get (iter);
+      EosFlexyShape shape = eos_flexy_grid_cell_get_shape (cell);
+      GtkAllocation request = { 0, };
+
+      switch (shape)
+        {
+        case EOS_FLEXY_SHAPE_SMALL:
+          current_pos = allocate_small_cell (array,
+                                             n_columns, current_pos,
+                                             real_width, spacing,
+                                             &request);
+          break;
+
+        case EOS_FLEXY_SHAPE_MEDIUM_HORIZONTAL:
+          current_pos = allocate_medium_cell (array,
+                                              n_columns, current_pos,
+                                              real_width, spacing,
+                                              GTK_ORIENTATION_HORIZONTAL,
+                                              &request);
+          break;
+
+        case EOS_FLEXY_SHAPE_MEDIUM_VERTICAL:
+          current_pos = allocate_medium_cell (array,
+                                              n_columns, current_pos,
+                                              real_width, spacing,
+                                              GTK_ORIENTATION_VERTICAL,
+                                              &request);
+          break;
+
+        case EOS_FLEXY_SHAPE_LARGE:
+          current_pos = allocate_large_cell (array,
+                                             n_columns, current_pos,
+                                             real_width, spacing,
+                                             &request);
+          break;
+        }
+
+      max_height = MAX (max_height, request.y + request.height);
+
+      if (allocate)
+        gtk_widget_size_allocate (GTK_WIDGET (cell), &request);
+    }
+
+  max_height = MAX (max_height, (array->len * (real_width + spacing) / n_columns) + 50);
+
+  g_array_unref (array);
+
+  DEBUG (g_print ("%s size: { %d x %d }\n",
+                  allocate ? "Allocated" : "Preferred",
+                  available_width,
+                  max_height));
+
+  return max_height;
 }
 
 static GtkSizeRequestMode
@@ -348,77 +479,18 @@ eos_flexy_grid_get_preferred_height_for_width (GtkWidget *widget,
   int minimum_height, natural_height;
 
   int cell_size = priv->cell_size < 0 ? DEFAULT_CELL_SIZE : priv->cell_size;
+  int layout_height;
 
   /* minimum height: the maximum height of all the cells on a single row */
   minimum_height = cell_size * 2;
 
-  int max_row_width = for_width;
-  int row_width = 0, row_height = cell_size;
-
-  int height = row_height;
-  guint row = 1;
-
-  /* natural width: the maximum width of all the cells on a single row */
-  GSequenceIter *iter;
-  for (iter = g_sequence_get_begin_iter (priv->children);
-       !g_sequence_iter_is_end (iter);
-       iter = g_sequence_iter_next (iter))
-    {
-      EosFlexyGridCell *cell = g_sequence_get (iter);
-      int cell_height = 0, cell_width = 0;
-
-      if (!gtk_widget_get_visible (GTK_WIDGET (cell)))
-        continue;
-
-      EosFlexyShape cell_shape = eos_flexy_grid_cell_get_shape (cell);
-
-      switch (cell_shape)
-        {
-        case EOS_FLEXY_SHAPE_SMALL:
-          /* b1 */
-          cell_width = cell_size;
-          cell_height = cell_size;
-          break;
-
-        case EOS_FLEXY_SHAPE_MEDIUM_HORIZONTAL:
-          /* b2h */
-          cell_width = cell_size * 2;
-          cell_height = cell_size;
-          break;
-
-        case EOS_FLEXY_SHAPE_MEDIUM_VERTICAL:
-          /* b2v */
-          cell_width = cell_size;
-          cell_height = cell_size * 2;
-          break;
-
-        case EOS_FLEXY_SHAPE_LARGE:
-          /* b4 */
-          cell_width = cell_size * 2;
-          cell_height = cell_size * 2;
-          break;
-        }
-
-      row_width += cell_width;
-
-      if (row_width > max_row_width)
-        {
-          height = row * row_height;
-
-          row += 1;
-          row_width = cell_width;
-          row_height = MAX (cell_height, cell_size);
-        }
-      else
-        row_height = MAX (row_height, cell_height);
-    }
-
-  natural_height = MAX (height, cell_size);
+  layout_height = distribute_layout (priv->children, for_width, cell_size, priv->cell_spacing, FALSE);
 
   if (minimum_height_out)
     *minimum_height_out = minimum_height;
+
   if (natural_height_out)
-    *natural_height_out = MAX (natural_height, minimum_height);
+    *natural_height_out = MAX (layout_height, minimum_height);
 }
 
 static void
@@ -448,58 +520,10 @@ eos_flexy_grid_size_allocate (GtkWidget     *widget,
 
   EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (widget)->priv;
 
-  int target_column_size = priv->cell_size < 0 ? DEFAULT_CELL_SIZE : priv->cell_size;
+  int cell_size = priv->cell_size < 0 ? DEFAULT_CELL_SIZE : priv->cell_size;
   int available_width = allocation->width;
-  int available_height = allocation->height;
-  int cell_size = target_column_size;
-  int n_columns = MAX (available_width / (cell_size + priv->cell_spacing), 2);
-  int n_rows = MAX (available_height / (cell_size + priv->cell_spacing), 1);
 
-  guint cur_index = 0, next_index = 0;
-  guint n_cells = n_columns * n_rows;
-  CellRequest *cells = g_newa (CellRequest, n_cells);
-
-  reset_cells (cells, n_cells);
-
-  DEBUG (g_print ("Size; %d x %d (cols: %u, rows: %u)\n",
-                  available_width, available_height,
-                  n_columns,
-                  n_rows));
-
-  GSequenceIter *iter;
-  for (iter = g_sequence_get_begin_iter (priv->children);
-       !g_sequence_iter_is_end (iter);
-       iter = g_sequence_iter_next (iter))
-    {
-      EosFlexyGridCell *cell = g_sequence_get (iter);
-      GtkAllocation child_allocation;
-
-      if (!gtk_widget_get_visible (GTK_WIDGET (cell)))
-        continue;
-
-      if (cur_index > n_cells)
-        break;
-
-      eos_flexy_grid_distribute_cell_request (cells, n_cells, n_columns,
-                                              cell,
-                                              cur_index,
-                                              cell_size,
-                                              &next_index);
-
-      child_allocation.x = cells[cur_index].cell_x + priv->cell_spacing;
-      child_allocation.y = cells[cur_index].cell_y + priv->cell_spacing;
-      child_allocation.width = cells[cur_index].cell_width - priv->cell_spacing;
-      child_allocation.height = cells[cur_index].cell_height - priv->cell_spacing;
-
-      gtk_widget_size_allocate (GTK_WIDGET (cell), &child_allocation);
-
-      DEBUG (g_print ("cur_index: %u, next_index: %u, column: %d, row: %d\n",
-                      cur_index, next_index,
-                      cur_index % n_columns,
-                      cur_index / n_columns));
-
-      cur_index = next_index;
-    }
+  distribute_layout (priv->children, available_width, cell_size, priv->cell_spacing, TRUE);
 }
 
 static void
@@ -777,8 +801,6 @@ eos_flexy_grid_finalize (GObject *gobject)
 
   if (priv->sort_notify != NULL)
     priv->sort_notify (priv->sort_data);
-
-  g_clear_object (&priv->adjustment);
 
   g_sequence_free (priv->children);
 
