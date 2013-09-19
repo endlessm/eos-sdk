@@ -94,6 +94,7 @@ main (int    argc,
   add_splash_page_manager_tests ();
   add_action_menu_tests ();
   add_action_button_tests ();
+  add_flexy_grid_test ();
 
   return g_test_run ();
 }

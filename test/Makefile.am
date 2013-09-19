@@ -2,6 +2,7 @@
 
 noinst_PROGRAMS = \
 	test/run-tests \
+	test/flexy-grid \
 	test/smoke-tests/hello
 
 TEST_FLAGS = @EOS_SDK_CFLAGS@ -I$(top_srcdir) -DCOMPILING_EOS_SDK
@@ -17,6 +18,7 @@ test_run_tests_SOURCES = \
 	test/test-window.c \
 	test/test-action-menu.c \
 	test/test-action-button.c \
+	test/test-flexy-grid.c \
 	$(NULL)
 test_run_tests_CPPFLAGS = $(TEST_FLAGS)
 test_run_tests_LDADD = $(TEST_LIBS)
@@ -24,6 +26,10 @@ test_run_tests_LDADD = $(TEST_LIBS)
 test_smoke_tests_hello_SOURCES = test/smoke-tests/hello.c
 test_smoke_tests_hello_CPPFLAGS = $(TEST_FLAGS)
 test_smoke_tests_hello_LDADD = $(TEST_LIBS)
+
+test_flexy_grid_SOURCES = test/flexy-grid.c
+test_flexy_grid_CPPFLAGS = $(TEST_FLAGS)
+test_flexy_grid_LDADD = $(TEST_LIBS)
 
 javascript_tests = \
 	test/tools/eos-run-test/sanitycheck.js \

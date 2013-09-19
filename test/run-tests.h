@@ -39,5 +39,6 @@ void add_page_manager_tests                  (void);
 void add_splash_page_manager_tests           (void);
 void add_action_menu_tests                   (void);
 void add_action_button_tests                 (void);
+void add_flexy_grid_test                     (void);
 
 #endif /* RUN_TESTS_H */
