@@ -1,5 +1,15 @@
 /* Copyright 2013 Endless Mobile, Inc. */
 
+/**
+ * SECTION:eos-flexy-grid
+ * @Title: EosFlexyGrid
+ * @Short_Description: A flexible grid layout manager
+ *
+ * The #EosFlexyGrid widget provides a grid of cells in a layout controlled
+ * by the shape of the cells themselves, through the #EosFlexyGridCell:shape
+ * property of #EosFlexyGridCell.
+ */
+
 #include "config.h"
 
 #include "eosflexygrid-private.h"
@@ -37,6 +47,16 @@ typedef struct {
 
 enum
 {
+  PROP_0,
+
+  PROP_CELL_SIZE,
+  PROP_CELL_SPACING,
+
+  LAST_PROP
+};
+
+enum
+{
   CELL_SELECTED,
   CELL_ACTIVATED,
 
@@ -60,32 +80,7 @@ G_DEFINE_TYPE (EosFlexyGrid, eos_flexy_grid, GTK_TYPE_CONTAINER)
 #endif /* GLIB_CHECK_VERSION (2, 37, 5) */
 
 static guint grid_signals[LAST_SIGNAL] = { 0, };
-
-static EosFlexyGridCell *
-eos_flexy_grid_get_cell_at_coords (EosFlexyGrid *grid,
-                                   double        x_pos,
-                                   double        y_pos)
-{
-  EosFlexyGridPrivate *priv = grid->priv;
-  GSequenceIter *iter;
-
-  /* naive hit detection */
-  for (iter = g_sequence_get_begin_iter (priv->children);
-       !g_sequence_iter_is_end (iter);
-       iter = g_sequence_iter_next (iter))
-    {
-      GtkWidget *widget = g_sequence_get (iter);
-      GtkAllocation allocation;
-
-      gtk_widget_get_allocation (widget, &allocation);
-
-      if (x_pos >= allocation.x && x_pos < allocation.x + allocation.width &&
-          y_pos >= allocation.y && y_pos < allocation.y + allocation.height)
-        return EOS_FLEXY_GRID_CELL (widget);
-    }
-
-  return NULL;
-}
+static GParamSpec *grid_props[LAST_PROP] = { NULL, };
 
 static void
 eos_flexy_grid_update_cell_prelight (EosFlexyGrid *grid,
@@ -795,6 +790,52 @@ eos_flexy_grid_leave_notify (GtkWidget        *widget,
 }
 
 static void
+eos_flexy_grid_set_property (GObject      *gobject,
+                             guint         prop_id,
+                             const GValue *value,
+                             GParamSpec   *pspec)
+{
+  EosFlexyGrid *self = EOS_FLEXY_GRID (gobject);
+
+  switch (prop_id)
+    {
+    case PROP_CELL_SIZE:
+      eos_flexy_grid_set_cell_size (self, g_value_get_int (value));
+      break;
+
+    case PROP_CELL_SPACING:
+      eos_flexy_grid_set_cell_spacing (self, g_value_get_int (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
+    }
+}
+
+static void
+eos_flexy_grid_get_property (GObject    *gobject,
+                             guint       prop_id,
+                             GValue     *value,
+                             GParamSpec *pspec)
+{
+  EosFlexyGrid *self = EOS_FLEXY_GRID (gobject);
+
+  switch (prop_id)
+    {
+    case PROP_CELL_SIZE:
+      g_value_set_int (value, eos_flexy_grid_get_cell_size (self));
+      break;
+
+    case PROP_CELL_SPACING:
+      g_value_set_int (value, eos_flexy_grid_get_cell_spacing (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
+    }
+}
+
+static void
 eos_flexy_grid_finalize (GObject *gobject)
 {
   EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (gobject)->priv;
@@ -816,6 +857,8 @@ eos_flexy_grid_class_init (EosFlexyGridClass *klass)
 
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = eos_flexy_grid_finalize;
+  gobject_class->set_property = eos_flexy_grid_set_property;
+  gobject_class->get_property = eos_flexy_grid_get_property;
 
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   widget_class->get_request_mode = eos_flexy_grid_get_request_mode;
@@ -838,6 +881,42 @@ eos_flexy_grid_class_init (EosFlexyGridClass *klass)
   container_class->forall = eos_flexy_grid_forall;
   container_class->child_type = eos_flexy_grid_child_type;
 
+  /**
+   * EosFlexyGrid:cell-size:
+   *
+   * The minimum size of each cell inside a #EosFlexyGrid, or -1 for the default.
+   */
+  grid_props[PROP_CELL_SIZE] =
+    g_param_spec_int ("cell-size",
+                      "Cell Size",
+                      "The minimum size of each cell",
+                      -1, G_MAXINT,
+                      -1,
+                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * EosFlexyGrid:cell-spacing:
+   *
+   * The spacing between each cell inside a #EosFlexyGrid, or -1 for the default.
+   */
+  grid_props[PROP_CELL_SPACING] =
+    g_param_spec_int ("cell-spacing",
+                      "Cell Spacing",
+                      "The spacing between each cell",
+                      -1, G_MAXINT,
+                      -1,
+                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  g_object_class_install_properties (gobject_class, LAST_PROP, grid_props);
+
+  /**
+   * EosFlexyGrid::cell-selected:
+   * @grid: the #EosFlexyGrid that emitted the signal
+   * @cell: the #EosFlexyGridCell that was selected
+   *
+   * The ::cell-selected signal is emitted each time a cell inside @grid
+   * is selected. Selection happens by hovering on a cell.
+   */
   grid_signals[CELL_SELECTED] =
     g_signal_new (g_intern_static_string ("cell-selected"),
                   EOS_TYPE_FLEXY_GRID,
@@ -848,6 +927,14 @@ eos_flexy_grid_class_init (EosFlexyGridClass *klass)
                   G_TYPE_NONE, 1,
                   EOS_TYPE_FLEXY_GRID_CELL);
 
+  /**
+   * EosFlexyGrid::cell-activated:
+   * @grid: the #EosFlexyGrid that emitted the signal
+   * @cell: the #EosFlexyGridCell that was activated
+   *
+   * The ::cell-activated signal is emitted each time a cell inside @grid
+   * is activated. Activation happens by clicking on a cell.
+   */
   grid_signals[CELL_ACTIVATED] =
     g_signal_new (g_intern_static_string ("cell-activated"),
                   EOS_TYPE_FLEXY_GRID,
@@ -881,12 +968,39 @@ eos_flexy_grid_init (EosFlexyGrid *self)
   gtk_style_context_add_class (context, EOS_STYLE_CLASS_FLEXY_GRID);
 }
 
+/**
+ * eos_flexy_grid_new:
+ *
+ * Creates a new #EosFlexyGrid widget.
+ *
+ * Return value: (transfer full): the newly created #EosFlexyGrid widget
+ */
 GtkWidget *
 eos_flexy_grid_new (void)
 {
   return g_object_new (EOS_TYPE_FLEXY_GRID, NULL);
 }
 
+/**
+ * eos_flexy_grid_set_sort_func:
+ * @grid: a #EosFlexyGrid
+ * @sort_func: (scope notify) (allow-none): a sorting function, or
+ *   %NULL to unset an existing one
+ * @data: (closure): data to pass to @sort_func and @notify
+ * @notify: function called when @sort_func is unset, or the @grid
+ *   widget is destroyed
+ *
+ * Sets the sorting function for @grid.
+ *
+ * The @sort_func function compares two children of @grid, and must
+ * return -1 if the first child should precede the second; 1, if the
+ * first child should follow the second; or 0, if the children are
+ * identical.
+ *
+ * The @notify function will be called when this function is called
+ * with a different @sort_func (or %NULL); or when the @grid widget
+ * is destroyed.
+ */
 void
 eos_flexy_grid_set_sort_func (EosFlexyGrid         *grid,
                               EosFlexyGridSortFunc  sort_func,
@@ -904,6 +1018,15 @@ eos_flexy_grid_set_sort_func (EosFlexyGrid         *grid,
   priv->sort_notify = notify;
 }
 
+/**
+ * eos_flexy_grid_set_cell_size:
+ * @grid: a #EosFlexyGrid
+ * @size: the size of the cell
+ *
+ * Sets the size of the cells of @grid.
+ *
+ * If @size is less than 0, the default size will be used.
+ */
 void
 eos_flexy_grid_set_cell_size (EosFlexyGrid *grid,
                               int           size)
@@ -919,6 +1042,36 @@ eos_flexy_grid_set_cell_size (EosFlexyGrid *grid,
   gtk_widget_queue_resize (GTK_WIDGET (grid));
 }
 
+/**
+ * eos_flexy_grid_get_cell_size:
+ * @grid: a #EosFlexyGrid
+ *
+ * Retrieves the size of the cells of @grid.
+ *
+ * Return value: the size of the cells
+ */
+guint
+eos_flexy_grid_get_cell_size (EosFlexyGrid *grid)
+{
+  g_return_val_if_fail (EOS_IS_FLEXY_GRID (grid), 0);
+
+  EosFlexyGridPrivate *priv = grid->priv;
+
+  if (priv->cell_size < 0)
+    return DEFAULT_CELL_SIZE;
+
+  return priv->cell_size;
+}
+
+/**
+ * eos_flexy_grid_set_cell_spacing:
+ * @grid: a #EosFlexyGrid
+ * @spacing: the spacing between each cell
+ *
+ * Sets the spacing between each cell of @grid.
+ *
+ * If @spacing is less than 0, the default value will be used.
+ */
 void
 eos_flexy_grid_set_cell_spacing (EosFlexyGrid *grid,
                                  int           spacing)
@@ -934,6 +1087,27 @@ eos_flexy_grid_set_cell_spacing (EosFlexyGrid *grid,
   gtk_widget_queue_resize (GTK_WIDGET (grid));
 }
 
+/**
+ * eos_flexy_grid_get_cell_spacing:
+ * @grid: a #EosFlexyGrid
+ *
+ * Retrieves the cell spacing of @grid.
+ *
+ * Return value: the spacing between each cell
+ */
+guint
+eos_flexy_grid_get_cell_spacing (EosFlexyGrid *grid)
+{
+  g_return_val_if_fail (EOS_IS_FLEXY_GRID (grid), 0);
+
+  EosFlexyGridPrivate *priv = grid->priv;
+
+  if (priv->cell_spacing < 0)
+    return DEFAULT_SPACING;
+
+  return priv->cell_spacing;
+}
+
 static gint
 do_grid_sort (gconstpointer row_a,
               gconstpointer row_b,
@@ -946,6 +1120,22 @@ do_grid_sort (gconstpointer row_a,
                           priv->sort_data);
 }
 
+/**
+ * eos_flexy_grid_insert:
+ * @grid: a #EosFlexyGrid
+ * @child: a #GtkWidget
+ * @index_: the position of the @child
+ *
+ * Inserts @child inside @grid, at the given @index_. If @child is not
+ * a #EosFlexyGridCell widget, one will be implicitly created, and @child
+ * added to it.
+ *
+ * If @grid has a sort function, the @index_ is ignored.
+ *
+ * If @index_ is less than 0, the @child is appended at the end of the grid.
+ *
+ * If @index_ is 0, the child is prepended at the beginning of the grid.
+ */
 void
 eos_flexy_grid_insert (EosFlexyGrid *grid,
                        GtkWidget    *child,
@@ -990,3 +1180,45 @@ eos_flexy_grid_insert (EosFlexyGrid *grid,
   gtk_widget_set_parent (GTK_WIDGET (cell), GTK_WIDGET (grid));
   gtk_widget_set_child_visible (GTK_WIDGET (cell), TRUE);
 }
+
+/**
+ * eos_flexy_grid_get_cell_at_coords:
+ * @grid: a #EosFlexyGrid
+ * @x_pos: X coordinate to test, in widget-relative space
+ * @y_pos: Y coordinate to test, in widget-relative space
+ *
+ * Retrieves the #EosFlexyGridCell at the given coordinates.
+ *
+ * The coordinates to test must be in widget-relative space.
+ *
+ * Return value: (transfer none): the cell at the given coordinates, or %NULL
+ */
+EosFlexyGridCell *
+eos_flexy_grid_get_cell_at_coords (EosFlexyGrid *grid,
+                                   double        x_pos,
+                                   double        y_pos)
+{
+  g_return_val_if_fail (EOS_IS_FLEXY_GRID (grid), NULL);
+  g_return_val_if_fail (EOS_IS_FLEXY_GRID (grid), NULL);
+
+  EosFlexyGridPrivate *priv = grid->priv;
+  GSequenceIter *iter;
+
+  /* naive hit detection */
+  for (iter = g_sequence_get_begin_iter (priv->children);
+       !g_sequence_iter_is_end (iter);
+       iter = g_sequence_iter_next (iter))
+    {
+      GtkWidget *widget = g_sequence_get (iter);
+      GtkAllocation allocation;
+
+      gtk_widget_get_allocation (widget, &allocation);
+
+      if (x_pos >= allocation.x && x_pos < allocation.x + allocation.width &&
+          y_pos >= allocation.y && y_pos < allocation.y + allocation.height)
+        return EOS_FLEXY_GRID_CELL (widget);
+    }
+
+  return NULL;
+}
+
