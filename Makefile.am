@@ -140,11 +140,7 @@ CLEANFILES += data/eos-wikipedia-domain.gresource
 
 # # # GJS OVERRIDES # # #
 
-gjsoverridedir = ${datadir}/gjs-1.0/overrides
-
-# Put override files here for custom js API outside of normal introspection
-dist_gjsoverride_DATA = 		\
-	overrides/Endless.js
+include $(top_srcdir)/overrides/Makefile.am.inc
 
 # # # SDK TOOLS # # #
 

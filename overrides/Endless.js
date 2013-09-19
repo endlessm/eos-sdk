@@ -14,10 +14,15 @@ function getCurrentFileDir() {
     return Gio.File.new_for_path(path).get_parent().get_path();
 }
 
+imports.searchPath.unshift(getCurrentFileDir());
+
+const AssetButton = imports.endless_private.asset_button;
+
 function _init() {
     // this is imports.gi.Endless
     Endless = this;
     Endless.getCurrentFileDir = getCurrentFileDir;
+    Endless.AssetButton = AssetButton.AssetButton;
 
     // Override Endless.PageManager.add() so that you can set child properties
     // at the same time
