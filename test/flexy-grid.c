@@ -64,18 +64,21 @@ main (int argc, char *argv[])
   gtk_init (NULL, NULL);
 
   GtkWidget *window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
   g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
   gtk_widget_show (window);
 
   GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
   gtk_container_add (GTK_CONTAINER (window), scroll);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll),
+                                  GTK_POLICY_NEVER,
+                                  GTK_POLICY_AUTOMATIC);
   gtk_widget_show (scroll);
 
   GtkWidget *grid = eos_flexy_grid_new ();
   g_signal_connect (grid, "cell-selected", G_CALLBACK (on_cell_selected), NULL);
   g_signal_connect (grid, "cell-activated", G_CALLBACK (on_cell_activated), NULL);
   gtk_container_add (GTK_CONTAINER (scroll), grid);
-  gtk_widget_set_size_request (grid, 800, -1);
   gtk_widget_show (grid);
 
   for (guint i; i < 8; i++)
