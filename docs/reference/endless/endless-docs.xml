@@ -22,6 +22,7 @@
         <xi:include href="xml/page-manager.xml"/>
         <xi:include href="xml/splash-page-manager.xml"/>
         <xi:include href="xml/action-button.xml"/>
+        <xi:include href="xml/flexy-grid.xml"/>
         <!--<xi:include href="xml/hello.xml"/>-->
   </chapter>
 

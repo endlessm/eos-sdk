@@ -61,22 +61,30 @@ EOS_SDK_ALL_API_VERSIONS
 GType eos_flexy_grid_get_type (void) G_GNUC_CONST;
 
 EOS_SDK_ALL_API_VERSIONS
-GtkWidget *     eos_flexy_grid_new              (void);
+GtkWidget *             eos_flexy_grid_new                      (void);
 EOS_SDK_ALL_API_VERSIONS
-void            eos_flexy_grid_set_cell_size    (EosFlexyGrid *grid,
-                                                 int           size);
+void                    eos_flexy_grid_set_cell_size            (EosFlexyGrid         *grid,
+                                                                 int                   size);
 EOS_SDK_ALL_API_VERSIONS
-void            eos_flexy_grid_set_cell_spacing (EosFlexyGrid *grid,
-                                                 int           spacing);
+guint                   eos_flexy_grid_get_cell_size            (EosFlexyGrid         *grid);
 EOS_SDK_ALL_API_VERSIONS
-void            eos_flexy_grid_insert           (EosFlexyGrid *grid,
-                                                 GtkWidget    *child,
-                                                 int           index_);
+void                    eos_flexy_grid_set_cell_spacing         (EosFlexyGrid         *grid,
+                                                                 int                   spacing);
 EOS_SDK_ALL_API_VERSIONS
-void            eos_flexy_grid_set_sort_func    (EosFlexyGrid         *grid,
-                                                 EosFlexyGridSortFunc  sort_func,
-                                                 gpointer              data,
-                                                 GDestroyNotify        notify);
+guint                   eos_flexy_grid_get_cell_spacing         (EosFlexyGrid         *grid);
+EOS_SDK_ALL_API_VERSIONS
+void                    eos_flexy_grid_insert                   (EosFlexyGrid         *grid,
+                                                                 GtkWidget            *child,
+                                                                 int                   index_);
+EOS_SDK_ALL_API_VERSIONS
+void                    eos_flexy_grid_set_sort_func            (EosFlexyGrid         *grid,
+                                                                 EosFlexyGridSortFunc  sort_func,
+                                                                 gpointer              data,
+                                                                 GDestroyNotify        notify);
+EOS_SDK_ALL_API_VERSIONS
+EosFlexyGridCell *      eos_flexy_grid_get_cell_at_coords       (EosFlexyGrid         *grid,
+                                                                 double                x_pos,
+                                                                 double                y_pos);
 
 struct _EosFlexyGridCell
 {

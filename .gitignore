@@ -1,6 +1,7 @@
 # Build products
 endless-0.pc
 test/run-tests
+test/flexy-grid
 test/smoke-tests/hello
 Endless-0.gir
 Endless-0.typelib
@@ -128,3 +129,7 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Editor stuff
+*~
+*.swp

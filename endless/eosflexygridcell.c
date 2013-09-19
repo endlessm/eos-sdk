@@ -98,6 +98,11 @@ eos_flexy_grid_cell_class_init (EosFlexyGridCellClass *klass)
   gobject_class->set_property = eos_flexy_grid_cell_set_property;
   gobject_class->get_property = eos_flexy_grid_cell_get_property;
 
+  /**
+   * EosFlexyGridCell:shape:
+   *
+   * The shape of the cell.
+   */
   obj_props[PROP_SHAPE] =
     g_param_spec_enum ("shape",
                        "Shape",
@@ -123,12 +128,27 @@ eos_flexy_grid_cell_init (EosFlexyGridCell *self)
   gtk_style_context_add_class (context, EOS_STYLE_CLASS_FLEXY_GRID_CELL);
 }
 
+/**
+ * eos_flexy_grid_cell_new:
+ *
+ * Creates a new #EosFlexyGridCell widget.
+ *
+ * Return value: (transfer full): the newly created #EosFlexyGridCell widget
+ */
 GtkWidget *
 eos_flexy_grid_cell_new (void)
 {
   return g_object_new (EOS_TYPE_FLEXY_GRID_CELL, NULL);
 }
 
+/**
+ * eos_flexy_grid_cell_set_shape:
+ * @cell: a #EosFlexyGridCell
+ * @shape: the shape of the cell
+ *
+ * Sets the shape of the @cell. The @shape determines the amount of
+ * space inside a #EosFlexyGrid that will be assigned to the @cell.
+ */
 void
 eos_flexy_grid_cell_set_shape (EosFlexyGridCell *cell,
                                EosFlexyShape     shape)
@@ -143,9 +163,19 @@ eos_flexy_grid_cell_set_shape (EosFlexyGridCell *cell,
       priv->shape = shape;
 
       g_object_notify_by_pspec (G_OBJECT (cell), obj_props[PROP_SHAPE]);
+
+      gtk_widget_queue_resize (GTK_WIDGET (cell));
     }
 }
 
+/**
+ * eos_flexy_grid_cell_get_shape:
+ * @cell: a #EosFlexyGridCell
+ *
+ * Retrieves the shape of @cell.
+ *
+ * Return value: the shape of the #EosFlexyGridCell
+ */
 EosFlexyShape
 eos_flexy_grid_cell_get_shape (EosFlexyGridCell *cell)
 {
@@ -158,7 +188,13 @@ eos_flexy_grid_cell_get_shape (EosFlexyGridCell *cell)
   return priv->shape;
 }
 
-/*< private >*/
+/*< private >
+ * eos_flexy_grid_cell_set_iter:
+ * @cell: a #EosFlexyGridCell
+ * @iter: a #GSequenceIter
+ *
+ * The #GSequenceIter associated to @cell.
+ */
 void
 eos_flexy_grid_cell_set_iter (EosFlexyGridCell *cell,
                               GSequenceIter    *iter)
@@ -168,7 +204,14 @@ eos_flexy_grid_cell_set_iter (EosFlexyGridCell *cell,
   priv->iter = iter;
 }
 
-/*< private >*/
+/*< private >
+ * eos_flexy_grid_cell_get_iter:
+ * @cell: a #EosFlexyGridCell
+ *
+ * Retrieves the #GSequenceIter associated to @cell.
+ *
+ * Return value: (transfer none): a #GSequenceIter
+ */
 GSequenceIter *
 eos_flexy_grid_cell_get_iter (EosFlexyGridCell *cell)
 {
@@ -177,7 +220,13 @@ eos_flexy_grid_cell_get_iter (EosFlexyGridCell *cell)
   return priv->iter;
 }
 
-/*< private >*/
+/*< private >
+ * eos_flexy_grid_cell_set_selected:
+ * @cell: a #EosFlexyGridCell
+ * @selected: %TRUE to select the @cell, and %FALSE otherwise
+ *
+ * Sets whether the @cell should be selected or not.
+ */
 void
 eos_flexy_grid_cell_set_selected (EosFlexyGridCell *cell,
                                   gboolean          selected)
@@ -193,6 +242,15 @@ eos_flexy_grid_cell_set_selected (EosFlexyGridCell *cell,
     }
 }
 
+/**
+ * eos_flexy_grid_cell_get_selected:
+ * @cell: a #EosFlexyGridCell
+ *
+ * Checks whether @cell is selected.
+ *
+ * Return value: %TRUE if the #EosFlexyGridCell is selected,
+ *   and %FALSE otherwise
+ */
 gboolean
 eos_flexy_grid_cell_get_selected (EosFlexyGridCell *cell)
 {
