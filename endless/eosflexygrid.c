@@ -118,10 +118,11 @@ static inline void
 add_new_empty_line (GArray *array,
                     guint   n_cols)
 {
-  static gboolean empty = TRUE;
+  guint start = array->len;
 
-  for (guint i = 0; i < n_cols; i++)
-    g_array_append_val (array, empty);
+  g_array_set_size (array, array->len + n_cols);
+  for (guint i = start; i < array->len; i++)
+    g_array_index (array, gboolean, i) = TRUE;
 }
 
 static guint
@@ -325,7 +326,7 @@ distribute_layout (GSequence *children,
   guint real_width = cell_width;
   GArray *array = g_array_new (FALSE, FALSE, sizeof (gboolean));
   guint current_pos = 0;
-  int max_height = 0;
+  int max_height = cell_width;
 
   add_new_empty_line (array, n_columns);
 
@@ -371,13 +372,11 @@ distribute_layout (GSequence *children,
           break;
         }
 
-      max_height = MAX (max_height, request.y + request.height);
+      max_height = MAX (max_height, request.y + request.height + spacing);
 
       if (allocate)
         gtk_widget_size_allocate (GTK_WIDGET (cell), &request);
     }
-
-  max_height = MAX (max_height, (array->len * (real_width + spacing) / n_columns) + 50);
 
   g_array_unref (array);
 
@@ -471,21 +470,18 @@ eos_flexy_grid_get_preferred_height_for_width (GtkWidget *widget,
                                                gint      *natural_height_out)
 {
   EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (widget)->priv;
-  int minimum_height, natural_height;
 
   int cell_size = priv->cell_size < 0 ? DEFAULT_CELL_SIZE : priv->cell_size;
+  int cell_spacing = priv->cell_spacing < 0 ? DEFAULT_SPACING : priv->cell_spacing;
   int layout_height;
 
-  /* minimum height: the maximum height of all the cells on a single row */
-  minimum_height = cell_size * 2;
-
-  layout_height = distribute_layout (priv->children, for_width, cell_size, priv->cell_spacing, FALSE);
+  layout_height = distribute_layout (priv->children, for_width, cell_size, cell_spacing, FALSE);
 
   if (minimum_height_out)
-    *minimum_height_out = minimum_height;
+    *minimum_height_out = layout_height;
 
   if (natural_height_out)
-    *natural_height_out = MAX (layout_height, minimum_height);
+    *natural_height_out = layout_height;
 }
 
 static void
@@ -516,9 +512,10 @@ eos_flexy_grid_size_allocate (GtkWidget     *widget,
   EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (widget)->priv;
 
   int cell_size = priv->cell_size < 0 ? DEFAULT_CELL_SIZE : priv->cell_size;
+  int cell_spacing = priv->cell_spacing < 0 ? DEFAULT_SPACING : priv->cell_spacing;
   int available_width = allocation->width;
 
-  distribute_layout (priv->children, available_width, cell_size, priv->cell_spacing, TRUE);
+  distribute_layout (priv->children, available_width, cell_size, cell_spacing, TRUE);
 }
 
 static void
