@@ -18,6 +18,7 @@ test_run_tests_SOURCES = \
 	test/test-window.c \
 	test/test-action-menu.c \
 	test/test-action-button.c \
+	test/test-flexy-grid.c \
 	$(NULL)
 test_run_tests_CPPFLAGS = $(TEST_FLAGS)
 test_run_tests_LDADD = $(TEST_LIBS)
