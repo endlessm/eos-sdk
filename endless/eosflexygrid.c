@@ -1,7 +1,7 @@
 /* Copyright 2013 Endless Mobile, Inc. */
 
 /**
- * SECTION:eos-flexy-grid
+ * SECTION:flexy-grid
  * @Title: EosFlexyGrid
  * @Short_Description: A flexible grid layout manager
  *

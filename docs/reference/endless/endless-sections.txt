@@ -136,3 +136,38 @@ eos_action_button_get_type
 <SUBSECTION Private>
 EosActionButtonPrivate
 </SECTION>
+
+<SECTION>
+<FILE>flexy-grid</FILE>
+EosFlexyGrid
+EosFlexyGridCell
+eos_flexy_grid_new
+eos_flexy_grid_set_cell_size
+eos_flexy_grid_get_cell_size
+eos_flexy_grid_set_cell_spacing
+eos_flexy_grid_get_cell_spacing
+eos_flexy_grid_insert
+EosFlexyGridSortFunc
+eos_flexy_grid_set_sort_func
+eos_flexy_grid_get_cell_at_coords
+<SUBSECTION>
+eos_flexy_grid_cell_new
+eos_flexy_grid_cell_set_shape
+eos_flexy_grid_cell_get_shape
+<SUBSECTION Standard>
+EOS_TYPE_FLEXY_GRID
+EOS_FLEXY_GRID
+EOS_FLEXY_GRID_CLASS
+EOS_FLEXY_GRID_GET_CLAS
+EOS_IS_FLEXY_GRID
+EOS_IS_FLEXY_GRID_CLASS
+EOS_TYPE_FLEXY_GRID_CELL
+EOS_FLEXY_GRID_CELL
+EOS_FLEXY_GRID_CELL_CLASS
+EOS_FLEXY_GRID_CELL_GET_CLASS
+EOS_IS_FLEXY_GRID_CELL
+EOS_IS_FLEXY_GRID_CELL_CLASS
+<SUBSECTION Private>
+eos_flexy_grid_get_type
+eos_flexy_grid_cell_get_type
+</SECTION>
