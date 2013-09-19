@@ -72,6 +72,11 @@ EOS_SDK_ALL_API_VERSIONS
 void            eos_flexy_grid_insert           (EosFlexyGrid *grid,
                                                  GtkWidget    *child,
                                                  int           index_);
+EOS_SDK_ALL_API_VERSIONS
+void            eos_flexy_grid_set_sort_func    (EosFlexyGrid         *grid,
+                                                 EosFlexyGridSortFunc  sort_func,
+                                                 gpointer              data,
+                                                 GDestroyNotify        notify);
 
 struct _EosFlexyGridCell
 {

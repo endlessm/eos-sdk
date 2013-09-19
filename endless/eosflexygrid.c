@@ -353,7 +353,6 @@ eos_flexy_grid_get_preferred_height_for_width (GtkWidget *widget,
   minimum_height = cell_size * 2;
 
   int max_row_width = for_width;
-  int n_columns = MAX (max_row_width / cell_size, 2);
   int row_width = 0, row_height = cell_size;
 
   int height = row_height;
@@ -366,7 +365,7 @@ eos_flexy_grid_get_preferred_height_for_width (GtkWidget *widget,
        iter = g_sequence_iter_next (iter))
     {
       EosFlexyGridCell *cell = g_sequence_get (iter);
-      int cell_height, cell_width;
+      int cell_height = 0, cell_width = 0;
 
       if (!gtk_widget_get_visible (GTK_WIDGET (cell)))
         continue;
@@ -629,7 +628,6 @@ eos_flexy_grid_motion_notify (GtkWidget *widget,
                               GdkEventMotion *event)
 {
   EosFlexyGrid *self = EOS_FLEXY_GRID (widget);
-  EosFlexyGridPrivate *priv = self->priv;
 
   GdkWindow *window = gtk_widget_get_window (widget);
   GdkWindow *event_window = event->window;
@@ -809,6 +807,7 @@ eos_flexy_grid_class_init (EosFlexyGridClass *klass)
   widget_class->motion_notify_event = eos_flexy_grid_motion_notify;
   widget_class->button_press_event = eos_flexy_grid_button_press;
   widget_class->button_release_event = eos_flexy_grid_button_release;
+  widget_class->enter_notify_event = eos_flexy_grid_enter_notify;
   widget_class->leave_notify_event = eos_flexy_grid_leave_notify;
 
   GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);

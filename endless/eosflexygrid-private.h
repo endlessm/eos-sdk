@@ -15,6 +15,8 @@ GSequenceIter * eos_flexy_grid_cell_get_iter            (EosFlexyGridCell *cell)
 G_GNUC_INTERNAL
 void            eos_flexy_grid_cell_set_selected        (EosFlexyGridCell *cell,
                                                          gboolean          selected);
+G_GNUC_INTERNAL
+gboolean        eos_flexy_grid_cell_get_selected        (EosFlexyGridCell *cell);
 
 G_END_DECLS
 
