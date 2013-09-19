@@ -1196,7 +1196,6 @@ eos_flexy_grid_get_cell_at_coords (EosFlexyGrid *grid,
                                    double        y_pos)
 {
   g_return_val_if_fail (EOS_IS_FLEXY_GRID (grid), NULL);
-  g_return_val_if_fail (EOS_IS_FLEXY_GRID (grid), NULL);
 
   EosFlexyGridPrivate *priv = grid->priv;
   GSequenceIter *iter;

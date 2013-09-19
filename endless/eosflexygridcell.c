@@ -205,7 +205,7 @@ eos_flexy_grid_cell_set_iter (EosFlexyGridCell *cell,
 }
 
 /*< private >
- * eos_flexy_grid_cell_set_iter:
+ * eos_flexy_grid_cell_get_iter:
  * @cell: a #EosFlexyGridCell
  *
  * Retrieves the #GSequenceIter associated to @cell.
