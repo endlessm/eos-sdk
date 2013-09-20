@@ -133,7 +133,7 @@ const Application = new Lang.Class({
 
         // get the name and parameters for the desired function
         let f_call = uri.substring(EOS_URI_SCHEME.length, uri.length).split('?');
-        var function_name = f_call[0];
+        var function_name = decodeURI(f_call[0]);
         var parameters = {};
 
         if(f_call[1]) {

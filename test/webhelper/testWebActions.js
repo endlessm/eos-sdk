@@ -127,6 +127,17 @@ function testWebActionIsCalledWithBlankParameter() {
     assertEquals('', parameterValue);
 }
 
+function testWebActionIsUriDecoded() {
+    let actionWasCalled = false;
+    app.define_web_action('äction💩Quit', function(dict) {
+        actionWasCalled = true;
+        app.quit();
+    });
+    app.webActionToTest = 'endless://%C3%A4ction%F0%9F%92%A9Quit';
+    app.run([]);
+    assertTrue(actionWasCalled);
+}
+
 function testDefineMultipleActionsOverride() {
     let actionWasCalled = false;
     app.define_web_actions({
