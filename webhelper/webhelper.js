@@ -1,8 +1,11 @@
 const Endless = imports.gi.Endless;
+const Format = imports.format;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 const WebKit = imports.gi.WebKit;
+
+String.prototype.format = Format.format;
 
 const EOS_URI_SCHEME = 'endless://';
 
