@@ -23,7 +23,7 @@ AM_CFLAGS = @STRICT_CFLAGS@
 
 # Make sure to run Gtk-doc tests and build the documentation when doing
 # 'make distcheck'
-DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --enable-gir-doc
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --enable-gir-doc --enable-js-doc
 
 # Generated files that 'make clean' should erase
 CLEANFILES =
@@ -35,8 +35,8 @@ dist-hook:
 else
 dist-hook:
 	@echo "***"
-	@echo "*** You must configure with --enable-gtk-doc and --enable-gir-doc"
-	@echo "*** to run make dist or make distcheck."
+	@echo "*** You must configure with --enable-gtk-doc, --enable-gir-doc, and"
+	@echo "*** --enable-js-doc to run make dist or make distcheck."
 	@echo "***"
 	@false
 endif
@@ -122,6 +122,10 @@ CLEANFILES += \
 	docs/reference/endless-js/html/*.css \
 	docs/reference/endless-js/html/*.js
 endif
+
+# # # PURE JAVASCRIPT MODULE DOCUMENTATION # # #
+
+include $(top_srcdir)/docs/reference/webhelper/Makefile.am.inc
 
 # # # SECONDARY GRESOURCES # # #
 
