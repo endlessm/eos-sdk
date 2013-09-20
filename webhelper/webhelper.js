@@ -57,11 +57,11 @@ const Application = new Lang.Class({
      * Define an action that may be invoked from a WebView
      *
      * Parameters:
-     *   - name: a string, which must be a valid URI location.
-     *   - implementation: a function (see Callback Parameters below.)
+     *   name - a string, which must be a valid URI location.
+     *   implementation - a function (see Callback Parameters below.)
      *
      * Callback Parameters:
-     *   - dict: object containing properties corresponding to the query
+     *   dict - object containing properties corresponding to the query
      *     parameters that the web action was called with
      *
      * Sets up an action that may be invoked from an HTML document inside a
@@ -73,7 +73,7 @@ const Application = new Lang.Class({
      * > <a href="endless://setVolume?volume=11">This one goes to 11</a>
      * Or from the in-browser Javascript, by navigating to the action URI, as
      * follows:
-     * > window.location = 'endless://setVolume?volume=11'
+     * > window.location.href = 'endless://setVolume?volume=11';
      *
      * In both cases, the function would then be called with the _dict_
      * parameter equal to
@@ -165,7 +165,7 @@ const Application = new Lang.Class({
         return true;
     },
 
-//  convenience functions
+    // convenience function
 
     _getElementById: function(webview, id) {
         // WebKit.DOMDocument
