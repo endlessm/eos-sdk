@@ -2,7 +2,7 @@
 
 /**
  * SECTION:flexy-grid
- * @Title: EosFlexyGrid
+ * @Title: Flexible Grid
  * @Short_Description: A flexible grid layout manager
  *
  * The #EosFlexyGrid widget provides a grid of cells in a layout controlled
