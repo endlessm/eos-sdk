@@ -23,15 +23,48 @@ G_BEGIN_DECLS
 #define EOS_IS_FLEXY_GRID_CELL_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE ((klass), EOS_TYPE_FLEXY_GRID_CELL))
 #define EOS_FLEXY_GRID_CELL_GET_CLASS(obj)      (G_TYPE_INSTANCE_GET_CLASS ((obj), EOS_TYPE_FLEXY_GRID_CELL, EosFlexyGridCellClass))
 
+/**
+ * EOS_STYLE_CLASS_FLEXY_GRID:
+ *
+ * A CSS class to match a grid with flexible layout, used by #EosFlexyGrid.
+ */
 #define EOS_STYLE_CLASS_FLEXY_GRID      "flexy-grid"
+/**
+ * EOS_STYLE_CLASS_FLEXY_GRID_CELL:
+ *
+ * A CSS class to match a cell inside a grid with flexible layout, used by
+ * #EosFlexyGrid.
+ */
 #define EOS_STYLE_CLASS_FLEXY_GRID_CELL "flexy-grid-cell"
 
+/**
+ * EosFlexyGrid:
+ *
+ * This structure contains no public members.
+ */
 typedef struct _EosFlexyGrid            EosFlexyGrid;
 typedef struct _EosFlexyGridClass       EosFlexyGridClass;
 
+/**
+ * EosFlexyGridCell:
+ *
+ * This structure contains no public members.
+ */
 typedef struct _EosFlexyGridCell        EosFlexyGridCell;
 typedef struct _EosFlexyGridCellClass   EosFlexyGridCellClass;
 
+/**
+ * EosFlexyGridSortFunc:
+ * @cell_a: first cell to compare
+ * @cell_b: second cell to compare
+ * @user_data: data passed to eos_flexy_grid_set_sort_func()
+ *
+ * Type for functions that determine the sort order of two cells inside the
+ * grid.
+ *
+ * Returns: -1 if @cell_a should come before @cell_b, 1 if @cell_a should come
+ * after @cell_b, or 0 if @cell_a and @cell_b are identical.
+ */
 typedef gint (* EosFlexyGridSortFunc) (EosFlexyGridCell *cell_a,
                                        EosFlexyGridCell *cell_b,
                                        gpointer          user_data);

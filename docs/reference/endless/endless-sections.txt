@@ -3,6 +3,8 @@
 eos_hello_sample_function
 <SUBSECTION Private>
 EOS_SDK_ALL_API_VERSIONS
+EOS_DEFINE_ENUM_TYPE
+EOS_ENUM_VALUE
 </SECTION>
 
 <SECTION>
@@ -154,11 +156,15 @@ eos_flexy_grid_get_cell_at_coords
 eos_flexy_grid_cell_new
 eos_flexy_grid_cell_set_shape
 eos_flexy_grid_cell_get_shape
+EosFlexyShape
+<SUBSECTION>
+EOS_STYLE_CLASS_FLEXY_GRID
+EOS_STYLE_CLASS_FLEXY_GRID_CELL
 <SUBSECTION Standard>
 EOS_TYPE_FLEXY_GRID
 EOS_FLEXY_GRID
 EOS_FLEXY_GRID_CLASS
-EOS_FLEXY_GRID_GET_CLAS
+EOS_FLEXY_GRID_GET_CLASS
 EOS_IS_FLEXY_GRID
 EOS_IS_FLEXY_GRID_CLASS
 EOS_TYPE_FLEXY_GRID_CELL
@@ -167,7 +173,11 @@ EOS_FLEXY_GRID_CELL_CLASS
 EOS_FLEXY_GRID_CELL_GET_CLASS
 EOS_IS_FLEXY_GRID_CELL
 EOS_IS_FLEXY_GRID_CELL_CLASS
+EOS_TYPE_FLEXY_SHAPE
 <SUBSECTION Private>
+EosFlexyGridClass
+EosFlexyGridCellClass
 eos_flexy_grid_get_type
 eos_flexy_grid_cell_get_type
+eos_flexy_shape_get_type
 </SECTION>
