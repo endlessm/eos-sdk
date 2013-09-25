@@ -60,6 +60,8 @@ eos_top_bar_button_press_event (GtkWidget *widget,
                                 GdkEventButton *event)
 {
   GtkWidget *window;
+  GdkWindow *gdk_win;
+  GdkWindowState state;
 
   /* ignore right clicks */
   if (gdk_event_triggers_context_menu ((GdkEvent *) event))
@@ -72,6 +74,26 @@ eos_top_bar_button_press_event (GtkWidget *widget,
   window = gtk_widget_get_toplevel (widget);
   if (!window)
     return FALSE;
+
+  gdk_win = gtk_widget_get_window (window);
+  state = gdk_window_get_state (gdk_win);
+
+  /* manually unmaximize if it is maximized. For some
+   reason, mutter is refusing to unmaximize the window when dragged from
+   the top bar, when it is fully snapped to a 2nd monitor */
+  if ((state & GDK_WINDOW_STATE_MAXIMIZED) > 0)
+    {
+      gint width, height;
+
+      gtk_window_unmaximize (GTK_WINDOW (window));
+
+      gtk_widget_get_preferred_width (window, NULL, &width);
+      gtk_widget_get_preferred_height (window, NULL, &height);
+
+      gdk_window_move_resize (gdk_win,
+                              event->x_root - width / 2, event->y_root,
+                              width, height);
+    }
 
   gtk_window_begin_move_drag (GTK_WINDOW (window),
                               event->button,
