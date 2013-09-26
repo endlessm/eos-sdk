@@ -55,8 +55,48 @@ G_DEFINE_TYPE (EosApplication, eos_application, GTK_TYPE_APPLICATION)
 
 struct _EosApplicationPrivate
 {
+  GOnce  init_config_dir_once;
+  GFile *config_dir;
+
   EosWindow *main_application_window;
 };
+
+enum
+{
+  PROP_0,
+  PROP_CONFIG_DIR,
+  NPROPS
+};
+
+static GParamSpec *eos_application_props[NPROPS] = { NULL, };
+
+static void
+eos_application_get_property (GObject    *object,
+                              guint       property_id,
+                              GValue     *value,
+                              GParamSpec *pspec)
+{
+  EosApplication *self = EOS_APPLICATION (object);
+
+  switch (property_id)
+    {
+    case PROP_CONFIG_DIR:
+      g_value_set_object (value, eos_application_get_config_dir (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+    }
+}
+
+static void
+eos_application_finalize (GObject *object)
+{
+  EosApplication *self = EOS_APPLICATION (object);
+  g_clear_object (&self->priv->config_dir);
+
+  G_OBJECT_CLASS (eos_application_parent_class)->finalize (object);
+}
 
 static void
 eos_application_activate (GApplication *application)
@@ -74,6 +114,58 @@ eos_application_activate (GApplication *application)
     }
 
   /* TODO: Should it be required to override activate() as in GApplication? */
+}
+
+static gpointer
+ensure_config_dir_exists_and_is_writable (EosApplication *self)
+{
+  const gchar *xdg_path = g_get_user_config_dir ();
+  const gchar *app_id = g_application_get_application_id (G_APPLICATION (self));
+  GFile *xdg_dir = g_file_new_for_path (xdg_path);
+  GFile *config_dir = g_file_get_child (xdg_dir, app_id);
+  gchar *config_path = g_file_get_path (config_dir); /* For error reporting */
+
+  g_object_unref (xdg_dir);
+
+  GError *error = NULL;
+  if (!g_file_make_directory_with_parents (config_dir, NULL, &error))
+    {
+      if (error->domain == G_IO_ERROR && error->code == G_IO_ERROR_EXISTS)
+        {
+          g_clear_error (&error); /* Ignore G_IO_ERROR_EXISTS */
+        }
+      else
+        {
+          g_error ("There was an error creating the user config directory %s: "
+                   "%s",
+                   config_path, error->message);
+        }
+    }
+
+  GFileInfo *info = g_file_query_info (config_dir,
+                                       G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE,
+                                       G_FILE_QUERY_INFO_NONE,
+                                       NULL,
+                                       &error);
+  if (info == NULL)
+    {
+      g_error ("Checking the user config directory %s failed. This means "
+               "something strange is going on in your home directory: %s",
+               config_path, error->message);
+    }
+  if (!g_file_info_get_attribute_boolean(info,
+                                         G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE))
+    {
+      g_error ("Your user config directory %s is not writable. This means "
+               "something strange is going on in your home directory.",
+               config_path);
+    }
+
+  g_object_unref (info);
+  g_free (config_path);
+
+  self->priv->config_dir = config_dir;
+  return NULL;
 }
 
 static void
@@ -96,6 +188,10 @@ eos_application_startup (GApplication *application)
   g_debug ("Initialized theme\n");
 
   g_object_unref (provider);
+
+  EosApplication *self = EOS_APPLICATION (application);
+  g_once (&self->priv->init_config_dir_once,
+          (GThreadFunc)ensure_config_dir_exists_and_is_writable, self);
 }
 
 static void
@@ -162,21 +258,43 @@ on_app_id_set (EosApplication *self)
 static void
 eos_application_class_init (EosApplicationClass *klass)
 {
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GApplicationClass *g_application_class = G_APPLICATION_CLASS (klass);
   GtkApplicationClass *gtk_application_class = GTK_APPLICATION_CLASS (klass);
 
   g_type_class_add_private (klass, sizeof (EosApplicationPrivate));
 
+  object_class->get_property = eos_application_get_property;
+  object_class->finalize = eos_application_finalize;
   g_application_class->activate = eos_application_activate;
   g_application_class->startup = eos_application_startup;
   gtk_application_class->window_added = eos_application_window_added;
   gtk_application_class->window_removed = eos_application_window_removed;
+
+  /**
+   * EosApplication:config-dir:
+   *
+   * A directory appropriate for storing per-user configuration information for
+   * this application.
+   * Accessing this property guarantees that the directory exists and is
+   * writable.
+   * See also eos_application_get_config_dir() for more information.
+   */
+  eos_application_props[PROP_CONFIG_DIR] =
+    g_param_spec_object ("config-dir", "Config dir",
+                         "User configuration directory for this application",
+                         G_TYPE_FILE,
+                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+
+  g_object_class_install_properties (object_class, NPROPS,
+                                     eos_application_props);
 }
 
 static void
 eos_application_init (EosApplication *self)
 {
   self->priv = APPLICATION_PRIVATE (self);
+  self->priv->init_config_dir_once = (GOnce)G_ONCE_INIT;
   g_signal_connect (self, "notify::application-id",
                     G_CALLBACK (on_app_id_set), self);
 }
@@ -203,4 +321,34 @@ eos_application_new (const gchar      *application_id,
                        "application-id", application_id,
                        "flags", flags,
                        NULL);
+}
+
+/**
+ * eos_application_get_config_dir:
+ * @self: the application
+ *
+ * Gets a #GFile pointing to the application-specific user configuration
+ * directory.
+ * This directory is located in <code>XDG_USER_CONFIG_DIR</code>, which usually
+ * expands to <filename class="directory">~/.config</filename>.
+ * The directory name is the same as the application's unique ID (see
+ * #GApplication:application-id.)
+ *
+ * You should use this directory to store configuration data specific to your
+ * application and specific to one user, such as cookies.
+ *
+ * Calling this function will also ensure that the directory exists and is
+ * writable.
+ * If it does not exist, it will be created.
+ * If it cannot be created, or it exists but is not writable, the program will
+ * abort.
+ *
+ * Returns: (transfer none): A #GFile pointing to the user config directory.
+ */
+GFile *
+eos_application_get_config_dir (EosApplication *self)
+{
+  g_once (&self->priv->init_config_dir_once,
+          (GThreadFunc)ensure_config_dir_exists_and_is_writable, self);
+  return self->priv->config_dir;
 }
