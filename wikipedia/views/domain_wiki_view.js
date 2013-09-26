@@ -153,6 +153,9 @@ const DomainWikiView = new Lang.Class({
 
         this._category_back_button.connect('clicked',
             Lang.bind(this, this._onCategoryBackClicked));
+
+        this._category_view.connect('go-back-home',
+            Lang.bind(this, this._onCategoryBackClicked));
     },
 
     _set_article_sidebar_uri: function(uri){

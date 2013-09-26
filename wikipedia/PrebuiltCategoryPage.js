@@ -1,20 +1,24 @@
-const EndlessWikipedia = imports.wikipedia.EndlessWikipedia;
+const Endless = imports.gi.Endless;
+const Gettext = imports.gettext;
+const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
-const GdkPixbuf = imports.gi.GdkPixbuf;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
 const BoxWithBg = imports.wikipedia.widgets.BoxWithBg;
+const Config = imports.wikipedia.config;
 const FixedSizeTextView = imports.wikipedia.widgets.FixedSizeTextView;
 const ScaledImage = imports.wikipedia.widgets.scaled_image;
 
 const SUBMENU_SEPARATOR_A_URI = "/com/endlessm/wikipedia-domain/assets/submenu_separator_shadow_a.png";
 const SPLASH_SEPARATOR_URI = "/com/endlessm/wikipedia-domain/assets/category_splash_separator_shadow.png";
 const INTRO_TITLE_SEPARATOR_URI = "/com/endlessm/wikipedia-domain/assets/introduction_title_separator.png";
-
 const LEFT_MARGIN_FOR_TEXT = 45;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
+
+const _ = function(string) { return GLib.dgettext('eos-sdk', string); };
+Gettext.bindtextdomain('eos-sdk', Config.DATADIR + '/locale');
 
 function _resourceUriToPath(uri) {
     if(uri.startsWith('resource://'))
@@ -42,6 +46,10 @@ const PrebuiltCategoryPage = new Lang.Class({
             'Resource URI for the image file accompanying the category',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
             '')
+    },
+
+    Signals: {
+        'go-back-home':{}
     },
 
     _init: function(props) {
@@ -108,11 +116,18 @@ const PrebuiltCategoryPage = new Lang.Class({
         this._description_scrolled_window.set_policy(Gtk.PolicyType.NEVER,
             Gtk.PolicyType.AUTOMATIC);
 
-        this._back_button = new Gtk.Button({
+        this._back_button = new Endless.AssetButton({
             valign: Gtk.Align.CENTER,
             hexpand: true,
-            child: new Gtk.Image({ resource: '/com/endlessm/wikipedia-domain/assets/play.png'})
+            normal_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_normal.png",
+            active_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_pressed.png",
+            prelight_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_hover.png",
+            label: _("OTHER CATEGORIES")
         });
+
+        this._back_button.connect('clicked', Lang.bind(this, function() {
+            this.emit('go-back-home');
+        }));
 
         this.parent(props);
 
@@ -124,7 +139,7 @@ const PrebuiltCategoryPage = new Lang.Class({
         this._layout_grid.add(this._shaded_box);
         
         this._overlay = new Gtk.Overlay({
-            halign:Gtk.Align.END
+            halign: Gtk.Align.END
         });
         this._overlay.add(this._layout_grid);
         this._overlay.add_overlay(this._submenu_separator);

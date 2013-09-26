@@ -8,7 +8,7 @@ const FixedSizeTextView = new Lang.Class({
     Name: "FixedSizeTextView",
     Extends: Gtk.TextView,
 
-    vfunc_get_preferred_width:function(){
+    vfunc_get_preferred_width: function(){
         return [CATEGORY_DESCRIPTION_WIDTH, CATEGORY_DESCRIPTION_WIDTH];
     }
 });
