@@ -8,8 +8,8 @@ const Pango = imports.gi.Pango;
 // going over its specified width
 const ARTICLE_LABEL_MAX_WIDTH_CHARS = 24;
 
-const TextButton = new Lang.Class({
-    Name: 'EndlessTextButton',
+const ListTextButton = new Lang.Class({
+    Name: 'EndlessListTextButton',
     Extends: Gtk.Button,
 
     // This is a button for the article list widget. It has a label and an icon image.

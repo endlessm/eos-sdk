@@ -1,18 +1,24 @@
-const EndlessWikipedia = imports.wikipedia.EndlessWikipedia;
+const Endless = imports.gi.Endless;
+const Gettext = imports.gettext;
+const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
-const GdkPixbuf = imports.gi.GdkPixbuf;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
 const BoxWithBg = imports.wikipedia.widgets.BoxWithBg;
+const Config = imports.wikipedia.config;
+const FixedSizeTextView = imports.wikipedia.widgets.FixedSizeTextView;
 const ScaledImage = imports.wikipedia.widgets.scaled_image;
 
-const CATEGORY_DESCRIPTION_WIDTH = 520;
 const SUBMENU_SEPARATOR_A_URI = "/com/endlessm/wikipedia-domain/assets/submenu_separator_shadow_a.png";
 const SPLASH_SEPARATOR_URI = "/com/endlessm/wikipedia-domain/assets/category_splash_separator_shadow.png";
 const INTRO_TITLE_SEPARATOR_URI = "/com/endlessm/wikipedia-domain/assets/introduction_title_separator.png";
+const LEFT_MARGIN_FOR_TEXT = 45;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
+
+const _ = function(string) { return GLib.dgettext('eos-sdk', string); };
+Gettext.bindtextdomain('eos-sdk', Config.DATADIR + '/locale');
 
 function _resourceUriToPath(uri) {
     if(uri.startsWith('resource://'))
@@ -42,32 +48,31 @@ const PrebuiltCategoryPage = new Lang.Class({
             '')
     },
 
+    Signals: {
+        'go-back-home':{}
+    },
+
     _init: function(props) {
-        this._vbox = new BoxWithBg.BoxWithBg({
+        this._shaded_box = new BoxWithBg.BoxWithBg({
             name: "category_info",
             orientation: Gtk.Orientation.VERTICAL,
-            expand:true
+            vexpand: true
         });
-        this._vbox.set_size_request(CATEGORY_DESCRIPTION_WIDTH, -1);
 
         this._title = null;
         this._description = null;
 
-        this._frame = new Gtk.Frame({
-            name: "category_frame",
-            expand: true,
-        });
-
         this._layout_grid = new Gtk.Grid({
             orientation: Gtk.Orientation.HORIZONTAL,
-            expand: true,
+            hexpand: true,
             halign: Gtk.Align.END
         });
 
         this._title_label = new Gtk.Label({
             name:"category_title",
             expand: false,
-            halign: Gtk.Align.START
+            halign: Gtk.Align.START,
+            margin_left: LEFT_MARGIN_FOR_TEXT
         });
 
         this._submenu_separator = new ScaledImage.ScaledImage({
@@ -87,9 +92,8 @@ const PrebuiltCategoryPage = new Lang.Class({
             constraint: Gtk.Orientation.HORIZONTAL
         });
 
-        this._description_text_view = new Gtk.TextView({
+        this._description_text_view = new FixedSizeTextView.FixedSizeTextView({
             name:"category_description",
-            expand: true,
             margin_left: 6, // stupid Benton Sans correction
             sensitive: false,
             editable: false,
@@ -102,39 +106,52 @@ const PrebuiltCategoryPage = new Lang.Class({
 
         this._description_scrolled_window = new Gtk.ScrolledWindow({
             name: 'category_scrolled_window',
-            halign: Gtk.Align.FILL
+            halign: Gtk.Align.FILL,
+            vexpand: true,
+            margin_left: LEFT_MARGIN_FOR_TEXT
         });
 
         this._description_scrolled_window.add(this._description_text_view);
+
         this._description_scrolled_window.set_policy(Gtk.PolicyType.NEVER,
             Gtk.PolicyType.AUTOMATIC);
 
-        this._inner_grid = new Gtk.Grid({
-            orientation: Gtk.Orientation.VERTICAL,
-            expand: true,
-            margin_left: 45,
-            margin_right: 45,
-            margin_bottom: 15
+        this._back_button = new Endless.AssetButton({
+            valign: Gtk.Align.CENTER,
+            hexpand: true,
+            normal_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_normal.png",
+            active_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_pressed.png",
+            prelight_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_hover.png",
+            label: _("OTHER CATEGORIES")
         });
+
+        this._back_button.connect('clicked', Lang.bind(this, function() {
+            this.emit('go-back-home');
+        }));
 
         this.parent(props);
 
-        this._inner_grid.add(this._title_label);
-        this._inner_grid.add(this._description_separator);
-        this._inner_grid.add(this._description_scrolled_window);
-        this._vbox.add(this._inner_grid);
+        this._shaded_box.add(this._title_label);
+        this._shaded_box.add(this._description_separator);
+        this._shaded_box.add(this._description_scrolled_window);
 
         this._layout_grid.add(this._splash_separator);
-        this._layout_grid.add(this._vbox);
+        this._layout_grid.add(this._shaded_box);
         
-        this._overlay = new Gtk.Overlay({halign:Gtk.Align.END});
+        this._overlay = new Gtk.Overlay({
+            halign: Gtk.Align.END
+        });
         this._overlay.add(this._layout_grid);
         this._overlay.add_overlay(this._submenu_separator);
 
-        this._frame.add(this._overlay);
-        this.add(this._frame);
-        this._category_provider = new Gtk.CssProvider();
+        this._outer_most_grid = new Gtk.Grid({
+            orientation: Gtk.Orientation.HORIZONTAL
+        });
+        this._outer_most_grid.add(this._back_button);
+        this._outer_most_grid.add(this._overlay);
 
+        this.add(this._outer_most_grid);
+        this._category_provider = new Gtk.CssProvider();
     },
 
     get title() {
@@ -165,7 +182,7 @@ const PrebuiltCategoryPage = new Lang.Class({
         this._image_uri = value;
         let frame_css = "#category_frame{background-image: url('" + value + "');background-repeat:no-repeat;background-size:cover;}";
         this._category_provider.load_from_data(frame_css);
-        let context = this._frame.get_style_context();
+        let context = this.get_style_context();
         context.add_provider(this._category_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
     }
 });

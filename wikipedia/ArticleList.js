@@ -3,7 +3,7 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const TextButton = imports.wikipedia.widgets.TextButton;
+const ListTextButton = imports.wikipedia.widgets.ListTextButton;
 
 const ARTICLE_LIST_SIZE_REQUEST = 320;
 const HOVER_ARROW_URI = "/com/endlessm/wikipedia-domain/assets/submenu_hover_arrow.png";
@@ -43,7 +43,7 @@ const ArticleList = new Lang.Class({
 
         // Create new ones
         articles.forEach(function(title, index, obj) {
-            let button = new TextButton.TextButton(HOVER_ARROW_URI, title, {hexpand:true});
+            let button = new ListTextButton.ListTextButton(HOVER_ARROW_URI, title, {hexpand:true});
             button.connect('clicked', Lang.bind(this, function() {
                 this.emit('article-chosen', title, index);
             }));
