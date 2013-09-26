@@ -24,13 +24,14 @@ js_sources = \
 	wikipedia/ArticleList.js \
 	wikipedia/widgets/BackButton.js \
 	wikipedia/widgets/BoxWithBg.js \
+	wikipedia/widgets/FixedSizeTextView.js \
 	wikipedia/EndlessWikipedia.js \
 	wikipedia/PrebuiltArticlesPage.js \
 	wikipedia/PrebuiltCategoryPage.js \
 	wikipedia/PrebuiltFrontPage.js \
 	wikipedia/PrebuiltWikipediaApplication.js \
 	wikipedia/widgets/SideBarButton.js \
-	wikipedia/widgets/TextButton.js \
+	wikipedia/widgets/ListTextButton.js \
 	wikipedia/config.js \
 	wikipedia/widgets/scaled_image.js \
 	wikipedia/utils.js \

@@ -129,7 +129,9 @@ const DomainWikiView = new Lang.Class({
         this._category_page = new Gtk.Grid({
             orientation: Gtk.Orientation.HORIZONTAL
         });
-        this._category_view = new EndlessWikipedia.PrebuiltCategoryPage();
+        this._category_view = new EndlessWikipedia.PrebuiltCategoryPage({
+            name: "category_frame"
+        });
         // _category_article_list is eventually going to be the same widget as
         // _article_list, so that's why it's not built into the
         // PrebuiltCategoryPage
@@ -150,6 +152,9 @@ const DomainWikiView = new Lang.Class({
             Lang.bind(this, this._onArticleClicked));
 
         this._category_back_button.connect('clicked',
+            Lang.bind(this, this._onCategoryBackClicked));
+
+        this._category_view.connect('go-back-home',
             Lang.bind(this, this._onCategoryBackClicked));
     },
 
