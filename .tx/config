@@ -1,0 +1,9 @@
+[main]
+host = https://www.transifex.com
+
+[eos-sdk.all]
+file_filter = po/<lang>.po
+source_file = po/eos-sdk.pot
+source_lang = en
+trans.pt = po/pt_BR.po
+type = PO
