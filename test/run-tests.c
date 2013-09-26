@@ -1,5 +1,6 @@
 /* Copyright 2013 Endless Mobile, Inc. */
 
+#include <inttypes.h> /* For PRIi64 */
 #include <glib-object.h>
 #include <glib.h>
 #include <gtk/gtk.h>
@@ -7,12 +8,25 @@
 
 #include "run-tests.h"
 
+#define APPLICATION_TEST_ID_BASE "com.endlessm.eosapplication.test"
+
+/* App ID based on timestamp so that test applications don't collide */
+gchar *
+generate_unique_app_id (void)
+{
+  return g_strdup_printf ("%s%" PRIi64,
+                          APPLICATION_TEST_ID_BASE,
+                          g_get_real_time ());
+}
+
 /* Test fixture for running a test from an EosApplication's "startup" handler */
 void
 app_window_test_fixture_setup (AppWindowTestFixture *fixture,
                                gconstpointer callback)
 {
-  fixture->app = eos_application_new (TEST_APPLICATION_ID, 0);
+  gchar *app_id = generate_unique_app_id ();
+  fixture->app = eos_application_new (app_id, 0);
+  g_free (app_id);
   g_signal_connect(fixture->app, "startup", G_CALLBACK (callback),
                    NULL);
 }

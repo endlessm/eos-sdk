@@ -1,7 +1,6 @@
 /* Copyright 2013 Endless Mobile, Inc. */
 
 #include <stdlib.h>
-#include <inttypes.h> /* For PRIi64 */
 #include <sys/stat.h> /* For file mode constants */
 #include <gtk/gtk.h>
 #include <endless/endless.h>
@@ -10,8 +9,6 @@
 
 #define EXPECTED_TWO_WINDOW_ERRMSG "*You should not add more than one application window*"
 #define EXPECTED_CONFIG_NOT_WRITABLE_ERRMSG "*Your user config directory*is not writable*"
-
-#define APPLICATION_TEST_ID_BASE "com.endlessm.eosapplication.test"
 
 typedef struct
 {
@@ -36,14 +33,6 @@ test_two_windows (EosApplication *app)
   g_test_trap_assert_stderr (EXPECTED_TWO_WINDOW_ERRMSG);
 
   gtk_widget_destroy (win1);
-}
-
-static gchar *
-generate_unique_app_id (void)
-{
-  return g_strdup_printf ("%s%" PRIi64,
-                          APPLICATION_TEST_ID_BASE,
-                          g_get_real_time ());
 }
 
 static void
