@@ -602,10 +602,9 @@ static void
 on_minimize_clicked_cb (GtkWidget* top_bar,
                         gpointer user_data)
 {
-  if (user_data != NULL)
-    {
-      gtk_window_iconify (GTK_WINDOW (user_data));
-    }
+  GtkWidget *window = gtk_widget_get_toplevel (top_bar);
+
+  gtk_window_iconify (GTK_WINDOW (window));
 }
 
 static void
