@@ -540,7 +540,6 @@ eos_window_class_init (EosWindowClass *klass)
   widget_class->unmap = eos_window_unmap;
   widget_class->show = eos_window_show;
   container_class->forall = eos_window_forall;
-  widget_class->delete_event = eos_window_default_delete;
 
   /**
    * EosWindow:application:
@@ -569,6 +568,36 @@ eos_window_class_init (EosWindowClass *klass)
   g_object_class_install_properties (object_class, NPROPS, eos_window_props);
 }
 
+#if GTK_CHECK_VERSION (3, 10, 0)
+#define our_window_close(w)     gtk_window_close (GTK_WINDOW (w))
+#else
+static gboolean
+queue_close (gpointer user_data)
+{
+  GtkWidget *window = user_data;
+
+  GdkEvent *event = gdk_event_new (GDK_DELETE);
+
+  event->any.window = gtk_widget_get_window (window);
+  event->any.send_event = TRUE;
+
+  gtk_main_do_event (event);
+
+  gdk_event_free (event);
+
+  return G_SOURCE_REMOVE;
+}
+
+static void
+our_window_close (GtkWidget *window)
+{
+  if (!gtk_widget_get_realized (window))
+    return;
+
+  gdk_threads_add_idle (queue_close, window);
+}
+#endif /* GTK_CHECK_VERSION (3, 10, 0) */
+
 static void
 on_minimize_clicked_cb (GtkWidget* top_bar,
                         gpointer user_data)
@@ -583,13 +612,9 @@ static void
 on_close_clicked_cb (GtkWidget* top_bar,
                      gpointer user_data)
 {
-  if (user_data != NULL)
-    {
-      // We don't actually care about the return value, the default "delete-event" handler
-      // will take care of closing windows for us
-      gboolean dummy = FALSE;
-      g_signal_emit_by_name (G_OBJECT (user_data), "delete-event", NULL, &dummy);
-    }
+  GtkWidget *window = gtk_widget_get_toplevel (top_bar);
+
+  our_window_close (window);
 }
 
 /* Make sure that the edge finishing does not catch input events */
