@@ -569,7 +569,7 @@ eos_window_class_init (EosWindowClass *klass)
 }
 
 #if GTK_CHECK_VERSION (3, 10, 0)
-#define our_window_close(w)     gtk_window_close (GTK_WINDOW (w))
+#define our_window_close(w)     gtk_window_close (w)
 #else
 static gboolean
 queue_close (gpointer user_data)
@@ -589,9 +589,9 @@ queue_close (gpointer user_data)
 }
 
 static void
-our_window_close (GtkWidget *window)
+our_window_close (GtkWindow *window)
 {
-  if (!gtk_widget_get_realized (window))
+  if (!gtk_widget_get_realized (GTK_WIDGET (window)))
     return;
 
   gdk_threads_add_idle (queue_close, window);
@@ -599,8 +599,7 @@ our_window_close (GtkWidget *window)
 #endif /* GTK_CHECK_VERSION (3, 10, 0) */
 
 static void
-on_minimize_clicked_cb (GtkWidget* top_bar,
-                        gpointer user_data)
+on_minimize_clicked_cb (GtkWidget* top_bar)
 {
   GtkWidget *window = gtk_widget_get_toplevel (top_bar);
 
@@ -608,12 +607,11 @@ on_minimize_clicked_cb (GtkWidget* top_bar,
 }
 
 static void
-on_close_clicked_cb (GtkWidget* top_bar,
-                     gpointer user_data)
+on_close_clicked_cb (GtkWidget* top_bar)
 {
   GtkWidget *window = gtk_widget_get_toplevel (top_bar);
 
-  our_window_close (window);
+  our_window_close (GTK_WINDOW (window));
 }
 
 /* Make sure that the edge finishing does not catch input events */
@@ -704,9 +702,9 @@ eos_window_init (EosWindow *self)
   gtk_window_maximize (GTK_WINDOW (self));
 
   g_signal_connect (self->priv->top_bar, "minimize-clicked",
-                    G_CALLBACK (on_minimize_clicked_cb), self);
+                    G_CALLBACK (on_minimize_clicked_cb), NULL);
   g_signal_connect (self->priv->top_bar, "close-clicked",
-                    G_CALLBACK (on_close_clicked_cb), self);
+                    G_CALLBACK (on_close_clicked_cb), NULL);
 
   eos_window_set_page_manager (self,
                                EOS_PAGE_MANAGER (eos_page_manager_new ()));
