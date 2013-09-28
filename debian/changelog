@@ -1,3 +1,9 @@
+eos-sdk (1.1.5) unstable; urgency=low
+
+  * Updating version to 1.1.5
+
+ -- Roddy Shuler <roddy@endlessm.com>  Fri, 27 Sep 2013 21:53:13 -0700
+
 eos-sdk (1.1.5~rc2) unstable; urgency=low
 
   * Updating version to 1.1.5~rc2
