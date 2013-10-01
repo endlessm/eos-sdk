@@ -152,6 +152,10 @@ const PrebuiltCategoryPage = new Lang.Class({
 
         this.add(this._outer_most_grid);
         this._category_provider = new Gtk.CssProvider();
+
+        // Add style contexts for CSS
+        let context = this.get_style_context();
+        context.add_class(EndlessWikipedia.STYLE_CLASS_CATEGORY_PAGE);
     },
 
     get title() {

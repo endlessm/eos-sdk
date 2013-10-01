@@ -52,23 +52,23 @@ Gjs_ArticleList .scrollbar.slider {
     background-color: #babdb6;
 }
 
-#category_info{
+.category-page #category_info{
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-#category_description{
+.category-page #category_description{
     color:rgba(255, 255, 255, 1.0);
     background-color: rgba(0, 0, 0, 0);
     font-size: 12px;
     font-family: "Source Sans Pro";
 }
 
-#category_scrolled_window .scrollbar.slider {
+.category-page #category_scrolled_window .scrollbar.slider {
     border-radius: 6px;
     background-color: alpha(white, 0.3);
 }
 
-#category_title{
+.category-page #category_title{
     /* Top padding is hack because we have bad version of BentonSans */
     padding-top: 20px;
     font-family: "BentonSans ExtraLight";
@@ -89,12 +89,20 @@ Gjs_CategoryButton GtkEventBox:hover {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
-Gjs_AssetButton {
+.category-page Gjs_AssetButton {
     font-weight: bold;
     color: alpha(white, 0.0);
 }
 
-Gjs_AssetButton:prelight {
+.category-page Gjs_AssetButton:prelight {
     text-shadow: 0px 1px 0px alpha(#000000, 0.5), 0px 0px 12px alpha(#000000, 0.3);
     color: alpha(white, 1.0);
+}
+
+Gjs_BackButton {
+    -GtkButton-image-spacing: 7;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
 }

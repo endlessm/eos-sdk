@@ -1,17 +1,11 @@
 const EndlessWikipedia = imports.wikipedia.EndlessWikipedia;
-const Gettext = imports.gettext;
-const GLib = imports.gi.GLib;
 const Lang = imports.lang;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Endless = imports.gi.Endless;
 
-const Config = imports.wikipedia.config;
 const BackButton = imports.wikipedia.widgets.BackButton;
 const SideBarButton = imports.wikipedia.widgets.SideBarButton;
-
-const _ = function(string) { return GLib.dgettext('eos-sdk', string); };
-Gettext.bindtextdomain('eos-sdk', Config.DATADIR + '/locale');
 
 const SIDEBAR_BACK_BUTTON_URI = "/com/endlessm/wikipedia-domain/assets/image_strip_back_button.png";
 const SUBMENU_SEPARATOR_A_URI = "/com/endlessm/wikipedia-domain/assets/submenu_separator_shadow_a.png";
@@ -142,11 +136,8 @@ const DomainWikiView = new Lang.Class({
         this._category_page.add(this._category_view);
         this._category_page.add(this._category_article_list);
 
-        this._category_back_button = new BackButton.BackButton({
-            label: _("HOME")
-        });
+        this._category_back_button = new BackButton.BackButton();
         this._category_back_button.show();
-
 
         this._category_article_list.connect('article-chosen',
             Lang.bind(this, this._onArticleClicked));
