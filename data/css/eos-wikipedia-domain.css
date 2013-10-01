@@ -89,12 +89,12 @@ Gjs_CategoryButton GtkEventBox:hover {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
-Gjs_AssetButton {
+#category_page_back_button {
     font-weight: bold;
     color: alpha(white, 0.0);
 }
 
-Gjs_AssetButton:prelight {
+#category_page_back_button:prelight {
     text-shadow: 0px 1px 0px alpha(#000000, 0.5), 0px 0px 12px alpha(#000000, 0.3);
     color: alpha(white, 1.0);
 }

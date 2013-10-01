@@ -122,7 +122,8 @@ const PrebuiltCategoryPage = new Lang.Class({
             normal_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_normal.png",
             active_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_pressed.png",
             prelight_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_hover.png",
-            label: _("OTHER CATEGORIES")
+            label: _("OTHER CATEGORIES"),
+            name: "category_page_back_button"
         });
 
         this._back_button.connect('clicked', Lang.bind(this, function() {
