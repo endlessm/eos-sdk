@@ -122,8 +122,7 @@ const PrebuiltCategoryPage = new Lang.Class({
             normal_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_normal.png",
             active_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_pressed.png",
             prelight_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_hover.png",
-            label: _("OTHER CATEGORIES"),
-            name: "category_page_back_button"
+            label: _("OTHER CATEGORIES")
         });
 
         this._back_button.connect('clicked', Lang.bind(this, function() {
@@ -153,6 +152,10 @@ const PrebuiltCategoryPage = new Lang.Class({
 
         this.add(this._outer_most_grid);
         this._category_provider = new Gtk.CssProvider();
+
+        // Add style contexts for CSS
+        let context = this.get_style_context();
+        context.add_class(EndlessWikipedia.STYLE_CLASS_CATEGORY_PAGE);
     },
 
     get title() {

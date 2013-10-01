@@ -16,5 +16,6 @@
     <file>assets/introduction_back_button_normal.png</file>
     <file>assets/introduction_back_button_pressed.png</file>
     <file>assets/introduction_back_button_hover.png</file>
+    <file>assets/topbar_back_icon_normal.png</file>
   </gresource>
 </gresources>

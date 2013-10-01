@@ -1,3 +1,4 @@
 # List of source files which contain translatable strings.
 wikipedia/views/domain_wiki_view.js
+wikipedia/widgets/BackButton.js
 wikipedia/PrebuiltCategoryPage.js
