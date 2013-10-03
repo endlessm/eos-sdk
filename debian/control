@@ -24,16 +24,16 @@ Depends: ${shlibs:Depends},
          ${misc:Depends},
          gir1.2-gtk-3.0 (>= 3.8),
          eos-pstack (>= 1.0)
-Description: Open Endless SDK GUI library
- Runtime libraries for the Open Endless SDK: GUI library
+Description: Endless SDK GUI library
+ Runtime libraries for the Endless SDK: GUI library
 
 Package: eos-sdk-dev
 Section: non-free/libdevel
 Architecture: any
 Depends: eos-sdk (= ${binary:Version}),
          eos-pstack-dev
-Description: Open Endless SDK
- Development headers for the Open Endless SDK
+Description: Endless SDK development package
+ Development headers for the Endless SDK
 
 Package: eos-sdk-doc
 Section: non-free/doc
@@ -48,16 +48,18 @@ Package: gir1.2-endless-0
 Section: non-free/introspection
 Architecture: any
 Depends: ${gir:Depends}
-Description: Open Endless SDK
- Introspection data for the Open Endless SDK
+Description: Endless SDK
+ Introspection data for the Endless SDK. Install this if you want to use the
+ GObject introspection bindings for the Endless SDK from a language such as
+ Javascript.
 
 Package: eos-sdk-wikipedia
 Section: non-free/libs
 Architecture: any
 Depends: eos-sdk (= ${binary:Version}),
          gjs
-Description: Open Endless SDK Wikipedia library
- GJS libraries for the Open Endless SDK Wikipedia library
+Description: Endless SDK Wikipedia library
+ GJS libraries for the Endless SDK Wikipedia library
 
 Package: eos-sdk-webhelper
 Section: non-free/libs
@@ -65,6 +67,6 @@ Architecture: any
 Depends: eos-sdk (= ${binary:Version}),
          gjs,
          gir1.2-webkit-3.0
-Description: Open Endless SDK web helper
+Description: Endless SDK web helper
  Internal convenience library to simplify creation of web apps using the
- Open Endless SDK.
+ Endless SDK.
