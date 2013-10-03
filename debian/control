@@ -76,7 +76,7 @@ Description: Endless SDK Wikipedia library
 
 Package: eos-sdk-webhelper
 Section: non-free/libs
-Architecture: any
+Architecture: all
 Depends: ${misc:Depends},
          eos-sdk (= ${binary:Version}),
          gir1.2-endless-0 (= ${binary:Version}),

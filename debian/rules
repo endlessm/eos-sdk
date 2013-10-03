@@ -10,11 +10,11 @@
 #export DH_VERBOSE=1
 
 %:
-	dh $@ 
+	dh $@ --with gir
 
 # Build our documentation as well
 override_dh_auto_configure:
-	dh_auto_configure -- --enable-gtk-doc
+	dh_auto_configure -- --enable-gtk-doc --enable-gir-doc --enable-js-doc
 
 # Keeps our tests from running when building debian! We should get rid of
 # this, but right now the tests fail because Gtk is initialized but can't find
