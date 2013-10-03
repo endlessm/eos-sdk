@@ -3,17 +3,22 @@ Section: non-free/libs
 Priority: standard
 Maintainer: Endless Mobile <maintainers@endlessm.com>
 Build-Depends: debhelper (>= 8.0.0),
-               autotools-dev,
-               automake (>= 1.13),
+               eos-pstack-dev (>= 1.0),
                gettext (>= 0.18.1),
-               pkg-config (>= 0.24),
+               gir1.2-gdkpixbuf-2.0,
+               gir1.2-gtk-3.0 (>= 3.8),
+               gir1.2-json-1.0,
+               gir1.2-webkit-3.0 (>= 2.0),
+               gir1.2-webkit2-3.0 (>= 2.0),
+               gjs,
+               gobject-introspection,
                gtk-doc-tools (>= 1.18),
                libgirepository1.0-dev (>= 1.30),
-               gir1.2-gtk-3.0 (>= 3.8),
+               libglib2.0-bin,
                libgtk-3-dev,
-               eos-pstack-dev (>= 1.0),
-               gjs,
-               gir1.2-json-1.0
+               pkg-config (>= 0.24),
+               naturaldocs,
+               yelp-tools
 Standards-Version: 3.9.2
 Homepage: http://www.endlessm.com
 
@@ -22,15 +27,16 @@ Section: non-free/libs
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         gir1.2-gtk-3.0 (>= 3.8),
          eos-pstack (>= 1.0)
+Recommends: gjs
 Description: Endless SDK GUI library
  Runtime libraries for the Endless SDK: GUI library
 
 Package: eos-sdk-dev
 Section: non-free/libdevel
 Architecture: any
-Depends: eos-sdk (= ${binary:Version}),
+Depends: ${misc:Depends},
+         eos-sdk (= ${binary:Version}),
          eos-pstack-dev
 Description: Endless SDK development package
  Development headers for the Endless SDK
@@ -47,7 +53,8 @@ Description: Endless SDK API documentation
 Package: gir1.2-endless-0
 Section: non-free/introspection
 Architecture: any
-Depends: ${gir:Depends}
+Depends: ${gir:Depends},
+         ${misc:Depends}
 Description: Endless SDK
  Introspection data for the Endless SDK. Install this if you want to use the
  GObject introspection bindings for the Endless SDK from a language such as
@@ -56,7 +63,13 @@ Description: Endless SDK
 Package: eos-sdk-wikipedia
 Section: non-free/libs
 Architecture: any
-Depends: eos-sdk (= ${binary:Version}),
+Depends: ${misc:Depends},
+         eos-sdk (= ${binary:Version}),
+         gir1.2-endless-0 (= ${binary:Version}),
+         gir1.2-gdkpixbuf-2.0,
+         gir1.2-gtk-3.0 (>= 3.8),
+         gir1.2-json-1.0,
+         gir1.2-webkit-3.0 (>=2.0),
          gjs
 Description: Endless SDK Wikipedia library
  GJS libraries for the Endless SDK Wikipedia library
@@ -64,9 +77,13 @@ Description: Endless SDK Wikipedia library
 Package: eos-sdk-webhelper
 Section: non-free/libs
 Architecture: any
-Depends: eos-sdk (= ${binary:Version}),
-         gjs,
-         gir1.2-webkit-3.0
+Depends: ${misc:Depends},
+         eos-sdk (= ${binary:Version}),
+         gir1.2-endless-0 (= ${binary:Version}),
+         gir1.2-gtk-3.0 (>= 3.8),
+         gir1.2-webkit-3.0 (>= 2.0),
+         gir1.2-webkit2-3.0 (>= 2.0),
+         gjs
 Description: Endless SDK web helper
  Internal convenience library to simplify creation of web apps using the
  Endless SDK.
