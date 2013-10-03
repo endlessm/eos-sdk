@@ -35,6 +35,15 @@ Depends: eos-sdk (= ${binary:Version}),
 Description: Open Endless SDK
  Development headers for the Open Endless SDK
 
+Package: eos-sdk-doc
+Section: non-free/doc
+Architecture: all
+Depends: ${misc:Depends}
+Suggests: devhelp
+Description: Endless SDK API documentation
+ API documentation for the Endless SDK. Install this if you want to access the
+ API documentation locally, either in your browser or in the Devhelp program.
+
 Package: gir1.2-endless-0
 Section: introspection
 Architecture: any
