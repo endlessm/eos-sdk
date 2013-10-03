@@ -18,7 +18,7 @@ Standards-Version: 3.9.2
 Homepage: http://www.endlessm.com
 
 Package: eos-sdk
-Section: libs
+Section: non-free/libs
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
@@ -28,7 +28,7 @@ Description: Open Endless SDK GUI library
  Runtime libraries for the Open Endless SDK: GUI library
 
 Package: eos-sdk-dev
-Section: libdevel
+Section: non-free/libdevel
 Architecture: any
 Depends: eos-sdk (= ${binary:Version}),
          eos-pstack-dev
@@ -45,14 +45,14 @@ Description: Endless SDK API documentation
  API documentation locally, either in your browser or in the Devhelp program.
 
 Package: gir1.2-endless-0
-Section: introspection
+Section: non-free/introspection
 Architecture: any
 Depends: ${gir:Depends}
 Description: Open Endless SDK
  Introspection data for the Open Endless SDK
 
 Package: eos-sdk-wikipedia
-Section: libdevel
+Section: non-free/libs
 Architecture: any
 Depends: eos-sdk (= ${binary:Version}),
          gjs
@@ -60,7 +60,7 @@ Description: Open Endless SDK Wikipedia library
  GJS libraries for the Open Endless SDK Wikipedia library
 
 Package: eos-sdk-webhelper
-Section: libs
+Section: non-free/libs
 Architecture: any
 Depends: eos-sdk (= ${binary:Version}),
          gjs,
