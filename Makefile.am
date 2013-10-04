@@ -15,7 +15,7 @@ SUBDIRS = po . docs/reference/endless
 ACLOCAL_AMFLAGS = -I m4
 
 # Extra files to distribute in the tarball
-EXTRA_DIST = @EOS_SDK_API_NAME@.pc.in
+EXTRA_DIST = README.md @EOS_SDK_API_NAME@.pc.in
 
 # Compiler flags
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
