@@ -38,7 +38,9 @@ dnl AC_CONFIG_SRCDIR([src/hello.c])
 # no-portability suppresses warnings about syntax specific to GNU make
 # parallel-tests specifies that we use the new parallel-running test harness.
 # Unlike serial-tests, this option is accepted by Automake 1.11
-AM_INIT_AUTOMAKE([-Wall -Wno-portability foreign 1.11 parallel-tests])
+# tar-ustar is required because there may be files whose entire paths exceed
+# 99 characters.
+AM_INIT_AUTOMAKE([-Wall -Wno-portability foreign 1.11 parallel-tests tar-ustar])
 # Avoid spewing garbage over the terminal ('make V=1' to see the garbage)
 AM_SILENT_RULES([yes])
 # Initialize Libtool; don't build static libraries
