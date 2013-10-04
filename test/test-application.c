@@ -155,9 +155,15 @@ add_application_tests (void)
               config_dir_setup,
               test_config_dir_exists,
               config_dir_teardown);
-  g_test_add ("/application/config-dir-fails-if-not-writable", ConfigDirFixture,
-              NULL,
-              config_dir_setup,
-              test_config_dir_fails_if_not_writable,
-              config_dir_teardown);
+
+  /* Only run this test if UID is not root; root can write to any directory no
+  matter what its permissions. */
+  if (getuid() > 0 && geteuid() > 0)
+    {
+      g_test_add ("/application/config-dir-fails-if-not-writable",
+                  ConfigDirFixture, NULL,
+                  config_dir_setup,
+                  test_config_dir_fails_if_not_writable,
+                  config_dir_teardown);
+    }
 }
