@@ -18,7 +18,8 @@ Build-Depends: debhelper (>= 8.0.0),
                libgtk-3-dev,
                pkg-config (>= 0.24),
                naturaldocs,
-               yelp-tools
+               yelp-tools,
+               yelp-xsl
 Standards-Version: 3.9.2
 Homepage: http://www.endlessm.com
 
