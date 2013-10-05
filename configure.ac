@@ -226,6 +226,9 @@ AC_CONFIG_FILES([
 ])
 AC_CONFIG_FILES([tools/eos-run-test], [chmod +x tools/eos-run-test])
 AC_CONFIG_HEADERS([config.h])  dnl Header with system-dependent #defines
+# Make docs/reference/webhelper/eos.css available in the build tree as well as
+# the source tree
+AC_CONFIG_LINKS([docs/reference/webhelper/eos.css:docs/reference/webhelper/eos.css])
 # Do the output
 AC_OUTPUT
 
