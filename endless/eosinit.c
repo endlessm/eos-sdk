@@ -21,8 +21,6 @@ should also work on Clang. */
 
 static gboolean _eos_initialized = FALSE;
 
-static char *eos_system_personality;
-
 /*
  * _eos_init:
  *
@@ -67,17 +65,23 @@ eos_is_inited (void)
  *   with the name of the personality. You should never free or modify
  *   the returned string.
  */
-const char *
+const gchar *
 eos_get_system_personality (void)
 {
-  static char *personality;
+  static gchar *personality;
 
   if (g_once_init_enter (&personality))
     {
-      char *tmp;
+      gchar *tmp;
 
       tmp = g_strdup (g_getenv ("ENDLESS_OS_PERSONALITY"));
-      if (tmp == NULL || *tmp == '\0')
+      if (tmp == '\0')
+        {
+          g_free (tmp);
+          tmp = NULL;
+        }
+
+      if (tmp == NULL)
         {
           char *path = g_build_filename (DATADIR,
                                          "EndlessOS",
