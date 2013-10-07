@@ -21,6 +21,8 @@ should also work on Clang. */
 
 static gboolean _eos_initialized = FALSE;
 
+static char *eos_system_personality;
+
 /*
  * _eos_init:
  *
@@ -50,4 +52,53 @@ gboolean
 eos_is_inited (void)
 {
   return _eos_initialized;
+}
+
+/**
+ * eos_get_system_personality:
+ *
+ * Retrieves the "personality" of the system.
+ *
+ * The personality is a unique string that identifies the installation
+ * of EndlessOS for a specific country or audience. The availability of
+ * certain applications, or their content, is determined by this value.
+ *
+ * Return value: (transfer none): a string, owned by the Endless SDK,
+ *   with the name of the personality. You should never free or modify
+ *   the returned string.
+ */
+const char *
+eos_get_system_personality (void)
+{
+  static char *personality;
+
+  if (g_once_init_enter (&personality))
+    {
+      char *tmp;
+
+      tmp = g_strdup (g_getenv ("ENDLESS_OS_PERSONALITY"));
+      if (tmp == NULL || *tmp == '\0')
+        {
+          char *path = g_build_filename (DATADIR,
+                                         "EndlessOS",
+                                         "personality.txt",
+                                         NULL);
+
+          GError *error = NULL;
+          g_file_get_contents (path, &tmp, NULL, &error);
+          if (error != NULL)
+            {
+              g_critical ("No personality defined: %s", error->message);
+              g_error_free (error);
+              tmp = NULL;
+            }
+        }
+
+      if (tmp == NULL)
+        tmp = g_strdup ("Default");
+
+      g_once_init_leave (&personality, tmp);
+    }
+
+  return personality;
 }

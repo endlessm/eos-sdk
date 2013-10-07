@@ -25,6 +25,9 @@ EOS_SDK_ALL_API_VERSIONS
 gboolean eos_hello_sample_function (GFile   *file,
                                     GError **error);
 
+EOS_SDK_ALL_API_VERSIONS
+const char *    eos_get_system_personality      (void);
+
 G_END_DECLS
 
 #endif
