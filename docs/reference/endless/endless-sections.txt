@@ -1,6 +1,7 @@
 <SECTION>
 <FILE>hello</FILE>
 eos_hello_sample_function
+eos_get_system_personality
 <SUBSECTION Private>
 EOS_SDK_ALL_API_VERSIONS
 EOS_DEFINE_ENUM_TYPE
