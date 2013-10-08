@@ -41,8 +41,12 @@ const PrebuiltArticlesPage = new Lang.Class({
         context.add_class(EndlessWikipedia.STYLE_CLASS_ARTICLES_PAGE);
     },
 
-    setShowableLinks: function(linked_articles){
+    setShowableLinks: function(linked_articles) {
         this._wiki_view.setShowableLinks(linked_articles);
+    },
+
+    set_lang: function(lang) {
+        this._wiki_view.lang = lang;
     },
 
     get article_title() {

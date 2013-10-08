@@ -179,6 +179,10 @@ const DomainWikiView = new Lang.Class({
         this._article_view.article_uri = article.uri;
     },
 
+    set_lang: function(lang) {
+        this._article_view.set_lang(lang);
+    },
+
     transition_page: function(transition_type, page_name){
         this._window.page_manager.transition_type = transition_type;
         this._window.page_manager.visible_page_name = page_name;

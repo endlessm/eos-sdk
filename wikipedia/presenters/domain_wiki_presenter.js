@@ -14,6 +14,12 @@ function _resourceUriToPath(uri) {
     throw new Error('Resource URI did not start with "resource://"');
 }
 
+function _pathnameToLanguage(uri) {
+    let parts = uri.split("/");
+    let filename = parts[parts.length-1];
+    return filename.substring(0, 2);
+}
+
 const DomainWikiPresenter = new Lang.Class({
     Name: "DomainWikiPresenter",
     Extends: GObject.Object,
@@ -53,7 +59,7 @@ const DomainWikiPresenter = new Lang.Class({
 
     initAppInfoFromJsonFile: function(filename) {
         let app_content = JSON.parse(Utils.load_file_from_resource(filename));
-        this._lang_code = filename.substring(0, 2);
+        this._domain_wiki_view.set_lang(_pathnameToLanguage(filename));
         let categories = app_content['categories'];
         let cat_length = categories.length
         let category_models = new Array();
