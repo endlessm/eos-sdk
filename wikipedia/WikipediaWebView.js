@@ -33,7 +33,12 @@ const WikipediaWebView = new Lang.Class({
             'Hide article links',
             'A boolean to determine whether links should be shown',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
-            false)
+            false),
+        'lang': GObject.ParamSpec.string('lang',
+            'Language code',
+            'Specifies the language to be used in this wiki webview',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+            "")
     },
 
     _init: function(params) {
@@ -71,13 +76,21 @@ const WikipediaWebView = new Lang.Class({
     },
 
     loadArticleByTitle: function(title) {
-        let params = {"title":title, "hideLinks":this.hide_links};
+        let params = {
+            title: title, 
+            hideLinks: this.hide_links, 
+            lang: this.lang
+        };
         let url = this._getFullURL(hostName + getPageByTitleURI, params);
         this.load_uri(url);
     },
 
     loadArticleBySearchQuery: function(query) {
-        let params = {"query":query, "hideLinks":this.hide_links};
+        let params = {
+            query: query,
+            hideLinks: this.hide_links,
+            lang: this.lang
+        };
         let url = this._getFullURL(hostName + getPageByQueryURI, params);
         this.load_uri(url);
     },
