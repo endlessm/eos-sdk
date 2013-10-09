@@ -1,6 +1,7 @@
 /* Copyright 2013 Endless Mobile, Inc. */
 
 #include <inttypes.h> /* For PRIi64 */
+#include <unistd.h> /* For getpid() */
 #include <glib-object.h>
 #include <glib.h>
 #include <gtk/gtk.h>
@@ -14,9 +15,10 @@
 gchar *
 generate_unique_app_id (void)
 {
-  return g_strdup_printf ("%s%" PRIi64,
+  return g_strdup_printf ("%s%" PRIi64 "%ld",
                           APPLICATION_TEST_ID_BASE,
-                          g_get_real_time ());
+                          g_get_real_time (),
+                          (long) getpid ());
 }
 
 /* Test fixture for running a test from an EosApplication's "startup" handler */
