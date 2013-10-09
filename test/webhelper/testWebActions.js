@@ -37,7 +37,9 @@ let app;
 
 function setUp() {
     // Generate a unique ID for each app instance that we test
-    let id_string = 'com.endlessm.webhelper.test' + GLib.get_real_time();
+    let fake_pid = GLib.random_int();
+    // FIXME In this version of GJS there is no Posix module, so fake the PID
+    let id_string = 'com.endlessm.webhelper.test' + GLib.get_real_time() + fake_pid;
     app = new TestClass({
         application_id: id_string
     });
