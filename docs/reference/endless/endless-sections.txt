@@ -158,6 +158,7 @@ eos_flexy_grid_get_cell_at_coords
 eos_flexy_grid_cell_new
 eos_flexy_grid_cell_set_shape
 eos_flexy_grid_cell_get_shape
+eos_flexy_grid_cell_get_selected
 EosFlexyShape
 <SUBSECTION>
 EOS_STYLE_CLASS_FLEXY_GRID

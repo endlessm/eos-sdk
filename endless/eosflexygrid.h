@@ -145,6 +145,8 @@ void            eos_flexy_grid_cell_set_shape           (EosFlexyGridCell *cell,
                                                          EosFlexyShape     shape);
 EOS_SDK_ALL_API_VERSIONS
 EosFlexyShape   eos_flexy_grid_cell_get_shape           (EosFlexyGridCell *cell);
+EOS_SDK_ALL_API_VERSIONS
+gboolean        eos_flexy_grid_cell_get_selected        (EosFlexyGridCell *cell);
 
 G_END_DECLS
 
