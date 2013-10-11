@@ -88,3 +88,13 @@ Depends: ${misc:Depends},
 Description: Endless SDK web helper
  Internal convenience library to simplify creation of web apps using the
  Endless SDK.
+
+Package: eos-sdk-bin
+Section: non-free/libdevel
+Architecture: all
+Depends: ${misc:Depends},
+         eos-sdk (= ${binary:Version}),
+         gir1.2-glib-2.0,
+         gjs
+Description: Endless SDK bin files
+ Scripts for building/running/bundling applications using the Endless SDK.
