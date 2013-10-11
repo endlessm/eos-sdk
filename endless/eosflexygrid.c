@@ -109,7 +109,11 @@ eos_flexy_grid_update_cell_prelight (EosFlexyGrid *grid,
       g_signal_emit (grid, grid_signals[CELL_SELECTED], 0, cell);
     }
   else
-    priv->prelight_cell = NULL;
+    {
+      priv->prelight_cell = NULL;
+
+      g_signal_emit (grid, grid_signals[CELL_SELECTED], 0, NULL);
+    }
 
   gtk_widget_queue_draw (GTK_WIDGET (grid));
 }
