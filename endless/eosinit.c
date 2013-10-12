@@ -84,7 +84,7 @@ eos_get_system_personality (void)
 
       if (tmp == NULL)
         {
-          char *path = g_build_filename (DATADIR,
+          char *path = g_build_filename (SYSCONFDIR,
                                          "EndlessOS",
                                          "personality.txt",
                                          NULL);
