@@ -1,3 +1,4 @@
+const Endless = imports.gi.Endless;
 const Lang = imports.lang;
 const GObject = imports.gi.GObject;
 
@@ -25,20 +26,22 @@ const DomainWikiPresenter = new Lang.Class({
     Extends: GObject.Object,
 
     _init: function(model, view, app_filename, linked_articles_filename) {
-        this._domain_wiki_model = model;
-        this._domain_wiki_view = view;
-        this._domain_wiki_view.set_presenter(this)
-        this._domain_wiki_view.connect('category-chosen', Lang.bind(this, this._onCategoryClicked));
-        this._domain_wiki_view.connect('article-chosen', Lang.bind(this, this._onArticleClicked));
+        this._model = model;
+        this._view = view;
+        this._view.set_presenter(this);
+        this._view.connect('category-chosen',
+            Lang.bind(this, this._onCategoryClicked));
+        this._view.connect('article-chosen',
+            Lang.bind(this, this._onArticleClicked));
 
         this.initAppInfoFromJsonFile(app_filename);
         this.initPageRankFromJsonFile(linked_articles_filename);
 
-        this._domain_wiki_view.set_categories(this._domain_wiki_model.getCategories());
+        this._view.set_categories(this._model.getCategories());
 
-        let linked_articles = this._domain_wiki_model.getLinkedArticles();
+        let linked_articles = this._model.getLinkedArticles();
         let to_show = linked_articles["app_articles"].concat(linked_articles["extra_linked_articles"]);
-        this._domain_wiki_view.set_showable_links(to_show);
+        this._view.set_showable_links(to_show);
     },
 
     initArticleModels: function(articles) {
@@ -54,12 +57,12 @@ const DomainWikiPresenter = new Lang.Class({
 
     initPageRankFromJsonFile: function(filename){
         let articles = JSON.parse(Utils.load_file_from_resource(filename));
-        this._domain_wiki_model.setLinkedArticles(articles);
+        this._model.setLinkedArticles(articles);
     },
 
     initAppInfoFromJsonFile: function(filename) {
         let app_content = JSON.parse(Utils.load_file_from_resource(filename));
-        this._domain_wiki_view.set_lang(_pathnameToLanguage(filename));
+        this._view.set_lang(_pathnameToLanguage(filename));
         let categories = app_content['categories'];
         let cat_length = categories.length
         let category_models = new Array();
@@ -76,7 +79,7 @@ const DomainWikiPresenter = new Lang.Class({
             categoryModel.addArticles(articleModels);
             category_models.push(categoryModel);
         }
-        this._domain_wiki_model.addCategories(category_models);
+        this._model.addCategories(category_models);
     },
 
     initCategory: function(category){
@@ -90,33 +93,34 @@ const DomainWikiPresenter = new Lang.Class({
 
     _onCategoryClicked: function(page, title, index) {
         this._current_category = index;
-        let category = this._domain_wiki_model.getCategories()[index];
-        let articles = this._domain_wiki_model.getArticlesForCategoryIndex(index);
+        let category = this._model.getCategories()[index];
+        let articles = this._model.getArticlesForCategoryIndex(index);
 
         let titles = new Array();
         for(let i = 0; i < articles.length; i++){
             titles.push(articles[i].title);
         }
 
-        this._domain_wiki_view.set_category_info(category, titles);
+        this._view.set_category_info(category, titles);
 
-        this._domain_wiki_view.transition_page(Endless.PageManagerTransitionType.SLIDE_LEFT, 'category');
+        this._view.transition_page(Endless.PageManagerTransitionType.SLIDE_LEFT,
+            'category');
     },
 
     _onArticleClicked: function(article_list, title, index) {
-        let articles = this._domain_wiki_model.getArticlesForCategoryIndex(this._current_category);
-        this._domain_wiki_view.set_article_info(articles[index]);
-        this._domain_wiki_view.transition_page(Endless.PageManagerTransitionType.SLIDE_LEFT, 'article');
-
+        let articles = this._model.getArticlesForCategoryIndex(this._current_category);
+        this._view.set_article_info(articles[index]);
+        this._view.transition_page(Endless.PageManagerTransitionType.SLIDE_LEFT,
+            'article');
     },
 
     _onCategoryBackClicked: function(button) {
-        this._window.page_manager.transition_type = Endless.PageManagerTransitionType.SLIDE_RIGHT;
-        this._window.page_manager.visible_page_name = 'front';
+        this._view.transition_page(
+            Endless.PageManagerTransitionType.SLIDE_RIGHT, 'front');
     },
 
     _onArticleBackClicked: function(button) {
-        this._window.page_manager.transition_type = Endless.PageManagerTransitionType.SLIDE_RIGHT;
-        this._window.page_manager.visible_page_name = 'category';
+        this._view.transition_page(
+            Endless.PageManagerTransitionType.SLIDE_RIGHT, 'category');
     }
 });
