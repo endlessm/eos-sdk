@@ -64,7 +64,8 @@ libendless_@EOS_SDK_API_VERSION@_la_CPPFLAGS = \
 	@EOS_SDK_CFLAGS@ \
 	-DG_LOG_DOMAIN=\"EndlessSDK\" \
 	-DCOMPILING_EOS_SDK \
-	-DDATADIR=\""$(datadir)"\"
+	-DDATADIR=\""$(datadir)"\" \
+	-DSYSCONFDIR=\""$(sysconfdir)"\"
 libendless_@EOS_SDK_API_VERSION@_la_CFLAGS = $(AM_CFLAGS)
 libendless_@EOS_SDK_API_VERSION@_la_LIBADD = @EOS_SDK_LIBS@
 libendless_@EOS_SDK_API_VERSION@_la_LDFLAGS = \
