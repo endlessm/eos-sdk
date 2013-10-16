@@ -71,10 +71,14 @@ const DomainWikiView = new Lang.Class({
         });
         this._sidebar_frame.set_size_request(40, -1);
 
-        this._article_sidebar_back_button = new SideBarButton.SideBarButton(SIDEBAR_BACK_BUTTON_URI, {
+        this._article_sidebar_back_button = new Gtk.Button({
             name: "side_bar_button",
-            vexpand: true
-        });
+            vexpand: true,
+            image: new Gtk.Image({
+                resource: SIDEBAR_BACK_BUTTON_URI
+            })
+        })
+
         this._article_view = new EndlessWikipedia.PrebuiltArticlesPage();
         this._article_list = new EndlessWikipedia.ArticleList({
             halign: Gtk.Align.START,
