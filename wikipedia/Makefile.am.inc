@@ -5,13 +5,13 @@
 # Create a config.js file with the installed directory locations. Use the
 # following sed script to replace $datadir inside the script, as suggested by
 # the Autoconf manual; because $datadir and friends only work inside Makefiles.
-edit = sed \
+wikipedia_edit = sed \
 	-e 's|@datadir[@]|$(datadir)|g' \
 	$(NULL)
 wikipedia/config.js: wikipedia/config.js.in Makefile
 	$(AM_V_GEN)mkdir -p wikipedia && \
 	rm -f $@ $@.tmp && \
-	$(edit) $< >$@.tmp && \
+	$(wikipedia_edit) $< >$@.tmp && \
 	chmod +x $@.tmp && \
 	chmod a-w $@.tmp && \
 	mv $@.tmp $@
