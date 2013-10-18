@@ -1,9 +1,9 @@
 * {
-    font-family: "Source Sans Pro";
+    font-family: Lato;
 }
 
 .title {
-    font-family: "BentonSans ExtraLight";
+    font-family: "Lato Light";
     color: #ffffff;
     text-shadow: 0px 1px 0px alpha(#23326e, 0.15);
     padding-top: 15px;
@@ -14,8 +14,7 @@
 }
 
 .title.category.front-page {
-    font-size: 40px;
-    padding-top: 9px;
+    font-size: 42px;
 }
 
 Gjs_ArticleList{
@@ -27,9 +26,8 @@ Gjs_ArticleList .button {
     padding-right: 25px;
     padding-top: 15px;
     padding-bottom: 15px;
-    font-size: 15px;
+    font-size: 14px;
     color: #464646;
-    font-family: "Source Sans Pro";
     background-image: url('resource:///com/endlessm/wikipedia-domain/assets/submenu_bg_normal.jpg');
     background-size: cover;
 }
@@ -59,8 +57,7 @@ Gjs_ArticleList .scrollbar.slider {
 .category-page #category_description{
     color:rgba(255, 255, 255, 1.0);
     background-color: rgba(0, 0, 0, 0);
-    font-size: 12px;
-    font-family: "Source Sans Pro";
+    font-size: 11px;
 }
 
 .category-page #category_scrolled_window .scrollbar.slider {
@@ -69,10 +66,8 @@ Gjs_ArticleList .scrollbar.slider {
 }
 
 .category-page #category_title{
-    /* Top padding is hack because we have bad version of BentonSans */
-    padding-top: 20px;
-    font-family: "BentonSans ExtraLight";
-    font-size: 52px;
+    font-family: "Lato Light";
+    font-size: 50px;
     color: rgba(255, 255, 255, 0.9);
 }
 

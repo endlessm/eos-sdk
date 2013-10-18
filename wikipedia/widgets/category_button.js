@@ -10,8 +10,10 @@ const CATEGORY_LABEL_LEFT_MARGIN = 25;  // pixels
 const CATEGORY_LABEL_BOTTOM_MARGIN = 20;  // pixels
 const CATEGORY_BUTTON_RIGHT_MARGIN = 20;  // pixels
 const CATEGORY_BUTTON_BOTTOM_MARGIN = 20;  // pixels
-const CATEGORY_LABEL_BENTON_SANS_CORRECTION = 0; // pixels
-const CATEGORY_BUTTON_BENTON_SANS_CORRECTION = 10; // pixels
+// The following two are corrections because GTK 3.8 doesn't have baseline
+// alignment. Remove and align properly in GTK 3.10. FIXME
+const CATEGORY_LABEL_BASELINE_CORRECTION = 0; // pixels
+const CATEGORY_BUTTON_BASELINE_CORRECTION = 10; // pixels
 const _HOVER_ARROW_URI = '/com/endlessm/wikipedia-domain/assets/category_hover_arrow.png';
 const MAIN_CATEGORY_SCREEN_WIDTH_PERCENTAGE = 0.37;
 
@@ -71,7 +73,7 @@ const CategoryButton = new Lang.Class({
         });
         this._label = new Gtk.Label({
             margin_left: CATEGORY_LABEL_LEFT_MARGIN,
-            margin_bottom: CATEGORY_LABEL_BOTTOM_MARGIN - CATEGORY_LABEL_BENTON_SANS_CORRECTION,
+            margin_bottom: CATEGORY_LABEL_BOTTOM_MARGIN - CATEGORY_LABEL_BASELINE_CORRECTION,
             hexpand: true,
             halign: Gtk.Align.START,
             xalign: 0.0,  // deprecated Gtk.Misc properties; necessary because
@@ -80,7 +82,7 @@ const CategoryButton = new Lang.Class({
         this._arrow = new Gtk.Image({
             resource: _HOVER_ARROW_URI,
             margin_right: CATEGORY_BUTTON_RIGHT_MARGIN,
-            margin_bottom: CATEGORY_BUTTON_BOTTOM_MARGIN + CATEGORY_BUTTON_BENTON_SANS_CORRECTION,
+            margin_bottom: CATEGORY_BUTTON_BOTTOM_MARGIN + CATEGORY_BUTTON_BASELINE_CORRECTION,
             halign: Gtk.Align.END,
             valign: Gtk.Align.END,
             opacity: 0
