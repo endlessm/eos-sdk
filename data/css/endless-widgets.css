@@ -6,7 +6,7 @@
 
 .top-bar {
     font-family: "Lato";
-    font-style: bold;
+    font-weight: bold;
     font-size: 11px;
     background-image: -gtk-gradient(linear, center top, center bottom,
         from(#464646), to(#1e1e1e));
