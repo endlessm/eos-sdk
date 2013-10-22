@@ -6,7 +6,7 @@ const Pango = imports.gi.Pango;
 
 // This is an approximate number of characters that will keep the label from
 // going over its specified width
-const ARTICLE_LABEL_MAX_WIDTH_CHARS = 24;
+const ARTICLE_LABEL_MAX_WIDTH_CHARS = 22;
 
 const ListTextButton = new Lang.Class({
     Name: 'EndlessListTextButton',

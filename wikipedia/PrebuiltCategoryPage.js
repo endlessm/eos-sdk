@@ -94,7 +94,6 @@ const PrebuiltCategoryPage = new Lang.Class({
 
         this._description_text_view = new FixedSizeTextView.FixedSizeTextView({
             name:"category_description",
-            margin_left: 6, // stupid Benton Sans correction
             sensitive: false,
             editable: false,
             cursor_visible: false
