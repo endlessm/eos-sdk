@@ -24,6 +24,14 @@ const CategorySelectorView = new Lang.Class({
         this.parent(props);
     },
 
+    /**
+     * Method: setCategories
+     * Create buttons in this view for a list of categories to display
+     *
+     * Parameters:
+     *   categories - An array of <CategoryModels>
+     *
+     */
     setCategories: function(categories) {
         categories.forEach(function (category) {
             let button = new CategoryButton.CategoryButton({

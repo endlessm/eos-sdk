@@ -177,6 +177,10 @@ const DomainWikiView = new Lang.Class({
         this._article_back_button.label = category.title.toUpperCase();
     },
 
+    /**
+     * Method: set_article_info
+     * Proxy method to set the article displaying on the article page
+     */
     set_article_info: function (title, uri) {
         // Note: Must set article title first
         this._article_view.article_title = title;

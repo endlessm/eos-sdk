@@ -34,6 +34,13 @@ const ArticleList = new Lang.Class({
         this.add(this._grid);
     },
 
+    /**
+     * Method: setArticles
+     * Set articles to display in this widget
+     *
+     * Parameters:
+     *   articles - An array of <ArticleModels>
+     */
     setArticles: function(articles) {
         // Remove all existing article links
         this._grid.get_children().forEach(function(element, index, obj) {
