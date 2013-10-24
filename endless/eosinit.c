@@ -76,7 +76,7 @@ eos_get_system_personality (void)
       gchar *tmp;
 
       tmp = g_strdup (g_getenv ("ENDLESS_OS_PERSONALITY"));
-      if (tmp == '\0')
+      if (tmp != NULL && tmp[0] == '\0')
         {
           g_free (tmp);
           tmp = NULL;
@@ -84,23 +84,33 @@ eos_get_system_personality (void)
 
       if (tmp == NULL)
         {
+          GKeyFile *personality_file = g_key_file_new ();
           char *path = g_build_filename (SYSCONFDIR,
                                          "EndlessOS",
-                                         "personality.txt",
+                                         "personality.conf",
                                          NULL);
 
           GError *error = NULL;
-          g_file_get_contents (path, &tmp, NULL, &error);
+          g_key_file_load_from_file (personality_file, path,
+                                     G_KEY_FILE_NONE, &error);
+
+          if (error == NULL)
+            tmp = g_key_file_get_string (personality_file, "Personality",
+                                         "PersonalityName", &error);
+
           if (error != NULL)
             {
               g_critical ("No personality defined: %s", error->message);
               g_error_free (error);
               tmp = NULL;
             }
+
+          g_key_file_free (personality_file);
+          g_free (path);
         }
 
       if (tmp == NULL)
-        tmp = g_strdup ("Default");
+        tmp = g_strdup ("default");
 
       g_once_init_leave (&personality, tmp);
     }
