@@ -16,10 +16,10 @@ const DomainWikiView = new Lang.Class({
     Extends: GObject.Object,
     Signals: {
         'category-chosen': {
-            param_types: [GObject.TYPE_STRING, GObject.TYPE_INT]
+            param_types: [GObject.TYPE_STRING]
         },
         'article-chosen': {
-            param_types: [GObject.TYPE_STRING, GObject.TYPE_INT]
+            param_types: [GObject.TYPE_STRING, GObject.TYPE_STRING]
         }
     },
 
@@ -177,10 +177,14 @@ const DomainWikiView = new Lang.Class({
         this._article_back_button.label = category.title.toUpperCase();
     },
 
-    set_article_info: function(article){
+    /**
+     * Method: set_article_info
+     * Proxy method to set the article displaying on the article page
+     */
+    set_article_info: function (title, uri) {
         // Note: Must set article title first
-        this._article_view.article_title = article.title;
-        this._article_view.article_uri = article.uri;
+        this._article_view.article_title = title;
+        this._article_view.article_uri = uri;
     },
 
     set_lang: function(lang) {
@@ -200,12 +204,16 @@ const DomainWikiView = new Lang.Class({
         this._article_view.setShowableLinks(linked_articles);
     },
 
-    _onCategoryClicked: function(page, title, index) {
-        this.emit('category-chosen', title, index);
+    // Proxy signal, respond to front page's 'category-chosen' signal by
+    // emitting our own
+    _onCategoryClicked: function (page, categoryId) {
+        this.emit('category-chosen', categoryId);
     },
 
-    _onArticleClicked: function(article_list, title, index) {
-        this.emit('article-chosen', title, index);
+    // Proxy signal, respond to category page's 'article-chosen' signal by
+    // emitting our own
+    _onArticleClicked: function (articleList, title, uri) {
+        this.emit('article-chosen', title, uri);
     },
 
     _onCategoryBackClicked: function(button) {

@@ -35,6 +35,9 @@ javascript_tests = \
 	test/tools/eos-run-test/sanitycheck.js \
 	test/webhelper/testTranslate.js \
 	test/webhelper/testWebActions.js \
+	test/wikipedia/models/testCategoryModel.js \
+	test/wikipedia/models/testArticleModel.js \
+	test/wikipedia/models/testDomainWikiModel.js \
 	$(NULL)
 EXTRA_DIST += $(javascript_tests)
 
@@ -46,6 +49,7 @@ TESTS = \
 TEST_EXTENSIONS = .js
 JS_LOG_COMPILER = tools/eos-run-test
 AM_JS_LOG_FLAGS = \
+	--include-path=$(top_srcdir)/wikipedia \
 	--include-path=$(top_srcdir)/webhelper \
 	$(NULL)
 LOG_COMPILER = gtester

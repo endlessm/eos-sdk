@@ -14,7 +14,7 @@ const ArticleList = new Lang.Class({
     
     Signals: {
         'article-chosen': {
-            param_types: [GObject.TYPE_STRING, GObject.TYPE_INT]
+            param_types: [GObject.TYPE_STRING, GObject.TYPE_STRING]
         }
     },
 
@@ -34,7 +34,13 @@ const ArticleList = new Lang.Class({
         this.add(this._grid);
     },
 
-    // Takes a list of dictionaries with keys 'title' and 'uri'
+    /**
+     * Method: setArticles
+     * Set articles to display in this widget
+     *
+     * Parameters:
+     *   articles - An array of <ArticleModels>
+     */
     setArticles: function(articles) {
         // Remove all existing article links
         this._grid.get_children().forEach(function(element, index, obj) {
@@ -42,12 +48,13 @@ const ArticleList = new Lang.Class({
         }, this);
 
         // Create new ones
-        articles.forEach(function(title, index, obj) {
-            let button = new ListTextButton.ListTextButton(HOVER_ARROW_URI, title, {hexpand:true});
+        articles.forEach(function (article) {
+            let button = new ListTextButton.ListTextButton(HOVER_ARROW_URI,
+                article.title, { hexpand: true });
             button.connect('clicked', Lang.bind(this, function() {
-                this.emit('article-chosen', title, index);
+                this.emit('article-chosen', article.title, article.uri);
             }));
-            
+
             this._grid.add(button);
         }, this);
     }

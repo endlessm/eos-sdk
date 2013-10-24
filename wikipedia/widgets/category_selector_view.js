@@ -13,7 +13,7 @@ const CategorySelectorView = new Lang.Class({
     Extends: CategoryLayoutManager.CategoryLayoutManager,
     Signals: {
         'category-chosen': {
-            param_types: [GObject.TYPE_STRING, GObject.TYPE_INT]
+            param_types: [GObject.TYPE_STRING]
         }
     },
 
@@ -24,20 +24,26 @@ const CategorySelectorView = new Lang.Class({
         this.parent(props);
     },
 
-    // Takes an array of dictionaries with keys 'title' and 'image_uri'
+    /**
+     * Method: setCategories
+     * Create buttons in this view for a list of categories to display
+     *
+     * Parameters:
+     *   categories - An array of <CategoryModels>
+     *
+     */
     setCategories: function(categories) {
-        categories.forEach(function(category, index, obj) {
-            let isClickable = !category.getArticles().length == 0;
+        categories.forEach(function (category) {
             let button = new CategoryButton.CategoryButton({
                 category_title: category.title,
                 image_uri: category.image_thumbnail_uri,
-                clickable_category: isClickable,
+                clickable_category: category.has_articles,
                 is_main_category: category.is_main_category,
                 hexpand: !category.is_main_category
             });
-            button.index = index;
+            button.id = category.id; // ID to return to when clicked
             //if the category has no articles, you shouldn't be able to click on it.
-            if(isClickable) {
+            if (category.has_articles) {
                 button.connect('clicked', Lang.bind(this, this._onButtonClicked));              
             }
 
@@ -46,6 +52,6 @@ const CategorySelectorView = new Lang.Class({
     },
 
     _onButtonClicked: function(button) {
-        this.emit('category-chosen', button.category_title, button.index);
+        this.emit('category-chosen', button.id);
     }
 });
