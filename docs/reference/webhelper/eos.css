@@ -1,9 +1,9 @@
 * {
-    font-family: "Source Sans Pro";
+    font-family: "Lato";
 }
 
 p {
-    font-size: 16pt;
+    font-size: 15pt;
     text-indent: 0;
     margin-bottom: 1em;
 }
@@ -11,11 +11,11 @@ p {
 .STitle,
 .CTitle,
 .CGroup .CTitle {
-    font-size: 18pt;
+    font-size: 17pt;
 }
 
 .CHeading {
-    font-size: 14pt;
+    font-size: 13pt;
 }
 
 .SMain td,
@@ -23,7 +23,7 @@ p {
 .STable,
 .CDLEntry,
 .CDLDescription {
-    font-size: 12pt;
+    font-size: 11pt;
 }
 
 .ContentPage #Content,
@@ -33,7 +33,7 @@ p {
 
 .ContentPage #Menu,
 .IndexPage #Menu {
-    font-size: 12pt;
+    font-size: 11pt;
     width: 41ex;
 }
 
@@ -42,5 +42,5 @@ p {
 .CBody pre,
 .CDLEntry {
     font-family: "DejaVu Sans Mono";
-    font-size: 13pt;
+    font-size: 12pt;
 }
