@@ -14,7 +14,7 @@ const PrebuiltFrontPage = new Lang.Class({
     Extends: Gtk.Grid,
     Signals: {
         'category-chosen': {
-            param_types: [GObject.TYPE_STRING, GObject.TYPE_INT]
+            param_types: [GObject.TYPE_STRING]
         }
     },
 
@@ -55,7 +55,7 @@ const PrebuiltFrontPage = new Lang.Class({
     },
 
     // Proxy signal
-    _onCategoryChosen: function(widget, title, index) {
-        this.emit('category-chosen', title, index);
+    _onCategoryChosen: function(widget, categoryId) {
+        this.emit('category-chosen', categoryId);
     }
 });

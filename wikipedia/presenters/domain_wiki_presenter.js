@@ -37,22 +37,13 @@ const DomainWikiPresenter = new Lang.Class({
         this.initAppInfoFromJsonFile(app_filename);
         this.initPageRankFromJsonFile(linked_articles_filename);
 
-        this._view.set_categories(this._model.getCategories());
+        let firstLevel = this._model.getMainCategory().getSubcategories();
+        firstLevel.push(this._model.getMainCategory());
+        this._view.set_categories(firstLevel);
 
         let linked_articles = this._model.getLinkedArticles();
         let to_show = linked_articles["app_articles"].concat(linked_articles["extra_linked_articles"]);
         this._view.set_showable_links(to_show);
-    },
-
-    initArticleModels: function(articles) {
-        let _articles = new Array();
-        for(let i = 0; i < articles.length; i++) {
-            let humanTitle = articles[i].title;
-            let wikipediaURL = articles[i].url;
-            let newArticle = new ArticleModel.ArticleModel({ title: humanTitle, uri: wikipediaURL});
-            _articles.push(newArticle);
-        }
-      return _articles;
     },
 
     initPageRankFromJsonFile: function(filename){
@@ -62,54 +53,25 @@ const DomainWikiPresenter = new Lang.Class({
 
     initAppInfoFromJsonFile: function(filename) {
         let app_content = JSON.parse(Utils.load_file_from_resource(filename));
-        this._view.set_lang(_pathnameToLanguage(filename));
-        let categories = app_content['categories'];
-        let cat_length = categories.length
-        let category_models = new Array();
-        for(let i = 0; i < cat_length; i++){
-            let category = categories[i];
-            let categoryModel = this.initCategory(category);
-            let articles = category['articles'];
-            let articleModels = [];
-            if(!(articles.length == 0)) {
-                //if the category has no articles, then we cannot initialize them.
-                //This happens if the main category isn't clickable.
-                articleModels = this.initArticleModels(articles);
-            }
-            categoryModel.addArticles(articleModels);
-            category_models.push(categoryModel);
-        }
-        this._model.addCategories(category_models);
+        this._model.loadFromJson(app_content);
     },
 
-    initCategory: function(category){
-        let image_uri = category['image_file'];
-        let image_thumbnail_uri = category['image_thumb_uri'];
-        let params = {description:category['content_text'], image_uri:image_uri, 
-            image_thumbnail_uri:image_thumbnail_uri, title:category['category_name'], 
-            is_main_category:category['is_main_category']};
-        return new CategoryModel.CategoryModel(params);
-    },
+    // Respond to the front page's 'category-clicked' signal by loading the
+    // articles belonging to that category and switching to the category page
+    _onCategoryClicked: function (page, categoryId) {
+        let newCategory = this._model.getCategory(categoryId);
+        let articles = this._model.getArticlesForCategory(categoryId);
 
-    _onCategoryClicked: function(page, title, index) {
-        this._current_category = index;
-        let category = this._model.getCategories()[index];
-        let articles = this._model.getArticlesForCategoryIndex(index);
-
-        let titles = new Array();
-        for(let i = 0; i < articles.length; i++){
-            titles.push(articles[i].title);
-        }
-
-        this._view.set_category_info(category, titles);
+        this._view.set_category_info(newCategory, articles);
 
         this._view.transition_page(Endless.PageManagerTransitionType.SLIDE_LEFT,
             'category');
     },
 
-    _onArticleClicked: function(article_list, title, index) {
-        let articles = this._model.getArticlesForCategoryIndex(this._current_category);
-        this._view.set_article_info(articles[index]);
+    // Respond to the category page's 'article-clicked' signal by loading that
+    // article and switching to the article page
+    _onArticleClicked: function (articleList, title, uri) {
+        this._view.set_article_info(title, uri);
         this._view.transition_page(Endless.PageManagerTransitionType.SLIDE_LEFT,
             'article');
     },
