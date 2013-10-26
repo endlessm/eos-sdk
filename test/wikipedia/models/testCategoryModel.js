@@ -1,4 +1,4 @@
-const CategoryModel = imports.models.category_model;
+const CategoryModel = imports.wikipedia.models.category_model;
 
 let mockJsonData = {
     category_name: 'Category Name',

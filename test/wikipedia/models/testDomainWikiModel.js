@@ -1,4 +1,4 @@
-const DomainWikiModel = imports.models.domain_wiki_model;
+const DomainWikiModel = imports.wikipedia.models.domain_wiki_model;
 
 let model;
 

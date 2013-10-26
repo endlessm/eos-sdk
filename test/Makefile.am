@@ -49,8 +49,8 @@ TESTS = \
 TEST_EXTENSIONS = .js
 JS_LOG_COMPILER = tools/eos-run-test
 AM_JS_LOG_FLAGS = \
-	--include-path=$(top_srcdir)/wikipedia \
 	--include-path=$(top_srcdir)/webhelper \
+	--include-path=$(top_srcdir) \
 	$(NULL)
 LOG_COMPILER = gtester
 AM_LOG_FLAGS = -k --verbose
