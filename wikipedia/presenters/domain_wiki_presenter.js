@@ -15,10 +15,13 @@ function _resourceUriToPath(uri) {
     throw new Error('Resource URI did not start with "resource://"');
 }
 
-function _pathnameToLanguage(uri) {
+function _pathnameToAppName(uri) {
     let parts = uri.split("/");
     let filename = parts[parts.length-1];
-    return filename.substring(0, 2);
+    // Split by both dashes and periods in order
+    // to retrieve, e.g. 'health' from 'health-Guatemala.json'
+    let filename_parts = filename.split(/[\-\.]/);
+    return filename_parts[0];
 }
 
 const DomainWikiPresenter = new Lang.Class({
@@ -48,6 +51,12 @@ const DomainWikiPresenter = new Lang.Class({
         let linked_articles = this._model.getLinkedArticles();
         let to_show = linked_articles["app_articles"].concat(linked_articles["extra_linked_articles"]);
         this._view.set_showable_links(to_show);
+
+        let app_name = _pathnameToAppName(app_filename);
+        let personality = Endless.get_system_personality();
+
+        this._view.set_personality(personality);
+        this._view.set_app_name(app_name);
     },
 
     initPageRankFromJsonFile: function(filename){

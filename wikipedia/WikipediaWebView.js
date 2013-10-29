@@ -34,11 +34,16 @@ const WikipediaWebView = new Lang.Class({
             'A boolean to determine whether links should be shown',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
             false),
-        'lang': GObject.ParamSpec.string('lang',
-            'Language code',
-            'Specifies the language to be used in this wiki webview',
+        'system-personality': GObject.ParamSpec.string('system-personality',
+            'System Personality string',
+            'Specifies the system personality to be used in this wiki webview',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
-            "")
+            ""),
+        'app-name': GObject.ParamSpec.string('app-name',
+            'Application name',
+            'Specifies the application that is using this wiki webview',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+            ""),
     },
 
     _init: function(params) {
@@ -47,7 +52,7 @@ const WikipediaWebView = new Lang.Class({
         //let settings = this.get_settings();
         //settings.set_enable_developer_extras(true);
         //this.set_settings(settings);
-        this.connect('context-menu', Lang.bind(this, function(){return true}));
+        this.connect('context-menu', Lang.bind(this, function() {return true;}));
 
         this.connect('decide-policy',
             Lang.bind(this, this._onNavigation));
@@ -60,12 +65,18 @@ const WikipediaWebView = new Lang.Class({
     },
 
     _getFullURL: function(base_url, params){
+        // We always include personality and
+        // app name on all requests.
+
+        params["personality"] = this.system_personality;
+        params["app_name"] = this.app_name;
         let full_url = base_url;
         for(let key in params){
             full_url += key + "=" + params[key] + "&";
         }
+        // Remove the final '&'
         full_url = full_url.slice(0, -1);
-        return full_url
+        return full_url;
     },
 
     loadArticleByURI: function(uri) {
@@ -79,7 +90,6 @@ const WikipediaWebView = new Lang.Class({
         let params = {
             title: title, 
             hideLinks: this.hide_links, 
-            lang: this.lang
         };
         let url = this._getFullURL(hostName + getPageByTitleURI, params);
         this.load_uri(url);
@@ -89,7 +99,6 @@ const WikipediaWebView = new Lang.Class({
         let params = {
             query: query,
             hideLinks: this.hide_links,
-            lang: this.lang
         };
         let url = this._getFullURL(hostName + getPageByQueryURI, params);
         this.load_uri(url);
