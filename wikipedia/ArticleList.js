@@ -57,5 +57,13 @@ const ArticleList = new Lang.Class({
 
             this._grid.add(button);
         }, this);
+    },
+
+    /**
+     * Method: scrollToTop
+     * Scrolls the article list all the way up.
+     */
+    scrollToTop: function () {
+        this.get_vadjustment().set_value(0);
     }
 });
