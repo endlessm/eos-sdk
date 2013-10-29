@@ -33,6 +33,10 @@ const DomainWikiPresenter = new Lang.Class({
             Lang.bind(this, this._onCategoryClicked));
         this._view.connect('article-chosen',
             Lang.bind(this, this._onArticleClicked));
+        this._view.connect('category-back-clicked',
+            Lang.bind(this, this._onCategoryBackClicked));
+        this._view.connect('article-back-clicked',
+            Lang.bind(this, this._onArticleBackClicked));
 
         this.initAppInfoFromJsonFile(app_filename);
         this.initPageRankFromJsonFile(linked_articles_filename);
@@ -64,25 +68,21 @@ const DomainWikiPresenter = new Lang.Class({
 
         this._view.set_category_info(newCategory, articles);
 
-        this._view.transition_page(Endless.PageManagerTransitionType.SLIDE_LEFT,
-            'category');
+        this._view.show_category_page();
     },
 
     // Respond to the category page's 'article-clicked' signal by loading that
     // article and switching to the article page
     _onArticleClicked: function (articleList, title, uri) {
         this._view.set_article_info(title, uri);
-        this._view.transition_page(Endless.PageManagerTransitionType.SLIDE_LEFT,
-            'article');
+        this._view.show_article_page();
     },
 
     _onCategoryBackClicked: function(button) {
-        this._view.transition_page(
-            Endless.PageManagerTransitionType.SLIDE_RIGHT, 'front');
+        this._view.show_front_page();
     },
 
     _onArticleBackClicked: function(button) {
-        this._view.transition_page(
-            Endless.PageManagerTransitionType.SLIDE_RIGHT, 'category');
+        this._view.show_category_page();
     }
 });
