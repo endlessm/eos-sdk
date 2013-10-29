@@ -5,7 +5,6 @@ const Gtk = imports.gi.Gtk;
 const Endless = imports.gi.Endless;
 
 const BackButton = imports.wikipedia.widgets.BackButton;
-const SideBarButton = imports.wikipedia.widgets.SideBarButton;
 
 const SIDEBAR_BACK_BUTTON_URI = "/com/endlessm/wikipedia-domain/assets/image_strip_back_button.png";
 const SUBMENU_SEPARATOR_A_URI = "/com/endlessm/wikipedia-domain/assets/submenu_separator_shadow_a.png";
