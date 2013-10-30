@@ -28,8 +28,8 @@ const PrebuiltArticlesPage = new Lang.Class({
 
         // Empty array is placeholder until we get baby page rank
         this._wiki_view = new EndlessWikipedia.WikipediaWebView({
-            expand:true,
-            hide_links:true
+            expand: true,
+            hide_links: true
         });
 
         this.parent(props);
@@ -45,8 +45,12 @@ const PrebuiltArticlesPage = new Lang.Class({
         this._wiki_view.setShowableLinks(linked_articles);
     },
 
-    set_lang: function(lang) {
-        this._wiki_view.lang = lang;
+    set_app_name: function (app_name) {
+        this._wiki_view.app_name = app_name;
+    },
+
+    set_personality: function (personality) {
+        this._wiki_view.system_personality = personality;
     },
 
     get article_title() {

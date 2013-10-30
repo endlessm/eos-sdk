@@ -188,10 +188,6 @@ const DomainWikiView = new Lang.Class({
         this._article_view.article_uri = uri;
     },
 
-    set_lang: function(lang) {
-        this._article_view.set_lang(lang);
-    },
-
     /**
      * Method: show_front_page
      * Transition to the front page of the view
@@ -236,6 +232,14 @@ const DomainWikiView = new Lang.Class({
 
     set_showable_links: function(linked_articles){
         this._article_view.setShowableLinks(linked_articles);
+    },
+
+    set_app_name: function (app_name) {
+        this._article_view.set_app_name(app_name);
+    },
+
+    set_personality: function (personality) {
+        this._article_view.set_personality(personality);
     },
 
     // Proxy signal, respond to front page's 'category-chosen' signal by
