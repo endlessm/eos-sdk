@@ -8,6 +8,7 @@ const Utils = imports.wikipedia.utils;
 const hostName = "http://127.0.0.1:3000/"
 const getPageByTitleURI = "getArticleByTitle?";
 const getPageByQueryURI = "getTopArticleByQuery?";
+const getTitlesByQueryURI = "getArticleTitlesByQuery?";
 
 // Interpret image:// URIs as wikipedia images
 WebKit.WebContext.get_default().register_uri_scheme('image', function(request) {
@@ -92,6 +93,15 @@ const WikipediaWebView = new Lang.Class({
             lang: this.lang
         };
         let url = this._getFullURL(hostName + getPageByQueryURI, params);
+        this.load_uri(url);
+    },
+
+    loadTitlesBySearchQuery: function (query) {
+        let params = {
+            query: query,
+            lang: this.lang
+        };
+        let url = this._getFullURL(hostName + getTitlesByQueryURI, params);
         this.load_uri(url);
     },
 
