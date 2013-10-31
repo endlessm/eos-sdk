@@ -1,4 +1,6 @@
+const Gdk = imports.gi.Gdk;
 const Gio = imports.gi.Gio;
+const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const GObject = imports.gi.GObject;
 const Lang = imports.lang;
@@ -143,6 +145,13 @@ const WikipediaWebView = new Lang.Class({
                 let title = decodeURI(suffix.replace("_", " ", 'g'));
                 this.loadArticleByTitle(title);
                 return true;
+            } else if (GLib.uri_parse_scheme(uri).startsWith('browser-')) {
+                // Open everything that starts with 'browser-' in the system
+                // browser
+                let realURI = uri.slice('browser-'.length);
+                printerr('Showing', realURI);
+                Gtk.show_uri(null, realURI, Gdk.CURRENT_TIME);
+                return true; // handled
             }
         }
         return false; // not handled, default behavior
