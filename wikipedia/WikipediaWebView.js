@@ -5,7 +5,7 @@ const Lang = imports.lang;
 const WebKit = imports.gi.WebKit2;
 const Utils = imports.wikipedia.utils;
 
-const hostName = "http://127.0.0.1:3000/"
+const hostName = "http://127.0.0.1:3000/v1/";
 const getPageByTitleURI = "getArticleByTitle?";
 const getPageByQueryURI = "getTopArticleByQuery?";
 const getTitlesByQueryURI = "getArticleTitlesByQuery?";
