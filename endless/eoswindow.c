@@ -36,6 +36,9 @@
  * ]|
  */
 
+#define DEFAULT_WINDOW_WIDTH 800
+#define DEFAULT_WINDOW_HEIGHT 600
+
 #define BACKGROUND_FRAME_NAME_TEMPLATE "_eos-window-background-%d"
 
 #define TRANSPARENT_FRAME_CSS_PROPERTIES "{ background-image: none;\n" \
@@ -700,6 +703,7 @@ eos_window_init (EosWindow *self)
 
   gtk_window_set_decorated (GTK_WINDOW (self), FALSE);
   gtk_window_maximize (GTK_WINDOW (self));
+  gtk_window_set_default_size (GTK_WINDOW (self), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 
   g_signal_connect (self->priv->top_bar, "minimize-clicked",
                     G_CALLBACK (on_minimize_clicked_cb), NULL);
