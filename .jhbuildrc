@@ -1,0 +1,23 @@
+# -*- mode: python -*-
+# -*- coding: utf-8 -*-
+
+# if you have a GNOME git account, uncomment this line
+# repos['git.gnome.org'] = 'ssh://user@git.gnome.org/git/'
+
+# what module set should be used.
+moduleset = [
+    '/vagrant/eos-sdk.modules',
+    # 'gnome-suites-core-3.10'
+]
+
+# A list of the modules to build.
+modules = [ 'endless-apps' ]
+
+# what directory should the source be checked out to?
+checkoutroot = '/vagrant/checkout'
+
+# the prefix to configure/install modules to (must have write access)
+prefix = os.path.expanduser('~/install')
+
+# custom CFLAGS / environment pieces for the build
+os.environ['CFLAGS'] = '-g -O0'  # debugging symbols, no optimization

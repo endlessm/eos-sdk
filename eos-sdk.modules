@@ -1,0 +1,226 @@
+<?xml version="1.0"?><!--*- mode: nxml; indent-tabs-mode: nil -*-->
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<!-- vim:set ts=2 expandtab: -->
+<moduleset>
+
+<!--
+Moduleset to build EndlessOS SDK from a freshly installed Vagrant box.
+This moduleset is created under the assumptions that:
+ 1) Dependencies will be installed from distro repos as much as possible
+ 2) Dependencies will always be built using dev versions
+-->
+
+  <repository type="git" name="endlessm" href="https://github.com/endlessm"
+    default="yes"/>
+
+  <!-- Module of all apps -->
+  <metamodule id="endless-apps">
+    <dependencies>
+      <dep package="eos-celebrities"/>
+      <dep package="eos-cooking"/>
+      <dep package="eos-dictionary"/>
+      <dep package="eos-english"/>
+      <dep package="eos-fitness"/>
+      <dep package="eos-futbol"/>
+      <dep package="eos-guatemala"/>
+      <dep package="eos-khan-academy"/>
+      <dep package="eos-mexico"/>
+      <dep package="eos-photos"/>
+      <dep package="eos-programming-app"/>
+      <dep package="eos-resume-app"/>
+      <dep package="eos-science"/>
+      <dep package="eos-translation"/>
+      <dep package="eos-travel"/>
+      <dep package="eos-typing"/>
+      <dep package="eos-weather"/>
+      <dep package="eos-wikipedia"/>
+      <dep package="eos-wikipedia-brazil"/>
+      <dep package="eos-wikipedia-health"/>
+      <dep package="eos-wikipedia-offline"/>
+      <dep package="eos-youtube"/>
+    </dependencies>
+  </metamodule>
+
+  <!-- *********** APPS ************************************************* -->
+
+  <autotools id="eos-weather">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-english">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-programming-app">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-typing">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-wikipedia-offline"
+    skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-translation"
+    skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-youtube-gjs">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-khan-academy"
+    skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-wikipedia">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-photos"
+    skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-wikipedia-brazil">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-wikipedia-health">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-dictionary"
+    skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-resume-app"
+    skip-autogen="true" makeargs="-v" skip-install="true">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-celebrities">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-cooking">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-fitness">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-futbol">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-guatemala">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-mexico">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-science">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-travel">
+    <branch revision="dev"/>
+    <dependencies>
+      <dep package="eos-sdk"/>
+    </dependencies>
+  </autotools>
+
+  <!-- ********* PLATFORM ************************************************ -->
+
+  <autotools id="eos-sdk">
+    <branch revision="dev"
+      autogenargs="--enable-strict-flags --enable-gtk-doc --enable-gir-doc --enable-js-doc"/>
+    <dependencies>
+      <dep package="eos-theme"/>
+      <dep package="eos-pstack"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="eos-pstack">
+    <branch revision="dev"/>
+  </autotools>
+
+  <autotools id="eos-theme">
+    <branch revision="dev"/>
+  </autotools>
+
+</moduleset>
