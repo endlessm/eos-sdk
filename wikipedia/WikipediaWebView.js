@@ -8,6 +8,7 @@ const WebKit = imports.gi.WebKit2;
 const Utils = imports.wikipedia.utils;
 
 const hostName = "http://127.0.0.1:3000/v1/";
+const getPageById = "getArticleById?";
 const getPageByTitleURI = "getArticleByTitle?";
 const getPageByQueryURI = "getTopArticleByQuery?";
 const getTitlesByQueryURI = "getArticleTitlesByQuery?";
@@ -82,12 +83,15 @@ const WikipediaWebView = new Lang.Class({
         return full_url;
     },
 
-    loadArticleByURI: function(uri, source) {
-        let parts = uri.split("/");
-        let suffix = parts[parts.length - 1];
-        let title = decodeURI(suffix.replace("_", " ", 'g'));
-        // FIXME: this is a workaround for not storing the URI in the database
-        this.loadArticleByTitle(title, source);
+    loadArticleById: function(id, source) {
+        let params = {
+            id: id,
+            hideLinks: this.hide_links,
+            source: source,
+            lang: _systemPersonalityToDatabaseLang(this.system_personality)
+        };
+        let url = this._getFullURL(hostName + getPageById, params);
+        this.load_uri(url);
     },
 
     loadArticleByTitle: function(title, source) {
@@ -147,9 +151,9 @@ const WikipediaWebView = new Lang.Class({
             if (uri.startsWith(hostName + "wiki/")) {
                 let parts = uri.split("/");
                 let suffix = parts[parts.length - 1];
-                let title = decodeURI(suffix.replace("_", " ", 'g'));
+                let id = decodeURI(suffix);
                 // FIXME: determine the source db from the link format?
-                this.loadArticleByTitle(title, 'Wikipedia');
+                this.loadArticleById(id, 'Wikipedia');
                 return true;
             } else if (GLib.uri_parse_scheme(uri).startsWith('browser-')) {
                 // Open everything that starts with 'browser-' in the system
