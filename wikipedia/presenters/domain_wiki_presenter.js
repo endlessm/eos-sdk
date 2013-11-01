@@ -82,8 +82,8 @@ const DomainWikiPresenter = new Lang.Class({
 
     // Respond to the category page's 'article-clicked' signal by loading that
     // article and switching to the article page
-    _onArticleClicked: function (articleList, title, uri) {
-        this._view.set_article_info(title, uri);
+    _onArticleClicked: function (articleList, title, source, uri) {
+        this._view.set_article_info(title, source, uri);
         this._view.show_article_page();
     },
 

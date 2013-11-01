@@ -1,4 +1,6 @@
+const Gdk = imports.gi.Gdk;
 const Gio = imports.gi.Gio;
+const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const GObject = imports.gi.GObject;
 const Lang = imports.lang;
@@ -80,26 +82,31 @@ const WikipediaWebView = new Lang.Class({
         return full_url;
     },
 
-    loadArticleByURI: function(uri) {
+    loadArticleByURI: function(uri, source) {
         let parts = uri.split("/");
         let suffix = parts[parts.length - 1];
         let title = decodeURI(suffix.replace("_", " ", 'g'));
-        this.loadArticleByTitle(title);
+        // FIXME: this is a workaround for not storing the URI in the database
+        this.loadArticleByTitle(title, source);
     },
 
-    loadArticleByTitle: function(title) {
+    loadArticleByTitle: function(title, source) {
         let params = {
             title: title, 
             hideLinks: this.hide_links, 
+            source: source,
+            lang: _systemPersonalityToDatabaseLang(this.system_personality)
         };
         let url = this._getFullURL(hostName + getPageByTitleURI, params);
         this.load_uri(url);
     },
 
-    loadArticleBySearchQuery: function(query) {
+    loadArticleBySearchQuery: function (query, source) {
         let params = {
             query: query,
             hideLinks: this.hide_links,
+            source: source,
+            lang: _systemPersonalityToDatabaseLang(this.system_personality)
         };
         let url = this._getFullURL(hostName + getPageByQueryURI, params);
         this.load_uri(url);
@@ -108,7 +115,7 @@ const WikipediaWebView = new Lang.Class({
     loadTitlesBySearchQuery: function (query) {
         let params = {
             query: query,
-            lang: this.lang
+            lang: _systemPersonalityToDatabaseLang(this.system_personality)
         };
         let url = this._getFullURL(hostName + getTitlesByQueryURI, params);
         this.load_uri(url);
@@ -141,8 +148,16 @@ const WikipediaWebView = new Lang.Class({
                 let parts = uri.split("/");
                 let suffix = parts[parts.length - 1];
                 let title = decodeURI(suffix.replace("_", " ", 'g'));
-                this.loadArticleByTitle(title);
+                // FIXME: determine the source db from the link format?
+                this.loadArticleByTitle(title, 'Wikipedia');
                 return true;
+            } else if (GLib.uri_parse_scheme(uri).startsWith('browser-')) {
+                // Open everything that starts with 'browser-' in the system
+                // browser
+                let realURI = uri.slice('browser-'.length);
+                printerr('Showing', realURI);
+                Gtk.show_uri(null, realURI, Gdk.CURRENT_TIME);
+                return true; // handled
             }
         }
         return false; // not handled, default behavior
@@ -152,3 +167,16 @@ const WikipediaWebView = new Lang.Class({
         this.setAllowedLinks();
     }
 });
+
+/* Temporary helper function; remove this when the original article URI is
+stored inside the Elasticsearch database. FIXME */
+function _systemPersonalityToDatabaseLang(personality) {
+    switch (personality) {
+    case 'Guatemala':
+    case 'Mexico':
+        return 'es';
+    case 'Brazil':
+        return 'pt';
+    }
+    return 'en';
+}

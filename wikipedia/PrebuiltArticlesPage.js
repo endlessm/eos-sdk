@@ -15,6 +15,11 @@ const PrebuiltArticlesPage = new Lang.Class({
             'Human-readable title for the article to be displayed',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
             ''),
+        'article-source': GObject.ParamSpec.string('article-source',
+            'Article source',
+            'Source website or database that the article comes from',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+            'Wikipedia'),
         'article-uri': GObject.ParamSpec.string('article-uri',
             'Article URI',
             'Wikipedia URI for the article to be displayed',
@@ -25,6 +30,7 @@ const PrebuiltArticlesPage = new Lang.Class({
     _init: function(props) {
         this._article_title = null;
         this._article_uri = null;
+        this._article_source = null;
 
         // Empty array is placeholder until we get baby page rank
         this._wiki_view = new EndlessWikipedia.WikipediaWebView({
@@ -68,7 +74,7 @@ const PrebuiltArticlesPage = new Lang.Class({
     set article_uri(value) {
         this._article_uri = value;
         if(value !== null && value !== "") {
-            this._wiki_view.loadArticleByURI(this._article_uri);
+            this._wiki_view.loadArticleByTitle(this._article_title, this.article_source);
         }
     }
 });

@@ -11,6 +11,10 @@ const ArticleModel = new Lang.Class({
         'title': GObject.ParamSpec.string('title', 'Article Title', 'Human Readable Article Title',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
                     ""),
+        'source': GObject.ParamSpec.string('source', 'Source',
+            'Source website or database that the article is from',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            ''),
         'uri': GObject.ParamSpec.string('uri', 'Article URI', 'Title URI as stored in wikipedia database', 
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
                     "")
@@ -92,6 +96,7 @@ const ArticleModel = new Lang.Class({
 function newFromJson(json) {
     let retval = new ArticleModel({
         title: json['title'],
+        source: json['source'],
         uri: json['url']
     });
     retval.setCategories(json['categories']);
