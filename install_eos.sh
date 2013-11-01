@@ -33,10 +33,10 @@ set +e
     sudo dpkg -i $DEST_DIR/*.deb
 set -e
 
-Fix conflicts and install dependencies of EOS packages
+# Fix conflicts and install dependencies of EOS packages
 sudo apt-get install -yf
 
-Install the database files
+# Install the database files
 pushd /var
 set +e
     for db_archive in $DEST_DIR/*.tar.gz; do
