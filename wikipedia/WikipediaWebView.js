@@ -7,7 +7,8 @@ const Lang = imports.lang;
 const WebKit = imports.gi.WebKit2;
 const Utils = imports.wikipedia.utils;
 
-const hostName = "http://127.0.0.1:3000/v1/";
+const hostName = "http://127.0.0.1:3000";
+const version = "v1"
 const getPageById = "getArticleById?";
 const getPageByTitleURI = "getArticleByTitle?";
 const getPageByQueryURI = "getTopArticleByQuery?";
@@ -68,10 +69,10 @@ const WikipediaWebView = new Lang.Class({
         this._links_to_show = linked_articles;
     },
 
-    _getFullURL: function(base_url, params){
+    _getFullURL: function(method, params){
         // We always include personality and
         // app name on all requests.
-
+        let base_url = [hostName, version, method].join("/")
         params["personality"] = this.system_personality;
         params["app_name"] = this.app_name;
         let full_url = base_url;
@@ -90,7 +91,7 @@ const WikipediaWebView = new Lang.Class({
             source: source,
             lang: _systemPersonalityToDatabaseLang(this.system_personality)
         };
-        let url = this._getFullURL(hostName + getPageById, params);
+        let url = this._getFullURL(getPageById, params);
         this.load_uri(url);
     },
 
@@ -101,7 +102,7 @@ const WikipediaWebView = new Lang.Class({
             source: source,
             lang: _systemPersonalityToDatabaseLang(this.system_personality)
         };
-        let url = this._getFullURL(hostName + getPageByTitleURI, params);
+        let url = this._getFullURL(getPageByTitleURI, params);
         this.load_uri(url);
     },
 
@@ -112,7 +113,7 @@ const WikipediaWebView = new Lang.Class({
             source: source,
             lang: _systemPersonalityToDatabaseLang(this.system_personality)
         };
-        let url = this._getFullURL(hostName + getPageByQueryURI, params);
+        let url = this._getFullURL(getPageByQueryURI, params);
         this.load_uri(url);
     },
 
@@ -121,7 +122,7 @@ const WikipediaWebView = new Lang.Class({
             query: query,
             lang: _systemPersonalityToDatabaseLang(this.system_personality)
         };
-        let url = this._getFullURL(hostName + getTitlesByQueryURI, params);
+        let url = this._getFullURL(getTitlesByQueryURI, params);
         this.load_uri(url);
     },
 
@@ -148,7 +149,7 @@ const WikipediaWebView = new Lang.Class({
     _onNavigation: function(webview, decision, decision_type) {
         if (decision_type == WebKit.PolicyDecisionType.NAVIGATION_ACTION) {
             let uri = decision.request.uri;
-            if (uri.startsWith(hostName + "wiki/")) {
+            if (uri.startsWith(hostName + "/wiki/")) {
                 let parts = uri.split("/");
                 let suffix = parts[parts.length - 1];
                 let id = decodeURI(suffix);
