@@ -88,8 +88,8 @@ This moduleset is created under the assumptions that:
     </dependencies>
   </autotools>
 
-  <autotools id="eos-youtube-gjs">
-    <branch revision="dev"/>
+  <autotools id="eos-youtube">
+    <branch revision="dev" module="eos-youtube-gjs"/>
     <dependencies>
       <dep package="eos-sdk"/>
     </dependencies>
