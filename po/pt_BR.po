@@ -3,15 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# joelmx <joel@endlessm.com>, 2013
 # Philip Chimento <l10n@endlessm.com>, 2013
 # ptomato <philip.chimento@gmail.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: philip@endlessm.com\n"
-"POT-Creation-Date: 2013-09-26 14:41-0700\n"
-"PO-Revision-Date: 2013-09-26 21:47+0000\n"
-"Last-Translator: ptomato <philip.chimento@gmail.com>\n"
+"POT-Creation-Date: 2013-10-22 15:26-0700\n"
+"PO-Revision-Date: 2013-10-30 01:48+0000\n"
+"Last-Translator: joelmx <joel@endlessm.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/projects/p/teams/language/pt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,10 +20,10 @@ msgstr ""
 "Language: pt\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: wikipedia/views/domain_wiki_view.js:146
-msgid "HOME"
-msgstr "INÍCIO"
+#: wikipedia/widgets/BackButton.js:21
+msgid "BACK"
+msgstr "ATRÁS"
 
-#: wikipedia/PrebuiltCategoryPage.js:125
+#: wikipedia/PrebuiltCategoryPage.js:124
 msgid "OTHER CATEGORIES"
 msgstr "OUTRAS CATEGORIAS"
