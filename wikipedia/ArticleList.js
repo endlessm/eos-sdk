@@ -14,11 +14,7 @@ const ArticleList = new Lang.Class({
     
     Signals: {
         'article-chosen': {
-            param_types: [
-                GObject.TYPE_STRING,
-                GObject.TYPE_STRING,
-                GObject.TYPE_STRING
-            ]
+            param_types: [GObject.TYPE_STRING, GObject.TYPE_STRING]
         }
     },
 
@@ -56,8 +52,7 @@ const ArticleList = new Lang.Class({
             let button = new ListTextButton.ListTextButton(HOVER_ARROW_URI,
                 article.title, { hexpand: true });
             button.connect('clicked', Lang.bind(this, function() {
-                this.emit('article-chosen',
-                    article.title, article.source, article.uri);
+                this.emit('article-chosen', article.title, article.uri);
             }));
 
             this._grid.add(button);

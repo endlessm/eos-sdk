@@ -18,7 +18,7 @@ const DomainWikiView = new Lang.Class({
             param_types: [GObject.TYPE_STRING]
         },
         'article-chosen': {
-            param_types: [GObject.TYPE_STRING, GObject.TYPE_STRING, GObject.TYPE_STRING]
+            param_types: [GObject.TYPE_STRING, GObject.TYPE_STRING]
         },
         'category-back-clicked': {},
         'article-back-clicked': {}
@@ -182,10 +182,9 @@ const DomainWikiView = new Lang.Class({
      * Method: set_article_info
      * Proxy method to set the article displaying on the article page
      */
-    set_article_info: function (title, source, uri) {
+    set_article_info: function (title, uri) {
         // Note: Must set article title first
         this._article_view.article_title = title;
-        this._article_view.article_source = source;
         this._article_view.article_uri = uri;
     },
 
@@ -251,8 +250,8 @@ const DomainWikiView = new Lang.Class({
 
     // Proxy signal, respond to category page's 'article-chosen' signal by
     // emitting our own
-    _onArticleClicked: function (articleList, title, source, uri) {
-        this.emit('article-chosen', title, source, uri);
+    _onArticleClicked: function (articleList, title, uri) {
+        this.emit('article-chosen', title, uri);
     },
 
     _onCategoryBackClicked: function(button) {

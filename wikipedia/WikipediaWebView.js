@@ -7,9 +7,9 @@ const Lang = imports.lang;
 const WebKit = imports.gi.WebKit2;
 const Utils = imports.wikipedia.utils;
 
-const hostName = "http://127.0.0.1:3000";
-const version = "v1"
-const getPageById = "getArticleById?";
+const API_ENDPOINT = "http://127.0.0.1:3000";
+const API_VERSION = "v1";
+const getPageByIdURI = "getArticleById?";
 const getPageByTitleURI = "getArticleByTitle?";
 const getPageByQueryURI = "getTopArticleByQuery?";
 const getTitlesByQueryURI = "getArticleTitlesByQuery?";
@@ -72,9 +72,9 @@ const WikipediaWebView = new Lang.Class({
     _getFullURL: function(method, params){
         // We always include personality and
         // app name on all requests.
-        let base_url = [hostName, version, method].join("/")
+        let base_url = [API_ENDPOINT, API_VERSION, method].join("/");
         params["personality"] = this.system_personality;
-        params["app_name"] = this.app_name;
+        params["appname"] = this.app_name;
         let full_url = base_url;
         for(let key in params){
             full_url += key + "=" + params[key] + "&";
@@ -84,25 +84,12 @@ const WikipediaWebView = new Lang.Class({
         return full_url;
     },
 
-    loadArticleById: function(id, source) {
+    loadArticleById: function (id) {
         let params = {
             id: id,
-            hideLinks: this.hide_links,
-            source: source,
-            lang: _systemPersonalityToDatabaseLang(this.system_personality)
+            hideLinks: this.hide_links
         };
-        let url = this._getFullURL(getPageById, params);
-        this.load_uri(url);
-    },
-
-    loadArticleByTitle: function(title, source) {
-        let params = {
-            title: title, 
-            hideLinks: this.hide_links, 
-            source: source,
-            lang: _systemPersonalityToDatabaseLang(this.system_personality)
-        };
-        let url = this._getFullURL(getPageByTitleURI, params);
+        let url = this._getFullURL(getPageByIdURI, params);
         this.load_uri(url);
     },
 
@@ -110,18 +97,14 @@ const WikipediaWebView = new Lang.Class({
         let params = {
             query: query,
             hideLinks: this.hide_links,
-            source: source,
-            lang: _systemPersonalityToDatabaseLang(this.system_personality)
+            source: source
         };
         let url = this._getFullURL(getPageByQueryURI, params);
         this.load_uri(url);
     },
 
     loadTitlesBySearchQuery: function (query) {
-        let params = {
-            query: query,
-            lang: _systemPersonalityToDatabaseLang(this.system_personality)
-        };
+        let params = { query: query };
         let url = this._getFullURL(getTitlesByQueryURI, params);
         this.load_uri(url);
     },
@@ -149,12 +132,11 @@ const WikipediaWebView = new Lang.Class({
     _onNavigation: function(webview, decision, decision_type) {
         if (decision_type == WebKit.PolicyDecisionType.NAVIGATION_ACTION) {
             let uri = decision.request.uri;
-            if (uri.startsWith(hostName + "/wiki/")) {
+            if (uri.startsWith(API_ENDPOINT + "/wiki/")) {
                 let parts = uri.split("/");
                 let suffix = parts[parts.length - 1];
                 let id = decodeURI(suffix);
-                // FIXME: determine the source db from the link format?
-                this.loadArticleById(id, 'Wikipedia');
+                this.loadArticleById(id);
                 return true;
             } else if (GLib.uri_parse_scheme(uri).startsWith('browser-')) {
                 // Open everything that starts with 'browser-' in the system
@@ -172,16 +154,3 @@ const WikipediaWebView = new Lang.Class({
         this.setAllowedLinks();
     }
 });
-
-/* Temporary helper function; remove this when the original article URI is
-stored inside the Elasticsearch database. FIXME */
-function _systemPersonalityToDatabaseLang(personality) {
-    switch (personality) {
-    case 'Guatemala':
-    case 'Mexico':
-        return 'es';
-    case 'Brazil':
-        return 'pt';
-    }
-    return 'en';
-}
