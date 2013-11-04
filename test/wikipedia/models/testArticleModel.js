@@ -3,6 +3,7 @@ const ArticleModel = imports.wikipedia.models.article_model;
 let mockJsonData = {
     title: 'Article Title',
     url: 'file:///',
+    source: 'Mock data',
     categories: [
         'Category One',
         'Category Two'
