@@ -46,6 +46,7 @@ let mockJsonData = {
         {
             title: 'Article One',
             url: 'file:///article1.html',
+            source: 'Mock data',
             categories: [
                 'Category One'
             ]
@@ -53,6 +54,7 @@ let mockJsonData = {
         {
             title: 'Article Two',
             url: 'file:///article2.html',
+            source: 'Mock data',
             categories: [
                 'Category One',
                 'Category Two'
@@ -61,6 +63,7 @@ let mockJsonData = {
         {
             title: 'Article Three',
             url: 'file:///article3.html',
+            source: 'Mock data',
             categories: [
                 'Category Two'
             ]
