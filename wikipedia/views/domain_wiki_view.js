@@ -182,10 +182,9 @@ const DomainWikiView = new Lang.Class({
      * Method: set_article_info
      * Proxy method to set the article displaying on the article page
      */
-    set_article_info: function (title, source, uri) {
+    set_article_info: function (title, uri) {
         // Note: Must set article title first
         this._article_view.article_title = title;
-        this._article_view.article_source = source;
         this._article_view.article_uri = uri;
     },
 

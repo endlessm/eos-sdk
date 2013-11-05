@@ -7,7 +7,9 @@ const Lang = imports.lang;
 const WebKit = imports.gi.WebKit2;
 const Utils = imports.wikipedia.utils;
 
-const hostName = "http://127.0.0.1:3000/v1/";
+const API_ENDPOINT = "http://127.0.0.1:3000";
+const API_VERSION = "v1";
+const getPageByIdURI = "getArticleById?";
 const getPageByTitleURI = "getArticleByTitle?";
 const getPageByQueryURI = "getTopArticleByQuery?";
 const getTitlesByQueryURI = "getArticleTitlesByQuery?";
@@ -67,12 +69,12 @@ const WikipediaWebView = new Lang.Class({
         this._links_to_show = linked_articles;
     },
 
-    _getFullURL: function(base_url, params){
+    _getFullURL: function(method, params){
         // We always include personality and
         // app name on all requests.
-
+        let base_url = [API_ENDPOINT, API_VERSION, method].join("/");
         params["personality"] = this.system_personality;
-        params["app_name"] = this.app_name;
+        params["appname"] = this.app_name;
         let full_url = base_url;
         for(let key in params){
             full_url += key + "=" + params[key] + "&";
@@ -82,22 +84,12 @@ const WikipediaWebView = new Lang.Class({
         return full_url;
     },
 
-    loadArticleByURI: function(uri, source) {
-        let parts = uri.split("/");
-        let suffix = parts[parts.length - 1];
-        let title = decodeURI(suffix.replace("_", " ", 'g'));
-        // FIXME: this is a workaround for not storing the URI in the database
-        this.loadArticleByTitle(title, source);
-    },
-
-    loadArticleByTitle: function(title, source) {
+    loadArticleById: function (id) {
         let params = {
-            title: title, 
-            hideLinks: this.hide_links, 
-            source: source,
-            lang: _systemPersonalityToDatabaseLang(this.system_personality)
+            id: id,
+            hideLinks: this.hide_links
         };
-        let url = this._getFullURL(hostName + getPageByTitleURI, params);
+        let url = this._getFullURL(getPageByIdURI, params);
         this.load_uri(url);
     },
 
@@ -105,19 +97,15 @@ const WikipediaWebView = new Lang.Class({
         let params = {
             query: query,
             hideLinks: this.hide_links,
-            source: source,
-            lang: _systemPersonalityToDatabaseLang(this.system_personality)
+            source: source
         };
-        let url = this._getFullURL(hostName + getPageByQueryURI, params);
+        let url = this._getFullURL(getPageByQueryURI, params);
         this.load_uri(url);
     },
 
     loadTitlesBySearchQuery: function (query) {
-        let params = {
-            query: query,
-            lang: _systemPersonalityToDatabaseLang(this.system_personality)
-        };
-        let url = this._getFullURL(hostName + getTitlesByQueryURI, params);
+        let params = { query: query };
+        let url = this._getFullURL(getTitlesByQueryURI, params);
         this.load_uri(url);
     },
 
@@ -144,12 +132,11 @@ const WikipediaWebView = new Lang.Class({
     _onNavigation: function(webview, decision, decision_type) {
         if (decision_type == WebKit.PolicyDecisionType.NAVIGATION_ACTION) {
             let uri = decision.request.uri;
-            if (uri.startsWith(hostName + "wiki/")) {
+            if (uri.startsWith(API_ENDPOINT + "/wiki/")) {
                 let parts = uri.split("/");
                 let suffix = parts[parts.length - 1];
-                let title = decodeURI(suffix.replace("_", " ", 'g'));
-                // FIXME: determine the source db from the link format?
-                this.loadArticleByTitle(title, 'Wikipedia');
+                let id = decodeURI(suffix);
+                this.loadArticleById(id);
                 return true;
             } else if (GLib.uri_parse_scheme(uri).startsWith('browser-')) {
                 // Open everything that starts with 'browser-' in the system
@@ -167,16 +154,3 @@ const WikipediaWebView = new Lang.Class({
         this.setAllowedLinks();
     }
 });
-
-/* Temporary helper function; remove this when the original article URI is
-stored inside the Elasticsearch database. FIXME */
-function _systemPersonalityToDatabaseLang(personality) {
-    switch (personality) {
-    case 'Guatemala':
-    case 'Mexico':
-        return 'es';
-    case 'Brazil':
-        return 'pt';
-    }
-    return 'en';
-}
