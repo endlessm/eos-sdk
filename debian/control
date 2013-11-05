@@ -11,6 +11,7 @@ Build-Depends: debhelper (>= 8.0.0),
                gir1.2-webkit-3.0 (>= 2.0),
                gir1.2-webkit2-3.0 (>= 2.0),
                gjs,
+               gnome-icon-theme-symbolic,
                gobject-introspection,
                gtk-doc-tools (>= 1.18),
                libgirepository1.0-dev (>= 1.30),
@@ -28,7 +29,8 @@ Section: non-free/libs
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         eos-pstack (>= 1.0)
+         eos-pstack (>= 1.0),
+         gnome-icon-theme-symbolic
 Recommends: gjs
 Description: Endless SDK GUI library
  Runtime libraries for the Endless SDK: GUI library
