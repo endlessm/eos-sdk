@@ -137,7 +137,7 @@ const AssetButton = new Lang.Class({
 
         if(this[uri_property] === uri)
             return;
-        let img_stream;
+        let img_stream = null;
         try {
             img_stream = this._open_stream_from_uri(uri);
             this[pixbuf_property] = GdkPixbuf.Pixbuf.new_from_stream(img_stream, null);
@@ -147,7 +147,8 @@ const AssetButton = new Lang.Class({
             this[pixbuf_property] = null;
             this[uri_property] = null;
         }
-        img_stream.close(null);
+        if (img_stream !== null)
+            img_stream.close(null);
         this._update_appearance();
         this.notify(state + '-image-uri');
     }
