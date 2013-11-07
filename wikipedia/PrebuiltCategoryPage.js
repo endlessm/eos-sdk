@@ -72,7 +72,8 @@ const PrebuiltCategoryPage = new Lang.Class({
             name:"category_title",
             expand: false,
             halign: Gtk.Align.START,
-            margin_left: LEFT_MARGIN_FOR_TEXT
+            margin_left: LEFT_MARGIN_FOR_TEXT,
+            wrap: true
         });
 
         this._submenu_separator = new ScaledImage.ScaledImage({
