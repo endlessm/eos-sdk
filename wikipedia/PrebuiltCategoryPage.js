@@ -73,7 +73,10 @@ const PrebuiltCategoryPage = new Lang.Class({
             expand: false,
             halign: Gtk.Align.START,
             margin_left: LEFT_MARGIN_FOR_TEXT,
-            wrap: true
+            xalign: 0.0, // deprecated Gtk.Misc property; necessary because
+            wrap: true,  // "wrap" doesn't respect "halign"
+            width_chars: 15,
+            max_width_chars: 18
         });
 
         this._submenu_separator = new ScaledImage.ScaledImage({
@@ -122,7 +125,8 @@ const PrebuiltCategoryPage = new Lang.Class({
             normal_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_normal.png",
             active_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_pressed.png",
             prelight_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_hover.png",
-            label: _("OTHER CATEGORIES")
+            label: _("OTHER CATEGORIES"),
+            margin_right: 10
         });
 
         this._back_button.connect('clicked', Lang.bind(this, function() {
