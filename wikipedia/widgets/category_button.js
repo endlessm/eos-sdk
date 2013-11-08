@@ -77,7 +77,9 @@ const CategoryButton = new Lang.Class({
             hexpand: true,
             halign: Gtk.Align.START,
             xalign: 0.0,  // deprecated Gtk.Misc properties; necessary because
-            wrap: true    // "wrap" doesn't respect "halign"
+            wrap: true,   // "wrap" doesn't respect "halign"
+            width_chars: 18,
+            max_width_chars: 20
         });
         this._arrow = new Gtk.Image({
             resource: _HOVER_ARROW_URI,
@@ -159,6 +161,8 @@ const CategoryButton = new Lang.Class({
             let context = this._label.get_style_context();
             context.add_class(EndlessWikipedia.STYLE_CLASS_MAIN);
             this._label.margin_bottom = 0;
+            this._label.width_chars = 8;
+            this._label.max_width_chars = 9;
         }
     },
 
