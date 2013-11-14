@@ -33,10 +33,11 @@ python setup.py install
 popd
 
 echo "Configuring eos-shell..."
-# Restore alt-F2 run behaviour
-gsettings set org.gnome.desktop.wm.keybindings panel-run-dialog "['<Alt>F2']"
 # Unbreak my app, please
 gsettings set org.gnome.shell no-default-maximize true
+# Turn off screen lock and blanking
+gsettings set org.gnome.desktop.screensaver lock-enabled false
+gsettings set org.gnome.desktop.session idle-delay 0
 
 echo "Configuring Sublime Text..."
 mkdir -p $HOME/.config/sublime-text-2
