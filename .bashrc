@@ -115,3 +115,7 @@ fi
 CFLAGS="$CFLAGS -fdiagnostics-color=auto"
 
 unset color_prompt force_color_prompt
+
+# Set this so that GUI programs open in the VM's graphical environment
+DISPLAY=:0.0
+
