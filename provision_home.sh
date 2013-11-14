@@ -10,6 +10,10 @@ git config --global alias.publish 'push --set-upstream origin HEAD'
 git config --global push.default simple
 git config --global credential.helper 'cache --timeout=28800'
 
+# Uncomment and replace the lines below with your name and e-mail
+# git config --global user.name 'My Name'
+# git config --global user.email 'my@email'
+
 echo "Configuring bash..."
 cp /vagrant/.bash_aliases /vagrant/.bashrc /home/vagrant
 
