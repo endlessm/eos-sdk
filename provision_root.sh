@@ -19,3 +19,6 @@ echo "Creating shortcuts for dev tools in EOS app store..."
 for app in gnome-terminal devhelp sublime-text-2; do
     cp /usr/share/applications/$app.desktop /usr/share/applications/eos-app-$app.desktop
 done
+
+echo "Installing Transifex client..."
+pip install transifex-client
