@@ -7,9 +7,10 @@ add-apt-repository -y ppa:webupd8team/sublime-text-2
 apt-get update
 apt-get -y dist-upgrade
 # Various dependencies
-apt-get -y install git devhelp sublime-text python-pip emacs fluxbox zsh tmux \
+apt-get -y install git devhelp sublime-text python-pip yelp-tools fluxbox tmux \
     sl osc pyflakes pep8 gnome-devel-docs gtk-doc-tools libgirepository1.0-dev \
-    gnome-api-docs python-bs4 gnome-common yelp-tools
+    gnome-api-docs python-bs4 gnome-common language-pack-pt language-pack-es \
+    zsh emacs
 # For testing this script: dependencies of the rest of the provisioning scripts
 # apt-get -y install git gnome-common yelp-tools sublime-text devhelp python-pip
 apt-get clean
