@@ -1,0 +1,73 @@
+{
+    'desktop': [
+        'eos-app-chromium-browser.desktop',
+        'eos-app-com.endlessm.youtube.desktop',
+        'eos-app-skype.desktop',
+        'eos-app-libreoffice-writer.desktop',
+        'eos-link-grooveshark.desktop',
+        'eos-app-com.endlessm.endless-photos.desktop',
+        'eos-app-eos-file-manager.desktop',
+        'eos-folder-media.directory',
+        'eos-folder-games.directory',
+        'eos-folder-work.directory',
+        'eos-folder-news.directory',
+        'eos-folder-curiosity.directory',
+        'eos-folder-user-0.directory'
+    ],
+    'eos-folder-media.directory': [
+        'eos-link-facebook.desktop',
+        'eos-app-shotwell.desktop',
+        'eos-app-totem.desktop',
+        'eos-app-rhythmbox.desktop',
+        'eos-app-frostwire.desktop',
+        'eos-app-gimp.desktop',
+        'eos-app-inkscape.desktop',
+        'eos-link-ted.desktop',
+        'eos-link-googlebooks.desktop'
+    ],
+    'eos-folder-games.directory': [
+        'eos-app-openarena.desktop',
+        'eos-link-angrybirds.desktop',
+        'eos-app-solitaire.desktop',
+        'eos-app-sol.desktop',
+        'eos-app-supertux2.desktop',
+        'eos-app-chromium-bsu.desktop',
+        'eos-app-supertuxkart.desktop',
+        'eos-app-gcompris.desktop',
+        'eos-app-frozen-bubble.desktop'
+    ],
+    'eos-folder-work.directory': [
+        'eos-app-evolution.desktop',
+        'eos-app-libreoffice-calc.desktop',
+        'eos-app-libreoffice-impress.desktop',
+        'eos-app-com.endlessm.endless-resume-app.desktop',
+        'eos-link-gmail.desktop',
+        'eos-app-gnome-calculator.desktop',
+        'eos-app-com.endlessm.typing.desktop'
+    ],
+    'eos-folder-news.directory': [
+        'eos-app-com.endlessm.endless-weather.desktop',
+        'eos-link-cnn.desktop',
+        'eos-link-nytimes.desktop',
+        'eos-link-wsj.desktop',
+        'eos-link-economist.desktop'
+    ],
+    'eos-folder-curiosity.directory': [
+        'eos-app-com.endlessm.wikipedia.desktop',
+        'eos-app-com.endlessm.brazil.desktop',
+        'eos-app-com.endlessm.guatemala.desktop',
+        'eos-app-com.endlessm.mexico.desktop',
+        'eos-app-com.endlessm.health.desktop',
+        'eos-app-com.endlessm.endless-translation.desktop',
+        'eos-app-com.endlessm.endless-english.desktop',
+        'eos-app-com.endlessm.khanacademy.desktop',
+        'eos-app-com.endlessm.programming.desktop',
+        'eos-link-worldwonders.desktop',
+        'eos-app-stellarium.desktop'
+    ],
+    'eos-folder-user-0.directory': [
+        'eos-app-gnome-terminal.desktop',
+        'eos-app-sublime-text-2.desktop',
+        'eos-app-devhelp.desktop'
+    ]
+}

@@ -38,6 +38,8 @@ gsettings set org.gnome.shell no-default-maximize true
 # Turn off screen lock and blanking
 gsettings set org.gnome.desktop.screensaver lock-enabled false
 gsettings set org.gnome.desktop.session idle-delay 0
+# Put dev tools on desktop
+gsettings set org.gnome.shell icon-grid-layout "$(cat /vagrant/desktop-layout.json)"
 
 echo "Configuring Sublime Text..."
 mkdir -p $HOME/.config/sublime-text-2
