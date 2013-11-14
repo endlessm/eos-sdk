@@ -26,6 +26,12 @@ echo "Configuring jhbuild..."
 cp /vagrant/.jhbuildrc /vagrant/eos-sdk.modules /home/vagrant
 mkdir -p $HOME/install/share/glib-2.0/schemas
 
+echo "Installing turbine..."
+git clone git://git.gnome.org/turbine
+pushd turbine
+python setup.py install
+popd
+
 echo "Configuring eos-shell..."
 # Restore alt-F2 run behaviour
 gsettings set org.gnome.desktop.wm.keybindings panel-run-dialog "['<Alt>F2']"
