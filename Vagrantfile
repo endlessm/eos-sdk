@@ -10,11 +10,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "raring32-vanilla"
+  config.vm.box = "raring32-desktop"
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
-  config.vm.box_url = "http://goo.gl/y79mW"
+  config.vm.box_url = "https://dl.dropboxusercontent.com/u/4790586/raring32-desktop.box"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. So accessing
@@ -42,7 +42,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Don't boot with headless mode
     vb.gui = true
     # Use VBoxManage to customize the VM.
-    vb.customize ["modifyvm", :id, "--memory", "2048", "--vram", "128", "--accelerate3d", "on", "--clipboard", "bidirectional"]
+    # vb.customize ["modifyvm", :id, "--memory", "2048"]
   end
 
   # View the documentation for the provider you're using for more
