@@ -45,10 +45,13 @@ set +e
     done
 set -e
 popd
+
+echo "Configuring elasticsearch..."
 sudo chown -R elasticsearch. /var/lib/elasticsearch
 sudo /usr/share/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-analysis-phonetic/1.6.0
 sudo /usr/share/elasticsearch/bin/plugin -install mobz/elasticsearch-head
 
+echo "Configuring personality..."
 sudo eos-select-personality default
 
 echo "Configuring chromium..."

@@ -41,11 +41,15 @@ gsettings set org.gnome.shell no-default-maximize true
 echo "Configuring Sublime Text..."
 mkdir -p $HOME/.config/sublime-text-2
 pushd $HOME/.config/sublime-text-2
+# Install Package Control
 mkdir -p Packages Installed\ Packages
 wget -O Installed\ Packages/Package\ Control.sublime-package \
     https://sublime.wbond.net/Package%20Control.sublime-package
+# Install Philip's default Sublime Text configuration - feel free to create or
+# fork your own settings repo and install that instead
 rm -rf Packages/User
 git clone https://github.com/ptomato/st2settings Packages/User
+# Patch SublimeLinter's "node" executable name because Ubuntu calls it "nodejs"
 python <<EOF
 import json
 filename = 'Packages/User/SublimeLinter.sublime-settings'

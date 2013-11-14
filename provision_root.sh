@@ -14,10 +14,11 @@ apt-get -y install git devhelp sublime-text python-pip emacs fluxbox zsh tmux \
 # apt-get -y install git gnome-common yelp-tools sublime-text devhelp python-pip
 apt-get clean
 
-Create shortcuts that will show up in the EOS app store?
-echo "Creating shortcuts for dev tools in EOS app store..."
+# Create shortcuts that will show up on the EOS desktop
+echo "Creating shortcuts for dev tools for EOS desktop..."
 for app in gnome-terminal devhelp sublime-text-2; do
-    cp /usr/share/applications/$app.desktop /usr/share/applications/eos-app-$app.desktop
+    cp /usr/share/applications/$app.desktop \
+        /usr/share/applications/eos-app-$app.desktop
 done
 
 echo "Installing Transifex client..."
