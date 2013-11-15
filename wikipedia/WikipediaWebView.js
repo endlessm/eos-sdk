@@ -116,7 +116,7 @@ const WikipediaWebView = new Lang.Class({
     setAllowedLinks: function(){
         // If you want to show all links, then
         // no point in showing some subset of them as well
-        if(!this.hide_links){
+        if(!this.hide_links || this._links_to_show.length === 0){
             return;
         }
         let str = JSON.stringify(this._links_to_show);

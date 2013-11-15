@@ -42,14 +42,15 @@ const DomainWikiPresenter = new Lang.Class({
             Lang.bind(this, this._onArticleBackClicked));
 
         this.initAppInfoFromJsonFile(app_filename);
-        this.initPageRankFromJsonFile(linked_articles_filename);
+
+        if(linked_articles_filename !== '')
+            this.initPageRankFromJsonFile(linked_articles_filename);
 
         let firstLevel = this._model.getMainCategory().getSubcategories();
         firstLevel.push(this._model.getMainCategory());
         this._view.set_categories(firstLevel);
 
-        let linked_articles = this._model.getLinkedArticles();
-        let to_show = linked_articles["app_articles"].concat(linked_articles["extra_linked_articles"]);
+        let to_show = this._model.getLinkedArticles();
         this._view.set_showable_links(to_show);
 
         let app_name = _pathnameToAppName(app_filename);
