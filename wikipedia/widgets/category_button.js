@@ -63,7 +63,6 @@ const CategoryButton = new Lang.Class({
         this._is_main_category = null;
         this._pixbuf = null;
 
-        this._overlay = new Gtk.Overlay();
         this._eventbox = new Gtk.EventBox({
             expand: true
         });
@@ -95,22 +94,15 @@ const CategoryButton = new Lang.Class({
         context.add_class(EndlessWikipedia.STYLE_CLASS_TITLE);
         context.add_class(EndlessWikipedia.STYLE_CLASS_CATEGORY);
         context.add_class(EndlessWikipedia.STYLE_CLASS_FRONT_PAGE);
-        this._image = new Gtk.Image({
-            expand: true,
-            halign: Gtk.Align.FILL,
-            valign: Gtk.Align.FILL
-        });
 
         // Parent constructor sets all properties
         this.parent(props);
 
         // Put widgets together
-        this.add(this._overlay);
-        this._overlay.add(this._image);
         this._eventbox_grid.add(this._label);
         this._eventbox_grid.add(this._arrow);
         this._eventbox.add(this._eventbox_grid);
-        this._overlay.add_overlay(this._eventbox);
+        this.add(this._eventbox);
         this.show_all();
 
         // Connect signals
@@ -124,7 +116,6 @@ const CategoryButton = new Lang.Class({
 
     set image_uri(value) {
         this._image_uri = value;
-        this._update_pixbuf();
     },
 
     get category_title() {
@@ -189,23 +180,24 @@ const CategoryButton = new Lang.Class({
         }
     },
 
-    vfunc_size_allocate: function(allocation) {
-        this.parent(allocation);
-        this._update_pixbuf();
-    },
-
     // Reloads the pixbuf from the gresource at the proper size if necessary
     _update_pixbuf: function () {
         if (this._image_uri === "" || this._image_uri === null)
             return;
         let allocation = this.get_allocation();
-        if (allocation.width <= 1 || allocation.height <= 1)
-            return;
         if (this._pixbuf === null || this._pixbuf.get_width() !== allocation.width ||
                                      this._pixbuf.get_height() !== allocation.height)
             this._pixbuf = Utils.load_pixbuf_cover(Utils.resourceUriToPath(this._image_uri),
                                                    allocation.width, allocation.height);
-        this._image.set_from_pixbuf(this._pixbuf);
+    },
+
+    vfunc_draw: function (cr) {
+        this._update_pixbuf();
+        if (this._pixbuf !== null) {
+            Gdk.cairo_set_source_pixbuf(cr, this._pixbuf, 0, 0);
+            cr.paint();
+        }
+        this.parent(cr);
     },
 
     // HANDLERS
