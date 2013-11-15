@@ -197,7 +197,12 @@ const CategoryButton = new Lang.Class({
             Gdk.cairo_set_source_pixbuf(cr, this._pixbuf, 0, 0);
             cr.paint();
         }
-        this.parent(cr);
+        let ret = this.parent(cr);
+        // We need to manually call dispose on cairo contexts. This is somewhat related to the bug listed here
+        // https://bugzilla.gnome.org/show_bug.cgi?id=685513 for the shell. We should see if they come up with
+        // a better fix in the future, i.e. fix this through gjs.
+        cr.$dispose();
+        return ret;
     },
 
     // HANDLERS
