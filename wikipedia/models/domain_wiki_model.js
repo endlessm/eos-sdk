@@ -16,6 +16,7 @@ const DomainWikiModel = new Lang.Class({
     _init: function(params) {
         this._articles = [];
         this._mainCategory = null;
+        this._linked_articles = undefined;
         this._categories = {};
         this.parent(params);
     },
@@ -90,7 +91,10 @@ const DomainWikiModel = new Lang.Class({
     },
 
     getLinkedArticles:function(){
-        return this._linked_articles;
+        if(this._linked_articles !== undefined)
+            return this._linked_articles["app_articles"].concat(this._linked_articles["extra_linked_articles"]);
+        else
+            return [];
     },
 
     /**
