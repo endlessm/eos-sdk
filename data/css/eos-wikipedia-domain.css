@@ -101,3 +101,8 @@ Gjs_BackButton {
     padding-left: 10px;
     padding-right: 10px;
 }
+
+.tooltip {
+    border-radius: 5px;
+    background-color: alpha(#212526, 0.90);
+}
