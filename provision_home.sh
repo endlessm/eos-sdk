@@ -2,10 +2,12 @@
 
 # Configure git
 echo "Configuring git..."
+# Change to your liking
 git config --global color.ui auto
+git config --global core.editor vim
 git config --global alias.st status
 git config --global alias.ch checkout
-git config --global alias.get 'pull --prune'
+git config --global alias.get 'fetch --prune'
 git config --global alias.publish 'push --set-upstream origin HEAD'
 git config --global push.default simple
 git config --global credential.helper 'cache --timeout=28800'
