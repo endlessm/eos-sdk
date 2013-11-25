@@ -16,6 +16,29 @@ apt-get -y install git devhelp sublime-text python-pip yelp-tools fluxbox tmux \
 # apt-get -y install git gnome-common yelp-tools sublime-text devhelp python-pip
 apt-get clean
 
+# Repositories that require VPN if you are not in the San Francisco office are
+# below. If you are in the office, you can comment out the following stanza.
+# Note that the VPN has to be connected on your host machine too.
+resolvconf -a eth0 <<EOF
+nameserver 10.0.1.9
+search endlessm-sf.com
+EOF
+
+add-apt-repository -ys "deb http://obs-master:82/shared/eos dev extra endless"
+apt-get update
+apt-get -y --allow-unauthenticated dist-upgrade
+# Requires interactivity when updating base-passwd?
+apt-get -y --allow-unauthenticated install eos-guatemala endlessos-base-photos \
+    eos-celebrities eos-cooking eos-english eos-exploration-center eos-fitness \
+    eos-file-manager eos-translation eos-shell eos-khanacademy eos-programming \
+    eos-mexico eos-resume eos-typing eos-wikipedia-health eos-wikipedia-brazil \
+    eos-futbol eos-travel eos-science eos-weather chromium-browser eos-youtube \
+    eos-social eos-wikipedia eos-language-pack-es eos-language-pack-pt
+# Requires selecting GDM instead of LightDM
+# Don't install eos-shell-apps so that we don't pull in all the giant games deps
+# like OpenArena, and don't install eos-media because it's huge
+apt-get clean
+
 # Create shortcuts that will show up on the EOS desktop
 echo "Creating shortcuts for dev tools for EOS desktop..."
 for app in gnome-terminal devhelp sublime-text-2; do
