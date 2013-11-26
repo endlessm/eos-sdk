@@ -15,7 +15,7 @@ const CATEGORY_BUTTON_BOTTOM_MARGIN = 20;  // pixels
 const CATEGORY_LABEL_BASELINE_CORRECTION = 0; // pixels
 const CATEGORY_BUTTON_BASELINE_CORRECTION = 10; // pixels
 const _HOVER_ARROW_URI = '/com/endlessm/wikipedia-domain/assets/category_hover_arrow.png';
-const MAIN_CATEGORY_SCREEN_WIDTH_PERCENTAGE = 0.37;
+const CATEGORY_MIN_WIDTH = 120; // pixels
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
 
@@ -160,16 +160,12 @@ const CategoryButton = new Lang.Class({
 
     // OVERRIDES
 
+    // Sometimes our label content runs too long and the min window width can
+    // be greater than the screen width. So we provide our own min width for
+    // category buttons here, and allow the GtkLabels to be cut off
     vfunc_get_preferred_width: function() {
-        if(this._is_main_category) {
-            let toplevel = this.get_toplevel();
-            if(toplevel == null)
-                return this.parent();
-            let width = toplevel.get_allocated_width() * MAIN_CATEGORY_SCREEN_WIDTH_PERCENTAGE;
-            return [width, width];
-        } else {
-            return this.parent();
-        }
+        let natural_width = this.parent()[1];
+        return [CATEGORY_MIN_WIDTH, natural_width];
     },
 
     // Reloads the pixbuf from the gresource at the proper size if necessary
