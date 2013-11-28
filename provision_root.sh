@@ -10,8 +10,8 @@ apt-get -y dist-upgrade
 apt-get -y install git devhelp sublime-text python-pip yelp-tools fluxbox tmux \
     sl osc pyflakes pep8 gnome-devel-docs gtk-doc-tools libgirepository1.0-dev \
     gnome-api-docs librsvg2-dev gnome-common language-pack-pt language-pack-es \
-    zsh emacs python-bs4 libgtk-3-dev libgtk2.0-dev libclutter-1.0-dev \
-    libjson-glib-doc python-polib
+    zsh emacs python-bs4 python-polib libgtk-3-dev libclutter-1.0-dev apt-file \
+    libjson-glib-doc libgtk2.0-dev
 # For testing this script: dependencies of the rest of the provisioning scripts
 # apt-get -y install git gnome-common yelp-tools sublime-text devhelp python-pip
 apt-get clean
@@ -48,3 +48,6 @@ done
 
 echo "Installing Transifex client..."
 pip install transifex-client
+
+echo "Creating apt-file cache..."
+apt-file update
