@@ -11,6 +11,8 @@ git config --global alias.get 'fetch --prune'
 git config --global alias.publish 'push --set-upstream origin HEAD'
 git config --global push.default simple
 git config --global credential.helper 'cache --timeout=28800'
+# Might want to change that last one to "credential.helper store" if you are
+# using 2-factor authentication and authenticating with an access token.
 
 # Uncomment and replace the lines below with your name and e-mail
 # git config --global user.name 'My Name'
