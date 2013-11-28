@@ -76,6 +76,8 @@ test_config_dir_returns_expected_path (ConfigDirFixture *fixture,
                                        gconstpointer     unused)
 {
   GFile *config_dir = eos_application_get_config_dir (fixture->app);
+  /* XDG_CONFIG_HOME may be a relative path, so resolve it via file handles */
+  GFile *xdg_user_config_dir = g_file_new_for_path (g_get_user_config_dir ());
 
   char *basename = g_file_get_basename (config_dir);
   g_assert_cmpstr (basename, ==, fixture->unique_id);
@@ -84,8 +86,13 @@ test_config_dir_returns_expected_path (ConfigDirFixture *fixture,
   GFile *parent = g_file_get_parent (config_dir);
   char *dirname = g_file_get_path (parent);
   g_object_unref (parent);
-  g_assert_cmpstr (dirname, ==, g_get_user_config_dir ());
+
+  char *xdg_dirname = g_file_get_path (xdg_user_config_dir);
+  g_object_unref (xdg_user_config_dir);
+
+  g_assert_cmpstr (dirname, ==, xdg_dirname);
   g_free (dirname);
+  g_free (xdg_dirname);
 }
 
 static void
