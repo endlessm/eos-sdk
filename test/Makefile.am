@@ -33,23 +33,19 @@ test_flexy_grid_LDADD = $(TEST_LIBS)
 
 javascript_tests = \
 	test/tools/eos-run-test/sanitycheck.js \
+	test/webhelper/testTranslate.js \
+	test/webhelper/testWebActions.js \
 	test/wikipedia/models/testCategoryModel.js \
 	test/wikipedia/models/testArticleModel.js \
 	test/wikipedia/models/testDomainWikiModel.js \
 	$(NULL)
-# Disabled until post Echo release:
-#	test/webhelper/testTranslate.js
-#	test/webhelper/testWebActions.js
-
 EXTRA_DIST += $(javascript_tests)
 
 # Run tests when running 'make check'
 TESTS = \
+	test/run-tests \
 	$(javascript_tests) \
 	$(NULL)
-# Disabled until post Echo release:
-#	test/run-tests
-
 TEST_EXTENSIONS = .js
 JS_LOG_COMPILER = tools/eos-run-test
 AM_JS_LOG_FLAGS = \
