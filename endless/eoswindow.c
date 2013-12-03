@@ -11,7 +11,6 @@
 #include "eosmainarea-private.h"
 
 #include <gtk/gtk.h>
-#include <pstack.h>
 
 /**
  * SECTION:window
@@ -213,10 +212,10 @@ static void
 sync_stack_animation (EosWindow *self)
 {
   EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
-  p_stack_set_transition_type (P_STACK (self->priv->background_stack),
-                               eos_page_manager_get_pstack_transition_type (pm));
-  p_stack_set_transition_duration (P_STACK (self->priv->background_stack),
-                                   eos_page_manager_get_transition_duration (pm));
+  gtk_stack_set_transition_type (GTK_STACK (self->priv->background_stack),
+                                 eos_page_manager_get_gtk_stack_transition_type (pm));
+  gtk_stack_set_transition_duration (GTK_STACK (self->priv->background_stack),
+                                     eos_page_manager_get_transition_duration (pm));
 }
 
 // Helper to generate frame css override
@@ -269,8 +268,8 @@ update_page_background (EosWindow *self)
                                           gtk_widget_get_name (self->priv->next_background),
                                           next_background_css_props);
   override_background_css (self, background_css);
-  p_stack_set_visible_child (P_STACK (self->priv->background_stack),
-                                      self->priv->next_background);
+  gtk_stack_set_visible_child (GTK_STACK (self->priv->background_stack),
+                               self->priv->next_background);
   // Swap our background frames for next animation
   GtkWidget *temp = self->priv->next_background;
   self->priv->next_background = self->priv->current_background;
@@ -334,8 +333,8 @@ update_page (EosWindow *self)
   update_page_left_topbar (self);
   update_page_center_topbar (self);
   update_page_background (self);
-  p_stack_set_transition_type (P_STACK (self->priv->background_stack),
-                               P_STACK_TRANSITION_TYPE_NONE);
+  gtk_stack_set_transition_type (GTK_STACK (self->priv->background_stack),
+                                 GTK_STACK_TRANSITION_TYPE_NONE);
 
   if (self->priv->current_page)
     {
@@ -661,7 +660,7 @@ eos_window_init (EosWindow *self)
   self->priv->overlay = gtk_overlay_new ();
   gtk_container_add (GTK_CONTAINER (self), self->priv->overlay);
 
-  self->priv->background_stack = p_stack_new ();
+  self->priv->background_stack = gtk_stack_new ();
   gtk_container_add (GTK_CONTAINER (self->priv->overlay), self->priv->background_stack);
 
   gchar *background_name1 = g_strdup_printf (BACKGROUND_FRAME_NAME_TEMPLATE, 1);

@@ -8,11 +8,10 @@
 #include "eospagemanager.h"
 
 #include <gtk/gtk.h>
-#include <pstack.h>
 
 G_BEGIN_DECLS
 
-PStackTransitionType eos_page_manager_get_pstack_transition_type (EosPageManager *self);
+GtkStackTransitionType eos_page_manager_get_gtk_stack_transition_type (EosPageManager *self);
 
 G_END_DECLS
 
