@@ -11,7 +11,11 @@ apt-get -y install git devhelp sublime-text python-pip yelp-tools fluxbox tmux \
     sl osc pyflakes pep8 gnome-devel-docs gtk-doc-tools libgirepository1.0-dev \
     gnome-api-docs librsvg2-dev gnome-common language-pack-pt language-pack-es \
     zsh emacs python-bs4 python-polib libgtk-3-dev libclutter-1.0-dev apt-file \
-    libjson-glib-doc libgtk2.0-dev libxslt1-dev flex bison gperf
+    libjson-glib-doc libgtk2.0-dev libxslt1-dev flex bison gperf libdbus-1-dev \
+    libproxy-dev libatasmart-dev libmozjs185-dev libtasn1-6-dev libsqlite3-dev \
+    xutils-dev libgudev-1.0-dev libgphoto2-2-dev libxtst-dev libacl1-dev ragel \
+    libtiff5-dev libjpeg-dev doxygen libpam0g-dev nettle-dev icon-naming-utils \
+    libgcrypt11-dev
 # For testing this script: dependencies of the rest of the provisioning scripts
 # apt-get -y install git gnome-common yelp-tools sublime-text devhelp python-pip
 apt-get clean
