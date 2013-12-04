@@ -76,10 +76,10 @@ AC_SUBST(EOS_SDK_LT_VERSION_INFO)
 
 # Required versions of libraries
 # Update these whenever you use a function that requires a certain API version
-GLIB_REQUIREMENT="glib-2.0 >= 2.36"
+GLIB_REQUIREMENT="glib-2.0 >= 2.38"
 GOBJECT_REQUIREMENT="gobject-2.0"
 GIO_REQUIREMENT="gio-2.0"
-GTK_REQUIREMENT="gtk+-3.0 >= 3.4"
+GTK_REQUIREMENT="gtk+-3.0 >= 3.10"
 # These go into the pkg-config file as Requires: and Requires.private:
 # (Generally, use Requires.private: instead of Requires:)
 EOS_REQUIRED_MODULES=

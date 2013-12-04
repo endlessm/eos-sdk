@@ -21,21 +21,10 @@ typedef struct {
   guint selected : 1;
 } EosFlexyGridCellPrivate;
 
-#if GLIB_CHECK_VERSION (2, 37, 5)
-
-# define EOS_FLEXY_GRID_CELL_GET_PRIV(obj) \
+#define EOS_FLEXY_GRID_CELL_GET_PRIV(obj) \
   ((EosFlexyGridCellPrivate *) eos_flexy_grid_cell_get_instance_private ((EosFlexyGridCell *) (obj)))
 
 G_DEFINE_TYPE_WITH_PRIVATE (EosFlexyGridCell, eos_flexy_grid_cell, GTK_TYPE_BIN)
-
-#else
-
-# define EOS_FLEXY_GRID_CELL_GET_PRIV(obj) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((obj), EOS_TYPE_FLEXY_GRID_CELL, EosFlexyGridCellPrivate))
-
-G_DEFINE_TYPE (EosFlexyGridCell, eos_flexy_grid_cell, GTK_TYPE_BIN)
-
-#endif /* GLIB_CHECK_VERSION (2, 37, 5) */
 
 enum
 {
@@ -90,10 +79,6 @@ eos_flexy_grid_cell_get_property (GObject    *gobject,
 static void
 eos_flexy_grid_cell_class_init (EosFlexyGridCellClass *klass)
 {
-#if !GLIB_CHECK_VERSION (2, 37, 6)
-  g_type_class_add_private (klass, sizeof (EosFlexyGridCellPrivate));
-#endif
-
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->set_property = eos_flexy_grid_cell_set_property;
   gobject_class->get_property = eos_flexy_grid_cell_get_property;
