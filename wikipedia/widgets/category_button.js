@@ -162,9 +162,15 @@ const CategoryButton = new Lang.Class({
 
     // Sometimes our label content runs too long and the min window width can
     // be greater than the screen width. So we provide our own min width for
-    // category buttons here, and allow the GtkLabels to be cut off
-    vfunc_get_preferred_width: function() {
-        let natural_width = this.parent()[1];
+    // category buttons here, and allow the GtkLabels to be cut off if there's
+    // no space. We ask for width for height management so the height will be
+    // allocated first.
+    vfunc_get_request_mode: function() {
+        return Gtk.SizeRequestMode.WIDTH_FOR_HEIGHT;
+    },
+
+    vfunc_get_preferred_width_for_height: function(height) {
+        let natural_width = this.parent(height)[1];
         return [CATEGORY_MIN_WIDTH, natural_width];
     },
 
