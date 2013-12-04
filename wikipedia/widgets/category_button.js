@@ -60,16 +60,14 @@ const CategoryButton = new Lang.Class({
         this._is_main_category = null;
         this._pixbuf = null;
 
-        this._grid = new Gtk.Grid({
-            orientation: Gtk.Orientation.HORIZONTAL,
-            expand: true,
-            valign: Gtk.Align.END
+        this._overlay = new Gtk.Overlay({
+            expand: true
         });
         this._label = new Gtk.Label({
             margin_left: CATEGORY_LABEL_LEFT_MARGIN,
             margin_bottom: CATEGORY_LABEL_BOTTOM_MARGIN - CATEGORY_LABEL_BASELINE_CORRECTION,
-            hexpand: true,
             halign: Gtk.Align.START,
+            valign: Gtk.Align.END,
             xalign: 0.0,  // deprecated Gtk.Misc properties; necessary because
             wrap: true,   // "wrap" doesn't respect "halign"
             width_chars: 18,
@@ -80,8 +78,12 @@ const CategoryButton = new Lang.Class({
             margin_right: CATEGORY_BUTTON_RIGHT_MARGIN,
             margin_bottom: CATEGORY_BUTTON_BOTTOM_MARGIN + CATEGORY_BUTTON_BASELINE_CORRECTION,
             halign: Gtk.Align.END,
-            valign: Gtk.Align.END,
-            opacity: 0
+            valign: Gtk.Align.END
+        });
+        // Make the arrow image transparent to mouse events
+        this._arrow.connect_after('realize', function (frame) {
+            let gdk_window = frame.get_window();
+            gdk_window.set_child_input_shapes();
         });
 
         let context = this._label.get_style_context();
@@ -93,13 +95,21 @@ const CategoryButton = new Lang.Class({
         this.parent(props);
 
         // Put widgets together
-        this._grid.add(this._label);
-        this._grid.add(this._arrow);
-        this.add(this._grid);
+        let alignment = new Gtk.Alignment({ expand: true });
+        alignment.add(this._label);
+        this._overlay.add(alignment);
+        this._overlay.add_overlay(this._arrow);
+        this.add(this._overlay);
         this.show_all();
+        this._arrow.hide();
 
-        this.connect("enter", Lang.bind(this, function (w) { this._arrow.opacity = 1; }));
-        this.connect("leave", Lang.bind(this, function (w) { this._arrow.opacity = 0; }));
+        this.connect("enter", Lang.bind(this, function (w) {
+            if(this._clickable_category)
+                this._arrow.show();
+        }));
+        this.connect("leave", Lang.bind(this, function (w) {
+            this._arrow.hide();
+        }));
     },
 
     get image_uri() {
