@@ -71,11 +71,11 @@ Gjs_ArticleList .scrollbar.slider {
     color: rgba(255, 255, 255, 0.9);
 }
 
-Gjs_CategoryButton GtkEventBox {
+Gjs_CategoryButton.clickable {
     transition: background-color 1000ms ease-in-out;
 }
 
-Gjs_CategoryButton GtkEventBox:hover {
+Gjs_CategoryButton.clickable:hover {
     background-color: alpha(#212121, 0.5);
     transition: background-color 100ms ease-in-out;
 }

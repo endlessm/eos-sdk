@@ -21,7 +21,7 @@ GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.
 
 const CategoryButton = new Lang.Class({
     Name: 'CategoryButton',
-    Extends: Gtk.EventBox,
+    Extends: Gtk.Button,
     Properties: {
         // resource URI for the category's accompanying image
         'image-uri': GObject.ParamSpec.string('image-uri',
@@ -51,9 +51,6 @@ const CategoryButton = new Lang.Class({
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
             false)        
     },
-    Signals: {
-        'clicked': {}
-    },
 
     _init: function(props) {
         // Get ready for property construction
@@ -63,12 +60,9 @@ const CategoryButton = new Lang.Class({
         this._is_main_category = null;
         this._pixbuf = null;
 
-        this._eventbox = new Gtk.EventBox({
-            expand: true
-        });
-        this._eventbox_grid = new Gtk.Grid({
+        this._grid = new Gtk.Grid({
             orientation: Gtk.Orientation.HORIZONTAL,
-            hexpand: true,
+            expand: true,
             valign: Gtk.Align.END
         });
         this._label = new Gtk.Label({
@@ -99,15 +93,13 @@ const CategoryButton = new Lang.Class({
         this.parent(props);
 
         // Put widgets together
-        this._eventbox_grid.add(this._label);
-        this._eventbox_grid.add(this._arrow);
-        this._eventbox.add(this._eventbox_grid);
-        this.add(this._eventbox);
+        this._grid.add(this._label);
+        this._grid.add(this._arrow);
+        this.add(this._grid);
         this.show_all();
 
-        // Connect signals
-        this.connect('button-press-event',
-            Lang.bind(this, this._onButtonPress));
+        this.connect("enter", Lang.bind(this, function (w) { this._arrow.opacity = 1; }));
+        this.connect("leave", Lang.bind(this, function (w) { this._arrow.opacity = 0; }));
     },
 
     get image_uri() {
@@ -135,19 +127,9 @@ const CategoryButton = new Lang.Class({
     set clickable_category(value) {
         this._clickable_category = value;
         if(this._clickable_category) {
-            //Hover events/effects only trigger if the button is clickable.
-            this._eventbox.add_events(Gdk.EventMask.ENTER_NOTIFY_MASK |
-                Gdk.EventMask.LEAVE_NOTIFY_MASK);
-            this._eventbox.connect('enter-notify-event',
-                Lang.bind(this, function(widget, event) {
-                    this._eventbox.set_state_flags(Gtk.StateFlags.PRELIGHT, false);
-                    this._arrow.opacity = 1.0;
-                }));
-            this._eventbox.connect('leave-notify-event',
-                Lang.bind(this, function(widget, event) {
-                    this._eventbox.unset_state_flags(Gtk.StateFlags.PRELIGHT);
-                    this._arrow.opacity = 0.0;
-                }));
+            this.get_style_context().add_class(EndlessWikipedia.STYLE_CLASS_CATEGORY_CLICKABLE);
+        } else {
+            this.get_style_context().remove_class(EndlessWikipedia.STYLE_CLASS_CATEGORY_CLICKABLE);
         }
     },
 
@@ -203,11 +185,5 @@ const CategoryButton = new Lang.Class({
         // a better fix in the future, i.e. fix this through gjs.
         cr.$dispose();
         return ret;
-    },
-
-    // HANDLERS
-
-    _onButtonPress: function(widget, event) {
-        this.emit('clicked')
     }
 });
