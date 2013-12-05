@@ -63,21 +63,10 @@ enum
   LAST_SIGNAL
 };
 
-#if GLIB_CHECK_VERSION (2, 37, 5)
-
-# define EOS_FLEXY_GRID_GET_PRIV(obj) \
+#define EOS_FLEXY_GRID_GET_PRIV(obj) \
   ((EosFlexyGridPrivate *) eos_flexy_grid_get_instance_private ((EosFlexyGrid *) (obj)))
 
 G_DEFINE_TYPE_WITH_PRIVATE (EosFlexyGrid, eos_flexy_grid, GTK_TYPE_CONTAINER)
-
-#else
-
-# define EOS_FLEXY_GRID_GET_PRIV(obj) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((obj), EOS_TYPE_FLEXY_GRID, EosFlexyGridPrivate))
-
-G_DEFINE_TYPE (EosFlexyGrid, eos_flexy_grid, GTK_TYPE_CONTAINER)
-
-#endif /* GLIB_CHECK_VERSION (2, 37, 5) */
 
 static guint grid_signals[LAST_SIGNAL] = { 0, };
 static GParamSpec *grid_props[LAST_PROP] = { NULL, };
@@ -852,10 +841,6 @@ eos_flexy_grid_finalize (GObject *gobject)
 static void
 eos_flexy_grid_class_init (EosFlexyGridClass *klass)
 {
-#if !GLIB_CHECK_VERSION (2, 37, 5)
-  g_type_class_add_private (klass, sizeof (EosFlexyGridPrivate));
-#endif
-
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = eos_flexy_grid_finalize;
   gobject_class->set_property = eos_flexy_grid_set_property;

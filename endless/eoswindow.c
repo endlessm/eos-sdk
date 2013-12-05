@@ -571,36 +571,6 @@ eos_window_class_init (EosWindowClass *klass)
   g_object_class_install_properties (object_class, NPROPS, eos_window_props);
 }
 
-#if GTK_CHECK_VERSION (3, 10, 0)
-#define our_window_close(w)     gtk_window_close (w)
-#else
-static gboolean
-queue_close (gpointer user_data)
-{
-  GtkWidget *window = user_data;
-
-  GdkEvent *event = gdk_event_new (GDK_DELETE);
-
-  event->any.window = gtk_widget_get_window (window);
-  event->any.send_event = TRUE;
-
-  gtk_main_do_event (event);
-
-  gdk_event_free (event);
-
-  return G_SOURCE_REMOVE;
-}
-
-static void
-our_window_close (GtkWindow *window)
-{
-  if (!gtk_widget_get_realized (GTK_WIDGET (window)))
-    return;
-
-  gdk_threads_add_idle (queue_close, window);
-}
-#endif /* GTK_CHECK_VERSION (3, 10, 0) */
-
 static void
 on_minimize_clicked_cb (GtkWidget* top_bar)
 {
@@ -614,7 +584,7 @@ on_close_clicked_cb (GtkWidget* top_bar)
 {
   GtkWidget *window = gtk_widget_get_toplevel (top_bar);
 
-  our_window_close (GTK_WINDOW (window));
+  gtk_window_close (GTK_WINDOW (window));
 }
 
 /* Make sure that the edge finishing does not catch input events */
