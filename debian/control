@@ -3,7 +3,6 @@ Section: non-free/libs
 Priority: standard
 Maintainer: Endless Mobile <maintainers@endlessm.com>
 Build-Depends: debhelper (>= 8.0.0),
-               eos-pstack-dev (>= 1.0),
                gettext (>= 0.18.1),
                gir1.2-gdkpixbuf-2.0,
                gir1.2-gtk-3.0 (>= 3.8),
@@ -29,7 +28,6 @@ Section: non-free/libs
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         eos-pstack (>= 1.0),
          gnome-icon-theme-symbolic
 Recommends: gjs
 Description: Endless SDK GUI library
@@ -39,8 +37,7 @@ Package: eos-sdk-dev
 Section: non-free/libdevel
 Architecture: any
 Depends: ${misc:Depends},
-         eos-sdk (= ${binary:Version}),
-         eos-pstack-dev
+         eos-sdk (= ${binary:Version})
 Description: Endless SDK development package
  Development headers for the Endless SDK
 
