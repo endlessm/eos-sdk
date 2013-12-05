@@ -21,7 +21,7 @@ GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.
 
 const CategoryButton = new Lang.Class({
     Name: 'CategoryButton',
-    Extends: Gtk.EventBox,
+    Extends: Gtk.Button,
     Properties: {
         // resource URI for the category's accompanying image
         'image-uri': GObject.ParamSpec.string('image-uri',
@@ -51,9 +51,6 @@ const CategoryButton = new Lang.Class({
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
             false)        
     },
-    Signals: {
-        'clicked': {}
-    },
 
     _init: function(props) {
         // Get ready for property construction
@@ -63,19 +60,14 @@ const CategoryButton = new Lang.Class({
         this._is_main_category = null;
         this._pixbuf = null;
 
-        this._eventbox = new Gtk.EventBox({
+        this._overlay = new Gtk.Overlay({
             expand: true
-        });
-        this._eventbox_grid = new Gtk.Grid({
-            orientation: Gtk.Orientation.HORIZONTAL,
-            hexpand: true,
-            valign: Gtk.Align.END
         });
         this._label = new Gtk.Label({
             margin_left: CATEGORY_LABEL_LEFT_MARGIN,
             margin_bottom: CATEGORY_LABEL_BOTTOM_MARGIN - CATEGORY_LABEL_BASELINE_CORRECTION,
-            hexpand: true,
             halign: Gtk.Align.START,
+            valign: Gtk.Align.END,
             xalign: 0.0,  // deprecated Gtk.Misc properties; necessary because
             wrap: true,   // "wrap" doesn't respect "halign"
             width_chars: 18,
@@ -86,8 +78,12 @@ const CategoryButton = new Lang.Class({
             margin_right: CATEGORY_BUTTON_RIGHT_MARGIN,
             margin_bottom: CATEGORY_BUTTON_BOTTOM_MARGIN + CATEGORY_BUTTON_BASELINE_CORRECTION,
             halign: Gtk.Align.END,
-            valign: Gtk.Align.END,
-            opacity: 0
+            valign: Gtk.Align.END
+        });
+        // Make the arrow image transparent to mouse events
+        this._arrow.connect_after('realize', function (frame) {
+            let gdk_window = frame.get_window();
+            gdk_window.set_child_input_shapes();
         });
 
         let context = this._label.get_style_context();
@@ -99,15 +95,21 @@ const CategoryButton = new Lang.Class({
         this.parent(props);
 
         // Put widgets together
-        this._eventbox_grid.add(this._label);
-        this._eventbox_grid.add(this._arrow);
-        this._eventbox.add(this._eventbox_grid);
-        this.add(this._eventbox);
+        let alignment = new Gtk.Alignment({ expand: true });
+        alignment.add(this._label);
+        this._overlay.add(alignment);
+        this._overlay.add_overlay(this._arrow);
+        this.add(this._overlay);
         this.show_all();
+        this._arrow.hide();
 
-        // Connect signals
-        this.connect('button-press-event',
-            Lang.bind(this, this._onButtonPress));
+        this.connect("enter", Lang.bind(this, function (w) {
+            if(this._clickable_category)
+                this._arrow.show();
+        }));
+        this.connect("leave", Lang.bind(this, function (w) {
+            this._arrow.hide();
+        }));
     },
 
     get image_uri() {
@@ -135,19 +137,9 @@ const CategoryButton = new Lang.Class({
     set clickable_category(value) {
         this._clickable_category = value;
         if(this._clickable_category) {
-            //Hover events/effects only trigger if the button is clickable.
-            this._eventbox.add_events(Gdk.EventMask.ENTER_NOTIFY_MASK |
-                Gdk.EventMask.LEAVE_NOTIFY_MASK);
-            this._eventbox.connect('enter-notify-event',
-                Lang.bind(this, function(widget, event) {
-                    this._eventbox.set_state_flags(Gtk.StateFlags.PRELIGHT, false);
-                    this._arrow.opacity = 1.0;
-                }));
-            this._eventbox.connect('leave-notify-event',
-                Lang.bind(this, function(widget, event) {
-                    this._eventbox.unset_state_flags(Gtk.StateFlags.PRELIGHT);
-                    this._arrow.opacity = 0.0;
-                }));
+            this.get_style_context().add_class(EndlessWikipedia.STYLE_CLASS_CATEGORY_CLICKABLE);
+        } else {
+            this.get_style_context().remove_class(EndlessWikipedia.STYLE_CLASS_CATEGORY_CLICKABLE);
         }
     },
 
@@ -203,11 +195,5 @@ const CategoryButton = new Lang.Class({
         // a better fix in the future, i.e. fix this through gjs.
         cr.$dispose();
         return ret;
-    },
-
-    // HANDLERS
-
-    _onButtonPress: function(widget, event) {
-        this.emit('clicked')
     }
 });
