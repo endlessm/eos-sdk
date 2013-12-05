@@ -66,6 +66,7 @@ struct _EosWindowPrivate
   GtkWidget *top_bar;
   GtkWidget *main_area;
   GtkWidget *overlay;
+  GtkSizeGroup *overlay_size_group;
   GtkWidget *edge_finishing;
   GtkWidget *current_background;
   GtkWidget *next_background;
@@ -655,6 +656,13 @@ eos_window_init (EosWindow *self)
 
   self->priv->main_area = eos_main_area_new ();
   gtk_overlay_add_overlay (GTK_OVERLAY (self->priv->overlay), self->priv->main_area);
+
+  // We want the overlay to size to the main area, the widget on top. The
+  // overlay gets its size request from the widget on the bottom, the
+  // background frame with no minimum size. So we use a size group.
+  self->priv->overlay_size_group = gtk_size_group_new (GTK_SIZE_GROUP_BOTH);
+  gtk_size_group_add_widget (self->priv->overlay_size_group, self->priv->background_stack);
+  gtk_size_group_add_widget (self->priv->overlay_size_group, self->priv->main_area);
 
   self->priv->edge_finishing = gtk_drawing_area_new ();
   gtk_widget_set_vexpand (self->priv->edge_finishing, FALSE);

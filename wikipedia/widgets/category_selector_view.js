@@ -39,7 +39,6 @@ const CategorySelectorView = new Lang.Class({
                 image_uri: category.image_thumbnail_uri,
                 clickable_category: category.has_articles,
                 is_main_category: category.is_main_category,
-                hexpand: !category.is_main_category
             });
             button.id = category.id; // ID to return to when clicked
             //if the category has no articles, you shouldn't be able to click on it.

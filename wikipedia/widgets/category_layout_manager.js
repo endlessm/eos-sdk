@@ -1,6 +1,9 @@
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
+const MAIN_CATEGORY_SCREEN_WIDTH_PERCENTAGE = 37;
+const SUB_CATEGORY_SCREEN_WIDTH_PERCENTAGE = 30;
+
 const CategoryLayoutManager = new Lang.Class({
     Name: 'CategoryLayoutManager',
     Extends: Gtk.Grid,
@@ -8,8 +11,7 @@ const CategoryLayoutManager = new Lang.Class({
     _init: function(props) {
         props = props || {};
         props.row_homogeneous = true;
-        //we don't make the columns homogenous because the 0th column
-        //needs to be 37% of the screen, according to designs.
+        props.column_homogeneous = true;
         this.parent(props);
 
         this._childWidgets = [];
@@ -17,15 +19,16 @@ const CategoryLayoutManager = new Lang.Class({
     },
 
     // Distribute children in two columns, except for the last one if an odd
-    // number; that should span two columns
+    // number; that should span two columns. The width must be divided by
+    // percentage according to the spec, so we consider each column in the grid
+    // one percent
     _redistributeChildren: function() {
         let numChildren = this._childWidgets.length;
         let oddNumber = numChildren % 2 == 1;
 
         let numRows = 1;
-
         this._childWidgets.forEach(function(child, index) {
-            let column = (index % 2) + 1; //plus 1 because the mainWidget is the 0 column.
+            let column = (index % 2) * SUB_CATEGORY_SCREEN_WIDTH_PERCENTAGE + MAIN_CATEGORY_SCREEN_WIDTH_PERCENTAGE;
             let row = Math.floor(index / 2);
 
             if(numRows < row + 1) 
@@ -33,20 +36,19 @@ const CategoryLayoutManager = new Lang.Class({
             //need when we add the main widget.
 
             if(child.get_parent() === this)
-                Gtk.Container.prototype.remove.call(this,
-                    this._childWidgets[index]);
+                Gtk.Container.prototype.remove.call(this, this._childWidgets[index]);
 
             if(oddNumber && index == numChildren - 1)
-                this.attach(child, 1, row, 2, 1);
+                this.attach(child, column, row, SUB_CATEGORY_SCREEN_WIDTH_PERCENTAGE * 2, 1);
             else
-                this.attach(child, column, row, 1, 1);
+                this.attach(child, column, row, SUB_CATEGORY_SCREEN_WIDTH_PERCENTAGE, 1);
         }, this);
 
         if(this._mainWidget) {
             if(this._mainWidget.get_parent() === this) {
                 Gtk.Container.prototype.remove.call(this, this._mainWidget);
             }
-            this.attach(this._mainWidget, 0, 0, 1, numRows);
+            this.attach(this._mainWidget, 0, 0, MAIN_CATEGORY_SCREEN_WIDTH_PERCENTAGE, numRows);
         }
     },
 
