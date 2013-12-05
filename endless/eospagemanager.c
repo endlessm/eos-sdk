@@ -5,7 +5,6 @@
 #include "eospagemanager-private.h"
 
 #include <gtk/gtk.h>
-#include <pstack.h>
 
 #include <string.h>
 
@@ -262,9 +261,8 @@ static void
 set_visible_page_from_info (EosPageManager         *self,
                             EosPageManagerPageInfo *info)
 {
-  /* FIXME when porting to GtkStack */
-  PStack *stack = P_STACK (self->priv->stack);
-  p_stack_set_visible_child (stack, info->page);
+  GtkStack *stack = GTK_STACK (self->priv->stack);
+  gtk_stack_set_visible_child (stack, info->page);
 
   self->priv->visible_page_info = info;
 
@@ -906,7 +904,7 @@ eos_page_manager_init (EosPageManager *self)
   gtk_widget_set_has_window (self_widget, FALSE);
 
   /* TODO replace with GtkStack */
-  self->priv->stack = p_stack_new ();
+  self->priv->stack = gtk_stack_new ();
   gtk_widget_set_parent (self->priv->stack, self_widget);
 }
 
@@ -1603,7 +1601,7 @@ eos_page_manager_get_transition_duration (EosPageManager *self)
 {
   g_return_val_if_fail (EOS_IS_PAGE_MANAGER (self), 0);
 
-  return p_stack_get_transition_duration (P_STACK (self->priv->stack));
+  return gtk_stack_get_transition_duration (GTK_STACK (self->priv->stack));
 }
 
 /**
@@ -1620,7 +1618,7 @@ eos_page_manager_set_transition_duration (EosPageManager *self,
 {
   g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
 
-  p_stack_set_transition_duration (P_STACK (self->priv->stack), duration);
+  gtk_stack_set_transition_duration (GTK_STACK (self->priv->stack), duration);
   g_object_notify (G_OBJECT (self), "transition-duration");
 }
 
@@ -1657,7 +1655,7 @@ eos_page_manager_set_transition_type (EosPageManager                *self,
   g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
 
   self->priv->transition_type = transition_type;
-  PStackTransitionType pstack_transition;
+  GtkStackTransitionType gtk_stack_transition;
   switch (transition_type)
     {
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE:
@@ -1666,25 +1664,25 @@ eos_page_manager_set_transition_type (EosPageManager                *self,
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT:
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP:
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN:
-      pstack_transition = (PStackTransitionType)self->priv->transition_type;
+      gtk_stack_transition = (GtkStackTransitionType)self->priv->transition_type;
       break;
     default:
-      pstack_transition = P_STACK_TRANSITION_TYPE_NONE;
+      gtk_stack_transition = GTK_STACK_TRANSITION_TYPE_NONE;
       break;
     }
-  p_stack_set_transition_type (P_STACK (self->priv->stack),
-                               pstack_transition);
+  gtk_stack_set_transition_type (GTK_STACK (self->priv->stack),
+                                 gtk_stack_transition);
   g_object_notify (G_OBJECT (self), "transition-type");
 }
 
 /*
- * eos_page_manager_get_pstack_transition_type:
+ * eos_page_manager_get_gtk_stack_transition_type:
  * @self: the page manager
  *
- * Gets the internal pstack transition type used to animate the page manager.
+ * Gets the internal gtk_stack transition type used to animate the page manager.
  */
-PStackTransitionType
-eos_page_manager_get_pstack_transition_type (EosPageManager *self)
+GtkStackTransitionType
+eos_page_manager_get_gtk_stack_transition_type (EosPageManager *self)
 {
-  return p_stack_get_transition_type (P_STACK (self->priv->stack));
+  return gtk_stack_get_transition_type (GTK_STACK (self->priv->stack));
 }

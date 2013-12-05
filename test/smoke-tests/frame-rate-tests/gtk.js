@@ -2,17 +2,16 @@
 
 const Lang = imports.lang;
 const Gtk = imports.gi.Gtk;
-const PLib = imports.gi.PLib;
 const GObject = imports.gi.GObject;
 const Endless = imports.gi.Endless;
 
 const TEST_APPLICATION_ID = "com.frametest";
 
-let TRANSITION1 = PLib.StackTransitionType.SLIDE_LEFT;
-let TRANSITION2 = PLib.StackTransitionType.SLIDE_RIGHT;
+let TRANSITION1 = Gtk.StackTransitionType.SLIDE_LEFT;
+let TRANSITION2 = Gtk.StackTransitionType.SLIDE_RIGHT;
 if (ARGV[0] === "crossfade") {
-    TRANSITION1 = PLib.StackTransitionType.CROSSFADE;
-    TRANSITION2 = PLib.StackTransitionType.CROSSFADE;
+    TRANSITION1 = Gtk.StackTransitionType.CROSSFADE;
+    TRANSITION2 = Gtk.StackTransitionType.CROSSFADE;
 }
 
 let BACKGROUND1_NAME = "page1_1080";
@@ -49,7 +48,7 @@ const TestApplication = new Lang.Class ({
             this._stack.set_visible_child(this._page1);
         }));
 
-        this._stack = new PLib.Stack();
+        this._stack = new Gtk.Stack();
         this._stack.add(this._page1);
         this._stack.add(this._page2);
 
