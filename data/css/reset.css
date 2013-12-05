@@ -6,7 +6,8 @@
  * Also, when adding new style properties, please add them here.
  */
 
-* {
+EosWindow,
+EosWindow * {
   color: inherit;
   font-size: inherit;
   background-color: initial;
