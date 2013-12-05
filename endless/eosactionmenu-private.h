@@ -33,13 +33,10 @@ G_BEGIN_DECLS
 
 typedef struct _EosActionMenu EosActionMenu;
 typedef struct _EosActionMenuClass EosActionMenuClass;
-typedef struct _EosActionMenuPrivate EosActionMenuPrivate;
 
 struct _EosActionMenu
 {
   GtkFrame parent;
-
-  EosActionMenuPrivate *priv;
 };
 
 struct _EosActionMenuClass

@@ -33,13 +33,10 @@ G_BEGIN_DECLS
 
 typedef struct _EosTopBar EosTopBar;
 typedef struct _EosTopBarClass EosTopBarClass;
-typedef struct _EosTopBarPrivate EosTopBarPrivate;
 
 struct _EosTopBar
 {
   GtkEventBox parent;
-
-  EosTopBarPrivate *priv;
 };
 
 struct _EosTopBarClass

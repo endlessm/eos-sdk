@@ -38,7 +38,6 @@ G_BEGIN_DECLS
 
 typedef struct _EosWindow EosWindow;
 typedef struct _EosWindowClass EosWindowClass;
-typedef struct _EosWindowPrivate EosWindowPrivate;
 
 /**
  * EosWindow:
@@ -49,8 +48,6 @@ struct _EosWindow
 {
   /*< private >*/
   GtkApplicationWindow parent;
-
-  EosWindowPrivate *priv;
 };
 
 struct _EosWindowClass

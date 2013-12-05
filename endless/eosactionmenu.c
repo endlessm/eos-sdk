@@ -17,19 +17,15 @@
  */
 
 
-G_DEFINE_TYPE (EosActionMenu, eos_action_menu, GTK_TYPE_FRAME)
-
-#define EOS_ACTION_MENU_PRIVATE(o) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((o), EOS_TYPE_ACTION_MENU, EosActionMenuPrivate))
-
-struct _EosActionMenuPrivate
-{
+typedef struct {
   GtkWidget *overlay;
   GtkWidget *center_grid;
   GtkWidget *bottom_grid;
 
   GtkActionGroup *action_group;
-};
+} EosActionMenuPrivate;
+
+G_DEFINE_TYPE_WITH_PRIVATE (EosActionMenu, eos_action_menu, GTK_TYPE_FRAME)
 
 static void
 eos_action_menu_dispose (GObject *object);
@@ -44,8 +40,6 @@ eos_action_menu_class_init (EosActionMenuClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  g_type_class_add_private (klass, sizeof (EosActionMenuPrivate));
-
   object_class->dispose = eos_action_menu_dispose;
   object_class->finalize = eos_action_menu_finalize;
 }
@@ -53,11 +47,8 @@ eos_action_menu_class_init (EosActionMenuClass *klass)
 static void
 eos_action_menu_init (EosActionMenu *self)
 {
-  EosActionMenuPrivate *priv;
+  EosActionMenuPrivate *priv = eos_action_menu_get_instance_private (self);
   GtkStyleContext *context;
-
-  self->priv = EOS_ACTION_MENU_PRIVATE (self);
-  priv = self->priv;
 
   context = gtk_widget_get_style_context (GTK_WIDGET (self));
   gtk_style_context_add_class (context, _EOS_STYLE_CLASS_ACTION_MENU);
@@ -148,11 +139,9 @@ void
 eos_action_menu_add_action (EosActionMenu *menu,
                             GtkAction *action)
 {
-  EosActionMenuPrivate *priv;
-
   g_return_if_fail (EOS_IS_ACTION_MENU (menu));
-  priv = menu->priv;
 
+  EosActionMenuPrivate *priv = eos_action_menu_get_instance_private (menu);
   if (action)
     {
       gtk_action_group_add_action (priv->action_group, action);
@@ -193,9 +182,8 @@ GtkAction *
 eos_action_menu_get_action (EosActionMenu *menu,
                             const gchar *name)
 {
-  EosActionMenuPrivate *priv;
   g_return_val_if_fail (EOS_IS_ACTION_MENU (menu), NULL);
-  priv = menu->priv;
+  EosActionMenuPrivate *priv = eos_action_menu_get_instance_private (menu);
 
   return gtk_action_group_get_action (priv->action_group, name);
 }
@@ -209,9 +197,8 @@ eos_action_menu_get_action (EosActionMenu *menu,
 GList *
 eos_action_menu_list_actions (EosActionMenu *menu)
 {
-  EosActionMenuPrivate *priv;
   g_return_val_if_fail (EOS_IS_ACTION_MENU (menu), NULL);
-  priv = menu->priv;
+  EosActionMenuPrivate *priv = eos_action_menu_get_instance_private (menu);
 
   return gtk_action_group_list_actions (priv->action_group);
 }
@@ -227,13 +214,12 @@ void
 eos_action_menu_remove_action (EosActionMenu *menu,
                                GtkAction *action)
 {
-  EosActionMenuPrivate *priv;
-  GList *children, *i;
-  GtkWidget *target_child = NULL;
-
   g_return_if_fail (EOS_IS_ACTION_MENU (menu));
   g_return_if_fail (GTK_IS_ACTION (action));
-  priv = menu->priv;
+
+  EosActionMenuPrivate *priv = eos_action_menu_get_instance_private (menu);
+  GList *children, *i;
+  GtkWidget *target_child = NULL;
 
   gtk_action_group_remove_action(priv->action_group, action);
 
@@ -272,11 +258,10 @@ void
 eos_action_menu_remove_action_by_name (EosActionMenu *menu,
                                        const gchar *name)
 {
-  GtkAction *action;
-  EosActionMenuPrivate *priv;
-
   g_return_if_fail (EOS_IS_ACTION_MENU (menu));
-  priv = menu->priv;
+
+  GtkAction *action;
+  EosActionMenuPrivate *priv = eos_action_menu_get_instance_private (menu);
 
   action = gtk_action_group_get_action (priv->action_group, name);
   if (action)

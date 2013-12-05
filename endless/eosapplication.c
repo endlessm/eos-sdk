@@ -48,18 +48,14 @@
  * ]|
  */
 
-G_DEFINE_TYPE (EosApplication, eos_application, GTK_TYPE_APPLICATION)
-
-#define APPLICATION_PRIVATE(o) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((o), EOS_TYPE_APPLICATION, EosApplicationPrivate))
-
-struct _EosApplicationPrivate
-{
+typedef struct {
   GOnce  init_config_dir_once;
   GFile *config_dir;
 
   EosWindow *main_application_window;
-};
+} EosApplicationPrivate;
+
+G_DEFINE_TYPE_WITH_PRIVATE (EosApplication, eos_application, GTK_TYPE_APPLICATION)
 
 enum
 {
@@ -93,7 +89,8 @@ static void
 eos_application_finalize (GObject *object)
 {
   EosApplication *self = EOS_APPLICATION (object);
-  g_clear_object (&self->priv->config_dir);
+  EosApplicationPrivate *priv = eos_application_get_instance_private (self);
+  g_clear_object (&priv->config_dir);
 
   G_OBJECT_CLASS (eos_application_parent_class)->finalize (object);
 }
@@ -102,15 +99,16 @@ static void
 eos_application_activate (GApplication *application)
 {
   EosApplication *self = EOS_APPLICATION (application);
+  EosApplicationPrivate *priv = eos_application_get_instance_private (self);
 
   G_APPLICATION_CLASS (eos_application_parent_class)->activate (application);
 
   /* Raise the main application window if it is iconified. This behavior will
   be default in GTK at some future point, in which case the following
   paragraph can be removed. */
-  if (self->priv->main_application_window)
+  if (priv->main_application_window)
     {
-      gtk_window_present (GTK_WINDOW (self->priv->main_application_window));
+      gtk_window_present (GTK_WINDOW (priv->main_application_window));
     }
 
   /* TODO: Should it be required to override activate() as in GApplication? */
@@ -119,6 +117,7 @@ eos_application_activate (GApplication *application)
 static gpointer
 ensure_config_dir_exists_and_is_writable (EosApplication *self)
 {
+  EosApplicationPrivate *priv = eos_application_get_instance_private (self);
   const gchar *xdg_path = g_get_user_config_dir ();
   const gchar *app_id = g_application_get_application_id (G_APPLICATION (self));
   GFile *xdg_dir = g_file_new_for_path (xdg_path);
@@ -164,7 +163,7 @@ ensure_config_dir_exists_and_is_writable (EosApplication *self)
   g_object_unref (info);
   g_free (config_path);
 
-  self->priv->config_dir = config_dir;
+  priv->config_dir = config_dir;
   return NULL;
 }
 
@@ -190,7 +189,8 @@ eos_application_startup (GApplication *application)
   g_object_unref (provider);
 
   EosApplication *self = EOS_APPLICATION (application);
-  g_once (&self->priv->init_config_dir_once,
+  EosApplicationPrivate *priv = eos_application_get_instance_private (self);
+  g_once (&priv->init_config_dir_once,
           (GThreadFunc)ensure_config_dir_exists_and_is_writable, self);
 }
 
@@ -199,6 +199,7 @@ eos_application_window_added (GtkApplication *application,
                               GtkWindow *window)
 {
   EosApplication *self = EOS_APPLICATION (application);
+  EosApplicationPrivate *priv = eos_application_get_instance_private (self);
 
   GTK_APPLICATION_CLASS (eos_application_parent_class)->window_added (
     application, window);
@@ -207,12 +208,12 @@ eos_application_window_added (GtkApplication *application,
   it should be raised when the application is activated */
   if (EOS_IS_WINDOW (window))
     {
-      if (self->priv->main_application_window != NULL)
+      if (priv->main_application_window != NULL)
         {
           g_error ("You should not add more than one application window.");
         }
       g_object_ref (window);
-      self->priv->main_application_window = EOS_WINDOW (window);
+      priv->main_application_window = EOS_WINDOW (window);
     }
 }
 
@@ -221,23 +222,24 @@ eos_application_window_removed (GtkApplication *application,
                                 GtkWindow *window)
 {
   EosApplication *self = EOS_APPLICATION (application);
+  EosApplicationPrivate *priv = eos_application_get_instance_private (self);
 
   GTK_APPLICATION_CLASS (eos_application_parent_class)->window_removed (
     application, window);
 
   if (EOS_IS_WINDOW (window))
     {
-      if (self->priv->main_application_window == NULL)
+      if (priv->main_application_window == NULL)
         {
           g_warning ("EosWindow is being removed from EosApplication, although "
                      "none was added.");
           return;
         }
-      if (self->priv->main_application_window != EOS_WINDOW (window))
+      if (priv->main_application_window != EOS_WINDOW (window))
         g_warning ("A different EosWindow is being removed from EosApplication "
                    "than the one that was added.");
       g_object_unref (window);
-      self->priv->main_application_window = NULL;
+      priv->main_application_window = NULL;
     }
 }
 
@@ -261,8 +263,6 @@ eos_application_class_init (EosApplicationClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GApplicationClass *g_application_class = G_APPLICATION_CLASS (klass);
   GtkApplicationClass *gtk_application_class = GTK_APPLICATION_CLASS (klass);
-
-  g_type_class_add_private (klass, sizeof (EosApplicationPrivate));
 
   object_class->get_property = eos_application_get_property;
   object_class->finalize = eos_application_finalize;
@@ -293,8 +293,8 @@ eos_application_class_init (EosApplicationClass *klass)
 static void
 eos_application_init (EosApplication *self)
 {
-  self->priv = APPLICATION_PRIVATE (self);
-  self->priv->init_config_dir_once = (GOnce)G_ONCE_INIT;
+  EosApplicationPrivate *priv = eos_application_get_instance_private (self);
+  priv->init_config_dir_once = (GOnce)G_ONCE_INIT;
   g_signal_connect (self, "notify::application-id",
                     G_CALLBACK (on_app_id_set), self);
 }
@@ -348,7 +348,8 @@ eos_application_new (const gchar      *application_id,
 GFile *
 eos_application_get_config_dir (EosApplication *self)
 {
-  g_once (&self->priv->init_config_dir_once,
+  EosApplicationPrivate *priv = eos_application_get_instance_private (self);
+  g_once (&priv->init_config_dir_once,
           (GThreadFunc)ensure_config_dir_exists_and_is_writable, self);
-  return self->priv->config_dir;
+  return priv->config_dir;
 }

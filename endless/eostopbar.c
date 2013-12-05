@@ -27,13 +27,7 @@
 #define _EOS_TOP_BAR_MINIMIZE_ICON_NAME "window-minimize-symbolic"
 #define _EOS_TOP_BAR_CLOSE_ICON_NAME "window-close-symbolic"
 
-G_DEFINE_TYPE (EosTopBar, eos_top_bar, GTK_TYPE_EVENT_BOX)
-
-#define TOP_BAR_PRIVATE(o) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((o), EOS_TYPE_TOP_BAR, EosTopBarPrivate))
-
-struct _EosTopBarPrivate
-{
+typedef struct {
   GtkWidget *actions_grid;
   GtkWidget *left_top_bar_attach;
   GtkWidget *center_top_bar_attach;
@@ -45,7 +39,9 @@ struct _EosTopBarPrivate
   GtkWidget *minimize_icon;
   GtkWidget *close_button;
   GtkWidget *close_icon;
-};
+} EosTopBarPrivate;
+
+G_DEFINE_TYPE_WITH_PRIVATE (EosTopBar, eos_top_bar, GTK_TYPE_EVENT_BOX)
 
 enum {
   CLOSE_CLICKED,
@@ -122,8 +118,6 @@ eos_top_bar_class_init (EosTopBarClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  g_type_class_add_private (klass, sizeof (EosTopBarPrivate));
-
   widget_class->button_press_event = eos_top_bar_button_press_event;
   widget_class->get_preferred_height = eos_top_bar_get_preferred_height;
   widget_class->draw = eos_top_bar_draw;
@@ -171,15 +165,14 @@ static void
 eos_top_bar_init (EosTopBar *self)
 {
   GtkStyleContext *context;
-
-  self->priv = TOP_BAR_PRIVATE (self);
+  EosTopBarPrivate *priv = eos_top_bar_get_instance_private (self);
 
   context = gtk_widget_get_style_context (GTK_WIDGET (self));
   gtk_style_context_add_class (context, _EOS_STYLE_CLASS_TOP_BAR);
 
   gtk_widget_set_hexpand (GTK_WIDGET (self), TRUE);
 
-  self->priv->actions_grid =
+  priv->actions_grid =
     g_object_new (GTK_TYPE_GRID,
                   "orientation", GTK_ORIENTATION_HORIZONTAL,
                   "hexpand", TRUE,
@@ -191,60 +184,60 @@ eos_top_bar_init (EosTopBar *self)
                   "margin-right", _EOS_TOP_BAR_HORIZONTAL_BUTTON_MARGIN_PX,
                   NULL);
 
-  self->priv->left_top_bar_attach = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
-  self->priv->center_top_bar_attach = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
-  gtk_widget_set_hexpand (self->priv->center_top_bar_attach, TRUE);
-  gtk_widget_set_halign (self->priv->center_top_bar_attach, GTK_ALIGN_CENTER);
+  priv->left_top_bar_attach = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
+  priv->center_top_bar_attach = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
+  gtk_widget_set_hexpand (priv->center_top_bar_attach, TRUE);
+  gtk_widget_set_halign (priv->center_top_bar_attach, GTK_ALIGN_CENTER);
 
   /* TODO implement adding actions and widgets to the actions_grid */
 
-  self->priv->minimize_button =
+  priv->minimize_button =
     g_object_new (GTK_TYPE_BUTTON,
                   "halign", GTK_ALIGN_END,
                   "valign", GTK_ALIGN_CENTER,
                   NULL);
-  self->priv->minimize_icon =
+  priv->minimize_icon =
     gtk_image_new_from_icon_name (_EOS_TOP_BAR_MINIMIZE_ICON_NAME,
                                   GTK_ICON_SIZE_SMALL_TOOLBAR);
-  g_object_set(self->priv->minimize_icon,
+  g_object_set(priv->minimize_icon,
                "pixel-size", _EOS_TOP_BAR_ICON_SIZE_PX,
                "margin", _EOS_TOP_BAR_BUTTON_PADDING_PX,
                NULL);
-  gtk_container_add (GTK_CONTAINER (self->priv->minimize_button),
-                     self->priv->minimize_icon);
+  gtk_container_add (GTK_CONTAINER (priv->minimize_button),
+                     priv->minimize_icon);
 
-  self->priv->close_button =
+  priv->close_button =
     g_object_new (GTK_TYPE_BUTTON,
                   "halign", GTK_ALIGN_END,
                   "valign", GTK_ALIGN_CENTER,
                   NULL);
-  self->priv->close_icon =
+  priv->close_icon =
       gtk_image_new_from_icon_name (_EOS_TOP_BAR_CLOSE_ICON_NAME,
                                     GTK_ICON_SIZE_SMALL_TOOLBAR);
-  g_object_set(self->priv->close_icon,
+  g_object_set(priv->close_icon,
                "pixel-size", _EOS_TOP_BAR_ICON_SIZE_PX,
                "margin", _EOS_TOP_BAR_BUTTON_PADDING_PX,
                NULL);
-  gtk_container_add (GTK_CONTAINER (self->priv->close_button),
-                     self->priv->close_icon);
+  gtk_container_add (GTK_CONTAINER (priv->close_button),
+                     priv->close_icon);
 
-  gtk_container_add (GTK_CONTAINER (self->priv->actions_grid),
-                     self->priv->left_top_bar_attach);
-  gtk_container_add (GTK_CONTAINER (self->priv->actions_grid),
-                     self->priv->center_top_bar_attach);
-  gtk_container_add (GTK_CONTAINER (self->priv->actions_grid),
-                     self->priv->minimize_button);
-  gtk_container_add (GTK_CONTAINER (self->priv->actions_grid),
-                     self->priv->close_button);
+  gtk_container_add (GTK_CONTAINER (priv->actions_grid),
+                     priv->left_top_bar_attach);
+  gtk_container_add (GTK_CONTAINER (priv->actions_grid),
+                     priv->center_top_bar_attach);
+  gtk_container_add (GTK_CONTAINER (priv->actions_grid),
+                     priv->minimize_button);
+  gtk_container_add (GTK_CONTAINER (priv->actions_grid),
+                     priv->close_button);
 
-  gtk_container_add (GTK_CONTAINER (self), self->priv->actions_grid);
+  gtk_container_add (GTK_CONTAINER (self), priv->actions_grid);
 
   gtk_widget_set_hexpand (GTK_WIDGET (self), TRUE);
   gtk_widget_set_halign (GTK_WIDGET (self), GTK_ALIGN_FILL);
 
-  g_signal_connect (self->priv->minimize_button, "clicked",
+  g_signal_connect (priv->minimize_button, "clicked",
                     G_CALLBACK (on_minimize_clicked_cb), self);
-  g_signal_connect (self->priv->close_button, "clicked",
+  g_signal_connect (priv->close_button, "clicked",
                     G_CALLBACK (on_close_clicked_cb), self);
 }
 
@@ -268,7 +261,7 @@ eos_top_bar_set_left_widget (EosTopBar *self,
   g_return_if_fail (EOS_IS_TOP_BAR (self));
   g_return_if_fail (left_top_bar_widget == NULL || GTK_IS_WIDGET (left_top_bar_widget));
 
-  EosTopBarPrivate *priv = self->priv;
+  EosTopBarPrivate *priv = eos_top_bar_get_instance_private (self);
 
   if (priv->left_top_bar_widget == left_top_bar_widget)
     return;
@@ -299,7 +292,7 @@ eos_top_bar_set_center_widget (EosTopBar *self,
   g_return_if_fail (EOS_IS_TOP_BAR (self));
   g_return_if_fail (center_top_bar_widget == NULL || GTK_IS_WIDGET (center_top_bar_widget));
 
-  EosTopBarPrivate *priv = self->priv;
+  EosTopBarPrivate *priv = eos_top_bar_get_instance_private (self);
 
   if (priv->center_top_bar_widget == center_top_bar_widget)
     return;

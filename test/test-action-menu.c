@@ -57,7 +57,8 @@ test_am_add_action (ActionMenuFixture *fixture,
 
   eos_action_menu_add_action (fixture->action_menu, fixture->action1);
 
-  GtkWidget *button = gtk_grid_get_child_at (GTK_GRID (fixture->action_menu->priv->center_grid), 0, 0);
+  EosActionMenuPrivate *action_menu_priv = eos_action_menu_get_instance_private (fixture->action_menu);
+  GtkWidget *button = gtk_grid_get_child_at (GTK_GRID (action_menu_priv->center_grid), 0, 0);
 
   g_assert (EOS_IS_ACTION_BUTTON (button));
 
@@ -111,10 +112,11 @@ menu_contains_button_with_label (EosActionMenu *menu, const gchar* button_label)
   GList* children;
   gboolean found = FALSE;
 
-  children = gtk_container_get_children (GTK_CONTAINER (menu->priv->center_grid));
+  EosActionMenuPrivate *action_menu_priv = eos_action_menu_get_instance_private (menu);
+  children = gtk_container_get_children (GTK_CONTAINER (action_menu_priv->center_grid));
 
   children = g_list_concat (children,
-                            gtk_container_get_children (GTK_CONTAINER (menu->priv->bottom_grid)));
+                            gtk_container_get_children (GTK_CONTAINER (action_menu_priv->bottom_grid)));
 
   for (GList *i = children; i != NULL ; i = i->next)
     {
@@ -170,8 +172,9 @@ test_am_remove_action (ActionMenuFixture *fixture,
   g_assert (g_list_find (list, fixture->action3) == NULL);
 
   // the container is empty
-  g_assert (gtk_container_get_children (GTK_CONTAINER (fixture->action_menu->priv->center_grid)) == NULL);
-  g_assert (gtk_container_get_children (GTK_CONTAINER (fixture->action_menu->priv->bottom_grid)) == NULL);
+  EosActionMenuPrivate *action_menu_priv = eos_action_menu_get_instance_private (fixture->action_menu);
+  g_assert (gtk_container_get_children (GTK_CONTAINER (action_menu_priv->center_grid)) == NULL);
+  g_assert (gtk_container_get_children (GTK_CONTAINER (action_menu_priv->bottom_grid)) == NULL);
 }
 
 static void

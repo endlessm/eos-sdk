@@ -33,7 +33,6 @@ G_BEGIN_DECLS
 
 typedef struct _EosActionButton EosActionButton;
 typedef struct _EosActionButtonClass EosActionButtonClass;
-typedef struct _EosActionButtonPrivate EosActionButtonPrivate;
 
 /**
  * EosActionButton:
@@ -43,8 +42,6 @@ typedef struct _EosActionButtonPrivate EosActionButtonPrivate;
 struct _EosActionButton
 {
   GtkButton parent;
-
-  EosActionButtonPrivate *priv;
 };
 
 struct _EosActionButtonClass

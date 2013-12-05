@@ -42,17 +42,13 @@
  * ]|
  */
 
-G_DEFINE_TYPE (EosSplashPageManager, eos_splash_page_manager, EOS_TYPE_PAGE_MANAGER)
-
-#define SPLASH_PAGE_MANAGER_PRIVATE(o) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((o), EOS_TYPE_SPLASH_PAGE_MANAGER, EosSplashPageManagerPrivate))
-
-struct _EosSplashPageManagerPrivate
-{
+typedef struct {
   GtkWidget *splash_page;
   GtkWidget *main_page;
   gboolean main_page_shown;
-};
+} EosSplashPageManagerPrivate;
+
+G_DEFINE_TYPE_WITH_PRIVATE (EosSplashPageManager, eos_splash_page_manager, EOS_TYPE_PAGE_MANAGER)
 
 enum
 {
@@ -115,7 +111,8 @@ eos_splash_page_manager_add (GtkContainer *container,
                              GtkWidget    *new_page)
 {
   EosSplashPageManager *self = EOS_SPLASH_PAGE_MANAGER (container);
-  if (self->priv->splash_page != NULL)
+  EosSplashPageManagerPrivate *priv = eos_splash_page_manager_get_instance_private (self);
+  if (priv->splash_page != NULL)
     {
       g_critical ("Not adding page %p to splash page manager. You already added"
                   "a splash page.", new_page);
@@ -131,11 +128,12 @@ eos_splash_page_manager_remove (GtkContainer *container,
                                 GtkWidget    *page)
 {
   EosSplashPageManager *self = EOS_SPLASH_PAGE_MANAGER (container);
-  if (page == self->priv->splash_page)
+  EosSplashPageManagerPrivate *priv = eos_splash_page_manager_get_instance_private (self);
+  if (page == priv->splash_page)
     {
       eos_splash_page_manager_set_splash_page (self, NULL);
     }
-  if (page == self->priv->main_page)
+  if (page == priv->main_page)
     {
       eos_splash_page_manager_set_main_page (self, NULL);
     }
@@ -146,8 +144,6 @@ eos_splash_page_manager_class_init (EosSplashPageManagerClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
-
-  g_type_class_add_private (klass, sizeof (EosSplashPageManagerPrivate));
 
   object_class->get_property = eos_splash_page_manager_get_property;
   object_class->set_property = eos_splash_page_manager_set_property;
@@ -186,7 +182,6 @@ eos_splash_page_manager_class_init (EosSplashPageManagerClass *klass)
 static void
 eos_splash_page_manager_init (EosSplashPageManager *self)
 {
-  self->priv = SPLASH_PAGE_MANAGER_PRIVATE (self);
 }
 
 /* Public API */
@@ -219,7 +214,8 @@ eos_splash_page_manager_get_splash_page (EosSplashPageManager *self)
 {
   g_return_val_if_fail (EOS_IS_SPLASH_PAGE_MANAGER (self), NULL);
   
-  return self->priv->splash_page;
+  EosSplashPageManagerPrivate *priv = eos_splash_page_manager_get_instance_private (self);
+  return priv->splash_page;
 }
 
 /**
@@ -240,18 +236,19 @@ eos_splash_page_manager_set_splash_page (EosSplashPageManager *self,
   g_return_if_fail (page == NULL || GTK_IS_WIDGET (page));
   g_return_if_fail (page == NULL || gtk_widget_get_parent (page) == NULL);
 
+  EosSplashPageManagerPrivate *priv = eos_splash_page_manager_get_instance_private (self);
 
-  if (self->priv->splash_page != page)
+  if (priv->splash_page != page)
     {
-      if (self->priv->splash_page != NULL)
-        gtk_container_remove (GTK_CONTAINER (self), self->priv->splash_page);
+      if (priv->splash_page != NULL)
+        gtk_container_remove (GTK_CONTAINER (self), priv->splash_page);
       if (page != NULL)
         {
           GTK_CONTAINER_CLASS (eos_splash_page_manager_parent_class)->add (GTK_CONTAINER (self), page);
-          if (!self->priv->main_page_shown)
+          if (!priv->main_page_shown)
             eos_page_manager_set_visible_page (EOS_PAGE_MANAGER (self), page);
         }
-      self->priv->splash_page = page;
+      priv->splash_page = page;
       g_object_notify( G_OBJECT (self), "splash-page");
     }
 }
@@ -272,7 +269,8 @@ eos_splash_page_manager_get_main_page (EosSplashPageManager *self)
 {
   g_return_val_if_fail (EOS_IS_SPLASH_PAGE_MANAGER (self), NULL);
   
-  return self->priv->main_page;
+  EosSplashPageManagerPrivate *priv = eos_splash_page_manager_get_instance_private (self);
+  return priv->main_page;
 }
 
 /**
@@ -293,14 +291,15 @@ eos_splash_page_manager_set_main_page (EosSplashPageManager *self,
   g_return_if_fail (page == NULL || GTK_IS_WIDGET (page));
   g_return_if_fail (page == NULL || gtk_widget_get_parent (page) == NULL);
 
-  if (self->priv->main_page != page)
+  EosSplashPageManagerPrivate *priv = eos_splash_page_manager_get_instance_private (self);
+  if (priv->main_page != page)
     {
-      if (self->priv->main_page != NULL)
-        gtk_container_remove (GTK_CONTAINER (self), self->priv->main_page);
+      if (priv->main_page != NULL)
+        gtk_container_remove (GTK_CONTAINER (self), priv->main_page);
       // Call page manager add not our own.
       if (page != NULL)
         GTK_CONTAINER_CLASS (eos_splash_page_manager_parent_class)->add (GTK_CONTAINER (self), page);
-      self->priv->main_page = page;
+      priv->main_page = page;
       g_object_notify( G_OBJECT (self), "main-page");
     }
 }
@@ -315,13 +314,15 @@ void
 eos_splash_page_manager_show_main_page (EosSplashPageManager *self)
 {
   g_return_if_fail (EOS_IS_SPLASH_PAGE_MANAGER (self));
-  if (self->priv->main_page == NULL)
+
+  EosSplashPageManagerPrivate *priv = eos_splash_page_manager_get_instance_private (self);
+  if (priv->main_page == NULL)
     {
       g_critical ("Main page is null, have you set it?");
       return;
     }
-  self->priv->main_page_shown = TRUE;
-  eos_page_manager_set_visible_page (EOS_PAGE_MANAGER (self), self->priv->main_page);
+  priv->main_page_shown = TRUE;
+  eos_page_manager_set_visible_page (EOS_PAGE_MANAGER (self), priv->main_page);
 }
 
 /**
@@ -336,11 +337,13 @@ void
 eos_splash_page_manager_show_splash_page (EosSplashPageManager *self)
 {
   g_return_if_fail (EOS_IS_SPLASH_PAGE_MANAGER (self));
-  if (self->priv->splash_page == NULL)
+
+  EosSplashPageManagerPrivate *priv = eos_splash_page_manager_get_instance_private (self);
+  if (priv->splash_page == NULL)
     {
       g_critical ("Splash page is null, have you set it?");
       return;
     }
-  self->priv->main_page_shown = FALSE;
-  eos_page_manager_set_visible_page (EOS_PAGE_MANAGER (self), self->priv->splash_page);
+  priv->main_page_shown = FALSE;
+  eos_page_manager_set_visible_page (EOS_PAGE_MANAGER (self), priv->splash_page);
 }

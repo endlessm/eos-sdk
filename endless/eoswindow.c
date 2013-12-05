@@ -54,13 +54,7 @@
 
 #define _EOS_TOP_BAR_EDGE_FINISHING_HEIGHT_PX 2
 
-G_DEFINE_TYPE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
-
-#define WINDOW_PRIVATE(o) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((o), EOS_TYPE_WINDOW, EosWindowPrivate))
-
-struct _EosWindowPrivate
-{
+typedef struct {
   EosApplication *application;
 
   GtkWidget *top_bar;
@@ -79,7 +73,9 @@ struct _EosWindowPrivate
   gulong visible_page_property_handler;
   GtkCssProvider *background_provider;
   gchar *current_background_css_props;
-};
+} EosWindowPrivate;
+
+G_DEFINE_TYPE_WITH_PRIVATE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
 
 enum
 {
@@ -94,13 +90,14 @@ static GParamSpec *eos_window_props[NPROPS] = { NULL, };
 static void
 override_background_css(EosWindow *self, gchar *background_css)
 {
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
   // Override the css
   GtkStyleProvider *provider =
-    GTK_STYLE_PROVIDER (self->priv->background_provider);
+    GTK_STYLE_PROVIDER (priv->background_provider);
   GdkScreen *screen = gdk_screen_get_default ();
   GError *error = NULL;
   gtk_style_context_remove_provider_for_screen (screen, provider);
-  gtk_css_provider_load_from_data (self->priv->background_provider,
+  gtk_css_provider_load_from_data (priv->background_provider,
                                    background_css, -1, &error);
   gtk_style_context_add_provider_for_screen (screen, provider,
                                              GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
@@ -116,9 +113,10 @@ override_background_css(EosWindow *self, gchar *background_css)
 static void
 update_page_actions (EosWindow *self)
 {
-  EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
-  EosMainArea *ma = EOS_MAIN_AREA (self->priv->main_area);
-  GtkWidget *page = self->priv->current_page;
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  EosPageManager *pm = EOS_PAGE_MANAGER (priv->page_manager);
+  EosMainArea *ma = EOS_MAIN_AREA (priv->main_area);
+  GtkWidget *page = priv->current_page;
 
   if (page != NULL)
     {
@@ -141,9 +139,10 @@ update_page_actions (EosWindow *self)
 static void
 update_page_toolbox (EosWindow *self)
 {
-  EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
-  EosMainArea *ma = EOS_MAIN_AREA (self->priv->main_area);
-  GtkWidget *page = self->priv->current_page;
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  EosPageManager *pm = EOS_PAGE_MANAGER (priv->page_manager);
+  EosMainArea *ma = EOS_MAIN_AREA (priv->main_area);
+  GtkWidget *page = priv->current_page;
 
   if (page != NULL)
     {
@@ -167,9 +166,10 @@ update_page_toolbox (EosWindow *self)
 static void
 update_page_left_topbar (EosWindow *self)
 {
-  EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
-  EosTopBar *tb = EOS_TOP_BAR (self->priv->top_bar);
-  GtkWidget *page = self->priv->current_page;
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  EosPageManager *pm = EOS_PAGE_MANAGER (priv->page_manager);
+  EosTopBar *tb = EOS_TOP_BAR (priv->top_bar);
+  GtkWidget *page = priv->current_page;
 
   if (page != NULL)
     {
@@ -193,9 +193,10 @@ update_page_left_topbar (EosWindow *self)
 static void
 update_page_center_topbar (EosWindow *self)
 {
-  EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
-  EosTopBar *tb = EOS_TOP_BAR (self->priv->top_bar);
-  GtkWidget *page = self->priv->current_page;
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  EosPageManager *pm = EOS_PAGE_MANAGER (priv->page_manager);
+  EosTopBar *tb = EOS_TOP_BAR (priv->top_bar);
+  GtkWidget *page = priv->current_page;
 
   if (page != NULL)
     {
@@ -212,10 +213,11 @@ update_page_center_topbar (EosWindow *self)
 static void
 sync_stack_animation (EosWindow *self)
 {
-  EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
-  gtk_stack_set_transition_type (GTK_STACK (self->priv->background_stack),
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  EosPageManager *pm = EOS_PAGE_MANAGER (priv->page_manager);
+  gtk_stack_set_transition_type (GTK_STACK (priv->background_stack),
                                  eos_page_manager_get_gtk_stack_transition_type (pm));
-  gtk_stack_set_transition_duration (GTK_STACK (self->priv->background_stack),
+  gtk_stack_set_transition_duration (GTK_STACK (priv->background_stack),
                                      eos_page_manager_get_transition_duration (pm));
 }
 
@@ -252,8 +254,9 @@ format_background_css (EosPageManager *pm,
 static void
 update_page_background (EosWindow *self)
 {
-  EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
-  GtkWidget *page = self->priv->current_page;
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  EosPageManager *pm = EOS_PAGE_MANAGER (priv->page_manager);
+  GtkWidget *page = priv->current_page;
   // If no page set, do not transition
   if (page == NULL)
     return;
@@ -261,21 +264,21 @@ update_page_background (EosWindow *self)
   gchar *next_background_css_props = format_background_css (pm,
                                                             page);
   // If page background are exactly the same, do not transition
-  if (g_strcmp0 (self->priv->current_background_css_props, next_background_css_props) == 0)
+  if (g_strcmp0 (priv->current_background_css_props, next_background_css_props) == 0)
     return;
   gchar *background_css = g_strdup_printf(CSS_TEMPLATE,
-                                          gtk_widget_get_name (self->priv->current_background),
-                                          self->priv->current_background_css_props,
-                                          gtk_widget_get_name (self->priv->next_background),
+                                          gtk_widget_get_name (priv->current_background),
+                                          priv->current_background_css_props,
+                                          gtk_widget_get_name (priv->next_background),
                                           next_background_css_props);
   override_background_css (self, background_css);
-  gtk_stack_set_visible_child (GTK_STACK (self->priv->background_stack),
-                               self->priv->next_background);
+  gtk_stack_set_visible_child (GTK_STACK (priv->background_stack),
+                               priv->next_background);
   // Swap our background frames for next animation
-  GtkWidget *temp = self->priv->next_background;
-  self->priv->next_background = self->priv->current_background;
-  self->priv->current_background = temp;
-  self->priv->current_background_css_props = next_background_css_props;
+  GtkWidget *temp = priv->next_background;
+  priv->next_background = priv->current_background;
+  priv->current_background = temp;
+  priv->current_background_css_props = next_background_css_props;
 }
 
 /*
@@ -319,14 +322,15 @@ update_visible_page_properties (GtkWidget  *widget,
 static void
 update_page (EosWindow *self)
 {
-  EosPageManager *pm = EOS_PAGE_MANAGER (self->priv->page_manager);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  EosPageManager *pm = EOS_PAGE_MANAGER (priv->page_manager);
 
-  if (self->priv->current_page)
+  if (priv->current_page)
     {
-      g_signal_handler_disconnect (self->priv->current_page,
-                                   self->priv->visible_page_property_handler);
+      g_signal_handler_disconnect (priv->current_page,
+                                   priv->visible_page_property_handler);
     }
-  self->priv->current_page = eos_page_manager_get_visible_page (pm);
+  priv->current_page = eos_page_manager_get_visible_page (pm);
 
   update_page_actions (self);
   update_page_toolbox (self);
@@ -334,13 +338,13 @@ update_page (EosWindow *self)
   update_page_left_topbar (self);
   update_page_center_topbar (self);
   update_page_background (self);
-  gtk_stack_set_transition_type (GTK_STACK (self->priv->background_stack),
+  gtk_stack_set_transition_type (GTK_STACK (priv->background_stack),
                                  GTK_STACK_TRANSITION_TYPE_NONE);
 
-  if (self->priv->current_page)
+  if (priv->current_page)
     {
-      self->priv->visible_page_property_handler =
-        g_signal_connect (self->priv->current_page,
+      priv->visible_page_property_handler =
+        g_signal_connect (priv->current_page,
                           "child-notify",
                           G_CALLBACK (update_visible_page_properties),
                           self);
@@ -354,11 +358,12 @@ eos_window_get_property (GObject    *object,
                          GParamSpec *pspec)
 {
   EosWindow *self = EOS_WINDOW (object);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
 
   switch (property_id)
     {
     case PROP_APPLICATION:
-      g_value_set_object (value, self->priv->application);
+      g_value_set_object (value, priv->application);
       break;
 
     case PROP_PAGE_MANAGER:
@@ -374,10 +379,11 @@ static void
 set_application (EosWindow *self,
                  EosApplication *application)
 {
-  self->priv->application = application;
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  priv->application = application;
   gtk_window_set_application (GTK_WINDOW (self),
-                              GTK_APPLICATION (self->priv->application));
-  if (self->priv->application == NULL)
+                              GTK_APPLICATION (priv->application));
+  if (priv->application == NULL)
     {
       g_error ("In order to create a window, you must have an application "
                "for it to connect to.");
@@ -416,11 +422,12 @@ eos_window_get_preferred_height (GtkWidget *widget,
                                  int *natural_height)
 {
   EosWindow *self = EOS_WINDOW (widget);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
   int top_bar_minimum, top_bar_natural;
 
   GTK_WIDGET_CLASS (eos_window_parent_class)->get_preferred_height (widget,
     minimum_height, natural_height);
-  gtk_widget_get_preferred_height (self->priv->top_bar,
+  gtk_widget_get_preferred_height (priv->top_bar,
                                    &top_bar_minimum, &top_bar_natural);
   if (minimum_height != NULL)
     *minimum_height += top_bar_minimum;
@@ -435,23 +442,24 @@ eos_window_size_allocate (GtkWidget *widget,
                           GtkAllocation *allocation)
 {
   EosWindow *self = EOS_WINDOW (widget);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
   GtkWidget *child;
   GtkAllocation child_allocation = *allocation;
 
   gtk_widget_set_allocation (widget, allocation);
 
-  if (self->priv->top_bar != NULL)
+  if (priv->top_bar != NULL)
     {
       int top_bar_natural;
       GtkAllocation top_bar_allocation = *allocation;
 
-      gtk_widget_get_preferred_height (self->priv->top_bar,
+      gtk_widget_get_preferred_height (priv->top_bar,
                                        NULL, &top_bar_natural);
       top_bar_allocation.height = MIN(top_bar_natural, allocation->height);
       child_allocation.y += top_bar_allocation.height;
       child_allocation.height -= top_bar_allocation.height;
 
-      gtk_widget_size_allocate (self->priv->top_bar, &top_bar_allocation);
+      gtk_widget_size_allocate (priv->top_bar, &top_bar_allocation);
     }
 
   /* We can't chain up to GtkWindow's implementation of size_allocate() here,
@@ -465,12 +473,13 @@ static void
 eos_window_map (GtkWidget *widget)
 {
   EosWindow *self = EOS_WINDOW (widget);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
 
   GTK_WIDGET_CLASS (eos_window_parent_class)->map (widget);
-  if (self->priv->top_bar != NULL
-      && gtk_widget_get_visible (self->priv->top_bar))
+  if (priv->top_bar != NULL
+      && gtk_widget_get_visible (priv->top_bar))
     {
-      gtk_widget_map (self->priv->top_bar);
+      gtk_widget_map (priv->top_bar);
     }
 }
 
@@ -478,21 +487,22 @@ static void
 eos_window_unmap (GtkWidget *widget)
 {
   EosWindow *self = EOS_WINDOW (widget);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
 
   GTK_WIDGET_CLASS (eos_window_parent_class)->unmap (widget);
-  if (self->priv->top_bar != NULL)
-    gtk_widget_unmap (self->priv->top_bar);
+  if (priv->top_bar != NULL)
+    gtk_widget_unmap (priv->top_bar);
 }
 
 static void
 eos_window_show (GtkWidget *widget)
 {
   EosWindow *self = EOS_WINDOW (widget);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
 
   GTK_WIDGET_CLASS (eos_window_parent_class)->show (widget);
-  if (self->priv->top_bar != NULL)
-    gtk_widget_show_all (self->priv->top_bar);
-    
+  if (priv->top_bar != NULL)
+    gtk_widget_show_all (priv->top_bar);
 }
 
 /* The top bar is an internal child, so include it in our list of internal
@@ -504,9 +514,10 @@ eos_window_forall (GtkContainer *container,
                    gpointer callback_data)
 {
   EosWindow *self = EOS_WINDOW (container);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
 
-  if (include_internals && self->priv->top_bar != NULL)
-    (*callback) (self->priv->top_bar, callback_data);
+  if (include_internals && priv->top_bar != NULL)
+    (*callback) (priv->top_bar, callback_data);
   GTK_CONTAINER_CLASS (eos_window_parent_class)->forall (container,
                                                          include_internals,
                                                          callback,
@@ -528,8 +539,6 @@ eos_window_class_init (EosWindowClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
-
-  g_type_class_add_private (klass, sizeof (EosWindowPrivate));
 
   object_class->get_property = eos_window_get_property;
   object_class->set_property = eos_window_set_property;
@@ -623,68 +632,68 @@ on_edge_finishing_draw_cb (GtkWidget *edge_finishing,
 static void
 eos_window_init (EosWindow *self)
 {
-  self->priv = WINDOW_PRIVATE (self);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
 
-  self->priv->top_bar = eos_top_bar_new ();
-  gtk_widget_set_parent (self->priv->top_bar, GTK_WIDGET (self));
+  priv->top_bar = eos_top_bar_new ();
+  gtk_widget_set_parent (priv->top_bar, GTK_WIDGET (self));
 
-  self->priv->overlay = gtk_overlay_new ();
-  gtk_container_add (GTK_CONTAINER (self), self->priv->overlay);
+  priv->overlay = gtk_overlay_new ();
+  gtk_container_add (GTK_CONTAINER (self), priv->overlay);
 
-  self->priv->background_stack = gtk_stack_new ();
-  gtk_container_add (GTK_CONTAINER (self->priv->overlay), self->priv->background_stack);
+  priv->background_stack = gtk_stack_new ();
+  gtk_container_add (GTK_CONTAINER (priv->overlay), priv->background_stack);
 
   gchar *background_name1 = g_strdup_printf (BACKGROUND_FRAME_NAME_TEMPLATE, 1);
-  self->priv->next_background = g_object_new (GTK_TYPE_FRAME, "name", background_name1, NULL);
-  gtk_container_add (GTK_CONTAINER (self->priv->background_stack), self->priv->next_background);
+  priv->next_background = g_object_new (GTK_TYPE_FRAME, "name", background_name1, NULL);
+  gtk_container_add (GTK_CONTAINER (priv->background_stack), priv->next_background);
 
   // Add the current background to the stack second. I think the latest added
   // will be the first visible page in the stack
   gchar *background_name0 = g_strdup_printf (BACKGROUND_FRAME_NAME_TEMPLATE, 0);
-  self->priv->current_background = g_object_new (GTK_TYPE_FRAME, "name", background_name0, NULL);
-  gtk_container_add (GTK_CONTAINER (self->priv->background_stack), self->priv->current_background);
+  priv->current_background = g_object_new (GTK_TYPE_FRAME, "name", background_name0, NULL);
+  gtk_container_add (GTK_CONTAINER (priv->background_stack), priv->current_background);
 
-  self->priv->background_provider = gtk_css_provider_new ();
+  priv->background_provider = gtk_css_provider_new ();
   // We start all the background frames transparent with no styling
-  self->priv->current_background_css_props = TRANSPARENT_FRAME_CSS_PROPERTIES;
+  priv->current_background_css_props = TRANSPARENT_FRAME_CSS_PROPERTIES;
   gchar *background_css = g_strdup_printf(CSS_TEMPLATE,
-                                          gtk_widget_get_name (self->priv->current_background),
+                                          gtk_widget_get_name (priv->current_background),
                                           TRANSPARENT_FRAME_CSS_PROPERTIES,
-                                          gtk_widget_get_name (self->priv->next_background),
+                                          gtk_widget_get_name (priv->next_background),
                                           TRANSPARENT_FRAME_CSS_PROPERTIES);
   override_background_css (self, background_css);
 
-  self->priv->main_area = eos_main_area_new ();
-  gtk_overlay_add_overlay (GTK_OVERLAY (self->priv->overlay), self->priv->main_area);
+  priv->main_area = eos_main_area_new ();
+  gtk_overlay_add_overlay (GTK_OVERLAY (priv->overlay), priv->main_area);
 
   // We want the overlay to size to the main area, the widget on top. The
   // overlay gets its size request from the widget on the bottom, the
   // background frame with no minimum size. So we use a size group.
-  self->priv->overlay_size_group = gtk_size_group_new (GTK_SIZE_GROUP_BOTH);
-  gtk_size_group_add_widget (self->priv->overlay_size_group, self->priv->background_stack);
-  gtk_size_group_add_widget (self->priv->overlay_size_group, self->priv->main_area);
+  priv->overlay_size_group = gtk_size_group_new (GTK_SIZE_GROUP_BOTH);
+  gtk_size_group_add_widget (priv->overlay_size_group, priv->background_stack);
+  gtk_size_group_add_widget (priv->overlay_size_group, priv->main_area);
 
-  self->priv->edge_finishing = gtk_drawing_area_new ();
-  gtk_widget_set_vexpand (self->priv->edge_finishing, FALSE);
-  gtk_widget_set_valign (self->priv->edge_finishing, GTK_ALIGN_START);
+  priv->edge_finishing = gtk_drawing_area_new ();
+  gtk_widget_set_vexpand (priv->edge_finishing, FALSE);
+  gtk_widget_set_valign (priv->edge_finishing, GTK_ALIGN_START);
   /* has_window == FALSE is necessary for not catching input events */
-  gtk_widget_set_has_window (self->priv->edge_finishing, FALSE);
-  gtk_widget_set_size_request (self->priv->edge_finishing,
+  gtk_widget_set_has_window (priv->edge_finishing, FALSE);
+  gtk_widget_set_size_request (priv->edge_finishing,
                                -1, _EOS_TOP_BAR_EDGE_FINISHING_HEIGHT_PX);
-  g_signal_connect_after (self->priv->edge_finishing, "realize",
+  g_signal_connect_after (priv->edge_finishing, "realize",
                           G_CALLBACK (after_edge_finishing_realize_cb), NULL);
-  g_signal_connect (self->priv->edge_finishing, "draw",
+  g_signal_connect (priv->edge_finishing, "draw",
                     G_CALLBACK (on_edge_finishing_draw_cb), NULL);
-  gtk_overlay_add_overlay (GTK_OVERLAY (self->priv->overlay),
-                           self->priv->edge_finishing);
+  gtk_overlay_add_overlay (GTK_OVERLAY (priv->overlay),
+                           priv->edge_finishing);
 
   gtk_window_set_decorated (GTK_WINDOW (self), FALSE);
   gtk_window_maximize (GTK_WINDOW (self));
   gtk_window_set_default_size (GTK_WINDOW (self), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 
-  g_signal_connect (self->priv->top_bar, "minimize-clicked",
+  g_signal_connect (priv->top_bar, "minimize-clicked",
                     G_CALLBACK (on_minimize_clicked_cb), NULL);
-  g_signal_connect (self->priv->top_bar, "close-clicked",
+  g_signal_connect (priv->top_bar, "close-clicked",
                     G_CALLBACK (on_close_clicked_cb), NULL);
 
   eos_window_set_page_manager (self,
@@ -722,8 +731,8 @@ EosPageManager *
 eos_window_get_page_manager (EosWindow *self)
 {
   g_return_val_if_fail (self != NULL && EOS_IS_WINDOW (self), NULL);
-
-  return self->priv->page_manager;
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  return priv->page_manager;
 }
 
 /**
@@ -737,18 +746,19 @@ void
 eos_window_set_page_manager (EosWindow *self,
                              EosPageManager *page_manager)
 {
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
   g_return_if_fail (self != NULL && EOS_IS_WINDOW (self));
   g_return_if_fail (page_manager != NULL && EOS_IS_PAGE_MANAGER (page_manager));
 
-  EosMainArea *main_area = EOS_MAIN_AREA (self->priv->main_area);
+  EosMainArea *main_area = EOS_MAIN_AREA (priv->main_area);
 
-  self->priv->page_manager = page_manager;
+  priv->page_manager = page_manager;
 
   eos_main_area_set_content (main_area,
-                             GTK_WIDGET (self->priv->page_manager));
+                             GTK_WIDGET (priv->page_manager));
 
   update_page (self);
 
-  g_signal_connect_swapped (self->priv->page_manager, "notify::visible-page",
+  g_signal_connect_swapped (priv->page_manager, "notify::visible-page",
                             G_CALLBACK (update_page), self);
 }
