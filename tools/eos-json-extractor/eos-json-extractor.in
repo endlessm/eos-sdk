@@ -1,0 +1,64 @@
+#!/usr/bin/gjs
+// Copyright 2013 Endless Mobile, Inc.
+
+const Format = imports.format;
+const System = imports.system;
+
+const Gio = imports.gi.Gio;
+const Json = imports.gi.Json;
+
+String.prototype.format = Format.format;
+
+// Other constants, available from subcommands' code
+const programVersion = "@PACKAGE_VERSION@";
+
+/**
+ * usage:
+ *
+ * Print command-line help message.
+ */
+function usage() {
+    print('Extracts translatable strings fron JSON configuration file.\n');
+    print('Usage: %s [Options | <INPUT-FILE> <TOP-SRCDIR>]\n'.format(
+        System.programInvocationName));
+    print('Options:');
+    print('  --help     Print this help message');
+    print('  --version  Print version and exit');
+    System.exit(0);
+}
+
+/**
+ * version:
+ *
+ * Print command-line version output.
+ */
+function version() {
+    print('%s %s - Discover unit tests in a source tree'.format(
+        System.programInvocationName, programVersion));
+    System.exit(0);
+}
+
+if(ARGV.indexOf('--version') != -1)
+    version();
+if((ARGV.indexOf('--help') != -1) || (ARGV.length != 2)) {
+    usage();
+}
+
+try {
+		let parser = new Json.Parser();
+		let input_file = Gio.File.new_for_path(ARGV[0]);
+		let top_srcdir = Gio.File.new_for_path(ARGV[1]);
+		let full_path = top_srcdir.get_relative_path(input_file);
+
+		parser.connect('object-member', function(parser, object, member_name) {
+		    if(!member_name.endsWith('_'))
+		        return;
+		    print('#line %d "%s"'.format(parser.get_current_line(), full_path));
+		    print('_("%s");'.format(object.get_string_member(member_name)));
+		});
+		parser.load_from_file(input_file.get_path());
+
+} catch (e) {
+    printerr('%s: %s'.format(System.programInvocationName, e.message));
+    System.exit(1);
+}

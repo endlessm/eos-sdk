@@ -223,6 +223,7 @@ AC_CONFIG_FILES([
 	docs/reference/endless/Makefile
 	docs/reference/endless/version.xml
 	$EOS_SDK_API_NAME.pc
+	tools/eos-json-extractor/eos-json-extractor
 ])
 AC_CONFIG_FILES([tools/eos-run-test], [chmod +x tools/eos-run-test])
 AC_CONFIG_HEADERS([config.h])  dnl Header with system-dependent #defines
