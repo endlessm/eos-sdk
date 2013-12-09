@@ -10,7 +10,7 @@ bin_SCRIPTS = \
 # Makefiles. And as long as we're replacing this, go ahead and replace
 # $PACKAGE_VERSION as well.
 tools_edit = sed \
-	-e 's|@datadir[@]|$(datadir)|g' \
+	-e 's|@libexecdir[@]|$(libexecdir)|g' \
 	-e 's|@PACKAGE_VERSION[@]|$(PACKAGE_VERSION)|g' \
 	$(NULL)
 tools/eos-application-manifest/eos-application-manifest: tools/eos-application-manifest/eos-application-manifest.in Makefile
@@ -24,8 +24,11 @@ tools/eos-application-manifest/eos-application-manifest: tools/eos-application-m
 CLEANFILES += tools/eos-application-manifest/eos-application-manifest
 EXTRA_DIST += tools/eos-application-manifest/eos-application-manifest.in
 
-commandsdir = $(datarootdir)/eos-application-manifest/commands
+commandsdir = $(libexecdir)/eos-application-manifest/commands
 dist_commands_DATA = \
 	tools/eos-application-manifest/commands/help.js \
 	tools/eos-application-manifest/commands/version.js \
+	tools/eos-application-manifest/commands/init.js \
 	$(NULL)
+
+EXTRA_DIST += $(tools_test_modules)

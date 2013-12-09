@@ -19,8 +19,8 @@ function execute(args) {
             return;
         print('Summaries of commands:');
         let maxWidth = commandsList.reduce(function (prev, curr) {
-            return Math.max(curr.length, prev.length);
-        });
+            return Math.max(curr.length, prev);
+        }, 0);
         commandsList.forEach(function (commandName) {
             let command = imports[commandName];
             let summary;

@@ -33,6 +33,7 @@ test_flexy_grid_LDADD = $(TEST_LIBS)
 
 javascript_tests = \
 	test/tools/eos-run-test/sanitycheck.js \
+	test/tools/eos-application-manifest/testInit.js \
 	test/webhelper/testTranslate.js \
 	test/webhelper/testWebActions.js \
 	test/wikipedia/models/testCategoryModel.js \

@@ -9,7 +9,7 @@ String.prototype.format = Format.format;
 System.programInvocationName = 'eos-application-manifest';
 
 // Other constants, available from subcommands' code
-const commandSearchPath = "@datadir@/eos-application-manifest/commands";
+const commandSearchPath = "@libexecdir@/eos-application-manifest/commands";
 const programVersion = "@PACKAGE_VERSION@";
 
 // Import commands from commands/ directory (local first)
