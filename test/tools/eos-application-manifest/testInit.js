@@ -1,6 +1,4 @@
-imports.searchPath.unshift('tools/eos-application-manifest');
-
-const Module = imports.commands.init;
+const Module = imports.tools['eos-application-manifest'].commands.init;
 
 function testParseOneArgumentWithoutValue() {
     let input = ['--parameter'];
