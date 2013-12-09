@@ -414,11 +414,13 @@ eos_window_set_property (GObject      *object,
     }
 }
 
+/* Clamp our size request calls so we never ask for a minimal size greater than
+ the available work area. */
 static void
-check_size_request (GtkWidget      *widget,
+clamp_size_request (GtkWidget      *widget,
                     GtkOrientation  orientation,
-                    gint            minimum_size,
-                    gint            natural_size)
+                    gint            *minimum_size,
+                    gint            *natural_size)
 {
 
   if (gtk_widget_get_realized (widget))
@@ -436,12 +438,17 @@ check_size_request (GtkWidget      *widget,
           orientation_string = "height";
         }
 
-      if (minimum_size > available_size)
-        g_critical ("Requested window %s %d greater than available work area %s %d",
-                    orientation_string,
-                    minimum_size,
-                    orientation_string,
-                    available_size);
+      if (*minimum_size > available_size)
+        {
+          g_critical ("Requested window %s %d greater than available work area %s %d. " \
+                      "Clamping size request to fit.",
+                      orientation_string,
+                      *minimum_size,
+                      orientation_string,
+                      available_size);
+          *minimum_size = available_size;
+          *natural_size = MAX (*minimum_size, *natural_size);
+        }
     }
 }
 
@@ -453,10 +460,10 @@ eos_window_get_preferred_width (GtkWidget *widget,
   GTK_WIDGET_CLASS (eos_window_parent_class)->get_preferred_width (widget,
     minimum_width, natural_width);
 
-  check_size_request (widget,
+  clamp_size_request (widget,
                       GTK_ORIENTATION_HORIZONTAL,
-                      *minimum_width,
-                      *natural_width);
+                      minimum_width,
+                      natural_width);
 }
 
 /* Piggy-back on the parent class's get_preferred_height(), but add the
@@ -479,10 +486,10 @@ eos_window_get_preferred_height (GtkWidget *widget,
   if (natural_height != NULL)
     *natural_height += top_bar_natural;
 
-  check_size_request (widget,
+  clamp_size_request (widget,
                       GTK_ORIENTATION_VERTICAL,
-                      *minimum_height,
-                      *natural_height);
+                      minimum_height,
+                      natural_height);
 }
 
 /* Remove space for our top bar from the allocation before doing a normal
