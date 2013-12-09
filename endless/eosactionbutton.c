@@ -34,13 +34,7 @@
 
 #define _EOS_STYLE_CLASS_ACTION_BUTTON "action-button"
 
-G_DEFINE_TYPE (EosActionButton, eos_action_button, GTK_TYPE_BUTTON)
-
-#define EOS_ACTION_BUTTON_PRIVATE(o) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((o), EOS_TYPE_ACTION_BUTTON, EosActionButtonPrivate))
-
-struct _EosActionButtonPrivate
-{
+typedef struct {
   /* properties */
   EosActionButtonSize size;
   gchar *label;
@@ -51,7 +45,9 @@ struct _EosActionButtonPrivate
   GtkWidget *grid;
   GtkWidget *icon_image;
   GtkWidget *label_widget;
-};
+} EosActionButtonPrivate;
+
+G_DEFINE_TYPE_WITH_PRIVATE (EosActionButton, eos_action_button, GTK_TYPE_BUTTON)
 
 typedef struct _EosActionButtonSizeDefinition EosActionButtonSizeDefinition;
 
@@ -116,8 +112,6 @@ eos_action_button_class_init (EosActionButtonClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
-
-  g_type_class_add_private (klass, sizeof (EosActionButtonPrivate));
 
   object_class->get_property = eos_action_button_get_property;
   object_class->set_property = eos_action_button_set_property;
@@ -224,13 +218,9 @@ eos_action_button_class_init (EosActionButtonClass *klass)
 static void
 eos_action_button_init (EosActionButton *self)
 {
-  EosActionButtonPrivate *priv;
-  GtkStyleContext *context;
+  EosActionButtonPrivate *priv = eos_action_button_get_instance_private (self);
+  GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (self));
 
-  self->priv = EOS_ACTION_BUTTON_PRIVATE (self);
-  priv = self->priv;
-
-  context = gtk_widget_get_style_context (GTK_WIDGET (self));
   gtk_style_context_add_class (context, _EOS_STYLE_CLASS_ACTION_BUTTON);
 
   priv->icon_image = gtk_image_new();
@@ -296,11 +286,9 @@ eos_action_button_finalize (GObject *object)
 static void
 eos_action_button_load_icon (EosActionButton *button)
 {
-  EosActionButtonPrivate *priv;
-
   g_return_if_fail (EOS_IS_ACTION_BUTTON (button));
 
-  priv = button->priv;
+  EosActionButtonPrivate *priv = eos_action_button_get_instance_private (button);
 
   if (priv->icon_id != NULL)
     {
@@ -329,12 +317,10 @@ void
 eos_action_button_set_size  (EosActionButton *button,
                              EosActionButtonSize size)
 {
-  EosActionButtonPrivate *priv;
-  int old_size;
-
   g_return_if_fail (EOS_IS_ACTION_BUTTON (button));
 
-  priv = button->priv;
+  int old_size;
+  EosActionButtonPrivate *priv = eos_action_button_get_instance_private (button);
 
   old_size = priv->size;
   priv->size = size;
@@ -365,12 +351,9 @@ eos_action_button_set_size  (EosActionButton *button,
 EosActionButtonSize
 eos_action_button_get_size (EosActionButton *button)
 {
-  EosActionButtonPrivate *priv;
-
   g_return_val_if_fail (EOS_IS_ACTION_BUTTON (button), -1);
 
-  priv = button->priv;
-
+  EosActionButtonPrivate *priv = eos_action_button_get_instance_private (button);
   return priv->size;
 }
 
@@ -385,13 +368,10 @@ eos_action_button_get_size (EosActionButton *button)
 void
 eos_action_button_set_label (EosActionButton *button, const gchar *label)
 {
-  EosActionButtonPrivate *priv;
-  gchar *new_label;
-
   g_return_if_fail (EOS_IS_ACTION_BUTTON (button));
 
-  priv = button->priv;
-  new_label = g_strdup (label);
+  EosActionButtonPrivate *priv = eos_action_button_get_instance_private (button);
+  gchar *new_label = g_strdup (label);
   g_free (priv->label);
   priv->label = new_label;
 
@@ -412,12 +392,9 @@ eos_action_button_set_label (EosActionButton *button, const gchar *label)
 const gchar *
 eos_action_button_get_label (EosActionButton *button)
 {
-  EosActionButtonPrivate *priv;
-
   g_return_val_if_fail (EOS_IS_ACTION_BUTTON (button), NULL);
 
-  priv = button->priv;
-
+  EosActionButtonPrivate *priv = eos_action_button_get_instance_private (button);
   return priv->label;
 }
 
@@ -434,11 +411,9 @@ void
 eos_action_button_set_label_position (EosActionButton *button,
                                       GtkPositionType position)
 {
-  EosActionButtonPrivate *priv;
-
   g_return_if_fail (EOS_IS_ACTION_BUTTON (button));
 
-  priv = button->priv;
+  EosActionButtonPrivate *priv = eos_action_button_get_instance_private (button);
 
   if (priv->label_pos != position)
     {
@@ -479,12 +454,9 @@ eos_action_button_set_label_position (EosActionButton *button,
 GtkPositionType
 eos_action_button_get_label_position (EosActionButton *button)
 {
-  EosActionButtonPrivate *priv;
-
   g_return_val_if_fail (EOS_IS_ACTION_BUTTON (button), -1);
 
-  priv = button->priv;
-
+  EosActionButtonPrivate *priv = eos_action_button_get_instance_private (button);
   return priv->label_pos;
 }
 
@@ -500,10 +472,8 @@ void
 eos_action_button_set_icon_id (EosActionButton *button,
                                const gchar* icon_id)
 {
-  EosActionButtonPrivate *priv;
-
   g_return_if_fail (EOS_IS_ACTION_BUTTON (button));
-  priv = button->priv;
+  EosActionButtonPrivate *priv = eos_action_button_get_instance_private (button);
 
   if (g_strcmp0 (icon_id, priv->icon_id) != 0)
     {
@@ -529,7 +499,8 @@ eos_action_button_get_icon_id (EosActionButton *button)
 {
   g_return_val_if_fail (EOS_IS_ACTION_BUTTON (button), NULL);
 
-  return button->priv->icon_id;
+  EosActionButtonPrivate *priv = eos_action_button_get_instance_private (button);
+  return priv->icon_id;
 }
 
 static void
@@ -539,7 +510,7 @@ eos_action_button_get_property (GObject    *object,
                                 GParamSpec *pspec)
 {
   EosActionButton *button = EOS_ACTION_BUTTON (object);
-  EosActionButtonPrivate *priv = button->priv;
+  EosActionButtonPrivate *priv = eos_action_button_get_instance_private (button);
 
   switch (property_id)
   {
@@ -596,7 +567,7 @@ eos_action_button_get_real_size (GtkWidget      *widget,
                                  gint           *natural_size)
 {
   EosActionButton *button = EOS_ACTION_BUTTON (widget);
-  EosActionButtonPrivate *priv = button->priv;
+  EosActionButtonPrivate *priv = eos_action_button_get_instance_private (button);
   GtkBorder margin;
   GtkAllocation label_allocation;
   GtkStyleContext *context = gtk_widget_get_style_context (widget);
@@ -675,7 +646,7 @@ eos_action_button_draw (GtkWidget *widget,
                         cairo_t   *cr)
 {
   EosActionButton *button = EOS_ACTION_BUTTON (widget);
-  EosActionButtonPrivate *priv = button->priv;
+  EosActionButtonPrivate *priv = eos_action_button_get_instance_private (button);
 
   gint x, y;
   gint frame_x = 0, frame_y = 0, bg_x = 0, bg_y = 0, icon_x = 0, icon_y = 0, label_x = 0, label_y = 0;

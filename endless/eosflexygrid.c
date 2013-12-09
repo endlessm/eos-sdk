@@ -63,9 +63,6 @@ enum
   LAST_SIGNAL
 };
 
-#define EOS_FLEXY_GRID_GET_PRIV(obj) \
-  ((EosFlexyGridPrivate *) eos_flexy_grid_get_instance_private ((EosFlexyGrid *) (obj)))
-
 G_DEFINE_TYPE_WITH_PRIVATE (EosFlexyGrid, eos_flexy_grid, GTK_TYPE_CONTAINER)
 
 static guint grid_signals[LAST_SIGNAL] = { 0, };
@@ -75,7 +72,7 @@ static void
 eos_flexy_grid_update_cell_prelight (EosFlexyGrid *grid,
                                      EosFlexyGridCell *cell)
 {
-  EosFlexyGridPrivate *priv = grid->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (grid);
 
   if (cell == priv->prelight_cell)
     return;
@@ -392,7 +389,7 @@ eos_flexy_grid_get_preferred_width (GtkWidget *widget,
                                     gint      *minimum_width_out,
                                     gint      *natural_width_out)
 {
-  EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (widget)->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (EOS_FLEXY_GRID (widget));
   int minimum_width, natural_width;
 
   int target_column_size = priv->cell_size < 0 ? DEFAULT_CELL_SIZE : priv->cell_size;
@@ -462,7 +459,7 @@ eos_flexy_grid_get_preferred_height_for_width (GtkWidget *widget,
                                                gint      *minimum_height_out,
                                                gint      *natural_height_out)
 {
-  EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (widget)->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (EOS_FLEXY_GRID (widget));
 
   int cell_size = priv->cell_size < 0 ? DEFAULT_CELL_SIZE : priv->cell_size;
   int cell_spacing = priv->cell_spacing < 0 ? DEFAULT_SPACING : priv->cell_spacing;
@@ -502,7 +499,7 @@ eos_flexy_grid_size_allocate (GtkWidget     *widget,
                             allocation->width,
                             allocation->height);
 
-  EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (widget)->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (EOS_FLEXY_GRID (widget));
 
   int cell_size = priv->cell_size < 0 ? DEFAULT_CELL_SIZE : priv->cell_size;
   int cell_spacing = priv->cell_spacing < 0 ? DEFAULT_SPACING : priv->cell_spacing;
@@ -575,7 +572,7 @@ eos_flexy_grid_remove (GtkContainer *container,
       return;
     }
 
-  EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (container)->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (EOS_FLEXY_GRID (container));
 
   EosFlexyGridCell *cell = EOS_FLEXY_GRID_CELL (widget);
   GSequenceIter *iter = eos_flexy_grid_cell_get_iter (cell);
@@ -614,7 +611,7 @@ eos_flexy_grid_forall (GtkContainer *container,
                        GtkCallback   callback,
                        gpointer      data)
 {
-  EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (container)->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (EOS_FLEXY_GRID (container));
 
   GSequenceIter *iter = g_sequence_get_begin_iter (priv->children);
   while (!g_sequence_iter_is_end (iter))
@@ -670,7 +667,7 @@ eos_flexy_grid_button_press (GtkWidget *widget,
     return GDK_EVENT_PROPAGATE;
 
   EosFlexyGrid *self = EOS_FLEXY_GRID (widget);
-  EosFlexyGridPrivate *priv = self->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (self);
 
   priv->active_cell = NULL;
 
@@ -717,7 +714,7 @@ eos_flexy_grid_button_release (GtkWidget *widget,
   if (event->button == GDK_BUTTON_PRIMARY)
     {
       EosFlexyGrid *grid = EOS_FLEXY_GRID (widget);
-      EosFlexyGridPrivate *priv = grid->priv;
+      EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (grid);
 
       if (priv->active_cell != NULL)
         {
@@ -742,7 +739,7 @@ eos_flexy_grid_enter_notify (GtkWidget        *widget,
   if (event->window != gtk_widget_get_window (widget))
     return GDK_EVENT_PROPAGATE;
 
-  EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (widget)->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (EOS_FLEXY_GRID (widget));
 
   priv->in_widget = TRUE;
 
@@ -761,7 +758,7 @@ eos_flexy_grid_leave_notify (GtkWidget        *widget,
   if (event->window != gtk_widget_get_window (widget))
     return GDK_EVENT_PROPAGATE;
 
-  EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (widget)->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (EOS_FLEXY_GRID (widget));
   EosFlexyGridCell *cell;
 
   if (event->detail != GDK_NOTIFY_INFERIOR)
@@ -828,7 +825,7 @@ eos_flexy_grid_get_property (GObject    *gobject,
 static void
 eos_flexy_grid_finalize (GObject *gobject)
 {
-  EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (gobject)->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (EOS_FLEXY_GRID (gobject));
 
   if (priv->sort_notify != NULL)
     priv->sort_notify (priv->sort_data);
@@ -935,16 +932,13 @@ eos_flexy_grid_class_init (EosFlexyGridClass *klass)
 static void
 eos_flexy_grid_init (EosFlexyGrid *self)
 {
-  EosFlexyGridPrivate *priv = EOS_FLEXY_GRID_GET_PRIV (self);
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (self);
 
   priv->children = g_sequence_new (NULL);
 
   /* we use the same width as the discovery center layout */
   priv->cell_size = -1;
   priv->cell_spacing = DEFAULT_SPACING;
-
-  /* XXX: once we depend on GTK 3.10 and GLib 2.38, we should remove this */
-  self->priv = priv;
 
   GtkWidget *widget = GTK_WIDGET (self);
   gtk_widget_set_has_window (widget, TRUE);
@@ -995,7 +989,7 @@ eos_flexy_grid_set_sort_func (EosFlexyGrid         *grid,
 {
   g_return_if_fail (EOS_IS_FLEXY_GRID (grid));
 
-  EosFlexyGridPrivate *priv = grid->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (grid);
   if (priv->sort_notify != NULL)
     priv->sort_notify (priv->sort_data);
 
@@ -1019,7 +1013,7 @@ eos_flexy_grid_set_cell_size (EosFlexyGrid *grid,
 {
   g_return_if_fail (EOS_IS_FLEXY_GRID (grid));
 
-  EosFlexyGridPrivate *priv = grid->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (grid);
   if (priv->cell_size == size)
     return;
 
@@ -1041,7 +1035,7 @@ eos_flexy_grid_get_cell_size (EosFlexyGrid *grid)
 {
   g_return_val_if_fail (EOS_IS_FLEXY_GRID (grid), 0);
 
-  EosFlexyGridPrivate *priv = grid->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (grid);
 
   if (priv->cell_size < 0)
     return DEFAULT_CELL_SIZE;
@@ -1064,7 +1058,7 @@ eos_flexy_grid_set_cell_spacing (EosFlexyGrid *grid,
 {
   g_return_if_fail (EOS_IS_FLEXY_GRID (grid));
 
-  EosFlexyGridPrivate *priv = grid->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (grid);
   if (priv->cell_spacing == spacing)
     return;
 
@@ -1086,7 +1080,7 @@ eos_flexy_grid_get_cell_spacing (EosFlexyGrid *grid)
 {
   g_return_val_if_fail (EOS_IS_FLEXY_GRID (grid), 0);
 
-  EosFlexyGridPrivate *priv = grid->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (grid);
 
   if (priv->cell_spacing < 0)
     return DEFAULT_SPACING;
@@ -1099,7 +1093,7 @@ do_grid_sort (gconstpointer row_a,
               gconstpointer row_b,
               gpointer data)
 {
-  EosFlexyGridPrivate *priv = EOS_FLEXY_GRID (data)->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (EOS_FLEXY_GRID (data));
 
   return priv->sort_func ((EosFlexyGridCell *) row_a,
                           (EosFlexyGridCell *) row_b,
@@ -1141,7 +1135,7 @@ eos_flexy_grid_insert (EosFlexyGrid *grid,
       gtk_widget_show (GTK_WIDGET (cell));
     }
 
-  EosFlexyGridPrivate *priv = grid->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (grid);
   GSequenceIter *iter;
 
   if (priv->sort_func != NULL)
@@ -1186,7 +1180,7 @@ eos_flexy_grid_get_cell_at_coords (EosFlexyGrid *grid,
 {
   g_return_val_if_fail (EOS_IS_FLEXY_GRID (grid), NULL);
 
-  EosFlexyGridPrivate *priv = grid->priv;
+  EosFlexyGridPrivate *priv = eos_flexy_grid_get_instance_private (grid);
   GSequenceIter *iter;
 
   /* naive hit detection */

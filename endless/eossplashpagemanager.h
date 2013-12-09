@@ -39,7 +39,6 @@ G_BEGIN_DECLS
 
 typedef struct _EosSplashPageManager EosSplashPageManager;
 typedef struct _EosSplashPageManagerClass EosSplashPageManagerClass;
-typedef struct _EosSplashPageManagerPrivate EosSplashPageManagerPrivate;
 
 /**
  * EosSplashPageManager:
@@ -49,8 +48,6 @@ typedef struct _EosSplashPageManagerPrivate EosSplashPageManagerPrivate;
 struct _EosSplashPageManager
 {
   EosPageManager parent;
-
-  EosSplashPageManagerPrivate *priv;
 };
 
 struct _EosSplashPageManagerClass

@@ -33,13 +33,10 @@ G_BEGIN_DECLS
 
 typedef struct _EosMainArea EosMainArea;
 typedef struct _EosMainAreaClass EosMainAreaClass;
-typedef struct _EosMainAreaPrivate EosMainAreaPrivate;
 
 struct _EosMainArea
 {
   GtkContainer parent;
-
-  EosMainAreaPrivate *priv;
 };
 
 struct _EosMainAreaClass

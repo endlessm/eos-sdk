@@ -73,8 +73,6 @@ struct _EosFlexyGrid
 {
   /*< private >*/
   GtkContainer parent_instance;
-
-  gpointer priv;
 };
 
 struct _EosFlexyGridClass

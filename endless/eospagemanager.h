@@ -37,7 +37,6 @@ G_BEGIN_DECLS
 
 typedef struct _EosPageManager EosPageManager;
 typedef struct _EosPageManagerClass EosPageManagerClass;
-typedef struct _EosPageManagerPrivate EosPageManagerPrivate;
 
 #define EOS_TYPE_PAGE_MANAGER_TRANSITION_TYPE (eos_page_manager_transition_type_get_type ())
 
@@ -70,8 +69,6 @@ typedef enum {
 struct _EosPageManager
 {
   GtkContainer parent;
-
-  EosPageManagerPrivate *priv;
 };
 
 struct _EosPageManagerClass

@@ -90,14 +90,7 @@
 #define DEFAULT_BACKGROUND_SIZE "100% 100%"
 #define DEFAULT_BACKGROUND_POSITION "0% 0%"
 
-G_DEFINE_TYPE (EosPageManager, eos_page_manager, GTK_TYPE_CONTAINER)
-
-#define PAGE_MANAGER_PRIVATE(o) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((o), EOS_TYPE_PAGE_MANAGER, EosPageManagerPrivate))
-
-typedef struct _EosPageManagerPageInfo EosPageManagerPageInfo;
-struct _EosPageManagerPageInfo
-{
+typedef struct {
   GtkWidget *page;
   gchar *name;
   gboolean fake_page_actions_visible;
@@ -108,17 +101,18 @@ struct _EosPageManagerPageInfo
   gchar *background_size;
   gchar *background_position;
   gboolean background_repeats;
-};
+} EosPageManagerPageInfo;
 
-struct _EosPageManagerPrivate
-{
+typedef struct {
   GtkWidget *stack;
   GList *page_info; /* GList<EosPageManagerPageInfo> */
   GHashTable *pages_by_name; /* GHashTable<gchar *, EosPageManagerPageInfo *> */
   GHashTable *pages_by_widget; /* GHashTable<GtkWidget *, EosPageManagerPageInfo *> */
   EosPageManagerPageInfo *visible_page_info;
   EosPageManagerTransitionType transition_type;
-};
+} EosPageManagerPrivate;
+
+G_DEFINE_TYPE_WITH_PRIVATE (EosPageManager, eos_page_manager, GTK_TYPE_CONTAINER)
 
 GType
 eos_page_manager_transition_type_get_type (void)
@@ -198,7 +192,8 @@ static EosPageManagerPageInfo *
 find_page_info_by_widget (EosPageManager *self,
                           GtkWidget      *page)
 {
-  return g_hash_table_lookup (self->priv->pages_by_widget, page);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
+  return g_hash_table_lookup (priv->pages_by_widget, page);
 }
 
 /*
@@ -215,7 +210,8 @@ static EosPageManagerPageInfo *
 find_page_info_by_name (EosPageManager *self,
                         const gchar    *name)
 {
-  return g_hash_table_lookup (self->priv->pages_by_name, name);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
+  return g_hash_table_lookup (priv->pages_by_name, name);
 }
 
 /* Convenience function, since this warning occurs at several places */
@@ -247,13 +243,14 @@ static void
 assert_internal_state (EosPageManager *self)
 {
 #ifdef DEBUG
-  guint list_length = g_list_length (self->priv->page_info);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
+  guint list_length = g_list_length (priv->page_info);
   g_assert_cmpuint (list_length,
                     ==,
-                    g_hash_table_size (self->priv->pages_by_widget));
+                    g_hash_table_size (priv->pages_by_widget));
   g_assert_cmpuint (list_length,
                     >=,
-                    g_hash_table_size (self->priv->pages_by_name));
+                    g_hash_table_size (priv->pages_by_name));
 #endif
 }
 
@@ -261,10 +258,11 @@ static void
 set_visible_page_from_info (EosPageManager         *self,
                             EosPageManagerPageInfo *info)
 {
-  GtkStack *stack = GTK_STACK (self->priv->stack);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
+  GtkStack *stack = GTK_STACK (priv->stack);
   gtk_stack_set_visible_child (stack, info->page);
 
-  self->priv->visible_page_info = info;
+  priv->visible_page_info = info;
 
   GObject *self_object = G_OBJECT (self);
   g_object_notify(self_object, "visible-page");
@@ -337,8 +335,9 @@ static void
 eos_page_manager_dispose (GObject *object)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (object);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
-  g_list_foreach (self->priv->page_info, (GFunc)top_bars_unref, NULL);
+  g_list_foreach (priv->page_info, (GFunc)top_bars_unref, NULL);
 
   G_OBJECT_CLASS (eos_page_manager_parent_class)->dispose (object);
 }
@@ -347,10 +346,11 @@ static void
 eos_page_manager_finalize (GObject *object)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (object);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
-  g_list_foreach (self->priv->page_info, (GFunc)page_info_free, NULL);
-  g_hash_table_destroy(self->priv->pages_by_widget);
-  g_hash_table_destroy(self->priv->pages_by_name);
+  g_list_foreach (priv->page_info, (GFunc)page_info_free, NULL);
+  g_hash_table_destroy(priv->pages_by_widget);
+  g_hash_table_destroy(priv->pages_by_name);
 
   G_OBJECT_CLASS (eos_page_manager_parent_class)->finalize (object);
 }
@@ -359,8 +359,9 @@ static GtkSizeRequestMode
 eos_page_manager_get_request_mode (GtkWidget *widget)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (widget);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
-  return gtk_widget_get_request_mode (self->priv->stack);
+  return gtk_widget_get_request_mode (priv->stack);
 }
 
 static void
@@ -369,8 +370,9 @@ eos_page_manager_get_preferred_height (GtkWidget       *widget,
                                        gint            *natural)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (widget);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
-  gtk_widget_get_preferred_height (self->priv->stack, minimum, natural);
+  gtk_widget_get_preferred_height (priv->stack, minimum, natural);
 }
 
 static void
@@ -380,8 +382,9 @@ eos_page_manager_get_preferred_width_for_height (GtkWidget       *widget,
                                                  gint            *natural)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (widget);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
-  gtk_widget_get_preferred_height_for_width (self->priv->stack, height,
+  gtk_widget_get_preferred_height_for_width (priv->stack, height,
                                              minimum, natural);
 }
 
@@ -391,8 +394,9 @@ eos_page_manager_get_preferred_width (GtkWidget       *widget,
                                       gint            *natural)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (widget);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
-  gtk_widget_get_preferred_width (self->priv->stack, minimum, natural);
+  gtk_widget_get_preferred_width (priv->stack, minimum, natural);
 }
 
 static void
@@ -402,8 +406,9 @@ eos_page_manager_get_preferred_height_for_width (GtkWidget       *widget,
                                                  gint            *natural)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (widget);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
-  gtk_widget_get_preferred_height_for_width (self->priv->stack, width,
+  gtk_widget_get_preferred_height_for_width (priv->stack, width,
                                              minimum, natural);
 }
 
@@ -412,28 +417,31 @@ eos_page_manager_size_allocate (GtkWidget *widget,
                                 GtkAllocation *allocation)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (widget);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
   gtk_widget_set_allocation (widget, allocation);
-  gtk_widget_size_allocate (self->priv->stack, allocation);
+  gtk_widget_size_allocate (priv->stack, allocation);
 }
 
 static void
 eos_page_manager_show_all (GtkWidget *widget)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (widget);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
   GTK_WIDGET_CLASS (eos_page_manager_parent_class)->show (widget);
-  if (self->priv->stack != NULL)
-    gtk_widget_show_all (self->priv->stack);
+  if (priv->stack != NULL)
+    gtk_widget_show_all (priv->stack);
 }
 
 static void
 eos_page_manager_map (GtkWidget *widget)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (widget);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
-  if (self->priv->stack != NULL && gtk_widget_get_visible (self->priv->stack))
-    gtk_widget_map (self->priv->stack);
+  if (priv->stack != NULL && gtk_widget_get_visible (priv->stack))
+    gtk_widget_map (priv->stack);
   GTK_WIDGET_CLASS (eos_page_manager_parent_class)->map (widget);
 }
 
@@ -441,9 +449,10 @@ static void
 eos_page_manager_unmap (GtkWidget *widget)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (widget);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
-  if (self->priv->stack != NULL)
-    gtk_widget_unmap (self->priv->stack);
+  if (priv->stack != NULL)
+    gtk_widget_unmap (priv->stack);
   GTK_WIDGET_CLASS (eos_page_manager_parent_class)->unmap (widget);
 }
 
@@ -452,9 +461,10 @@ eos_page_manager_draw (GtkWidget *widget,
                        cairo_t   *cr)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (widget);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
-  if (self->priv->stack != NULL)
-    gtk_widget_draw (self->priv->stack, cr);
+  if (priv->stack != NULL)
+    gtk_widget_draw (priv->stack, cr);
 
   return FALSE;
 }
@@ -464,18 +474,19 @@ eos_page_manager_add (GtkContainer *container,
                       GtkWidget    *new_page)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (container);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
-  gtk_container_add (GTK_CONTAINER (self->priv->stack), new_page);
+  gtk_container_add (GTK_CONTAINER (priv->stack), new_page);
   EosPageManagerPageInfo *info = g_slice_new0 (EosPageManagerPageInfo);
   info->background_size = g_strdup (DEFAULT_BACKGROUND_SIZE);
   info->background_position = g_strdup (DEFAULT_BACKGROUND_POSITION);
   info->background_repeats = TRUE;
   info->page = new_page;
-  self->priv->page_info = g_list_prepend (self->priv->page_info, info);
-  g_hash_table_insert (self->priv->pages_by_widget, new_page, info);
+  priv->page_info = g_list_prepend (priv->page_info, info);
+  g_hash_table_insert (priv->pages_by_widget, new_page, info);
 
   /* If there were no pages yet, then this one must become the visible one */
-  if (self->priv->visible_page_info == NULL)
+  if (priv->visible_page_info == NULL)
     eos_page_manager_set_visible_page (self, new_page);
 
   assert_internal_state (self);
@@ -486,32 +497,33 @@ eos_page_manager_remove (GtkContainer *container,
                          GtkWidget    *page)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (container);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
-  gtk_container_remove (GTK_CONTAINER (self->priv->stack), page);
+  gtk_container_remove (GTK_CONTAINER (priv->stack), page);
   EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
   if (info == NULL)
     {
       warn_page_widget_not_found (self, page);
       return;
     }
-  self->priv->page_info = g_list_remove (self->priv->page_info, info);
-  g_hash_table_remove (self->priv->pages_by_widget, page);
+  priv->page_info = g_list_remove (priv->page_info, info);
+  g_hash_table_remove (priv->pages_by_widget, page);
   if (info->name != NULL)
-    g_hash_table_remove (self->priv->pages_by_name, info->name);
+    g_hash_table_remove (priv->pages_by_name, info->name);
 
-  if (self->priv->visible_page_info == info)
+  if (priv->visible_page_info == info)
     {
       /* If this was the only page */
-      if (self->priv->page_info == NULL)
+      if (priv->page_info == NULL)
         {
-          self->priv->visible_page_info = NULL;
+          priv->visible_page_info = NULL;
         }
       /* Otherwise set visible page as the first in our list. */
       else
         {
           g_critical ("Removing the currently visible page %p from the page manager.",
                       page);
-          EosPageManagerPageInfo *visible_info = g_list_first (self->priv->page_info)->data;
+          EosPageManagerPageInfo *visible_info = g_list_first (priv->page_info)->data;
           set_visible_page_from_info (self, visible_info);
         }
 
@@ -529,17 +541,18 @@ eos_page_manager_forall (GtkContainer *container,
                          gpointer      callback_data)
 {
   EosPageManager *self = EOS_PAGE_MANAGER (container);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
-  if (self->priv->stack == NULL)
+  if (priv->stack == NULL)
     return;
 
-  GtkContainerClass *stack_class = GTK_CONTAINER_GET_CLASS (self->priv->stack);
-  stack_class->forall (GTK_CONTAINER (self->priv->stack),
+  GtkContainerClass *stack_class = GTK_CONTAINER_GET_CLASS (priv->stack);
+  stack_class->forall (GTK_CONTAINER (priv->stack),
                        include_internals,
                        callback,
                        callback_data);
   if (include_internals)
-    callback (self->priv->stack, callback_data);
+    callback (priv->stack, callback_data);
 }
 
 static void
@@ -677,8 +690,6 @@ eos_page_manager_class_init (EosPageManagerClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
-
-  g_type_class_add_private (klass, sizeof (EosPageManagerPrivate));
 
   object_class->get_property = eos_page_manager_get_property;
   object_class->set_property = eos_page_manager_set_property;
@@ -892,20 +903,19 @@ eos_page_manager_class_init (EosPageManagerClass *klass)
 static void
 eos_page_manager_init (EosPageManager *self)
 {
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
   GtkWidget *self_widget = GTK_WIDGET (self);
-  self->priv = PAGE_MANAGER_PRIVATE (self);
-  self->priv->pages_by_widget = g_hash_table_new (g_direct_hash,
-                                                  g_direct_equal);
-  self->priv->pages_by_name = g_hash_table_new_full (g_str_hash,
-                                                     g_str_equal,
-                                                     g_free,
-                                                     NULL);
+  priv->pages_by_widget = g_hash_table_new (g_direct_hash,
+                                            g_direct_equal);
+  priv->pages_by_name = g_hash_table_new_full (g_str_hash,
+                                               g_str_equal,
+                                               g_free,
+                                               NULL);
 
   gtk_widget_set_has_window (self_widget, FALSE);
 
-  /* TODO replace with GtkStack */
-  self->priv->stack = gtk_stack_new ();
-  gtk_widget_set_parent (self->priv->stack, self_widget);
+  priv->stack = gtk_stack_new ();
+  gtk_widget_set_parent (priv->stack, self_widget);
 }
 
 /* Public API */
@@ -938,10 +948,11 @@ eos_page_manager_get_visible_page (EosPageManager *self)
 {
   g_return_val_if_fail (EOS_IS_PAGE_MANAGER (self), NULL);
 
-  if (self->priv->visible_page_info == NULL)
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
+  if (priv->visible_page_info == NULL)
     return NULL;
 
-  return self->priv->visible_page_info->page;
+  return priv->visible_page_info->page;
 }
 
 /**
@@ -984,10 +995,11 @@ eos_page_manager_get_visible_page_name (EosPageManager *self)
 {
   g_return_val_if_fail (EOS_IS_PAGE_MANAGER (self), NULL);
 
-  if (self->priv->visible_page_info == NULL)
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
+  if (priv->visible_page_info == NULL)
     return NULL;
 
-  return self->priv->visible_page_info->name;
+  return priv->visible_page_info->name;
 }
 
 /**
@@ -1061,6 +1073,7 @@ eos_page_manager_set_page_name (EosPageManager *self,
                                 GtkWidget      *page,
                                 const gchar    *name)
 {
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
   EosPageManagerPageInfo *info;
 
   g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
@@ -1090,11 +1103,11 @@ eos_page_manager_set_page_name (EosPageManager *self,
     return;
 
   if (info->name != NULL)
-    g_hash_table_remove (self->priv->pages_by_name, info->name);
+    g_hash_table_remove (priv->pages_by_name, info->name);
   g_free (info->name);
   info->name = g_strdup (name);
   if (name != NULL)
-      g_hash_table_insert (self->priv->pages_by_name, g_strdup (name), info);
+      g_hash_table_insert (priv->pages_by_name, g_strdup (name), info);
 
   gtk_container_child_notify (GTK_CONTAINER (self), page, "name");
 
@@ -1601,7 +1614,8 @@ eos_page_manager_get_transition_duration (EosPageManager *self)
 {
   g_return_val_if_fail (EOS_IS_PAGE_MANAGER (self), 0);
 
-  return gtk_stack_get_transition_duration (GTK_STACK (self->priv->stack));
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
+  return gtk_stack_get_transition_duration (GTK_STACK (priv->stack));
 }
 
 /**
@@ -1618,7 +1632,8 @@ eos_page_manager_set_transition_duration (EosPageManager *self,
 {
   g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
 
-  gtk_stack_set_transition_duration (GTK_STACK (self->priv->stack), duration);
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
+  gtk_stack_set_transition_duration (GTK_STACK (priv->stack), duration);
   g_object_notify (G_OBJECT (self), "transition-duration");
 }
 
@@ -1636,7 +1651,8 @@ eos_page_manager_get_transition_type (EosPageManager *self)
 {
   g_return_val_if_fail (EOS_IS_PAGE_MANAGER (self), EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE);
 
-  return self->priv->transition_type;
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
+  return priv->transition_type;
 }
 
 
@@ -1654,7 +1670,8 @@ eos_page_manager_set_transition_type (EosPageManager                *self,
 {
   g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
 
-  self->priv->transition_type = transition_type;
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
+  priv->transition_type = transition_type;
   GtkStackTransitionType gtk_stack_transition;
   switch (transition_type)
     {
@@ -1664,13 +1681,13 @@ eos_page_manager_set_transition_type (EosPageManager                *self,
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT:
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP:
     case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN:
-      gtk_stack_transition = (GtkStackTransitionType)self->priv->transition_type;
+      gtk_stack_transition = (GtkStackTransitionType)priv->transition_type;
       break;
     default:
       gtk_stack_transition = GTK_STACK_TRANSITION_TYPE_NONE;
       break;
     }
-  gtk_stack_set_transition_type (GTK_STACK (self->priv->stack),
+  gtk_stack_set_transition_type (GTK_STACK (priv->stack),
                                  gtk_stack_transition);
   g_object_notify (G_OBJECT (self), "transition-type");
 }
@@ -1684,5 +1701,6 @@ eos_page_manager_set_transition_type (EosPageManager                *self,
 GtkStackTransitionType
 eos_page_manager_get_gtk_stack_transition_type (EosPageManager *self)
 {
-  return gtk_stack_get_transition_type (GTK_STACK (self->priv->stack));
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
+  return gtk_stack_get_transition_type (GTK_STACK (priv->stack));
 }

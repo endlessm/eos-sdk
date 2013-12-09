@@ -35,7 +35,6 @@
 
 typedef struct _EosApplication EosApplication;
 typedef struct _EosApplicationClass EosApplicationClass;
-typedef struct _EosApplicationPrivate EosApplicationPrivate;
 
 /**
  * EosApplication:
@@ -46,8 +45,6 @@ struct _EosApplication
 {
   /*< private >*/
   GtkApplication parent;
-
-  EosApplicationPrivate *priv;
 };
 
 struct _EosApplicationClass

@@ -17,18 +17,14 @@
  * area will not appear unless set.
  */
 
-G_DEFINE_TYPE (EosMainArea, eos_main_area, GTK_TYPE_CONTAINER)
-
-#define MAIN_AREA_PRIVATE(o) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((o), EOS_TYPE_MAIN_AREA, EosMainAreaPrivate))
-
-struct _EosMainAreaPrivate
-{
+typedef struct {
   GtkWidget *toolbox;
   GtkWidget *content;
   GtkWidget *actions_standin;
   guint actions_visible : 1;
-};
+} EosMainAreaPrivate;
+
+G_DEFINE_TYPE_WITH_PRIVATE (EosMainArea, eos_main_area, GTK_TYPE_CONTAINER)
 
 static void
 eos_main_area_get_preferred_width (GtkWidget *widget,
@@ -36,12 +32,14 @@ eos_main_area_get_preferred_width (GtkWidget *widget,
                                    gint      *natural)
 {
   EosMainArea *self = EOS_MAIN_AREA (widget);
-  GtkWidget *toolbox = self->priv->toolbox;
-  GtkWidget *content = self->priv->content;
+  EosMainAreaPrivate *priv = eos_main_area_get_instance_private (self);
+
+  GtkWidget *toolbox = priv->toolbox;
+  GtkWidget *content = priv->content;
   *minimal = *natural = 0;
 
   if ((toolbox && gtk_widget_get_visible (toolbox)) ||
-      self->priv->actions_visible)
+      priv->actions_visible)
     {
       gint toolbox_minimal, toolbox_natural;
       gtk_widget_get_preferred_width (toolbox,
@@ -68,8 +66,10 @@ eos_main_area_get_preferred_height (GtkWidget *widget,
                                     gint      *natural)
 {
   EosMainArea *self = EOS_MAIN_AREA (widget);
-  GtkWidget *toolbox = self->priv->toolbox;
-  GtkWidget *content = self->priv->content;
+  EosMainAreaPrivate *priv = eos_main_area_get_instance_private (self);
+
+  GtkWidget *toolbox = priv->toolbox;
+  GtkWidget *content = priv->content;
   *minimal = *natural = 0;
 
   if (toolbox && gtk_widget_get_visible (toolbox))
@@ -99,8 +99,10 @@ eos_main_area_size_allocate (GtkWidget     *widget,
                              GtkAllocation *allocation)
 {
   EosMainArea *self = EOS_MAIN_AREA (widget);
-  GtkWidget *toolbox = self->priv->toolbox;
-  GtkWidget *content = self->priv->content;
+  EosMainAreaPrivate *priv = eos_main_area_get_instance_private (self);
+
+  GtkWidget *toolbox = priv->toolbox;
+  GtkWidget *content = priv->content;
 
   gtk_widget_set_allocation (widget, allocation);
 
@@ -109,7 +111,7 @@ eos_main_area_size_allocate (GtkWidget     *widget,
   gboolean toolbox_visible = toolbox && gtk_widget_get_visible (toolbox);
   if (toolbox_visible)
     num_sidebars++;
-  if (self->priv->actions_visible)
+  if (priv->actions_visible)
     num_sidebars++;
 
   gint toolbox_min_width = 0, toolbox_nat_width = 0;
@@ -167,14 +169,14 @@ eos_main_area_size_allocate (GtkWidget     *widget,
       gtk_widget_size_allocate (toolbox, &toolbox_allocation);
       x += toolbox_allocation.width;
     }
-  if (self->priv->actions_visible)
+  if (priv->actions_visible)
     {
       GtkAllocation actions_allocation;
       actions_allocation.x = allocation->x + allocation->width - sidebar_width;
       actions_allocation.y = y;
       actions_allocation.width = sidebar_width;
       actions_allocation.height = allocation->height;
-      gtk_widget_size_allocate (self->priv->actions_standin,
+      gtk_widget_size_allocate (priv->actions_standin,
                                 &actions_allocation);
     }
   if (content_visible)
@@ -205,7 +207,7 @@ eos_main_area_remove (GtkContainer *container,
                       GtkWidget *widget)
 {
   EosMainArea *self = EOS_MAIN_AREA(container);
-  EosMainAreaPrivate *priv = self->priv;
+  EosMainAreaPrivate *priv = eos_main_area_get_instance_private (self);
 
   if (priv->content == widget)
     eos_main_area_set_content (self, NULL);
@@ -220,7 +222,7 @@ eos_main_area_forall(GtkContainer *container,
                      gpointer      callback_data)
 {
   EosMainArea *self = EOS_MAIN_AREA (container);
-  EosMainAreaPrivate *priv = self->priv;
+  EosMainAreaPrivate *priv = eos_main_area_get_instance_private (self);
 
   if (priv->toolbox)
     (*callback) (priv->toolbox, callback_data);
@@ -236,8 +238,9 @@ static void
 eos_main_area_destroy (GtkWidget *widget)
 {
   EosMainArea *self = EOS_MAIN_AREA (widget);
+  EosMainAreaPrivate *priv = eos_main_area_get_instance_private (self);
 
-  gtk_widget_destroy (self->priv->actions_standin);
+  gtk_widget_destroy (priv->actions_standin);
 
   GTK_WIDGET_CLASS (eos_main_area_parent_class)->destroy (widget);
 }
@@ -247,8 +250,6 @@ eos_main_area_class_init (EosMainAreaClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
   GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
-
-  g_type_class_add_private (klass, sizeof (EosMainAreaPrivate));
 
   widget_class->get_preferred_width = eos_main_area_get_preferred_width;
   widget_class->get_preferred_height = eos_main_area_get_preferred_height;
@@ -263,16 +264,16 @@ eos_main_area_class_init (EosMainAreaClass *klass)
 static void
 eos_main_area_init (EosMainArea *self)
 {
+  EosMainAreaPrivate *priv = eos_main_area_get_instance_private (self);
   gtk_widget_set_has_window(GTK_WIDGET(self), FALSE);
-  self->priv = MAIN_AREA_PRIVATE (self);
 
-  self->priv->actions_standin = gtk_event_box_new ();
-  g_object_ref_sink (self->priv->actions_standin);
+  priv->actions_standin = gtk_event_box_new ();
+  g_object_ref_sink (priv->actions_standin);
   GdkRGBA red = { 1.0, 0.0, 0.0, 1.0 };
-  gtk_widget_override_background_color (self->priv->actions_standin,
+  gtk_widget_override_background_color (priv->actions_standin,
                                         GTK_STATE_FLAG_NORMAL,
                                         &red);
-  gtk_widget_show (self->priv->actions_standin);
+  gtk_widget_show (priv->actions_standin);
 }
 
 /* Internal Public API */
@@ -306,7 +307,7 @@ eos_main_area_set_toolbox (EosMainArea *self,
   g_return_if_fail (EOS_IS_MAIN_AREA (self));
   g_return_if_fail (toolbox == NULL || GTK_IS_WIDGET (toolbox));
 
-  EosMainAreaPrivate *priv = self->priv;
+  EosMainAreaPrivate *priv = eos_main_area_get_instance_private (self);
   GtkWidget *self_widget = GTK_WIDGET (self);
 
   if (priv->toolbox == toolbox)
@@ -336,7 +337,8 @@ GtkWidget *
 eos_main_area_get_toolbox (EosMainArea *self)
 {
   g_return_val_if_fail (EOS_IS_MAIN_AREA (self), NULL);
-  return self->priv->toolbox;
+  EosMainAreaPrivate *priv = eos_main_area_get_instance_private (self);
+  return priv->toolbox;
 }
 
 /*
@@ -354,7 +356,7 @@ eos_main_area_set_content (EosMainArea *self,
   g_return_if_fail (content == NULL || GTK_IS_WIDGET (content));
   g_return_if_fail (content == NULL || gtk_widget_get_parent (content) == NULL);
 
-  EosMainAreaPrivate *priv = self->priv;
+  EosMainAreaPrivate *priv = eos_main_area_get_instance_private (self);
   GtkWidget *self_widget = GTK_WIDGET (self);
 
   if (priv->content == content)
@@ -381,7 +383,8 @@ GtkWidget *
 eos_main_area_get_content (EosMainArea *self)
 {
   g_return_val_if_fail (EOS_IS_MAIN_AREA (self), NULL);
-  return self->priv->content;
+  EosMainAreaPrivate *priv = eos_main_area_get_instance_private (self);
+  return priv->content;
 }
 
 /*
@@ -399,7 +402,7 @@ eos_main_area_set_actions (EosMainArea *self,
 {
   g_return_if_fail (EOS_IS_MAIN_AREA (self));
 
-  EosMainAreaPrivate *priv = self->priv;
+  EosMainAreaPrivate *priv = eos_main_area_get_instance_private (self);
   GtkWidget *self_widget = GTK_WIDGET (self);
 
   actions_visible = actions_visible != FALSE;
@@ -427,5 +430,6 @@ gboolean
 eos_main_area_get_actions (EosMainArea *self)
 {
   g_return_val_if_fail (EOS_IS_MAIN_AREA (self), FALSE);
-  return self->priv->actions_visible;
+  EosMainAreaPrivate *priv = eos_main_area_get_instance_private (self);
+  return priv->actions_visible;
 }
