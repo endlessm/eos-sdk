@@ -414,12 +414,57 @@ eos_window_set_property (GObject      *object,
     }
 }
 
+static void
+check_size_request (GtkWidget      *widget,
+                    GtkOrientation  orientation,
+                    gint            minimum_size,
+                    gint            natural_size)
+{
+
+  if (gtk_widget_get_realized (widget))
+    {
+      GdkScreen *default_screen = gdk_screen_get_default ();
+      GdkWindow *gdkwindow = gtk_widget_get_window (widget);
+      int monitor = gdk_screen_get_monitor_at_window (default_screen, gdkwindow);
+      GdkRectangle workarea;
+      gdk_screen_get_monitor_workarea (default_screen, monitor, &workarea);
+      gint available_size = workarea.width;
+      gchar *orientation_string = "width";
+      if (orientation == GTK_ORIENTATION_VERTICAL)
+        {
+          available_size = workarea.height;
+          orientation_string = "height";
+        }
+
+      if (minimum_size > available_size)
+        g_critical ("Requested window %s %d greater than available work area %s %d",
+                    orientation_string,
+                    minimum_size,
+                    orientation_string,
+                    available_size);
+    }
+}
+
+static void
+eos_window_get_preferred_width (GtkWidget *widget,
+                                gint *minimum_width,
+                                gint *natural_width)
+{
+  GTK_WIDGET_CLASS (eos_window_parent_class)->get_preferred_width (widget,
+    minimum_width, natural_width);
+
+  check_size_request (widget,
+                      GTK_ORIENTATION_HORIZONTAL,
+                      *minimum_width,
+                      *natural_width);
+}
+
 /* Piggy-back on the parent class's get_preferred_height(), but add the
 height of our top bar. Do not assume any borders on the top bar. */
 static void
 eos_window_get_preferred_height (GtkWidget *widget,
-                                 int *minimum_height,
-                                 int *natural_height)
+                                 gint *minimum_height,
+                                 gint *natural_height)
 {
   EosWindow *self = EOS_WINDOW (widget);
   EosWindowPrivate *priv = eos_window_get_instance_private (self);
@@ -433,6 +478,11 @@ eos_window_get_preferred_height (GtkWidget *widget,
     *minimum_height += top_bar_minimum;
   if (natural_height != NULL)
     *natural_height += top_bar_natural;
+
+  check_size_request (widget,
+                      GTK_ORIENTATION_VERTICAL,
+                      *minimum_height,
+                      *natural_height);
 }
 
 /* Remove space for our top bar from the allocation before doing a normal
@@ -547,6 +597,7 @@ eos_window_class_init (EosWindowClass *klass)
   gtk_window_set_titlebar(), available from GTK >= 3.10. But for now we are
   targeting GTK 3.8. Issue: [endlessm/eos-sdk#28] */
   widget_class->get_preferred_height = eos_window_get_preferred_height;
+  widget_class->get_preferred_width = eos_window_get_preferred_width;
   widget_class->size_allocate = eos_window_size_allocate;
   widget_class->map = eos_window_map;
   widget_class->unmap = eos_window_unmap;

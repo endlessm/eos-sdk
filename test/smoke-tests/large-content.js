@@ -22,7 +22,7 @@ const TestApplication = new Lang.Class ({
             new Gdk.RGBA({ red: 0, green: 0, blue: 1, alpha: 1 }));
         big_button.override_background_color(Gtk.StateFlags.ACTIVE,
             new Gdk.RGBA({ red: 1, green: 0, blue: 0, alpha: 1 }));
-        //big_button.set_size_request(9999, 9999);
+        big_button.set_size_request(3000, 2000);
 
         let window = new Endless.Window({
             application: this
