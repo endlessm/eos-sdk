@@ -5,8 +5,6 @@ const Format = imports.format;
 const System = imports.system;
 
 String.prototype.format = Format.format;
-// monkeypatch System.programInvocationName which is not in this version of GJS
-System.programInvocationName = 'eos-application-manifest';
 
 // Other constants, available from subcommands' code
 const commandSearchPath = "@libexecdir@/eos-application-manifest/commands";
@@ -21,8 +19,7 @@ if (ARGV.length === 0) {
     // automatically invoke "help" command with no arguments
     const Help = imports.help;
     Help.execute([]);
-    // System.exit(1); broken, bugzilla.gnome.org #703826
-    throw new Error();
+    System.exit(1);
 }
 
 let command_name = ARGV.shift();
@@ -34,14 +31,12 @@ try {
         let program_name = System.programInvocationName;
         printerr("%s: '%s' is not a valid command name. See %s help.".format(
             program_name, command_name, program_name));
-        // System.exit(1); broken
-        throw new Error();
+        System.exit(1);
     }
 }
 try {
     command.execute(ARGV);
 } catch (e) {
     printerr('%s: %s'.format(System.programInvocationName, e.message));
-    // System.exit(1); broken
-    throw e;
+    System.exit(1);
 }

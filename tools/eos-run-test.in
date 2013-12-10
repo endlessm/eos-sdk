@@ -7,9 +7,6 @@ const Lang = imports.lang;
 const System = imports.system;
 
 String.prototype.format = Format.format;
-// Monkeypatch System.programInvocationName if not in this version of GJS
-if(!('programInvocationName' in System))
-    System.programInvocationName = 'eos-run-test';
 
 const PACKAGE_VERSION = '@PACKAGE_VERSION@';
 const JS_EXTENSION = '.js';
@@ -26,7 +23,7 @@ function usage() {
     print('Options:');
     print('  --help     This help message');
     print('  --version  Print version and exit');
-    throw(0); // FIXME System.exit(0);
+    System.exit(0);
 }
 
 /**
@@ -35,9 +32,9 @@ function usage() {
  * Print command-line version output.
  */
 function version() {
-    print('%s %s - Discover unit tests in a source tree'.format(
+    print('%s %s - Run jsUnit tests in a GJS source file'.format(
         System.programInvocationName, PACKAGE_VERSION));
-    throw(0); // FIXME System.exit(0);
+    System.exit(0);
 }
 
 if(ARGV.indexOf('--help') != -1)
@@ -146,5 +143,5 @@ print(totalsString);
 
 if (totals.testsFailedCount > 0){
     printerr("Test(s) did not complete successfully");
-    throw(1); // FIXME System.exit(1);
+    System.exit(1);
 }
