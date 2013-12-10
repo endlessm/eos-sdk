@@ -441,7 +441,10 @@ clamp_size_request (GtkWidget      *widget,
       if (*minimum_size > available_size)
         {
           g_critical ("Requested window %s %d greater than available work area %s %d. " \
-                      "Clamping size request to fit.",
+                      "Clamping size request to fit. This means there is a bug in your " \
+                      "program, and it is not ready for production. Try checking if any " \
+                      "of your widgets have minimum size requests that make the page not " \
+                      "able to fit on the screen.",
                       orientation_string,
                       *minimum_size,
                       orientation_string,
