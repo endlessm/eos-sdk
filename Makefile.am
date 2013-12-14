@@ -9,7 +9,9 @@
 
 # Subdirectories where we also want to run make
 # (Make sure that the library is built before the docs)
-SUBDIRS = po . docs/reference/endless
+SUBDIRS = . \
+          po \
+          docs/reference/endless
 
 # Our Autoconf macros are kept in the m4/ directory
 ACLOCAL_AMFLAGS = -I m4
