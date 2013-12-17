@@ -46,7 +46,20 @@ const AssetButton = new Lang.Class({
         this.parent(params);
 
         this.set_image(this._image);
+        this._force_center_valign(this);
         this.connect('state-flags-changed', Lang.bind(this, this._update_appearance));
+    },
+
+    // Gtk 3.10 switched to vertically aligning internal children with
+    // Gtk.Align.BASELINE, which is not what we want for our buttons. This
+    // forces the button internals to use Gtk.Align.CENTER which we want. If
+    // Gtk ever provides public api for controlling alignment of its image and
+    // label, that would be much preferable.
+    _force_center_valign: function (w) {
+        w.set_valign(Gtk.Align.FILL);
+        if (w instanceof Gtk.Container) {
+            w.forall(Lang.bind(this, this._force_center_valign));
+        }
     },
 
     _update_appearance: function() {
