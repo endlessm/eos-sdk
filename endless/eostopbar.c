@@ -51,32 +51,6 @@ enum {
 
 static guint top_bar_signals[LAST_SIGNAL] = { 0 };
 
-static gboolean
-eos_top_bar_button_press_event (GtkWidget *widget,
-                                GdkEventButton *event)
-{
-  GtkWidget *window;
-
-  /* ignore right clicks */
-  if (gdk_event_triggers_context_menu ((GdkEvent *) event))
-    return FALSE;
-
-  /* ignore double clicks, etc */
-  if (event->type != GDK_BUTTON_PRESS)
-    return FALSE;
-
-  window = gtk_widget_get_toplevel (widget);
-  if (!window)
-    return FALSE;
-
-  gtk_window_begin_move_drag (GTK_WINDOW (window),
-                              event->button,
-                              event->x_root,
-                              event->y_root,
-                              event->time);
-  return TRUE;
-}
-
 static void
 eos_top_bar_get_preferred_height (GtkWidget *widget,
                                   int *minimum,
@@ -118,7 +92,6 @@ eos_top_bar_class_init (EosTopBarClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  widget_class->button_press_event = eos_top_bar_button_press_event;
   widget_class->get_preferred_height = eos_top_bar_get_preferred_height;
   widget_class->draw = eos_top_bar_draw;
 
