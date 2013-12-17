@@ -4,7 +4,6 @@
 imports.searchPath.unshift ("jasmine");
 imports.searchPath.unshift ("../wikipedia");
 imports.searchPath.unshift ("../webhelper");
-imports.searchPath.unshift (".");
 
 const JasmineGJS = imports.jasminegjsbootstrap;
 
@@ -17,4 +16,4 @@ for (let i = 0; i < ARGV.length; i++) {
     suites.push(ARGV[i]);
 }
 
-JasmineGJS.executeSpecs(suites);
+JasmineGJS.executeSpecs(suites, "");
