@@ -1,72 +1,110 @@
 const ArticleModel = imports.wikipedia.models.article_model;
 
-let mockJsonData = {
-    title: 'Article Title',
-    url: 'file:///',
-    source: 'Mock data',
-    categories: [
-        'Category One',
-        'Category Two'
-    ]
-};
-
-function _assertCategoryListHasIds(categoryList, idList) {
-    assertEquals(idList.length, categoryList.length);
-    idList.forEach(function (id) {
-        assertTrue(categoryList.some(function (actualId) {
-            return actualId == id;
-        }));
-    });
-}
-
-function testNewModelFromJson() {
-    let model = ArticleModel.newFromJson(mockJsonData);
-    assertTrue(model instanceof ArticleModel.ArticleModel);
-    assertEquals('Article Title', model.title);
-    assertEquals('file:///', model.uri);
-    _assertCategoryListHasIds(model.getCategories(),
-        ['Category One', 'Category Two']);
-}
-
-function testNewWithProperties() {
-    let model = new ArticleModel.ArticleModel({
+describe("Wikipedia article model", function() {
+    let mockJsonData = {
         title: 'Article Title',
-        uri: 'file:///'
+        url: 'file:///',
+        source: 'Mock data',
+        categories: [
+            'Category One',
+            'Category Two'
+        ]
+    };
+
+    describe("from JSON", function() {
+        let model;
+
+        beforeEach(function() {
+            model = ArticleModel.newFromJson(mockJsonData);
+        });
+
+        it("has an article title", function() {
+            expect(model.title).toEqual(mockJsonData.title);
+        });
+
+        it("has a uri", function() {
+            expect(model.uri).toEqual(mockJsonData.url);
+        });
+
+        it("has a list of categories", function() {
+            expect(model.getCategories()).toEqual(mockJsonData.categories);
+        });
     });
-    assertEquals('Article Title', model.title);
-    assertEquals('file:///', model.uri);
-    assertEquals(0, model.getCategories().length);
-}
 
-function testSetAndGetCategories() {
-    let model = new ArticleModel.ArticleModel();
-    let expectedCategories = ['One', 'Two', 'Three'];
-    model.setCategories(expectedCategories);
-    _assertCategoryListHasIds(model.getCategories(), expectedCategories);
-}
+    describe("from properties", function() {
+        let model;
+        beforeEach(function() {
+            model = new ArticleModel.ArticleModel({
+                title: 'Article Title',
+                uri: 'file://'
+            });
+        });
 
-function testSetCategoriesWipesPreviousCategories() {
-    let model = new ArticleModel.ArticleModel();
-    let firstCategories = ['One', 'Two', 'Three'];
-    model.setCategories(firstCategories);
-    let expectedCategories = ['A', 'B', 'C', 'D'];
-    model.setCategories(expectedCategories);
-    _assertCategoryListHasIds(model.getCategories(), expectedCategories);
-}
+        it("is an instance of an ArticleModel", function() {
+            expect(model instanceof ArticleModel.ArticleModel).toBeTruthy();
+        });
 
-function testAddAndGetCategories() {
-    let model = new ArticleModel.ArticleModel();
-    model.addCategory('One');
-    model.addCategory('Two');
-    model.addCategory('Three');
-    _assertCategoryListHasIds(model.getCategories(), ['One', 'Two', 'Three']);
-}
+        it("has a title", function() {
+            expect(model.title).toEqual('Article Title');
+        });
 
-function testHasCategories() {
-    let model = new ArticleModel.ArticleModel();
-    let expectedCategories = ['One', 'Two', 'Three'];
-    model.setCategories(expectedCategories);
-    expectedCategories.forEach(function (id) {
-        assertTrue(model.hasCategory(id));
+        it("has a URI", function() {
+            expect(model.uri).toEqual('file://');
+        });
+
+        it("has no categories", function() {
+            expect(model.getCategories().length).toEqual(0);
+        });
     });
-}
+
+    describe("setCategories method", function() {
+        let model;
+
+        beforeEach(function() {
+            model = new ArticleModel.ArticleModel();
+        });
+
+        it("adds categories", function() {
+            let expectedCategories = ['One', 'Two', 'Three'];
+            model.setCategories(expectedCategories);
+            expect(model.getCategories()).toEqual(expectedCategories);
+        });
+
+        it("replaces existing categories", function() {
+            model.setCategories(['One', 'Two']);
+            let expectedCategories = ['One', 'Two', 'Three'];
+            model.setCategories(expectedCategories);
+            expect(model.getCategories()).toEqual(expectedCategories);
+        });
+    });
+
+    it("appends new categories on addCategory", function() {
+        let model = new ArticleModel.ArticleModel();
+
+        model.addCategory('One');
+        model.addCategory('Two');
+        model.addCategory('Three');
+        expect(model.getCategories()).toEqual(['One', 'Two', 'Three']);
+    });
+    describe("hasCategory method", function() {
+        let model;
+        let expectedCategories = ['One', 'Two', 'Three'];
+ 
+        beforeEach(function() {
+            model = new ArticleModel.ArticleModel;
+            model.setCategories(expectedCategories);
+        });
+
+        expectedCategories.forEach(function(category) {
+            (function(categoryName) {
+                 it("returns true for category named " + categoryName, function() {
+                     expect(model.hasCategory(categoryName)).toBeTruthy();
+                 });
+             });
+        });
+
+        it("returns false for an unexpected category", function() {
+            expect(model.hasCategory('unexpected')).toBeFalsy();
+        });
+    });
+});

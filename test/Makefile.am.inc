@@ -14,7 +14,6 @@ include test/demos/Makefile.am.inc
 include test/smoke-tests/Makefile.am.inc
 
 javascript_tests = \
-	test/tools/eos-run-test/sanitycheck.js \
   test/tools/eos-application-manifest/testInit.js \
 	test/webhelper/testTranslate.js \
 	test/webhelper/testWebActions.js \
@@ -30,9 +29,10 @@ TESTS = \
 	$(javascript_tests) \
 	$(NULL)
 TEST_EXTENSIONS = .js
-JS_LOG_COMPILER = tools/eos-run-test
+JS_LOG_COMPILER = $(top_srcdir)/test/jasmine/eos-jasmine-run
 AM_JS_LOG_FLAGS = \
-	--include-path=$(top_srcdir)/webhelper \
+  --include-path=$(top_srcdir)/test/jasmine \
+  --include-path=$(top_srcdir)/webhelper \
 	--include-path=$(top_srcdir) \
 	$(NULL)
 LOG_COMPILER = gtester
