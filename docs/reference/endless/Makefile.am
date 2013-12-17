@@ -92,7 +92,7 @@ AM_TESTS_ENVIRONMENT = \
 	export DOC_MODULE=$(DOC_MODULE); \
 	export DOC_MAIN_SGML_FILE=$(DOC_MAIN_SGML_FILE); \
 	export SRCDIR=$(abs_srcdir); \
-	export BUILDDIR=$(abs_builddir)
+	export BUILDDIR=$(abs_builddir);
 # Need a dummy file to feed to GTKDOC_CHECK in the parallel test harness
 TESTS = gtkdoc-test-dummy-file
 LOG_COMPILER = $(GTKDOC_CHECK)
