@@ -2,6 +2,10 @@
     font-family: Lato;
 }
 
+EosWindow {
+    background-color: black;
+}
+
 .title {
     font-family: "Lato Light";
     color: #ffffff;
