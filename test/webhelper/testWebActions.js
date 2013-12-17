@@ -6,8 +6,8 @@ const Lang = imports.lang;
 const WebHelper = imports.webhelper;
 const WebKit = imports.gi.WebKit;
 
-const TestClass = new Lang.Class({
-    Name: 'testclass',
+const WebActionTestApplication = new Lang.Class({
+    Name: 'WebActionTestApplication',
     Extends: WebHelper.Application,
 
     vfunc_startup: function() {
@@ -33,128 +33,113 @@ const TestClass = new Lang.Class({
     }
 });
 
-let app;
-
-function setUp() {
-    // Generate a unique ID for each app instance that we test
-    let fake_pid = GLib.random_int();
-    // FIXME In this version of GJS there is no Posix module, so fake the PID
-    let id_string = 'com.endlessm.webhelper.test' + GLib.get_real_time() + fake_pid;
-    app = new TestClass({
-        application_id: id_string
-    });
-}
-
-function testWebActionIsCalled() {
-    let actionWasCalled = false;
-    app.define_web_action('quitApplication', function() {
-        actionWasCalled = true;
-        app.quit();
-    });
-    app.webActionToTest = 'endless://quitApplication';
-    app.run([]);
-    assertTrue(actionWasCalled);
-}
-
-function testWebActionIsCalledWithParameter() {
-    let actionParameter;
-    app.define_web_action('getParameterAndQuit', function(dict) {
-        actionParameter = dict['param'];
-        app.quit();
-    });
-    app.webActionToTest = 'endless://getParameterAndQuit?param=value';
-    app.run([]);
-    assertEquals('value', actionParameter);
-}
-
-function testWebActionIsCalledWithManyParameters() {
-    let firstParameter, secondParameter, thirdParameter;
-    app.define_web_action('getParametersAndQuit', function(dict) {
-        firstParameter = dict['first'];
-        secondParameter = dict['second'];
-        thirdParameter = dict['third'];
-        app.quit();
-    });
-    app.webActionToTest = 'endless://getParametersAndQuit?first=thefirst&second=thesecond&third=thethird';
-    app.run([]);
-    assertEquals('thefirst', firstParameter);
-    assertEquals('thesecond', secondParameter);
-    assertEquals('thethird', thirdParameter);
-}
-
-function testParameterNameIsUriDecoded() {
-    let expectedParameter = 'päräm💩';
-    let parameterWasFound = false;
-    app.define_web_action('getUriDecodedParameterAndQuit', function(dict) {
-        parameterWasFound = (expectedParameter in dict);
-        app.quit();
-    });
-    app.webActionToTest = 'endless://getUriDecodedParameterAndQuit?p%C3%A4r%C3%A4m%F0%9F%92%A9=value';
-    app.run([]);
-    assertTrue(parameterWasFound);
-}
-
-function testParameterValueIsUriDecoded() {
-    let expectedValue = 'válué💩';
-    let actualValue;
-    app.define_web_action('getUriDecodedValueAndQuit', function(dict) {
-        actualValue = dict['param'];
-        app.quit();
-    });
-    app.webActionToTest = 'endless://getUriDecodedValueAndQuit?param=v%C3%A1lu%C3%A9%F0%9F%92%A9';
-    app.run([]);
-    assertEquals(expectedValue, actualValue);
-}
-
-// This is commented out because GJS cannot catch exceptions across FFI
-// interfaces (e.g. in GObject callbacks.)
-// function testBadActionIsNotCalled() {
-//     app.webActionToTest = 'endless://nonexistentAction?param=value';
-//     assertRaises(function() { app.run([]); });
-// }
-
-function testWebActionIsCalledWithBlankParameter() {
-    let parameterWasFound = false;
-    let parameterValue;
-    app.define_web_action('getBlankValueAndQuit', function(dict) {
-        parameterWasFound = ('param' in dict);
-        if(parameterWasFound)
-            parameterValue = dict['param'];
-        app.quit();
-    });
-    app.webActionToTest = 'endless://getBlankValueAndQuit?param=';
-    app.run([]);
-    assertTrue(parameterWasFound);
-    assertNotUndefined(parameterValue);
-    assertEquals('', parameterValue);
-}
-
-function testWebActionIsUriDecoded() {
-    let actionWasCalled = false;
-    app.define_web_action('äction💩Quit', function(dict) {
-        actionWasCalled = true;
-        app.quit();
-    });
-    app.webActionToTest = 'endless://%C3%A4ction%F0%9F%92%A9Quit';
-    app.run([]);
-    assertTrue(actionWasCalled);
-}
-
-function testDefineMultipleActionsOverride() {
-    let actionWasCalled = false;
-    app.define_web_actions({
-        quitApplication: function() {
-            actionWasCalled = true;
+// TODO: These tests depend on a running X Server and Window Manager. That means
+// that they are not runnable in a continuous-integration server
+describe("Web Actions Bindings", function() {
+    let app;
+    let webActionSpy;
+    
+    beforeEach(function() {
+        // Generate a unique ID for each app instance that we test
+        let fake_pid = GLib.random_int();
+        // FIXME In this version of GJS there is no Posix module, so fake the PID
+        let id_string = 'com.endlessm.webhelper.test' + GLib.get_real_time() + fake_pid;
+        app = new WebActionTestApplication({
+            application_id: id_string
+        });
+        webActionSpy = jasmine.createSpy('quitAction').and.callFake(function() {
             app.quit();
-        }
+        });
     });
-    app.webActionToTest = 'endless://quitApplication';
-    app.run([]);
-    assertTrue(actionWasCalled);
-}
+    
+    let RunApplicationWithWebAction = function(app, action) {
+        app.webActionToTest = action;
+        app.run([]);
+    }
+    it("has a working quitApplication uri upon defining quitApplication as a string", function() {
+        app.define_web_action('quitApplication', webActionSpy);
+        RunApplicationWithWebAction(app, 'endless://quitApplication');
 
-function testDefineBadAction() {
-    assertRaises(function() {
-        app.define_web_action('badAction', 'not a function');
+        expect(webActionSpy).toHaveBeenCalled();
     });
-}
+
+    it("is called with a parameter", function() {
+        app.define_web_action('getParameterAndQuit', webActionSpy);
+        RunApplicationWithWebAction(app, 'endless://getParameterAndQuit?param=value');
+
+        expect(webActionSpy).toHaveBeenCalledWith(new jasmine.ObjectContaining({ param: 'value' }));
+    });
+
+    it("can be called with many parameters", function() {
+        app.define_web_action('getParametersAndQuit', webActionSpy);
+        RunApplicationWithWebAction(app, 'endless://getParametersAndQuit?first=thefirst&second=thesecond&third=thethird');
+
+        expect(webActionSpy).toHaveBeenCalledWith(new jasmine.ObjectContaining({
+            first: 'thefirst',
+            second: 'thesecond',
+            third: 'thethird'
+        }));
+    });
+
+    it("decodes parameter URI names", function() {
+        app.define_web_action('getUriDecodedParameterAndQuit', webActionSpy);
+        RunApplicationWithWebAction(app, 'endless://getUriDecodedParameterAndQuit?p%C3%A4r%C3%A4m%F0%9F%92%A9=value');
+
+        expect(webActionSpy).toHaveBeenCalledWith(new jasmine.ObjectContaining({
+            'päräm💩' : 'value'
+        }));
+    });
+
+    it("decodes parameter URI values", function() {
+        app.define_web_action('getUriDecodedParameterValueAndQuit', webActionSpy);
+        RunApplicationWithWebAction(app, 'endless://getUriDecodedParameterValueAndQuit?param=v%C3%A1lu%C3%A9%F0%9F%92%A9');
+
+        expect(webActionSpy).toHaveBeenCalledWith(new jasmine.ObjectContaining({
+            param : 'válué💩'
+        }));
+    });
+
+    // We currently can't catch exceptions across GObject-Introspection callbacks
+    xit('bad action is not called', function() {
+        expect(function() { RunApplicationWithWebAction(app, 'endless://nonexistentWebAction') }).toThrow();
+    });
+
+    describe("with blank parameters", function() {
+        beforeEach(function() {
+            app.define_web_action('getBlankValueAndQuit', webActionSpy);
+            RunApplicationWithWebAction(app, 'endless://getBlankValueAndQuit?param=');
+        });
+
+        it("can be called", function() {
+            expect(webActionSpy).toHaveBeenCalled();
+        });
+
+        it("is called with a paramater that is an empty string", function() {
+            expect(webActionSpy).toHaveBeenCalledWith(new jasmine.ObjectContaining({ 
+                'param' : ''
+            }));
+        });
+    });
+
+    it("URI decodes the action", function() {
+        app.define_web_action('äction💩Quit', webActionSpy);
+        RunApplicationWithWebAction(app, 'endless://%C3%A4ction%F0%9F%92%A9Quit');
+        expect(webActionSpy).toHaveBeenCalled();
+    });
+
+    it("allows web actions to be defined as object properties", function() {
+        app.define_web_actions({
+            quitApplication: webActionSpy
+        });
+ 
+        RunApplicationWithWebAction(app, 'endless://quitApplication');
+
+        expect(webActionSpy).toHaveBeenCalled();
+    });
+
+    it("throws an error when trying to define an action that is not a function", function() {
+        expect(function() {
+            app.define_web_action('action', {});
+        }).toThrow();
+    });
+});
