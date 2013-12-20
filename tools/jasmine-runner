@@ -1,0 +1,18 @@
+#!/usr/bin/gjs
+
+// You should only run this from test/
+imports.searchPath.unshift ("jasmine");
+imports.searchPath.unshift ("..");
+
+const JasmineGJS = imports.jasminegjsbootstrap;
+
+// Bootstrap Jasmine for the "jasmine" subdirectory
+JasmineGJS.bootstrap("jasmine");
+
+let suites = [];
+
+for (let i = 0; i < ARGV.length; i++) {
+    suites.push(ARGV[i]);
+}
+
+JasmineGJS.executeSpecs(suites, "");
