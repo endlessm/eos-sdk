@@ -77,11 +77,11 @@ describe("Category Model", function() {
         toContainCategoriesWithNames: function() {
           return {
             compare: function(actual, names) {
-              const result = {
+              let result = {
                 pass: (function() {
                   let outer_pass = true;
                   names.forEach(function (id) {
-                    const categories = actual.getSubcategories();
+                    let categories = actual.getSubcategories();
                     if (!categories.some(function(category) {
                       return category.id == id;
                     })) {
@@ -110,9 +110,9 @@ describe("Category Model", function() {
         toHaveOnlyTheFollowingCategoriesInOrder: function() {
           return {
             compare: function(actual, names) {
-              const result = {
+              let result = {
                 pass: (function() {
-                  const categories = actual.getSubcategories();
+                  let categories = actual.getSubcategories();
                   if (categories.length != names.length)
                     return false;
                   

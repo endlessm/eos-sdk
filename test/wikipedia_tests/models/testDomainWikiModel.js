@@ -70,20 +70,20 @@ describe("Domain Wiki Model", function() {
     ]
   };
   beforeEach(function() {
-    const model = new DomainWikiModel.DomainWikiModel();
+    let model = new DomainWikiModel.DomainWikiModel();
     jasmine.addMatchers({
       toHaveObjectsContainingProperties: function() {
         return {
           compare: function(actual, propertyMap) {
-            const result = {
+            let result = {
               pass: (function() {
                 for (let property in propertyMap) {
-                  const allValuesListedHaveAMatchForObject = actual.some(function(object) {
+                  let allValuesListedHaveAMatchForObject = actual.some(function(object) {
                     if (object[property] == 'undefined') {
                       return false;
                     }
                     
-                    const propertyValueMatchedForObject =
+                    let propertyValueMatchedForObject =
                       propertyMap[property].some(function(value) {
                         return object[property] == value;
                       });
@@ -133,24 +133,24 @@ describe("Domain Wiki Model", function() {
       model.loadFromJson(mockJsonData);
     });
     it("returns all articles when getting articles", function() {
-      const articles = model.getArticles();
+      let articles = model.getArticles();
       expect(articles).toHaveObjectsContainingProperties({
         title: [ 'Article One', 'Article Two', 'Article Three' ]
       });
     });
     it("can get articles for a category", function() {
-      const articles = model.getArticlesForCategory('Category One');
+      let articles = model.getArticlesForCategory('Category One');
       expect(articles).toHaveObjectsContainingProperties({
         title: [ 'Article One', 'Article Two' ]
       });
     });
     it("has no articles on a category that does not have articles", function() {
-      const articles = model.getArticlesForCategory('Main Category');
+      let articles = model.getArticlesForCategory('Main Category');
       expect(articles.length).toEqual(0);
     });
     // TODO: Shouldn't this throw?
     it("has no articles for a category that does not exist", function() {
-      const articles = model.getArticlesForCategory('Nonexistent');
+      let articles = model.getArticlesForCategory('Nonexistent');
       expect(articles.length).toEqual(0);
     });
     it("can check whether or not a category has articles", function() {
@@ -181,7 +181,7 @@ describe("Domain Wiki Model", function() {
       expect(model.getCategory('Nonexistent')).toBeUndefined();
     })
     it("returns 'Main Category' when getting the main category", function() {
-      const category = model.getMainCategory();
+      let category = model.getMainCategory();
       expect(category).toEqual(new jasmine.ObjectContaining({
         'title' : 'Main Category'
       }));

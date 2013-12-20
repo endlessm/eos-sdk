@@ -52,7 +52,7 @@ describe("Web Actions Bindings", function() {
       });
   });
   
-  const RunApplicationWithWebAction = function(app, action) {
+  let RunApplicationWithWebAction = function(app, action) {
       app.webActionToTest = action;
       app.run([]);
   }
