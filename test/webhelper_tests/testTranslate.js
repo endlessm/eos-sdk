@@ -75,7 +75,7 @@ describe("Translation strategy", function() {
         }).toThrow();
     });
 
-    // Can't test this right now as there is no support for propogating exceptions across
+    // Can't test this right now as there is no support for propagating exceptions across
     // GI interfaces
     xit("throws when there isn't a translation function set", function() {
         expect(function() {
