@@ -11,22 +11,28 @@ describe("Category Model", function() {
   };
   
   describe("from JSON", function() {
+
     let model;
     beforeEach(function() {
       model = CategoryModel.newFromJson(mockJsonData);
     });
+
     it("is a CategoryModel", function() {
       expect(model instanceof CategoryModel.CategoryModel).toBeTruthy();
     });
+
     it("has an id", function() {
       expect(model.id).toEqual(mockJsonData.category_name);
     });
+
     it("has no subcategories", function() {
       expect(model.getSubcategories().length).toEqual(0);
     });
   });
+
   describe("from properties", function() {
     let model;
+ 
     beforeEach(function() {
       model = new CategoryModel.CategoryModel({
         id: 'id',
@@ -38,27 +44,35 @@ describe("Category Model", function() {
         has_articles: true
       });
     });
+
     it("has an id", function() {
       expect(model.id).toEqual('id');
     });
+
     it("has a title", function() {
       expect(model.title).toEqual('title');
     });
+
     it("has a description", function() {
       expect(model.description).toEqual('description');
     });
+
     it("has an image uri", function() {
       expect(model.image_uri).toEqual('image-uri');
     });
+
     it("has an image thumbnail uri", function() {
       expect(model.image_thumbnail_uri).toEqual('image-thumbnail-uri');
     });
+
     it("is a main category", function() {
       expect(model.is_main_category).toBeTruthy();
     });
+
     it("has articles", function() {
       expect(model.has_articles).toBeTruthy();
     });
+
     // FIXME: This seems to be a fairly useless test. Does it actually
     // test anything?
     it("does not have articles once the flag is unset", function() {
@@ -66,12 +80,16 @@ describe("Category Model", function() {
       expect(model.has_articles).toBeFalsy();
     });
   });
+
   it("starts with no subcategories", function() {
     let model = new CategoryModel.CategoryModel();
+
     expect(model.getSubcategories().length).toEqual(0);
   });
+
   describe("in a tree-like structure", function() {
     let parent;
+
     beforeEach(function() {
       jasmine.addMatchers({
         toContainCategoriesWithNames: function() {
@@ -90,6 +108,7 @@ describe("Category Model", function() {
                   });
                   return outer_pass;
                 })(),
+
                 message: (function() {
                   let msg = "Expected categories with the following names\n";
                   names.forEach(function(name) {
@@ -100,7 +119,7 @@ describe("Category Model", function() {
                     msg += " " + category.id + "\n";
                   });
                   return msg;
-                })()
+                })();
               }
               
               return result;
@@ -123,6 +142,7 @@ describe("Category Model", function() {
                   
                   return true;
                 })(),
+
                 message: (function() {
                   let msg = "Expected exactly the following category names\n";
                   names.forEach(function(name) {
@@ -148,9 +168,11 @@ describe("Category Model", function() {
       parent.addSubcategory(new CategoryModel.CategoryModel({ id: 'Category Two' }));
       parent.addSubcategory(new CategoryModel.CategoryModel({ id: 'Category Three' }));
     });
+
     it("has subcategories", function() {
       expect(parent).toContainCategoriesWithNames(['Category Two', 'Category Three']);
     });
+
     it("silently does not add duplicates", function() {
       parent.addSubcategory(new CategoryModel.CategoryModel({ id: 'Category Two' }));
       expect(parent).toHaveOnlyTheFollowingCategoriesInOrder(['Category Two', 'Category Three']);

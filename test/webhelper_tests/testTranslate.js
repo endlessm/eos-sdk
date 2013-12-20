@@ -56,6 +56,7 @@ describe("Translation strategy", function() {
             application_id: id_string
         });
     });
+ 
     describe("translation function", function() {
         let translationFunctionSpy;
         beforeEach(function() {
@@ -67,11 +68,13 @@ describe("Translation strategy", function() {
             expect(translationFunctionSpy).toHaveBeenCalledWith(app.get_translation_string());
         });
     });
+
     it("throws when an incompatible type is set as the translation function", function() {
         expect(function() {
             app.set_translation_function({});
         }).toThrow();
     });
+
     // Can't test this right now as there is no support for propogating exceptions across
     // GI interfaces
     xit("throws when there isn't a translation function set", function() {
@@ -79,9 +82,11 @@ describe("Translation strategy", function() {
             app.run([]);
         }).toThrow();
     });
+
     it("has a null translation function by default", function() {
         expect(app.get_translation_function()).toBe(null);
     });
+
     it("stores the expected translation function", function() {
         let translation = function(str) {
             return str;
@@ -90,6 +95,7 @@ describe("Translation strategy", function() {
         app.set_translation_function(translation);
         expect(app.get_translation_function()).toBe(translation);
     });
+
     it("allows us to store a null translation function", function() {
         let nonNullTranslation = function(str) {
             return str;
