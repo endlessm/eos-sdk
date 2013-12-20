@@ -71,14 +71,14 @@ describe("Wikipedia article model", function() {
         });
 
         it("replaces existing categories", function() {
-            model.setCategories(['One', 'Two', 'Three']);
+            model.setCategories(['One', 'Two']);
             let expectedCategories = ['One', 'Two', 'Three'];
             model.setCategories(expectedCategories);
             expect(model.getCategories()).toEqual(expectedCategories);
         });
     });
 
-    it("can have arbitrary categories added to it", function() {
+    it("appends new categories on addCategory", function() {
         let model = new ArticleModel.ArticleModel();
 
         model.addCategory('One');

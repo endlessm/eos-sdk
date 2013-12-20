@@ -99,7 +99,7 @@ describe("Web Actions Bindings", function() {
         }));
     });
 
-    // We currenlty can't catch exceptions across GObject-Introspection callbacks
+    // We currently can't catch exceptions across GObject-Introspection callbacks
     xit('bad action is not called', function() {
         expect(function() { RunApplicationWithWebAction(app, 'endless://nonexistentWebAction') }).toThrow();
     });
@@ -127,7 +127,7 @@ describe("Web Actions Bindings", function() {
         expect(webActionSpy).toHaveBeenCalled();
     });
 
-    it("allows multiple web actions to be defined", function() {
+    it("allows web actions to be defined as object properties", function() {
         app.define_web_actions({
             quitApplication: webActionSpy
         });

@@ -155,7 +155,6 @@ describe("Domain Wiki Model", function() {
             expect(articles.length).toEqual(0);
         });
 
-        // TODO: Shouldn't this throw?
         it("has no articles for a category that does not exist", function() {
             let articles = model.getArticlesForCategory('Nonexistent');
             expect(articles.length).toEqual(0);
@@ -169,7 +168,6 @@ describe("Domain Wiki Model", function() {
             expect(model._getCategoryHasArticles('Category Three')).toBeFalsy();
         });
 
-        // TODO: Again this should throw.
         it("verifies that a category that does not exist has no articles", function() {
             expect(model._getCategoryHasArticles('Nonexistent')).toBeFalsy();
         });
