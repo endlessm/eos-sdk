@@ -44,9 +44,9 @@ const WebHelperApplicationWithTranslatableText = new Lang.Class({
 
 describe("Translation strategy", function() {
     let app;
-    let id_string;
 
     beforeEach(function() {
+        let id_string;
         // Generate a unique ID for each app instance that we test
         let fake_pid = GLib.random_int();
         // FIXME In this version of GJS there is no Posix module, so fake the PID
