@@ -94,6 +94,63 @@ test_get_set_page_manager (GApplication *app)
 }
 
 static void
+test_get_set_font_scaling_active (GApplication *app)
+{
+  GtkWidget *win = eos_window_new (EOS_APPLICATION (app));
+
+  gboolean is_scaling_default = eos_window_get_font_scaling_active (EOS_WINDOW (win));
+  g_assert (!is_scaling_default);
+
+  eos_window_set_font_scaling_active (EOS_WINDOW (win), TRUE);
+  gboolean is_scaling = eos_window_get_font_scaling_active (EOS_WINDOW (win));
+  g_assert (is_scaling);
+
+  gtk_widget_destroy (win);
+}
+
+static void
+test_get_set_font_scaling_default_size (GApplication *app)
+{
+  GtkWidget *win = eos_window_new (EOS_APPLICATION (app));
+  gint new_font_size = 10;
+
+  eos_window_set_font_scaling_default_size (EOS_WINDOW (win), new_font_size);
+  gint returned_font_size = eos_window_get_font_scaling_default_size (EOS_WINDOW (win));
+
+  g_assert (new_font_size == returned_font_size);
+
+  gtk_widget_destroy (win);
+}
+
+static void
+test_get_set_font_scaling_default_window_size (GApplication *app)
+{
+  GtkWidget *win = eos_window_new (EOS_APPLICATION (app));
+  gint new_window_size = 720;
+
+  eos_window_set_font_scaling_default_window_size (EOS_WINDOW (win), new_window_size);
+  gint returned_window_size = eos_window_get_font_scaling_default_window_size (EOS_WINDOW (win));
+
+  g_assert (new_window_size == returned_window_size);
+
+  gtk_widget_destroy (win);
+}
+
+static void
+test_get_set_font_scaling_min_font_size (GApplication *app)
+{
+  GtkWidget *win = eos_window_new (EOS_APPLICATION (app));
+  gint new_min_font_size = 10;
+
+  eos_window_set_font_scaling_min_font_size (EOS_WINDOW (win), new_min_font_size);
+  gint returned_min_font_size = eos_window_get_font_scaling_min_font_size (EOS_WINDOW (win));
+
+  g_assert (new_min_font_size == returned_min_font_size);
+
+  gtk_widget_destroy (win);
+}
+
+static void
 test_prop_page_manager (GApplication *app)
 {
   GtkWidget *win = eos_window_new (EOS_APPLICATION (app));
@@ -181,6 +238,14 @@ add_window_tests (void)
                        test_has_default_page_manager);
   ADD_APP_WINDOW_TEST ("/window/get-set-page-manager",
                        test_get_set_page_manager);
+  ADD_APP_WINDOW_TEST ("/window/get-set-font-scaling-active",
+                       test_get_set_font_scaling_active);
+  ADD_APP_WINDOW_TEST ("/window/get-set-font-scaling-default-size",
+                       test_get_set_font_scaling_default_size);
+  ADD_APP_WINDOW_TEST ("/window/get-set-font-scaling-default-window-size",
+                       test_get_set_font_scaling_default_window_size);
+  ADD_APP_WINDOW_TEST ("/window/get-set-font-scaling-min-font-size",
+                       test_get_set_font_scaling_min_font_size);
   ADD_APP_WINDOW_TEST ("/window/prop-page-manager", test_prop_page_manager);
   ADD_APP_WINDOW_TEST ("/window/main-area-widgets-visibility",
                        test_main_area_widgets_visibility);

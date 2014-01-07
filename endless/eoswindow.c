@@ -33,12 +33,39 @@
  *     },
  * });
  * ]|
+ *
+ * We will use an application-configurable base font size for application-
+ * configurable resolution and scale up/down from there for different screen sizes.
+ *
+ * Font scaling can be enabled by setting #EosWindow:font-scaling-active to
+ * true. Font scaling is turned off and the property is false by default.
+ *
+ * The default font size by which font scaling will occur can be set by
+ * #EosWindow:font-scaling-default-size.
+ *
+ * The default window resolution height by which font scaling will occur can be
+ * set by #EosWindow:font-scaling-default-window-size.
+ *
+ * The default minimum font size under which a font will never scale can be set
+ * by #EosWindow:font-scaling-min-font-size.
+ *
+ * For instance, supose we have a default font size of 12px, a default window size
+ * of 720px, and a window allocation of 360px. The calculated base pixel size
+ * will be 12px * (360px / 720px) = 6px. A corresponding CSS font-size of 1em will
+ * be equivalent to 6 px. A CSS font-size of 0.5em will be equivalent to 3px. If the
+ * window is resized to a height of 720px, then the calculated base pixel size will
+ * be 12px, and the CSS font-size of 1em will be equivalent to 12px. A CSS
+ * font-size of 0.5em will be equivalent to 6px. If the minimum font size is set
+ * to 12px, then the font-size will be forced to 12px, ignoring the calculated font
+ * size of 6px.
  */
 
 #define DEFAULT_WINDOW_WIDTH 800
 #define DEFAULT_WINDOW_HEIGHT 600
 
 #define BACKGROUND_FRAME_NAME_TEMPLATE "_eos-window-background-%d"
+
+#define FONT_SIZE_TEMPLATE "EosWindow { font-size: %fpx; }"
 
 #define TRANSPARENT_FRAME_CSS_PROPERTIES "{ background-image: none;\n" \
                                           " background-color: transparent\n;" \
@@ -68,6 +95,13 @@ typedef struct {
 
   EosPageManager *page_manager;
 
+  /* For scaling base font-size */
+  GtkCssProvider *font_size_provider;
+  gboolean font_scaling_active;
+  gint font_scaling_default_size;
+  gint font_scaling_default_window_size;
+  gint font_scaling_min_font_size;
+
   /* For keeping track of what to display alongside the current page */
   GtkWidget *current_page;
   gulong visible_page_property_handler;
@@ -82,6 +116,10 @@ enum
   PROP_0,
   PROP_APPLICATION,
   PROP_PAGE_MANAGER,
+  PROP_FONT_SCALING_ACTIVE,
+  PROP_FONT_SCALING_DEFAULT_SIZE,
+  PROP_FONT_SCALING_DEFAULT_WINDOW_SIZE,
+  PROP_FONT_SCALING_MIN_FONT_SIZE,
   NPROPS
 };
 
@@ -373,6 +411,22 @@ eos_window_get_property (GObject    *object,
       g_value_set_object (value, eos_window_get_page_manager (self));
       break;
 
+    case PROP_FONT_SCALING_ACTIVE:
+      g_value_set_boolean (value, priv->font_scaling_active);
+      break;
+
+    case PROP_FONT_SCALING_DEFAULT_SIZE:
+      g_value_set_int (value, priv->font_scaling_default_size);
+      break;
+
+    case PROP_FONT_SCALING_DEFAULT_WINDOW_SIZE:
+      g_value_set_int (value, priv->font_scaling_default_window_size);
+      break;
+
+    case PROP_FONT_SCALING_MIN_FONT_SIZE:
+      g_value_set_int (value, priv->font_scaling_min_font_size);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -412,6 +466,22 @@ eos_window_set_property (GObject      *object,
       eos_window_set_page_manager (self, g_value_get_object (value));
       break;
 
+    case PROP_FONT_SCALING_ACTIVE:
+      eos_window_set_font_scaling_active (self, g_value_get_boolean (value));
+      break;
+
+    case PROP_FONT_SCALING_DEFAULT_SIZE:
+      eos_window_set_font_scaling_default_size (self, g_value_get_int (value));
+      break;
+
+    case PROP_FONT_SCALING_DEFAULT_WINDOW_SIZE:
+      eos_window_set_font_scaling_default_window_size (self, g_value_get_int (value));
+      break;
+
+    case PROP_FONT_SCALING_MIN_FONT_SIZE:
+      eos_window_set_font_scaling_min_font_size (self, g_value_get_int (value));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -424,6 +494,7 @@ eos_window_finalize (GObject *object)
   EosWindowPrivate *priv = eos_window_get_instance_private (self);
 
   g_object_unref (priv->background_provider);
+  g_object_unref (priv->font_size_provider);
   g_free (priv->current_background_css_props);
 
   G_OBJECT_CLASS (eos_window_parent_class)->finalize (object);
@@ -498,6 +569,38 @@ eos_window_get_preferred_height (GtkWidget *widget,
                       natural_height);
 }
 
+/* Updates the base font size depending on the window size. */
+static void
+eos_window_size_allocate (GtkWidget *window, GtkAllocation *allocation)
+{
+  EosWindow *self = EOS_WINDOW (window);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+
+  if (priv->font_scaling_active)
+    {
+      GtkStyleProvider *provider = GTK_STYLE_PROVIDER (priv->font_size_provider);
+      gdouble base_pixel_size = (gdouble) priv->font_scaling_default_size *
+                                ((gdouble) allocation->height / (gdouble) priv->font_scaling_default_window_size);
+
+      if (base_pixel_size < priv->font_scaling_min_font_size)
+        base_pixel_size = priv->font_scaling_min_font_size;
+
+      GError *error = NULL;
+
+      gchar *font_size_css = g_strdup_printf (FONT_SIZE_TEMPLATE, base_pixel_size);
+      GdkScreen *screen = gdk_screen_get_default ();
+
+      gtk_style_context_remove_provider_for_screen (screen, provider);
+      gtk_css_provider_load_from_data (provider, font_size_css, -1, &error);
+      gtk_style_context_add_provider_for_screen (screen, provider,
+                                                 GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+      g_free(font_size_css);
+    }
+
+  GTK_WIDGET_CLASS (eos_window_parent_class)->size_allocate (window, allocation);
+}
+
 /* Our default delete event handler destroys the window. */
 static gboolean
 eos_window_default_delete (GtkWidget* window,
@@ -518,6 +621,7 @@ eos_window_class_init (EosWindowClass *klass)
   object_class->finalize = eos_window_finalize;
   widget_class->get_preferred_height = eos_window_get_preferred_height;
   widget_class->get_preferred_width = eos_window_get_preferred_width;
+  widget_class->size_allocate = eos_window_size_allocate;
 
   /**
    * EosWindow:application:
@@ -542,6 +646,56 @@ eos_window_class_init (EosWindowClass *klass)
                          "Page manager associated with this window",
                          EOS_TYPE_PAGE_MANAGER,
                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * EosWindow:font-scaling-active:
+   *
+   * The scaling flag that determines if the windows scale or not.
+   */
+  eos_window_props[PROP_FONT_SCALING_ACTIVE] =
+    g_param_spec_boolean ("font-scaling-active", "Font scaling active",
+                         "Whether or not EosWindow objects scale font size",
+                         FALSE,
+                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * EosWindow:font-scaling-default-size:
+   *
+   * The default font-size by which font scaling will occur. Units are in pixels.
+   */
+  eos_window_props[PROP_FONT_SCALING_DEFAULT_SIZE] =
+    g_param_spec_int ("font-scaling-default-size", "Font scaling default size",
+                      "This is the default font-size by which font-size for children widgets will scale",
+                      1,
+                      G_MAXINT,
+                      12,
+                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * EosWindow:font-scaling-default-window-size:
+   *
+   * The base resolution by which font scaling will occur. Units are in pixels.
+   */
+  eos_window_props[PROP_FONT_SCALING_DEFAULT_WINDOW_SIZE] =
+    g_param_spec_int ("font-scaling-default-window-size", "Font scaling default window size",
+                      "This is the base resolution by which font-size for children widgets will scale",
+                      1,
+                      G_MAXINT,
+                      1080,
+                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * EosWindow:font-scaling-min-font-size:
+   *
+   * The minimum font-size under which font scaling won't occur. Units are in pixels.
+   */
+  eos_window_props[PROP_FONT_SCALING_MIN_FONT_SIZE] =
+    g_param_spec_int ("font-scaling-min-font-size", "Font scaling default size",
+                      "This is the minimum font-size under which font-size for children widgets won't scale",
+                      1,
+                      G_MAXINT,
+                      8,
+                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, NPROPS, eos_window_props);
 }
@@ -621,6 +775,9 @@ eos_window_init (EosWindow *self)
   priv->current_background = g_object_new (GTK_TYPE_FRAME, "name", background_name0, NULL);
   gtk_container_add (GTK_CONTAINER (priv->background_stack), priv->current_background);
   g_free (background_name0);
+
+  /* Dynamically set the base font-size based on the given window allocation. */
+  priv->font_size_provider = gtk_css_provider_new ();
 
   priv->background_provider = gtk_css_provider_new ();
   // We start all the background frames transparent with no styling
@@ -730,4 +887,145 @@ eos_window_set_page_manager (EosWindow *self,
 
   g_signal_connect_swapped (priv->page_manager, "notify::visible-page",
                             G_CALLBACK (update_page), self);
+}
+
+/**
+ * eos_window_get_font_scaling_active:
+ * @self: the window
+ *
+ * See #EosWindow:font-scaling-active for details.
+ *
+ * Returns: whether or not the font will automatically scale.
+ */
+gboolean
+eos_window_get_font_scaling_active (EosWindow *self)
+{
+  g_return_val_if_fail (self != NULL && EOS_IS_WINDOW (self), FALSE);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+
+  return priv->font_scaling_active;
+}
+
+/**
+ * eos_window_set_font_scaling_active:
+ * @self: the window
+ * @is_scaling: true for enabling font scaling and 
+ * false for disabling font scaling
+ *
+ * Sets whether or not the font will automatically scale.
+ * See #EosWindow:font-scaling-active for details.
+ */
+void
+eos_window_set_font_scaling_active (EosWindow *self,
+                                    gboolean is_scaling)
+{
+  g_return_if_fail (self != NULL && EOS_IS_WINDOW (self));
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  priv->font_scaling_active = is_scaling;
+}
+
+/**
+ * eos_window_get_font_scaling_default_size:
+ * @self: the window
+ *
+ * See #EosWindow:font-scaling-default-size for details.
+ *
+ * Returns: the default font size by which the font size of children widgets
+ * will scale.
+ */
+gint
+eos_window_get_font_scaling_default_size (EosWindow *self)
+{
+  g_return_val_if_fail (self != NULL && EOS_IS_WINDOW (self), -1);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+
+  return priv->font_scaling_default_size;
+}
+
+/**
+ * eos_window_set_font_scaling_default_size:
+ * @self: the window
+ * @new_default_font_size: the new default font size
+ *
+ * Sets the default font size by which the font size of children widgets
+ * will scale. See #EosWindow:font-scaling-default-size for details.
+ */
+void
+eos_window_set_font_scaling_default_size (EosWindow *self,
+                                          gint new_default_font_size)
+{
+  g_return_if_fail (self != NULL && EOS_IS_WINDOW (self));
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  priv->font_scaling_default_size = new_default_font_size;
+}
+
+/**
+ * eos_window_get_font_scaling_default_window_size:
+ * @self: the window
+ *
+ * See #EosWindow:font-scaling-default-window-size for details.
+ *
+ * Returns: the default window size by which font scaling
+ * will occur.
+ */
+gint
+eos_window_get_font_scaling_default_window_size (EosWindow *self)
+{
+  g_return_val_if_fail (self != NULL && EOS_IS_WINDOW (self), -1);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+
+  return priv->font_scaling_default_window_size;
+}
+
+/**
+ * eos_window_set_font_scaling_default_window_size:
+ * @self: the window
+ * @new_default_window_size: the new default window size
+ *
+ * Sets the default window size by which the font size of children widgets
+ * will scale. See #EosWindow:font-scaling-default-window-size for details.
+ */
+void
+eos_window_set_font_scaling_default_window_size (EosWindow *self,
+                                                 gint new_default_window_size)
+{
+  g_return_if_fail (self != NULL && EOS_IS_WINDOW (self));
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  priv->font_scaling_default_window_size = new_default_window_size;
+}
+
+/**
+ * eos_window_get_font_scaling_min_font_size:
+ * @self: the window
+ *
+ * See #EosWindow:font-scaling-min-font-size for details.
+ *
+ * Returns: the minimum font size below which font scaling
+ * won't occur.
+ */
+gint
+eos_window_get_font_scaling_min_font_size (EosWindow *self)
+{
+  g_return_val_if_fail (self != NULL && EOS_IS_WINDOW (self), -1);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+
+  return priv->font_scaling_min_font_size;
+}
+
+/**
+ * eos_window_set_font_scaling_min_font_size:
+ * @self: the window
+ * @new_min_font_size: the new min font size
+ *
+ * Sets the min font size by which the font size of children widgets
+ * will scale. See #EosWindow:font-scaling-min-font-size for
+ * details.
+ */
+void 
+eos_window_set_font_scaling_min_font_size (EosWindow *self,
+                                           gint new_min_font_size)
+{
+  g_return_if_fail (self != NULL && EOS_IS_WINDOW (self));
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  priv->font_scaling_min_font_size = new_min_font_size;
 }
