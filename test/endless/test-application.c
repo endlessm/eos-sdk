@@ -72,6 +72,29 @@ test_config_dir_get (UniqueAppFixture *fixture,
 }
 
 static void
+test_image_attribution_file_get_set (UniqueAppFixture *fixture,
+                                     gconstpointer     unused)
+{
+  GFile *file1, *file2;
+  GFileIOStream *stream;
+  g_object_get (fixture->app, "image-attribution-file", &file1, NULL);
+
+  g_assert_null (file1);
+
+  file1 = g_file_new_tmp (NULL, &stream, NULL);
+  g_assert_nonnull (file1);
+  g_io_stream_close (G_IO_STREAM (stream), NULL, NULL);
+  g_object_unref (stream);
+  g_object_set (fixture->app, "image-attribution-file", file1, NULL);
+  g_object_get (fixture->app, "image-attribution-file", &file2, NULL);
+
+  g_assert_true (g_file_equal (file1, file2));
+
+  g_object_unref (file1);
+  g_object_unref (file2);
+}
+
+static void
 test_config_dir_returns_expected_path (UniqueAppFixture *fixture,
                                        gconstpointer     unused)
 {
@@ -156,6 +179,8 @@ add_application_tests (void)
              unique_app_setup, (func), unique_app_teardown)
 
   ADD_APP_TEST ("/application/config-dir-get", test_config_dir_get);
+  ADD_APP_TEST ("/application/image-attribution-file-get-set",
+                test_image_attribution_file_get_set);
   ADD_APP_TEST ("/application/config-dir-expected-path",
                 test_config_dir_returns_expected_path);
   ADD_APP_TEST ("/application/config-dir-exists", test_config_dir_exists);

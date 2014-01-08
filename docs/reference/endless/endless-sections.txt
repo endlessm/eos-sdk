@@ -27,6 +27,8 @@ EOS_ENUM_VALUE
 EosApplication
 eos_application_new
 eos_application_get_config_dir
+eos_application_get_image_attribution_file
+eos_application_set_image_attribution_file
 <SUBSECTION Standard>
 EosApplicationClass
 EOS_APPLICATION
