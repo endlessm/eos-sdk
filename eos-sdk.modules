@@ -146,6 +146,11 @@ This moduleset is created under the assumptions that:
     <branch revision="dev"/>
   </autotools>
 
+  <autotools id="eos-metrics">
+    <branch revision="dev"
+      autogenargs="--enable-strict-flags --enable-gtk-doc --enable-gir-doc"/>
+  </autotools>
+
   <autotools id="eos-theme">
     <branch revision="dev"/>
   </autotools>
