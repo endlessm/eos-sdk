@@ -274,10 +274,13 @@ update_page_background (EosWindow *self)
   override_background_css (self, background_css);
   gtk_stack_set_visible_child (GTK_STACK (priv->background_stack),
                                priv->next_background);
+  g_free (background_css);
   // Swap our background frames for next animation
   GtkWidget *temp = priv->next_background;
   priv->next_background = priv->current_background;
   priv->current_background = temp;
+
+  g_free (priv->current_background_css_props);
   priv->current_background_css_props = next_background_css_props;
 }
 
@@ -414,6 +417,18 @@ eos_window_set_property (GObject      *object,
     }
 }
 
+static void
+eos_window_finalize (GObject *object)
+{
+  EosWindow *self = EOS_WINDOW (object);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+
+  g_object_unref (priv->background_provider);
+  g_free (priv->current_background_css_props);
+
+  G_OBJECT_CLASS (eos_window_parent_class)->finalize (object);
+}
+
 /* Clamp our size request calls so we never ask for a minimal size greater than
  the available work area. */
 static void
@@ -500,6 +515,7 @@ eos_window_class_init (EosWindowClass *klass)
 
   object_class->get_property = eos_window_get_property;
   object_class->set_property = eos_window_set_property;
+  object_class->finalize = eos_window_finalize;
   widget_class->get_preferred_height = eos_window_get_preferred_height;
   widget_class->get_preferred_width = eos_window_get_preferred_width;
 
@@ -597,22 +613,25 @@ eos_window_init (EosWindow *self)
   gchar *background_name1 = g_strdup_printf (BACKGROUND_FRAME_NAME_TEMPLATE, 1);
   priv->next_background = g_object_new (GTK_TYPE_FRAME, "name", background_name1, NULL);
   gtk_container_add (GTK_CONTAINER (priv->background_stack), priv->next_background);
+  g_free (background_name1);
 
   // Add the current background to the stack second. I think the latest added
   // will be the first visible page in the stack
   gchar *background_name0 = g_strdup_printf (BACKGROUND_FRAME_NAME_TEMPLATE, 0);
   priv->current_background = g_object_new (GTK_TYPE_FRAME, "name", background_name0, NULL);
   gtk_container_add (GTK_CONTAINER (priv->background_stack), priv->current_background);
+  g_free (background_name0);
 
   priv->background_provider = gtk_css_provider_new ();
   // We start all the background frames transparent with no styling
-  priv->current_background_css_props = TRANSPARENT_FRAME_CSS_PROPERTIES;
+  priv->current_background_css_props = g_strdup (TRANSPARENT_FRAME_CSS_PROPERTIES);
   gchar *background_css = g_strdup_printf(CSS_TEMPLATE,
                                           gtk_widget_get_name (priv->current_background),
                                           TRANSPARENT_FRAME_CSS_PROPERTIES,
                                           gtk_widget_get_name (priv->next_background),
                                           TRANSPARENT_FRAME_CSS_PROPERTIES);
   override_background_css (self, background_css);
+  g_free (background_css);
 
   priv->main_area = eos_main_area_new ();
   gtk_overlay_add_overlay (GTK_OVERLAY (priv->overlay), priv->main_area);
