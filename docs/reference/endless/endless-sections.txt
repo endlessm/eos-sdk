@@ -192,3 +192,18 @@ eos_flexy_grid_get_type
 eos_flexy_grid_cell_get_type
 eos_flexy_shape_get_type
 </SECTION>
+
+<SECTION>
+<FILE>custom-container</FILE>
+EosCustomContainer
+eos_custom_container_new
+<SUBSECTION Standard>
+EOS_CUSTOM_CONTAINER
+EOS_CUSTOM_CONTAINER_CLASS
+EOS_CUSTOM_CONTAINER_GET_CLASS
+EOS_IS_CUSTOM_CONTAINER
+EOS_IS_CUSTOM_CONTAINER_CLASS
+EOS_TYPE_CUSTOM_CONTAINER
+EosCustomContainerClass
+eos_custom_container_get_type
+</SECTION>

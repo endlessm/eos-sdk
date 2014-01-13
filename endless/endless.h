@@ -18,6 +18,7 @@ G_BEGIN_DECLS
 #include "eospagemanager.h"
 #include "eossplashpagemanager.h"
 #include "eoswindow.h"
+#include "eoscustomcontainer.h"
 
 #undef _EOS_SDK_INSIDE_ENDLESS_H
 
