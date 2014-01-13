@@ -139,7 +139,6 @@ This moduleset is created under the assumptions that:
       autogenargs="--enable-strict-flags --enable-gtk-doc --enable-gir-doc --enable-js-doc"/>
     <dependencies>
       <dep package="eos-theme"/>
-      <dep package="eos-pstack"/>
     </dependencies>
   </autotools>
 
