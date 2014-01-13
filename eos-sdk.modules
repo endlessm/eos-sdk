@@ -17,26 +17,17 @@ This moduleset is created under the assumptions that:
   <!-- Module of all apps -->
   <metamodule id="endless-apps">
     <dependencies>
-      <dep package="eos-celebrities"/>
-      <dep package="eos-cooking"/>
       <dep package="eos-dictionary"/>
       <dep package="eos-english"/>
-      <dep package="eos-fitness"/>
-      <dep package="eos-futbol"/>
-      <dep package="eos-guatemala"/>
       <dep package="eos-khan-academy"/>
-      <dep package="eos-mexico"/>
       <dep package="eos-photos"/>
       <dep package="eos-programming-app"/>
       <dep package="eos-resume-app"/>
-      <dep package="eos-science"/>
       <dep package="eos-translation"/>
-      <dep package="eos-travel"/>
       <dep package="eos-typing"/>
       <dep package="eos-weather"/>
       <dep package="eos-wikipedia"/>
-      <dep package="eos-wikipedia-brazil"/>
-      <dep package="eos-wikipedia-health"/>
+      <dep package="eos-wikipedia-apps"/>
       <dep package="eos-wikipedia-offline"/>
       <dep package="eos-youtube"/>
     </dependencies>
@@ -118,14 +109,7 @@ This moduleset is created under the assumptions that:
     </dependencies>
   </autotools>
 
-  <autotools id="eos-wikipedia-brazil">
-    <branch revision="dev"/>
-    <dependencies>
-      <dep package="eos-sdk"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="eos-wikipedia-health">
+  <autotools id="eos-wikipedia-apps">
     <branch revision="dev"/>
     <dependencies>
       <dep package="eos-sdk"/>
@@ -142,62 +126,6 @@ This moduleset is created under the assumptions that:
 
   <autotools id="eos-resume-app"
     skip-autogen="true" makeargs="-v" skip-install="true">
-    <branch revision="dev"/>
-    <dependencies>
-      <dep package="eos-sdk"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="eos-celebrities">
-    <branch revision="dev"/>
-    <dependencies>
-      <dep package="eos-sdk"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="eos-cooking">
-    <branch revision="dev"/>
-    <dependencies>
-      <dep package="eos-sdk"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="eos-fitness">
-    <branch revision="dev"/>
-    <dependencies>
-      <dep package="eos-sdk"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="eos-futbol">
-    <branch revision="dev"/>
-    <dependencies>
-      <dep package="eos-sdk"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="eos-guatemala">
-    <branch revision="dev"/>
-    <dependencies>
-      <dep package="eos-sdk"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="eos-mexico">
-    <branch revision="dev"/>
-    <dependencies>
-      <dep package="eos-sdk"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="eos-science">
-    <branch revision="dev"/>
-    <dependencies>
-      <dep package="eos-sdk"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="eos-travel">
     <branch revision="dev"/>
     <dependencies>
       <dep package="eos-sdk"/>
