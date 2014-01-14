@@ -50,8 +50,8 @@ gsettings set org.gnome.desktop.session idle-delay 0
 gsettings set org.gnome.shell icon-grid-layout "$(cat /vagrant/desktop-layout.json)"
 
 echo "Configuring Sublime Text..."
-mkdir -p $HOME/.config/sublime-text-2
-pushd $HOME/.config/sublime-text-2
+mkdir -p $HOME/.config/sublime-text-3
+pushd $HOME/.config/sublime-text-3
 # Install Package Control
 mkdir -p Packages Installed\ Packages
 wget -O Installed\ Packages/Package\ Control.sublime-package \
@@ -60,14 +60,4 @@ wget -O Installed\ Packages/Package\ Control.sublime-package \
 # fork your own settings repo and install that instead
 rm -rf Packages/User
 git clone https://github.com/ptomato/st2settings Packages/User
-# Patch SublimeLinter's "node" executable name because Ubuntu calls it "nodejs"
-python <<EOF
-import json
-filename = 'Packages/User/SublimeLinter.sublime-settings'
-with open(filename) as f:
-    obj = json.load(f)
-obj[u'sublimelinter_executable_map'] = {u'javascript': u'/usr/bin/nodejs'}
-with open(filename, 'w') as f:
-    json.dump(obj, f, indent=4, separators=(',', ': '))
-EOF
 popd

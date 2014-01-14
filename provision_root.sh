@@ -3,19 +3,19 @@
 # Public repositories
 add-apt-repository -y "deb http://archive.canonical.com/ubuntu $(lsb_release -sc) partner"
 add-apt-repository -y ppa:gnome3-team/gnome3
-add-apt-repository -y ppa:webupd8team/sublime-text-2
+add-apt-repository -y ppa:webupd8team/sublime-text-3
 apt-get update
 apt-get -y dist-upgrade
 # Various dependencies
-apt-get -y install git devhelp sublime-text python-pip yelp-tools fluxbox tmux \
+apt-get -y install git devhelp python-pip yelp-tools fluxbox tmux libtiff5-dev \
     sl osc pyflakes pep8 gnome-devel-docs gtk-doc-tools libgirepository1.0-dev \
     gnome-api-docs librsvg2-dev gnome-common language-pack-pt language-pack-es \
     zsh emacs python-bs4 python-polib libgtk-3-dev libclutter-1.0-dev apt-file \
     libjson-glib-doc libgtk2.0-dev libxslt1-dev flex bison gperf libdbus-1-dev \
     libproxy-dev libatasmart-dev libmozjs185-dev libtasn1-6-dev libsqlite3-dev \
     xutils-dev libgudev-1.0-dev libgphoto2-2-dev libxtst-dev libacl1-dev ragel \
-    libtiff5-dev libjpeg-dev doxygen libpam0g-dev nettle-dev icon-naming-utils \
-    libgcrypt11-dev
+    libjpeg-dev libpam0g-dev nettle-dev sublime-text-installer libgcrypt11-dev \
+    doxygen icon-naming-utils
 # For testing this script: dependencies of the rest of the provisioning scripts
 # apt-get -y install git gnome-common yelp-tools sublime-text devhelp python-pip
 apt-get clean
@@ -45,7 +45,7 @@ apt-get clean
 
 # Create shortcuts that will show up on the EOS desktop
 echo "Creating shortcuts for dev tools for EOS desktop..."
-for app in gnome-terminal devhelp sublime-text-2; do
+for app in gnome-terminal devhelp sublime-text; do
     cp /usr/share/applications/$app.desktop \
         /usr/share/applications/eos-app-$app.desktop
 done
