@@ -34,7 +34,8 @@ trap "rm -f $tmp_inventory" EXIT
 echo "Creating Ansible inventory file in $tmp_inventory"
 cat << EOF > $tmp_inventory
 [dev_machine]
-dev_machine ansible_ssh_host=$TARGET_IP ansible_ssh_user="$TARGET_USER" ansible_ssh_pass="${TARGET_PASS}" ansible_connection=ssh
+dev_machine ansible_ssh_host=$TARGET_IP ansible_ssh_user="$TARGET_USER" ansible_sudo_pass="${TARGET_PASS}" ansible_ssh_pass="${TARGET_PASS}" ansible_connection=ssh
 EOF
 
-ansible-playbook -i $tmp_inventory playbooks/setup_dev_machine.yaml
+ansible-playbook -i $tmp_inventory playbooks/setup_dev_machine_root.yaml
+ansible-playbook -i $tmp_inventory playbooks/setup_dev_machine_user.yaml

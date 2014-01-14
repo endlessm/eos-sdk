@@ -1,0 +1,17 @@
+---
+# vim:ff=unix ts=2 sw=2 ai expandtab
+
+###
+# Notice the minus on the line below -- this starts the playbook's record
+# in the YAML document. Only one playbook is allowed per YAML file.  Indent
+# the body of the playbook.
+-
+  hosts: dev_machine
+
+  sudo: True
+
+  vars_files:
+    - "../default_variables.yaml"
+
+  tasks:
+    - include: setup_other_tools.yaml

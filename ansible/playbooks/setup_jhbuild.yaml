@@ -3,17 +3,22 @@
 
 - name: "Ensuring that git is installed"
   apt: name=git
+
 - name: "Creating checkout directory"
   file: path=~/checkout state=directory mode=755
+
 - name: "Cloning jhbuild"
   git: repo=git://git.gnome.org/jhbuild
        dest=~/checkout/jhbuild
 
-- name: "Installing jhbuildi - autogen"
+- name: "Installing jhbuild - autogen"
   shell: cd ~/checkout/jhbuild && ./autogen.sh
 
-- name: "Installing jhbuildi - make"
+- name: "Installing jhbuild - make"
   shell: cd ~/checkout/jhbuild && make 
 
-- name: "Installing jhbuildi - make install"
+- name: "Installing jhbuild - make install"
   shell: cd ~/checkout/jhbuild && make install
+
+- name: "Creating glib schemas dir"
+  file: path=~/install/share/glib-2.0/schemas state=directory mode=755

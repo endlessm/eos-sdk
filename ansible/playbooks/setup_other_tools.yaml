@@ -1,0 +1,18 @@
+---
+# vim:ff=unix ts=2 sw=2 ai expandtab
+
+- name: "Ensuring that git is installed"
+  apt: name=git
+
+- name: "Creating turbine directory"
+  file: path=~/checkout state=directory mode=755
+
+- name: "Cloning turbine"
+  git: repo=git://git.gnome.org/turbine
+       dest=~/checkout/turbine
+
+- name: "Installing turbine"
+  shell: cd ~/checkout/turbine && python setup.py install
+
+- name: "Installing transifex client"
+  shell: pip install transifex-client
