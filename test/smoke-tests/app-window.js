@@ -3,6 +3,7 @@
 const Lang = imports.lang;
 const Endless = imports.gi.Endless;
 const Gtk = imports.gi.Gtk;
+const Gdk = imports.gi.Gdk;
 const GObject = imports.gi.GObject;
 
 const TEST_APPLICATION_ID = 'com.endlessm.example.test';
@@ -103,12 +104,16 @@ const Toolbox = new Lang.Class ({
         this._label2 = new Gtk.Label({ label: 'Actions on page 1' });
         this.switch1 = new Gtk.Switch({ active: false });
         this.switch2 = new Gtk.Switch({ active: true });
+        this.button1 = new Gtk.Button({ label: 'Scale font down' });
+        this.button2 = new Gtk.Button({ label: 'Scale font up' });
 
         this.add(this._label);
         this.add(this._label1);
         this.add(this.switch1);
         this.add(this._label2);
         this.add(this.switch2);
+        this.add(this.button1);
+        this.add(this.button2);
     }
 });
 
@@ -214,8 +219,25 @@ const TestApplication = new Lang.Class ({
 
         this._window = new Endless.Window({
             application: this,
-            page_manager: this._pm
+            page_manager: this._pm,
+            'font-scaling-active': true,
+            'font-scaling-default-size': 16
         });
+
+        this._toolbox.button1.connect('clicked', Lang.bind(this, function () {
+            let current_font_size = this._window.get_font_scaling_default_size();
+            this._window.set_font_scaling_default_size(current_font_size - 1);
+        }));
+        this._toolbox.button2.connect('clicked', Lang.bind(this, function () {
+            let current_font_size = this._window.get_font_scaling_default_size();
+            this._window.set_font_scaling_default_size(current_font_size + 1);
+        }));
+
+        let provider = new Gtk.CssProvider();
+        provider.load_from_data("EosWindow { font-size: 1em; }");
+        Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), provider,
+                                                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+
         this._window.show_all();
     },
 
