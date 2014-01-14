@@ -32,12 +32,12 @@ add-apt-repository -ys "deb http://obs-master:82/shared/eos dev extra endless"
 apt-get update
 apt-get -y --allow-unauthenticated dist-upgrade
 # Requires interactivity when updating base-passwd?
-apt-get -y --allow-unauthenticated install eos-guatemala endlessos-base-photos \
+apt-get -y --allow-unauthenticated install eos-guatemala eos-photos eos-social \
     eos-celebrities eos-cooking eos-english eos-exploration-center eos-fitness \
     eos-file-manager eos-translation eos-shell eos-khanacademy eos-programming \
     eos-mexico eos-resume eos-typing eos-wikipedia-health eos-wikipedia-brazil \
     eos-futbol eos-travel eos-science eos-weather chromium-browser eos-youtube \
-    eos-social eos-wikipedia eos-language-pack-es eos-language-pack-pt
+    eos-wikipedia eos-language-pack-es eos-language-pack-pt
 # Requires selecting GDM instead of LightDM
 # Don't install eos-shell-apps so that we don't pull in all the giant games deps
 # like OpenArena, and don't install eos-media because it's huge
