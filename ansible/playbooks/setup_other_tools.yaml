@@ -2,7 +2,7 @@
 # vim:ff=unix ts=2 sw=2 ai expandtab
 
 - name: "Ensuring that git is installed"
-  apt: name=git
+  apt: name=git update_cache=true cache_valid_time=259200
 
 - name: "Creating turbine directory"
   file: path=~/checkout state=directory mode=755
