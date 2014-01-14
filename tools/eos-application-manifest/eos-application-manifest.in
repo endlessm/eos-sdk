@@ -1,4 +1,4 @@
-#!/usr/bin/gjs
+#!/usr/bin/env gjs
 // Copyright 2013 Endless Mobile, Inc.
 
 const Format = imports.format;
