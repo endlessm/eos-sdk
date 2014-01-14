@@ -1,0 +1,19 @@
+---
+# vim:ff=unix ts=2 sw=2 ai expandtab
+
+- name: "Ensuring that git is installed"
+  apt: name=git
+- name: "Creating checkout directory"
+  file: path=~/checkout state=directory mode=755
+- name: "Cloning jhbuild"
+  git: repo=git://git.gnome.org/jhbuild
+       dest=~/checkout/jhbuild
+
+- name: "Installing jhbuildi - autogen"
+  shell: cd ~/checkout/jhbuild && ./autogen.sh
+
+- name: "Installing jhbuildi - make"
+  shell: cd ~/checkout/jhbuild && make 
+
+- name: "Installing jhbuildi - make install"
+  shell: cd ~/checkout/jhbuild && make install
