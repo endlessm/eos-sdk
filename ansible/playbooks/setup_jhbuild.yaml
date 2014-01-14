@@ -1,24 +1,32 @@
 ---
 # vim:ff=unix ts=2 sw=2 ai expandtab
+-
+  hosts: dev_machine
 
-- name: "Ensuring that git is installed"
-  apt: name=git
+  sudo: False
 
-- name: "Creating checkout directory"
-  file: path=~/checkout state=directory mode=755
+  vars_files:
+    - "../default_variables.yaml"
 
-- name: "Cloning jhbuild"
-  git: repo=git://git.gnome.org/jhbuild
-       dest=~/checkout/jhbuild
+  tasks:
+    - name: "Ensuring that git is installed"
+      apt: name=git update_cache=true cache_valid_time=259200
 
-- name: "Installing jhbuild - autogen"
-  shell: cd ~/checkout/jhbuild && ./autogen.sh
+    - name: "Creating checkout directory"
+      file: path=~/checkout state=directory mode=755
 
-- name: "Installing jhbuild - make"
-  shell: cd ~/checkout/jhbuild && make 
+    - name: "Cloning jhbuild"
+      git: repo=git://git.gnome.org/jhbuild
+           dest=~/checkout/jhbuild
 
-- name: "Installing jhbuild - make install"
-  shell: cd ~/checkout/jhbuild && make install
+    - name: "Installing jhbuild - autogen"
+      shell: cd ~/checkout/jhbuild && ./autogen.sh
 
-- name: "Creating glib schemas dir"
-  file: path=~/install/share/glib-2.0/schemas state=directory mode=755
+    - name: "Installing jhbuild - make"
+      shell: cd ~/checkout/jhbuild && make 
+
+    - name: "Installing jhbuild - make install"
+      shell: cd ~/checkout/jhbuild && make install
+
+    - name: "Creating glib schemas dir"
+      file: path=~/install/share/glib-2.0/schemas state=directory mode=755
