@@ -274,7 +274,7 @@ format_background_css (EosPageManager *pm,
   // transparent. So any css styling of EosWindow will "show through" the
   // pages.
   if (background_uri == NULL)
-    return TRANSPARENT_FRAME_CSS_PROPERTIES;
+    return g_strdup (TRANSPARENT_FRAME_CSS_PROPERTIES);
   return g_strdup_printf (BACKGROUND_FRAME_CSS_PROPERTIES_TEMPLATE,
                           background_uri,
                           background_size,
