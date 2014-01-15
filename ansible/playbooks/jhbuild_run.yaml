@@ -10,7 +10,7 @@
 
   tasks:
     - name: "Installing jhbuild dependencies"
-      shell: executable=/bin/bash ~/.local/bin/jhbuild sysdeps --install
+      shell: executable=/bin/bash echo -e "y\n" | ~/.local/bin/jhbuild sysdeps --install
 
     - name: "Building jhbuild modules"
       shell: executable=/bin/bash ~/.local/bin/jhbuild build
