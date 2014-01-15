@@ -40,3 +40,4 @@ EOF
 ansible-playbook -i $tmp_inventory playbooks/setup_dev_machine_root.yaml
 ansible-playbook -i $tmp_inventory playbooks/setup_jhbuild.yaml
 ansible-playbook -i $tmp_inventory playbooks/install_jhbuild_deps.yaml
+ansible-playbook -i $tmp_inventory playbooks/jhbuild_run.yaml
