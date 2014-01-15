@@ -9,7 +9,7 @@
     - "../default_variables.yaml"
 
   tasks:
-    - name: "Installing jhbuild dependencies"
+    - name: "Installing jhbuild dependencies - this will take a very long time"
       shell: executable=/bin/bash echo -e "y\n" | ~/.local/bin/jhbuild sysdeps --install
 
     - name: "Building jhbuild modules"
