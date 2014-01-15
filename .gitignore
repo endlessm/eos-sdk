@@ -26,6 +26,7 @@ tools/eos-json-extractor/eos-json-extractor
 .libs
 stamp*
 *.stamp
+*.trs
 /Makefile
 /Makefile.in
 /aclocal.m4
@@ -45,6 +46,7 @@ stamp*
 /m4/ltsugar.m4
 /m4/ltversion.m4
 /m4/serial-tests.m4
+/test-driver
 .dirstamp
 
 # Gettext droppings
