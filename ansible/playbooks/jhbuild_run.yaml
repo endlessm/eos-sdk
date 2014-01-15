@@ -1,0 +1,16 @@
+---
+# vim:ff=unix ts=2 sw=2 ai expandtab
+-
+  hosts: dev_machine
+
+  sudo: False
+
+  vars_files:
+    - "../default_variables.yaml"
+
+  tasks:
+    - name: "Installing jhbuild dependencies"
+      shell: executable=/bin/bash ~/.local/bin/jhbuild sysdeps --install
+
+    - name: "Building jhbuild modules"
+      shell: executable=/bin/bash ~/.local/bin/jhbuild build
