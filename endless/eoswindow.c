@@ -872,10 +872,10 @@ void
 eos_window_set_page_manager (EosWindow *self,
                              EosPageManager *page_manager)
 {
-  EosWindowPrivate *priv = eos_window_get_instance_private (self);
   g_return_if_fail (self != NULL && EOS_IS_WINDOW (self));
   g_return_if_fail (page_manager != NULL && EOS_IS_PAGE_MANAGER (page_manager));
 
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
   EosMainArea *main_area = EOS_MAIN_AREA (priv->main_area);
 
   priv->page_manager = page_manager;
