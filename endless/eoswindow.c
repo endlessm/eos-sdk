@@ -95,6 +95,8 @@ typedef struct {
 
   EosPageManager *page_manager;
 
+  gboolean maximized;
+
   /* For scaling base font-size */
   GtkCssProvider *font_size_provider;
   gboolean font_scaling_active;
@@ -701,19 +703,44 @@ eos_window_class_init (EosWindowClass *klass)
 }
 
 static void
-on_minimize_clicked_cb (GtkWidget* top_bar)
+on_minimize_clicked_cb (GtkWidget* top_bar,
+                        gpointer   data)
 {
-  GtkWidget *window = gtk_widget_get_toplevel (top_bar);
+  EosWindow *self = (EosWindow *)data;
 
-  gtk_window_iconify (GTK_WINDOW (window));
+  gtk_window_iconify (GTK_WINDOW (self));
 }
 
 static void
-on_close_clicked_cb (GtkWidget* top_bar)
+on_maximize_clicked_cb (GtkWidget* top_bar,
+                        gpointer   data)
 {
-  GtkWidget *window = gtk_widget_get_toplevel (top_bar);
+  EosWindow *self = (EosWindow *)data;
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
 
-  gtk_window_close (GTK_WINDOW (window));
+  if (priv->maximized)
+    gtk_window_unmaximize (GTK_WINDOW (self));
+  else
+    gtk_window_maximize (GTK_WINDOW (self));
+}
+
+static void
+on_close_clicked_cb (GtkWidget* top_bar,
+                     gpointer   data)
+{
+  EosWindow *self = (EosWindow *)data;
+
+  gtk_window_close (GTK_WINDOW (self));
+}
+
+static void
+on_window_state_event_cb (GtkWidget* widget,
+                          GdkEvent*  event)
+{
+  EosWindow *self = EOS_WINDOW (widget);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  GdkWindowState window_state = ((GdkEventWindowState *)event)->new_window_state;
+  priv->maximized = window_state & GDK_WINDOW_STATE_MAXIMIZED;
 }
 
 /* Make sure that the edge finishing does not catch input events */
@@ -818,9 +845,13 @@ eos_window_init (EosWindow *self)
   gtk_window_set_default_size (GTK_WINDOW (self), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 
   g_signal_connect (priv->top_bar, "minimize-clicked",
-                    G_CALLBACK (on_minimize_clicked_cb), NULL);
+                    G_CALLBACK (on_minimize_clicked_cb), self);
+  g_signal_connect (priv->top_bar, "maximize-clicked",
+                    G_CALLBACK (on_maximize_clicked_cb), self);
   g_signal_connect (priv->top_bar, "close-clicked",
-                    G_CALLBACK (on_close_clicked_cb), NULL);
+                    G_CALLBACK (on_close_clicked_cb), self);
+  g_signal_connect (self, "window-state-event",
+                    G_CALLBACK (on_window_state_event_cb), NULL);
 
   eos_window_set_page_manager (self,
                                EOS_PAGE_MANAGER (eos_page_manager_new ()));
