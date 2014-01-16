@@ -1,0 +1,16 @@
+---
+# vim:ff=unix ts=2 sw=2 ai expandtab
+-
+  hosts: dev_machine
+
+  sudo: False
+
+  vars_files:
+    - "../default_variables.yaml"
+
+  tasks:
+    - name: "Copying python file for desktop generation"
+      copy: src=../templates/add_dev_tools_folder.py dest=~/ mode=755
+
+    - name: "Creating development tools folder"
+      shell: executable=/bin/bash export DISPLAY=:0; ~/add_dev_tools_folder.py &> ~/add_dev_tools_folder.log

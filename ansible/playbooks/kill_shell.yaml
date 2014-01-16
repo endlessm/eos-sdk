@@ -14,7 +14,5 @@
     - "../default_variables.yaml"
 
   tasks:
-    - include: setup_other_tools.yaml
-
     - name: "Setting default personality"
-      shell: executable=/bin/bash eos-select-personality default
+      service: name=gdm state=restarted
