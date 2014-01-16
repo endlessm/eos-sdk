@@ -21,6 +21,12 @@ fi
 read -e -p "Enter your machine's IP: " -i "$DEFAULT_IP" TARGET_IP
 read -e -p "Enter your machine's user: " -i "$DEFAULT_USER" TARGET_USER
 read -e -p "Enter your machine's password: " -i "${DEFAULT_PASSWORD}" TARGET_PASS
+
+API_KEY=""
+while [[ -z $API_KEY ]]; do
+  read -e -p "Enter your Github Personal Access Token (github.com/settings/applications): " -i "$API_KEY" API_KEY
+done
+
 echo
 
 echo -n "Checking connectivity to machine..."
@@ -40,4 +46,4 @@ EOF
 ansible-playbook -i $tmp_inventory playbooks/setup_dev_machine_root.yaml
 ansible-playbook -i $tmp_inventory playbooks/setup_jhbuild.yaml
 ansible-playbook -i $tmp_inventory playbooks/install_jhbuild_deps.yaml
-ansible-playbook -i $tmp_inventory playbooks/jhbuild_run.yaml
+ansible-playbook -i $tmp_inventory playbooks/jhbuild_run.yaml --extra-vars "api_key=$API_KEY"
