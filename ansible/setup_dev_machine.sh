@@ -29,10 +29,15 @@ done
 
 echo
 
-echo -n "Checking connectivity to machine..."
+echo -n "Checking connectivity to VM/machine..."
 sshpass -p "${TARGET_PASS}" ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $TARGET_USER@$TARGET_IP 'uname -a' &> /dev/null
 echo "[OK]"
+
+echo -n "Checking API key..."
+ git ls-remote -h https://$API_KEY@github.com/endlessm/eos-sdk &> /dev/null
+echo "[OK]"
 echo
+
 
 tmp_inventory=$(mktemp)
 trap "rm -f $tmp_inventory" EXIT
@@ -47,3 +52,5 @@ ansible-playbook -i $tmp_inventory playbooks/setup_dev_machine_root.yaml
 ansible-playbook -i $tmp_inventory playbooks/setup_jhbuild.yaml
 ansible-playbook -i $tmp_inventory playbooks/install_jhbuild_deps.yaml
 ansible-playbook -i $tmp_inventory playbooks/jhbuild_run.yaml --extra-vars "api_key=$API_KEY"
+
+echo "Repos are cloned. You should be able to run 'jhbuild build' on the target"
