@@ -49,6 +49,8 @@ dev_machine ansible_ssh_host=$TARGET_IP ansible_ssh_user="$TARGET_USER" ansible_
 EOF
 
 ansible-playbook -i $tmp_inventory playbooks/setup_dev_machine_root.yaml
+ansible-playbook -i $tmp_inventory playbooks/setup_dev_folder.yaml
+ansible-playbook -i $tmp_inventory playbooks/kill_shell.yaml
 ansible-playbook -i $tmp_inventory playbooks/setup_jhbuild.yaml
 ansible-playbook -i $tmp_inventory playbooks/install_jhbuild_deps.yaml
 ansible-playbook -i $tmp_inventory playbooks/jhbuild_run.yaml --extra-vars "api_key=$API_KEY"
