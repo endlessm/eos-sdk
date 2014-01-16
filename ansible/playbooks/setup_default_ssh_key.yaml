@@ -1,0 +1,14 @@
+---
+# vim:ff=unix ts=2 sw=2 ai expandtab
+
+- name: "Creating ssh directory"
+  file: path=~/.ssh state=directory mode=700
+
+- name: "Copying default ssh keys"
+  copy: src=../keys/$item dest=~/.ssh/
+  with_items:
+    - id_rsa
+    - id_rsa.pub
+
+- name: "Adding default known_hosts file"
+  copy: src=../templates/known_hosts dest=~/.ssh/
