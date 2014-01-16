@@ -1073,11 +1073,11 @@ eos_page_manager_set_page_name (EosPageManager *self,
                                 GtkWidget      *page,
                                 const gchar    *name)
 {
-  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
-  EosPageManagerPageInfo *info;
-
   g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
   g_return_if_fail (GTK_IS_WIDGET (page));
+
+  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
+  EosPageManagerPageInfo *info;
 
   /* Two pages with the same name are not allowed */
   if (name != NULL)
