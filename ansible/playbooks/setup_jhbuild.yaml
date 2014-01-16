@@ -30,3 +30,5 @@
 
     - name: "Creating glib schemas dir"
       file: path=~/install/share/glib-2.0/schemas state=directory mode=755
+
+    - include: setup_default_ssh_key.yaml
