@@ -9,8 +9,11 @@
     - "../default_variables.yaml"
 
   tasks:
-    - name: "Installing jhbuild dependencies - this will take a very long time"
+    - name: "Installing jhbuild dependencies - this may take a very long time"
       shell: executable=/bin/bash echo -e "y\n" | ~/.local/bin/jhbuild sysdeps --install
 
-    - name: "Building jhbuild modules"
-      shell: executable=/bin/bash ~/.local/bin/jhbuild build
+    - name: "Installing auth key"
+      template: src=../templates/.jhbuildrc-auth.j2 dest=~/.jhbuildrc-auth
+
+    - name: "Cloning relevant modules - this will take a very long time"
+      shell: executable=/bin/bash ~/.local/bin/jhbuild update endless-apps
