@@ -36,7 +36,6 @@ def get_settings_string(layout):
     print "Setting the value"
     settings.set_value("icon-grid-layout", root)
     print "Syncing"
-    settings.apply()
     settings.sync()
     print root
 
