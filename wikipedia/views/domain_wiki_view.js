@@ -29,7 +29,8 @@ const DomainWikiView = new Lang.Class({
         this._presenter = null;
 
         this._window = new Endless.Window({
-            application: application
+            'application': application,
+            'font-scaling-active': true
         });
 
         // These need to be called first
