@@ -120,13 +120,14 @@ const PrebuiltCategoryPage = new Lang.Class({
             Gtk.PolicyType.AUTOMATIC);
 
         this._back_button = new Endless.AssetButton({
+            name: "category-back-button",
+            expand: true,
+            halign: Gtk.Align.START,
             valign: Gtk.Align.CENTER,
             normal_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_normal.png",
             active_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_pressed.png",
             prelight_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_hover.png",
-            label: _("OTHER CATEGORIES"),
-            margin_right: 10,
-            margin_left: 40
+            label: _("OTHER CATEGORIES")
         });
 
         this._back_button.connect('clicked', Lang.bind(this, function() {
