@@ -46,7 +46,7 @@ const AssetButton = new Lang.Class({
         this.parent(params);
 
         this.set_image(this._image);
-        this._force_center_valign(this);
+        this.forall(Lang.bind(this, this._force_center_valign));
         this.connect('state-flags-changed', Lang.bind(this, this._update_appearance));
     },
 
