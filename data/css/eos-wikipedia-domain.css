@@ -54,8 +54,8 @@ Gjs_ArticleList .scrollbar.slider {
     background-color: #babdb6;
 }
 
-.category-page #category_info{
-    background-color: rgba(0, 0, 0, 0.5);
+.category-page #category_info {
+    background-color: alpha(#464646, 0.8);
 }
 
 .category-page #category_description{
