@@ -263,5 +263,28 @@ const Application = new Lang.Class({
                     "your app?");
             element.inner_html = this._translationFunction(element.inner_text);
         }
+    },
+
+    /**
+     * Method: set_web_settings_font_resizable
+     * Set an eos_window to update font size of web_settings
+     *
+     * Parameters:
+     *   eos_windw - an <Endless.Window>
+     *   web_settings - a <WebKit.WebSettings>
+     *
+     * The <Endless.Window> will be connected on its "size-allocate" signal
+     * to the given <WebKit.WebSettings>. The <Endless.Window> will update the
+     * "default-font-size" property of the <WebKit.WebSettings> calculated font size
+     * to the <Endless.Window>'s calculated font size.
+     */
+    set_web_settings_font_resizable: function (eos_window, web_settings) {
+        eos_window.connect('size-allocate',
+            Lang.bind(this, function (widget, allocation) {
+                if (eos_window.font_scaling_active) {
+                    web_settings.default_font_size = eos_window.font_scaling_calculated_font_size;
+                }
+            }
+        ));
     }
 });
