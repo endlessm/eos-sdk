@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
-#DEFAULT_USER="endless"
-DEFAULT_USER="sg"
+DEFAULT_USER="endless"
 DEFAULT_PASSWORD="endless"
 DEFAULT_IP="192.168.56.101"
 
