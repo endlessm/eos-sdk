@@ -98,6 +98,11 @@ Gjs_CategoryButton.clickable:hover {
     color: alpha(white, 1.0);
 }
 
+#category-back-button {
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
 Gjs_BackButton {
     -GtkButton-image-spacing: 7;
     padding-top: 2px;
