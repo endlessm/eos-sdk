@@ -76,12 +76,12 @@ Gjs_ArticleList .scrollbar.slider {
 }
 
 Gjs_CategoryButton.clickable {
-    transition: background-color 1000ms ease-in-out;
+    transition: background-color 150ms ease-in-out;
 }
 
 Gjs_CategoryButton.clickable:hover {
     background-color: alpha(#212121, 0.5);
-    transition: background-color 100ms ease-in-out;
+    transition: background-color 150ms ease-in-out;
 }
 
 #side_bar_button:hover {
