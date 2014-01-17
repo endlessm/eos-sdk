@@ -591,7 +591,8 @@ eos_window_size_allocate (GtkWidget *window, GtkAllocation *allocation)
       GdkScreen *screen = gdk_screen_get_default ();
 
       gtk_style_context_remove_provider_for_screen (screen, provider);
-      gtk_css_provider_load_from_data (provider, font_size_css, -1, &error);
+      gtk_css_provider_load_from_data (GTK_CSS_PROVIDER (provider),
+                                       font_size_css, -1, &error);
       gtk_style_context_add_provider_for_screen (screen, provider,
                                                  GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
