@@ -1,39 +1,20 @@
 # Copyright 2013 Endless Mobile, Inc.
 
-noinst_PROGRAMS = \
-	test/run-tests \
-	test/flexy-grid \
-	test/smoke-tests/hello
-
 TEST_FLAGS = @EOS_SDK_CFLAGS@ -I$(top_srcdir) -DCOMPILING_EOS_SDK
 TEST_LIBS = @EOS_SDK_LIBS@ $(top_builddir)/libendless-@EOS_SDK_API_VERSION@.la
+ENDLESS_TESTS_DIRECTORY = $(top_srcdir)/test
 
-test_run_tests_SOURCES = \
-	test/run-tests.c test/run-tests.h \
-	test/test-init.c \
-	test/test-hello.c \
-	test/test-application.c \
-	test/test-page-manager.c \
-	test/test-splash-page-manager.c \
-	test/test-window.c \
-	test/test-action-menu.c \
-	test/test-action-button.c \
-	test/test-flexy-grid.c \
-	$(NULL)
-test_run_tests_CPPFLAGS = $(TEST_FLAGS)
-test_run_tests_LDADD = $(TEST_LIBS)
+noinst_PROGRAMS = \
+  test/endless/run-tests \
+	test/smoke-tests/hello \
+  test/demos/flexy-grid
 
-test_smoke_tests_hello_SOURCES = test/smoke-tests/hello.c
-test_smoke_tests_hello_CPPFLAGS = $(TEST_FLAGS)
-test_smoke_tests_hello_LDADD = $(TEST_LIBS)
-
-test_flexy_grid_SOURCES = test/flexy-grid.c
-test_flexy_grid_CPPFLAGS = $(TEST_FLAGS)
-test_flexy_grid_LDADD = $(TEST_LIBS)
+include test/endless/Makefile.am.inc
+include test/demos/Makefile.am.inc
+include test/smoke-tests/Makefile.am.inc
 
 javascript_tests = \
-	test/tools/eos-run-test/sanitycheck.js \
-	test/tools/eos-application-manifest/testInit.js \
+  test/tools/eos-application-manifest/testInit.js \
 	test/webhelper/testTranslate.js \
 	test/webhelper/testWebActions.js \
 	test/wikipedia/models/testCategoryModel.js \
@@ -44,17 +25,19 @@ EXTRA_DIST += $(javascript_tests)
 
 # Run tests when running 'make check'
 TESTS = \
-	test/run-tests \
+	test/endless/run-tests \
 	$(javascript_tests) \
 	$(NULL)
-TEST_EXTENSIONS = .js
-JS_LOG_COMPILER = tools/eos-run-test
+TEST_EXTENSIONS =
 AM_JS_LOG_FLAGS = \
 	--include-path=$(top_srcdir)/webhelper \
 	--include-path=$(top_srcdir) \
 	$(NULL)
 LOG_COMPILER = gtester
 AM_LOG_FLAGS = -k --verbose
+
+JASMINE_SUBMODULE_PATH = $(top_srcdir)/test/jasmine
+include test/jasmine/Makefile-jasmine.am.inc
 
 # Use locally built versions of Endless-0.gir and libraries; this may need to be
 # changed to AM_TESTS_ENVIRONMENT in a future version of Automake

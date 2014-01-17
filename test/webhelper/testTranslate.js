@@ -5,14 +5,20 @@ const Lang = imports.lang;
 const WebHelper = imports.webhelper;
 const WebKit = imports.gi.WebKit;
 
-const TestClass = new Lang.Class({
-    Name: 'testclass',
+const WebHelperApplicationWithTranslatableText = new Lang.Class({
+    Name: 'WebHelperApplicationWithTranslatableText',
     Extends: WebHelper.Application,
+    
+    get_translation_string: function() {
+        return 'Translate Me';
+    },
 
     vfunc_startup: function() {
         this.parent();
         this.webview = new WebKit.WebView();
-        let string = '<html><body><p name="translatable">Translate Me</p></body></html>';
+        let string = '<html><body><p name="translatable">' +
+                     this.get_translation_string() +
+                     '</p></body></html>';
         this.webview.load_string(string, 'text/html', 'UTF-8', 'file://');
         this.win = new Endless.Window({
             application: this
@@ -36,62 +42,67 @@ const TestClass = new Lang.Class({
     }
 });
 
-let app;
+describe("Translation strategy", function() {
+    let app;
 
-function setUp() {
-    // Generate a unique ID for each app instance that we test
-    let fake_pid = GLib.random_int();
-    // FIXME In this version of GJS there is no Posix module, so fake the PID
-    let id_string = 'com.endlessm.webhelper.test' + GLib.get_real_time() + fake_pid;
-    app = new TestClass({
-        application_id: id_string
+    beforeEach(function() {
+        // FIXME In this version of GJS there is no Posix module, so fake the PID
+        let id_string = 'com.endlessm.webhelper.test' + GLib.get_real_time() + fake_pid;
+        // Generate a unique ID for each app instance that we test
+        let fake_pid = GLib.random_int();
+        app = new WebHelperApplicationWithTranslatableText({
+            application_id: id_string
+        });
     });
-}
-
-function testStringIsTranslated() {
-    let translationFunctionWasCalled = false;
-    let translationFunctionCalledWithString;
-    app.set_translation_function(function(s) {
-        translationFunctionWasCalled = true;
-        translationFunctionCalledWithString = s;
-        return s;
+ 
+    describe("translation function", function() {
+        let translationFunctionSpy;
+        beforeEach(function() {
+            translationFunctionSpy = jasmine.createSpy('translate').and.returnValue('Translated');
+        });
+        it("gets called with string to translate on run", function() {
+            app.set_translation_function(translationFunctionSpy);
+            app.run([]);
+            expect(translationFunctionSpy).toHaveBeenCalledWith(app.get_translation_string());
+        });
     });
-    app.run([]);
-    assertTrue(translationFunctionWasCalled);
-    assertEquals('Translate Me', translationFunctionCalledWithString);
-}
 
-// The following test is commented out because GJS cannot catch exceptions
-// across FFI interfaces (e.g. in GObject callbacks.)
-
-// function testMissingTranslationFunctionIsHandled() {
-//     assertRaises(function() {
-//         app.run([]);
-//     });
-// }
-
-function testSetBadTranslationFunction() {
-    assertRaises(function() {
-        app.set_translation_function("I am not a function");
+    it("throws when an incompatible type is set as the translation function", function() {
+        expect(function() {
+            app.set_translation_function({});
+        }).toThrow();
     });
-}
 
-function testGetSetTranslationFunction() {
-    let translationFunction = function(string) {
-        return string;
-    };
-    app.set_translation_function(translationFunction);
-    let actualTranslationFunction = app.get_translation_function();
-    assertEquals(translationFunction, actualTranslationFunction);
-}
+    // Can't test this right now as there is no support for propagating exceptions across
+    // GI interfaces
+    xit("throws when there isn't a translation function set", function() {
+        expect(function() {
+            app.run([]);
+        }).toThrow();
+    });
 
-function testTranslationFunctionIsNullByDefault() {
-    assertNull(app.get_translation_function());
-}
+    it("has a null translation function by default", function() {
+        expect(app.get_translation_function()).toBe(null);
+    });
 
-function testGetSetNullTranslationFunction() {
-    app.set_translation_function(function (s) { return s; });
-    assertNotNull(app.get_translation_function());
-    app.set_translation_function(null);
-    assertNull(app.get_translation_function());
-}
+    it("stores the expected translation function", function() {
+        let translation = function(str) {
+            return str;
+        };
+        
+        app.set_translation_function(translation);
+        expect(app.get_translation_function()).toBe(translation);
+    });
+
+    it("allows us to store a null translation function", function() {
+        let nonNullTranslation = function(str) {
+            return str;
+        }
+        
+        // set a non-null translation function first so that we get
+        // the non-default behaviour for get_translation_function
+        app.set_translation_function(nonNullTranslation);
+        app.set_translation_function(null);
+        expect(app.get_translation_function()).toBe(null);
+    });
+});

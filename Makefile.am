@@ -159,4 +159,4 @@ m4_DATA = \
 
 # # # TESTS # # #
 
-include $(top_srcdir)/test/Makefile.am
+include $(top_srcdir)/test/Makefile.am.inc
