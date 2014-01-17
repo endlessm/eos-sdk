@@ -703,19 +703,16 @@ eos_window_class_init (EosWindowClass *klass)
 }
 
 static void
-on_minimize_clicked_cb (GtkWidget* top_bar,
-                        gpointer   data)
+on_minimize_clicked_cb (GtkWidget *top_bar,
+                        EosWindow *self)
 {
-  EosWindow *self = (EosWindow *)data;
-
   gtk_window_iconify (GTK_WINDOW (self));
 }
 
 static void
-on_maximize_clicked_cb (GtkWidget* top_bar,
-                        gpointer   data)
+on_maximize_clicked_cb (GtkWidget *top_bar,
+                        EosWindow *self)
 {
-  EosWindow *self = (EosWindow *)data;
   EosWindowPrivate *priv = eos_window_get_instance_private (self);
 
   if (priv->maximized)
@@ -725,21 +722,19 @@ on_maximize_clicked_cb (GtkWidget* top_bar,
 }
 
 static void
-on_close_clicked_cb (GtkWidget* top_bar,
-                     gpointer   data)
+on_close_clicked_cb (GtkWidget *top_bar,
+                     EosWindow *self)
 {
-  EosWindow *self = (EosWindow *)data;
-
   gtk_window_close (GTK_WINDOW (self));
 }
 
 static void
-on_window_state_event_cb (GtkWidget* widget,
-                          GdkEvent*  event)
+on_window_state_event_cb (GtkWidget           *widget,
+                          GdkEventWindowState *event)
 {
   EosWindow *self = EOS_WINDOW (widget);
   EosWindowPrivate *priv = eos_window_get_instance_private (self);
-  GdkWindowState window_state = ((GdkEventWindowState *)event)->new_window_state;
+  GdkWindowState window_state = event->new_window_state;
   priv->maximized = window_state & GDK_WINDOW_STATE_MAXIMIZED;
 }
 

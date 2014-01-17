@@ -143,7 +143,7 @@ on_minimize_clicked_cb (GtkButton *button,
 
 static void
 on_maximize_clicked_cb (GtkButton *button,
-                        gpointer user_data)
+                        gpointer   user_data)
 {
   EosTopBar *self = EOS_TOP_BAR (user_data);
   g_signal_emit (self, top_bar_signals[MAXIMIZE_CLICKED], 0);
