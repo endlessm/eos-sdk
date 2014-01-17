@@ -38,27 +38,4 @@ logged on ostree.endlessm.com and publishes logged on obs-repository.
  - http://www.ansibleworks.com/docs/modules.html
 
 ## Current scripts
-- NOTE: **Most playbooks have testing hosts assigned by default and will need editing before running
-scripts**
-
-- setup\_ostree\_server
- - Installs all relevant files and applications to replicate our current ostree.endlessm.com
-
-- publish_ostree
- - Backs up the staging/dev folder on the server
- - Syncs obs-repository ostree with ostree.endlessm.com
-
-- migrate\_to\_*
- - Migrates all files from more unstable version to a more stable release endpoint
- - Process: staging/dev => staging/demo => prod
-
-## Examples
-
-- NOTE: **Most playbooks have testing hosts assigned by default and will need editing before running
-scripts**
-
-- To publish the obs-repository ostree to the server, run:
- - `ansible-playbook publish_ostree.yaml` and don't put in a sudo password
-
-- To setup another ostree publishing server, run:
- - `ansible-playbook setup_ostree_server.yaml` and put in a valid sudo password
+- setup_dev_env.sh - Installs the dev environment on the VM
