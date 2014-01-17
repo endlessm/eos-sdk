@@ -10,8 +10,7 @@ const Config = imports.wikipedia.config;
 const FixedSizeTextView = imports.wikipedia.widgets.FixedSizeTextView;
 const ScaledImage = imports.wikipedia.widgets.scaled_image;
 
-const SUBMENU_SEPARATOR_A_URI = "/com/endlessm/wikipedia-domain/assets/submenu_separator_shadow_a.png";
-const SPLASH_SEPARATOR_URI = "/com/endlessm/wikipedia-domain/assets/category_splash_separator_shadow.png";
+const SHADOW_SEPARATOR_RESOURCE_PATH = "/com/endlessm/wikipedia-domain/assets/submenu_separator_shadow_a.png";
 const INTRO_TITLE_SEPARATOR_URI = "/com/endlessm/wikipedia-domain/assets/introduction_title_separator.png";
 const LEFT_MARGIN_FOR_TEXT = 45;
 
@@ -80,13 +79,13 @@ const PrebuiltCategoryPage = new Lang.Class({
         });
 
         this._submenu_separator = new ScaledImage.ScaledImage({
-            resource: SUBMENU_SEPARATOR_A_URI,
+            resource: SHADOW_SEPARATOR_RESOURCE_PATH,
             constraint: Gtk.Orientation.VERTICAL,
             halign: Gtk.Align.END
         });
 
         this._splash_separator = new ScaledImage.ScaledImage({
-            resource: SPLASH_SEPARATOR_URI,
+            resource: SHADOW_SEPARATOR_RESOURCE_PATH,
             constraint: Gtk.Orientation.VERTICAL,
             halign: Gtk.Align.END
         });
