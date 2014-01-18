@@ -15,7 +15,7 @@
  * The #EosTopBar has three different areas that can be managed through this 
  * class: a left widget, center widget, and action buttons area.
  * 
- * The action buttons area contain "minimize" and "close" buttons.
+ * The action buttons area contain "minimize", "maximize" and "close" buttons.
  */
 #define _EOS_STYLE_CLASS_TOP_BAR "top-bar"
 #define _EOS_TOP_BAR_HEIGHT_PX 36
@@ -25,6 +25,7 @@
 #define _EOS_TOP_BAR_BUTTON_SEPARATION_PX 8
 #define _EOS_TOP_BAR_VERTICAL_BUTTON_MARGIN_PX 6
 #define _EOS_TOP_BAR_MINIMIZE_ICON_NAME "window-minimize-symbolic"
+#define _EOS_TOP_BAR_MAXIMIZE_ICON_NAME "face-monkey"
 #define _EOS_TOP_BAR_CLOSE_ICON_NAME "window-close-symbolic"
 
 typedef struct {
@@ -37,6 +38,8 @@ typedef struct {
 
   GtkWidget *minimize_button;
   GtkWidget *minimize_icon;
+  GtkWidget *maximize_button;
+  GtkWidget *maximize_icon;
   GtkWidget *close_button;
   GtkWidget *close_icon;
 } EosTopBarPrivate;
@@ -46,6 +49,7 @@ G_DEFINE_TYPE_WITH_PRIVATE (EosTopBar, eos_top_bar, GTK_TYPE_EVENT_BOX)
 enum {
   CLOSE_CLICKED,
   MINIMIZE_CLICKED,
+  MAXIMIZE_CLICKED,
   LAST_SIGNAL
 };
 
@@ -107,6 +111,17 @@ eos_top_bar_class_init (EosTopBarClass *klass)
                     G_TYPE_NONE, 0);
 
   /*
+   * Emitted when the maximize button has been activated.
+   */
+  top_bar_signals[MAXIMIZE_CLICKED] =
+      g_signal_new ("maximize-clicked",
+                    G_OBJECT_CLASS_TYPE (object_class),
+                    G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+                    0,
+                    NULL, NULL, NULL,
+                    G_TYPE_NONE, 0);
+
+  /*
    * Emitted when the close button has been activated.
    */
   top_bar_signals[CLOSE_CLICKED] =
@@ -124,6 +139,14 @@ on_minimize_clicked_cb (GtkButton *button,
 {
   EosTopBar *self = EOS_TOP_BAR (user_data);
   g_signal_emit (self, top_bar_signals[MINIMIZE_CLICKED], 0);
+}
+
+static void
+on_maximize_clicked_cb (GtkButton *button,
+                        gpointer   user_data)
+{
+  EosTopBar *self = EOS_TOP_BAR (user_data);
+  g_signal_emit (self, top_bar_signals[MAXIMIZE_CLICKED], 0);
 }
 
 static void
@@ -179,6 +202,21 @@ eos_top_bar_init (EosTopBar *self)
   gtk_container_add (GTK_CONTAINER (priv->minimize_button),
                      priv->minimize_icon);
 
+  priv->maximize_button =
+    g_object_new (GTK_TYPE_BUTTON,
+                  "halign", GTK_ALIGN_END,
+                  "valign", GTK_ALIGN_CENTER,
+                  NULL);
+  priv->maximize_icon =
+    gtk_image_new_from_icon_name (_EOS_TOP_BAR_MAXIMIZE_ICON_NAME,
+                                  GTK_ICON_SIZE_SMALL_TOOLBAR);
+  g_object_set(priv->maximize_icon,
+               "pixel-size", _EOS_TOP_BAR_ICON_SIZE_PX,
+               "margin", _EOS_TOP_BAR_BUTTON_PADDING_PX,
+               NULL);
+  gtk_container_add (GTK_CONTAINER (priv->maximize_button),
+                     priv->maximize_icon);
+
   priv->close_button =
     g_object_new (GTK_TYPE_BUTTON,
                   "halign", GTK_ALIGN_END,
@@ -201,6 +239,8 @@ eos_top_bar_init (EosTopBar *self)
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->minimize_button);
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
+                     priv->maximize_button);
+  gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->close_button);
 
   gtk_container_add (GTK_CONTAINER (self), priv->actions_grid);
@@ -210,6 +250,8 @@ eos_top_bar_init (EosTopBar *self)
 
   g_signal_connect (priv->minimize_button, "clicked",
                     G_CALLBACK (on_minimize_clicked_cb), self);
+  g_signal_connect (priv->maximize_button, "clicked",
+                    G_CALLBACK (on_maximize_clicked_cb), self);
   g_signal_connect (priv->close_button, "clicked",
                     G_CALLBACK (on_close_clicked_cb), self);
 }
