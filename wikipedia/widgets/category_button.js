@@ -10,11 +10,12 @@ const CATEGORY_LABEL_LEFT_MARGIN = 25;  // pixels
 const CATEGORY_LABEL_BOTTOM_MARGIN = 20;  // pixels
 const CATEGORY_BUTTON_RIGHT_MARGIN = 20;  // pixels
 const CATEGORY_BUTTON_BOTTOM_MARGIN = 20;  // pixels
+const CATEGORY_BUTTON_SIZE_PIXELS = 42;
 // The following two are corrections because GTK 3.8 doesn't have baseline
 // alignment. Remove and align properly in GTK 3.10. FIXME
 const CATEGORY_LABEL_BASELINE_CORRECTION = 0; // pixels
 const CATEGORY_BUTTON_BASELINE_CORRECTION = 10; // pixels
-const _HOVER_ARROW_URI = '/com/endlessm/wikipedia-domain/assets/category_hover_arrow.png';
+const CATEGORY_BUTTON_RESOURCE_URI = 'resource:///com/endlessm/wikipedia-domain/assets/wikipedia-category-forward-symbolic.svg';
 const CATEGORY_MIN_WIDTH = 120; // pixels
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
@@ -74,7 +75,10 @@ const CategoryButton = new Lang.Class({
             max_width_chars: 20
         });
         this._arrow = new Gtk.Image({
-            resource: _HOVER_ARROW_URI,
+            gicon: new Gio.FileIcon({
+                file: Gio.File.new_for_uri(CATEGORY_BUTTON_RESOURCE_URI)
+            }),
+            pixel_size: CATEGORY_BUTTON_SIZE_PIXELS,
             margin_right: CATEGORY_BUTTON_RIGHT_MARGIN,
             margin_bottom: CATEGORY_BUTTON_BOTTOM_MARGIN + CATEGORY_BUTTON_BASELINE_CORRECTION,
             halign: Gtk.Align.END,
