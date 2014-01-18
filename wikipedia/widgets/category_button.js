@@ -4,6 +4,7 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
+const CompositeButton = imports.wikipedia.widgets.composite_button;
 const Utils = imports.wikipedia.utils;
 
 const CATEGORY_LABEL_LEFT_MARGIN = 25;  // pixels
@@ -22,7 +23,7 @@ GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.
 
 const CategoryButton = new Lang.Class({
     Name: 'CategoryButton',
-    Extends: Gtk.Button,
+    Extends: CompositeButton.CompositeButton,
     Properties: {
         // resource URI for the category's accompanying image
         'image-uri': GObject.ParamSpec.string('image-uri',
@@ -89,6 +90,7 @@ const CategoryButton = new Lang.Class({
             let gdk_window = frame.get_window();
             gdk_window.set_child_input_shapes();
         });
+        this._arrow.get_style_context().add_class(Gtk.STYLE_CLASS_IMAGE);
 
         let context = this._label.get_style_context();
         context.add_class(EndlessWikipedia.STYLE_CLASS_TITLE);
@@ -103,17 +105,9 @@ const CategoryButton = new Lang.Class({
         alignment.add(this._label);
         this._overlay.add(alignment);
         this._overlay.add_overlay(this._arrow);
+        this.setSensitiveChildren([this._arrow]);
         this.add(this._overlay);
         this.show_all();
-        this._arrow.hide();
-
-        this.connect("enter", Lang.bind(this, function (w) {
-            if(this._clickable_category)
-                this._arrow.show();
-        }));
-        this.connect("leave", Lang.bind(this, function (w) {
-            this._arrow.hide();
-        }));
     },
 
     get image_uri() {
