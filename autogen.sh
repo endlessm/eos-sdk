@@ -20,6 +20,10 @@ if [ -d .git ]; then
     chmod +x .git/hooks/commit-msg
 fi
 
+git remote set-url origin http://github.com/endlessm/eos-sdk.git
+git submodule init .
+git submodule update --recursive
+
 # GNU gettext automake support doesn't get along with git
 # https://bugzilla.gnome.org/show_bug.cgi?id=661128
 touch -t 200001010000 $POT_FILE
