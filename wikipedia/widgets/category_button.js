@@ -7,15 +7,9 @@ const Lang = imports.lang;
 const CompositeButton = imports.wikipedia.widgets.composite_button;
 const Utils = imports.wikipedia.utils;
 
-const CATEGORY_LABEL_LEFT_MARGIN = 25;  // pixels
-const CATEGORY_LABEL_BOTTOM_MARGIN = 20;  // pixels
-const CATEGORY_BUTTON_RIGHT_MARGIN = 20;  // pixels
-const CATEGORY_BUTTON_BOTTOM_MARGIN = 20;  // pixels
+const CATEGORY_LABEL_LEFT_MARGIN_PIXELS = 5;  // in addition to the 20px below
+const CATEGORY_LABEL_SPACING_PIXELS = 20;
 const CATEGORY_BUTTON_SIZE_PIXELS = 42;
-// The following two are corrections because GTK 3.8 doesn't have baseline
-// alignment. Remove and align properly in GTK 3.10. FIXME
-const CATEGORY_LABEL_BASELINE_CORRECTION = 0; // pixels
-const CATEGORY_BUTTON_BASELINE_CORRECTION = 10; // pixels
 const CATEGORY_BUTTON_RESOURCE_URI = 'resource:///com/endlessm/wikipedia-domain/assets/wikipedia-category-forward-symbolic.svg';
 const CATEGORY_MIN_WIDTH = 120; // pixels
 
@@ -62,17 +56,19 @@ const CategoryButton = new Lang.Class({
         this._is_main_category = null;
         this._pixbuf = null;
 
-        this._overlay = new Gtk.Overlay({
+        this._inner_grid = new Gtk.Grid({
+            valign: Gtk.Align.END,
+            halign: Gtk.Align.FILL,
+            border_width: CATEGORY_LABEL_SPACING_PIXELS,
+            column_spacing: CATEGORY_LABEL_SPACING_PIXELS,
             expand: true
         });
         this._label = new Gtk.Label({
-            margin_left: CATEGORY_LABEL_LEFT_MARGIN,
-            margin_bottom: CATEGORY_LABEL_BOTTOM_MARGIN - CATEGORY_LABEL_BASELINE_CORRECTION,
+            margin_left: CATEGORY_LABEL_LEFT_MARGIN_PIXELS,
             halign: Gtk.Align.START,
-            valign: Gtk.Align.END,
+            valign: Gtk.Align.BASELINE,
             xalign: 0.0,  // deprecated Gtk.Misc properties; necessary because
             wrap: true,   // "wrap" doesn't respect "halign"
-            width_chars: 18,
             max_width_chars: 20
         });
         this._arrow = new Gtk.Image({
@@ -80,15 +76,9 @@ const CategoryButton = new Lang.Class({
                 file: Gio.File.new_for_uri(CATEGORY_BUTTON_RESOURCE_URI)
             }),
             pixel_size: CATEGORY_BUTTON_SIZE_PIXELS,
-            margin_right: CATEGORY_BUTTON_RIGHT_MARGIN,
-            margin_bottom: CATEGORY_BUTTON_BOTTOM_MARGIN + CATEGORY_BUTTON_BASELINE_CORRECTION,
+            hexpand: true,
             halign: Gtk.Align.END,
             valign: Gtk.Align.END
-        });
-        // Make the arrow image transparent to mouse events
-        this._arrow.connect_after('realize', function (frame) {
-            let gdk_window = frame.get_window();
-            gdk_window.set_child_input_shapes();
         });
         this._arrow.get_style_context().add_class(Gtk.STYLE_CLASS_IMAGE);
 
@@ -101,12 +91,10 @@ const CategoryButton = new Lang.Class({
         this.parent(props);
 
         // Put widgets together
-        let alignment = new Gtk.Alignment({ expand: true });
-        alignment.add(this._label);
-        this._overlay.add(alignment);
-        this._overlay.add_overlay(this._arrow);
         this.setSensitiveChildren([this._arrow]);
-        this.add(this._overlay);
+        this._inner_grid.add(this._label);
+        this._inner_grid.add(this._arrow);
+        this.add(this._inner_grid);
         this.show_all();
     },
 
@@ -150,8 +138,6 @@ const CategoryButton = new Lang.Class({
         if(this._is_main_category) {
             let context = this._label.get_style_context();
             context.add_class(EndlessWikipedia.STYLE_CLASS_MAIN);
-            this._label.margin_bottom = 0;
-            this._label.width_chars = 8;
             this._label.max_width_chars = 9;
         }
     },

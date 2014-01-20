@@ -10,7 +10,6 @@ EosWindow {
     font-family: "Lato Light";
     color: #ffffff;
     text-shadow: 0px 1px 0px alpha(#23326e, 0.15);
-    padding-top: 15px;
 }
 
 .title.main-element.category.front-page {
