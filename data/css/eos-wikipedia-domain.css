@@ -89,6 +89,7 @@ Gjs_CategoryButton.clickable:hover {
 }
 
 .category-page .back .image {
+    padding: 15px;
     color: black;
     opacity: 0.6;
     icon-shadow: inset 0 1px 1px alpha(black, 0.5), 0 1px alpha(white, 0.2);
@@ -122,8 +123,8 @@ Gjs_CategoryButton.clickable:hover {
 }
 
 .category-page .back {
-    padding-left: 40px;
-    padding-right: 40px;
+    padding-left: 25px;
+    padding-right: 25px;
 }
 
 Gjs_BackButton {

@@ -117,7 +117,7 @@ const PrebuiltCategoryPage = new Lang.Class({
             name: "category-back-button",
             expand: true,
             halign: Gtk.Align.START,
-            valign: Gtk.Align.CENTER
+            valign: Gtk.Align.FILL
         });
         this._back_button.connect('clicked', Lang.bind(this, function() {
             this.emit('go-back-home');

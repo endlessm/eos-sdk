@@ -32,7 +32,10 @@ const CategoryBackButton = new Lang.Class({
         let label = new Gtk.Label({
             label: _("OTHER CATEGORIES")
         });
-        let innerGrid = new Gtk.Grid();
+        let innerGrid = new Gtk.Grid({
+            expand: true,
+            valign: Gtk.Align.CENTER
+        });
 
         innerGrid.add(icon);
         innerGrid.add(label);
