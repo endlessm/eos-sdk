@@ -6,12 +6,15 @@ const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
 const BoxWithBg = imports.wikipedia.widgets.BoxWithBg;
+const CompositeButton = imports.wikipedia.widgets.composite_button;
 const Config = imports.wikipedia.config;
 const FixedSizeTextView = imports.wikipedia.widgets.FixedSizeTextView;
 const ScaledImage = imports.wikipedia.widgets.scaled_image;
 
 const SHADOW_SEPARATOR_RESOURCE_PATH = "/com/endlessm/wikipedia-domain/assets/submenu_separator_shadow_a.png";
 const INTRO_TITLE_SEPARATOR_URI = "/com/endlessm/wikipedia-domain/assets/introduction_title_separator.png";
+const CATEGORY_BACK_BUTTON_ASSET_RESOURCE_URI = 'resource:///com/endlessm/wikipedia-domain/assets/wikipedia-category-back-symbolic.svg';
+const CATEGORY_BACK_BUTTON_SIZE_PIXELS = 68;
 const LEFT_MARGIN_FOR_TEXT = 45;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
@@ -118,16 +121,29 @@ const PrebuiltCategoryPage = new Lang.Class({
         this._description_scrolled_window.set_policy(Gtk.PolicyType.NEVER,
             Gtk.PolicyType.AUTOMATIC);
 
-        this._back_button = new Endless.AssetButton({
+        let gicon = new Gio.FileIcon({
+            file: Gio.File.new_for_uri(CATEGORY_BACK_BUTTON_ASSET_RESOURCE_URI)
+        });
+        let backButtonIcon = Gtk.Image.new_from_gicon(gicon,
+            Gtk.IconSize.DIALOG);
+        backButtonIcon.pixel_size = CATEGORY_BACK_BUTTON_SIZE_PIXELS;
+        let backButtonLabel = new Gtk.Label({
+            label: _("OTHER CATEGORIES")
+        });
+        let backButtonInnerGrid = new Gtk.Grid();
+        this._back_button = new CompositeButton.CompositeButton({
             name: "category-back-button",
             expand: true,
             halign: Gtk.Align.START,
-            valign: Gtk.Align.CENTER,
-            normal_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_normal.png",
-            active_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_pressed.png",
-            prelight_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_hover.png",
-            label: _("OTHER CATEGORIES")
+            valign: Gtk.Align.CENTER
         });
+        backButtonInnerGrid.add(backButtonIcon);
+        backButtonInnerGrid.add(backButtonLabel);
+        this._back_button.add(backButtonInnerGrid);
+        this._back_button.setSensitiveChildren([
+            backButtonIcon,
+            backButtonLabel
+        ]);
 
         this._back_button.connect('clicked', Lang.bind(this, function() {
             this.emit('go-back-home');

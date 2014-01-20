@@ -24,6 +24,7 @@ js_sources = \
 	wikipedia/ArticleList.js \
 	wikipedia/widgets/BackButton.js \
 	wikipedia/widgets/BoxWithBg.js \
+	wikipedia/widgets/composite_button.js \
 	wikipedia/widgets/FixedSizeTextView.js \
 	wikipedia/EndlessWikipedia.js \
 	wikipedia/PrebuiltArticlesPage.js \

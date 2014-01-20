@@ -88,12 +88,35 @@ Gjs_CategoryButton.clickable:hover {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
-.category-page Gjs_AssetButton {
+#category-back-button GtkImage {
+    color: black;
+    opacity: 0.6;
+    icon-shadow: inset 0 1px 1px alpha(black, 0.5), 0 1px alpha(white, 0.2);
+}
+
+#category-back-button GtkImage:hover {
+    color: white;
+}
+
+#category-back-button GtkImage:active {
+    color: #d7d7d7;
+}
+
+#category-back-button GtkImage:hover,
+#category-back-button GtkImage:active {
+    opacity: 0.95;
+    icon-shadow: inset 0 1px 1px alpha(black, 0.5),
+                 0 1px alpha(white, 0.2),
+                 0 0 15px alpha(black, 0.15);
+}
+
+#category-back-button GtkLabel {
     font-weight: bold;
     color: alpha(white, 0.0);
 }
 
-.category-page Gjs_AssetButton:prelight {
+#category-back-button GtkLabel:hover,
+#category-back-button GtkLabel:active {
     text-shadow: 0px 1px 0px alpha(#000000, 0.5), 0px 0px 12px alpha(#000000, 0.3);
     color: alpha(white, 1.0);
 }
