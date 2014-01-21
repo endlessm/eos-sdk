@@ -16,3 +16,7 @@ test_endless_run_tests_SOURCES = \
 	$(NULL)
 test_endless_run_tests_CPPFLAGS = $(TEST_FLAGS)
 test_endless_run_tests_LDADD = $(TEST_LIBS)
+
+javascript_tests += \
+	test/endless/testCustomContainer.js \
+	$(NULL)
