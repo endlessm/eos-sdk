@@ -164,7 +164,8 @@ const array_contains = function (arr, obj, same_type) {
 
 /*
  * Loads a pixbuf sized to cover the dest_width and dest_height with the
- * image in res_path, while mataining the aspect ratio of the image
+ * image in res_path, while mataining the aspect ratio of the image.
+ * The anchor point for cropping is the bottom left of the image.
  */
 function load_pixbuf_cover(res_path, dest_width, dest_height) {
     let [load_width, load_height] = [dest_width, dest_height];
@@ -184,7 +185,8 @@ function load_pixbuf_cover(res_path, dest_width, dest_height) {
         load_width, load_height, true);
     let cropped_pixbuf = source_pixbuf;
     if(dest_width < source_pixbuf.width || dest_height < source_pixbuf.height)
-        cropped_pixbuf = source_pixbuf.new_subpixbuf(0, 0, dest_width, dest_height);
+        cropped_pixbuf = source_pixbuf.new_subpixbuf(0, source_pixbuf.height - dest_height,
+            dest_width, dest_height);
     return cropped_pixbuf;
 }
 
