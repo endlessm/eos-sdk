@@ -30,7 +30,7 @@ Gjs_ArticleList .button {
     padding-right: 25px;
     padding-top: 15px;
     padding-bottom: 15px;
-    font-size: 1.17em;
+    font-size: 1.45em;
     color: #464646;
     background-image: url('resource:///com/endlessm/wikipedia-domain/assets/submenu_bg_normal.jpg');
     background-size: cover;
@@ -61,7 +61,7 @@ Gjs_ArticleList .scrollbar.slider {
 .category-page #category_description{
     color:rgba(255, 255, 255, 1.0);
     background-color: rgba(0, 0, 0, 0);
-    font-size: 0.917em;
+    font-size: 1.5em;
 }
 
 .category-page #category_scrolled_window .scrollbar.slider {
