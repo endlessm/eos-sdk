@@ -6,7 +6,7 @@ const Pango = imports.gi.Pango;
 
 // This is an approximate number of characters that will keep the label from
 // going over its specified width
-const ARTICLE_LABEL_MAX_WIDTH_CHARS = 22;
+const ARTICLE_LABEL_MAX_WIDTH_CHARS = 30;
 
 const ListTextButton = new Lang.Class({
     Name: 'EndlessListTextButton',
@@ -30,7 +30,7 @@ const ListTextButton = new Lang.Class({
         });
 
         this._label = new Gtk.Label({
-            label: label_text.toUpperCase(),
+            label: label_text,
             max_width_chars: ARTICLE_LABEL_MAX_WIDTH_CHARS,
             ellipsize: Pango.EllipsizeMode.END
         });
