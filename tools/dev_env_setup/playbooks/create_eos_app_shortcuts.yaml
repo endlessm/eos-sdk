@@ -1,0 +1,8 @@
+---
+# vim:ff=unix ts=2 sw=2 ai expandtab
+
+- name: "Creating EOS links for various apps"
+  shell: cp /usr/share/applications/$item.desktop /usr/share/applications/eos-app-$item.desktop
+  with_items:
+    - gnome-terminal
+    - devhelp

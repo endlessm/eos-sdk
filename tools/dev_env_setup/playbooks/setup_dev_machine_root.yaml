@@ -16,5 +16,7 @@
   tasks:
     - include: playbooks/setup_tools_root.yaml
 
+    - include: playbooks/create_eos_app_shortcuts.yaml
+
     - name: "Setting default personality"
       shell: executable=/bin/bash eos-select-personality default
