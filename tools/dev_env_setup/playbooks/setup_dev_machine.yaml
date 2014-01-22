@@ -14,5 +14,12 @@
     - "../default_variables.yaml"
 
   tasks:
-    - name: "Setting default personality"
-      service: name=gdm state=restarted
+    - include: setup_tools_root.yaml
+
+    - include: create_eos_app_shortcuts.yaml
+
+    - include: setup_dev_folder.yaml
+
+    - include: setup_default_ssh_key.yaml
+
+    - include: setup_jhbuild.yaml

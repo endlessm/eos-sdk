@@ -1,8 +1,16 @@
 ---
 # vim:ff=unix ts=2 sw=2 ai expandtab
 
+- name: "Setting default personality"
+  shell: executable=/bin/bash eos-select-personality default
+
+- name: "Creating ~/.local/share/applications directory"
+  file: path=~/.local/share/applications state=directory
+  sudo: False
+
 - name: "Creating EOS links for various apps"
-  shell: cp /usr/share/applications/$item.desktop /usr/share/applications/eos-app-$item.desktop
+  shell: cp /usr/share/applications/$item.desktop ~/.local/share/applications/eos-app-$item.desktop
   with_items:
     - gnome-terminal
     - devhelp
+  sudo: False

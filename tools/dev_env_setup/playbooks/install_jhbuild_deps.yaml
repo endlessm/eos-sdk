@@ -1,16 +1,8 @@
 ---
 # vim:ff=unix ts=2 sw=2 ai expandtab
--
-  hosts: dev_machine
 
-  sudo: True
+- name: "Creating /opt/gnome directory"
+file: path=/opt/gnome state=directory mode=777
 
-  vars_files:
-    - "../default_variables.yaml"
-
-  tasks:
-    - name: "Creating /opt/gnome directory"
-      file: path=/opt/gnome state=directory mode=777
-
-    - name: "Updating apt-file cache"
-      shell: apt-file update
+- name: "Updating apt-file cache"
+  shell: apt-file update

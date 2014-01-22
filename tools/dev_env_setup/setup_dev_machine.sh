@@ -47,11 +47,6 @@ cat << EOF > $tmp_inventory
 dev_machine ansible_ssh_host=$TARGET_IP ansible_ssh_user="$TARGET_USER" ansible_sudo_pass="${TARGET_PASS}" ansible_ssh_pass="${TARGET_PASS}" ansible_connection=ssh
 EOF
 
-ansible-playbook -i $tmp_inventory playbooks/setup_dev_machine_root.yaml
-ansible-playbook -i $tmp_inventory playbooks/setup_dev_folder.yaml
-ansible-playbook -i $tmp_inventory playbooks/kill_shell.yaml
-ansible-playbook -i $tmp_inventory playbooks/setup_jhbuild.yaml
-ansible-playbook -i $tmp_inventory playbooks/install_jhbuild_deps.yaml
-ansible-playbook -i $tmp_inventory playbooks/jhbuild_run.yaml --extra-vars "api_key=$API_KEY"
+ansible-playbook -i $tmp_inventory playbooks/setup_dev_machine.yaml --extra-vars "api_key=$API_KEY"
 
 echo "Repos are cloned. You should be able to run 'jhbuild build' on the target"
