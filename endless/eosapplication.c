@@ -103,14 +103,6 @@ eos_application_activate (GApplication *application)
 
   G_APPLICATION_CLASS (eos_application_parent_class)->activate (application);
 
-  /* Raise the main application window if it is iconified. This behavior will
-  be default in GTK at some future point, in which case the following
-  paragraph can be removed. */
-  if (priv->main_application_window)
-    {
-      gtk_window_present (GTK_WINDOW (priv->main_application_window));
-    }
-
   /* TODO: Should it be required to override activate() as in GApplication? */
 }
 
