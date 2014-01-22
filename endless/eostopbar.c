@@ -25,7 +25,8 @@
 #define _EOS_TOP_BAR_BUTTON_SEPARATION_PX 8
 #define _EOS_TOP_BAR_VERTICAL_BUTTON_MARGIN_PX 6
 #define _EOS_TOP_BAR_MINIMIZE_ICON_NAME "window-minimize-symbolic"
-#define _EOS_TOP_BAR_MAXIMIZE_ICON_NAME "face-monkey"
+#define _EOS_TOP_BAR_MAXIMIZE_ICON_NAME "window-maximize-symbolic"
+#define _EOS_TOP_BAR_UNMAXIMIZE_ICON_NAME "window-unmaximize-symbolic"
 #define _EOS_TOP_BAR_CLOSE_ICON_NAME "window-close-symbolic"
 
 typedef struct {
@@ -207,9 +208,8 @@ eos_top_bar_init (EosTopBar *self)
                   "halign", GTK_ALIGN_END,
                   "valign", GTK_ALIGN_CENTER,
                   NULL);
-  priv->maximize_icon =
-    gtk_image_new_from_icon_name (_EOS_TOP_BAR_MAXIMIZE_ICON_NAME,
-                                  GTK_ICON_SIZE_SMALL_TOOLBAR);
+  priv->maximize_icon = gtk_image_new ();
+  eos_top_bar_update_window_maximized (self, TRUE);
   g_object_set(priv->maximize_icon,
                "pixel-size", _EOS_TOP_BAR_ICON_SIZE_PX,
                "margin", _EOS_TOP_BAR_BUTTON_PADDING_PX,
@@ -237,9 +237,9 @@ eos_top_bar_init (EosTopBar *self)
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->center_top_bar_attach);
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
-                     priv->minimize_button);
-  gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->maximize_button);
+  gtk_container_add (GTK_CONTAINER (priv->actions_grid),
+                     priv->minimize_button);
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->close_button);
 
@@ -322,4 +322,26 @@ eos_top_bar_set_center_widget (EosTopBar *self,
       gtk_container_add (GTK_CONTAINER (priv->center_top_bar_attach),
                          priv->center_top_bar_widget);
     }
+}
+
+/*
+ * eos_top_bar_update_window_maximized:
+ * @self: the top bar
+ * @is_maximized: whether the window is currently maximized
+ *
+ * Private method for eos_window to update the topbar on the window maximized
+ * state. The top bar will flip the asset of the maximized button depending on
+ * the state
+ */
+void
+eos_top_bar_update_window_maximized (EosTopBar *self,
+                                     gboolean is_maximized)
+{
+  g_return_if_fail (EOS_IS_TOP_BAR (self));
+  EosTopBarPrivate *priv = eos_top_bar_get_instance_private (self);
+
+  gchar *icon_name = is_maximized ? _EOS_TOP_BAR_UNMAXIMIZE_ICON_NAME : _EOS_TOP_BAR_MAXIMIZE_ICON_NAME;
+  gtk_image_set_from_icon_name (GTK_IMAGE (priv->maximize_icon),
+                                icon_name,
+                                GTK_ICON_SIZE_SMALL_TOOLBAR);
 }

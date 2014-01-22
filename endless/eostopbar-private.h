@@ -44,16 +44,18 @@ struct _EosTopBarClass
   GtkEventBoxClass parent_class;
 };
 
-GType eos_top_bar_get_type (void) G_GNUC_CONST;
+GType      eos_top_bar_get_type                (void) G_GNUC_CONST;
 
-GtkWidget *eos_top_bar_new (void);
+GtkWidget *eos_top_bar_new                     (void);
 
-void eos_top_bar_set_left_widget (EosTopBar *self,
-                             GtkWidget *left_top_bar_widget);
+void       eos_top_bar_set_left_widget         (EosTopBar *self,
+                                                GtkWidget *left_top_bar_widget);
 
-void
-eos_top_bar_set_center_widget (EosTopBar *self,
-                               GtkWidget *center_top_bar_widget);
+void       eos_top_bar_set_center_widget       (EosTopBar *self,
+                                                GtkWidget *center_top_bar_widget);
+
+void       eos_top_bar_update_window_maximized (EosTopBar *self,
+                                                gboolean   is_maximized);
 
 G_END_DECLS
 
