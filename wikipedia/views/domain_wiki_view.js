@@ -1,7 +1,10 @@
 const EndlessWikipedia = imports.wikipedia.EndlessWikipedia;
 const Lang = imports.lang;
+const System = imports.system;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
+const Gdk = imports.gi.Gdk;
+const GLib = imports.gi.GLib;
 const Endless = imports.gi.Endless;
 
 const BackButton = imports.wikipedia.widgets.BackButton;
@@ -54,6 +57,16 @@ const DomainWikiView = new Lang.Class({
         })
      
         this._window.show_all();
+
+        // A temporary measure to prevent memory usage from blowing up. The app
+        // will sometimes allocate pixbufs as part of its draw function and gjs
+        // will not cleanup unused pixbufs unless we force it to.
+        this._window.connect_after("draw", function () {
+            Gdk.threads_add_idle(GLib.PRIORITY_LOW, function () {
+                System.gc();
+                return false;
+            });
+        });
     },
 
     create_front_page: function(){
