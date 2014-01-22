@@ -99,7 +99,6 @@ static void
 eos_application_activate (GApplication *application)
 {
   EosApplication *self = EOS_APPLICATION (application);
-  EosApplicationPrivate *priv = eos_application_get_instance_private (self);
 
   G_APPLICATION_CLASS (eos_application_parent_class)->activate (application);
 
