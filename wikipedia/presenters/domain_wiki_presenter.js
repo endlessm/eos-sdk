@@ -58,6 +58,7 @@ const DomainWikiPresenter = new Lang.Class({
 
         this._view.set_personality(personality);
         this._view.set_app_name(app_name);
+        this.parent();
     },
 
     initPageRankFromJsonFile: function(filename){
