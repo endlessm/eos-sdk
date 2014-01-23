@@ -1,12 +1,12 @@
 ---
 # vim:ff=unix ts=2 sw=2 ai expandtab
-- name: "Copying python file for desktop generation"
-  copy: src=../templates/add_dev_tools_folder.py dest=~/ mode=755
+- name: "Copying files for desktop generation"
+  copy: src=../templates/$item dest=~/ mode=755
+  with_items:
+    - add_dev_tools_folder.py
+    - run_app_in_context_of.sh
   sudo: False
 
 - name: "Creating development tools folder"
-  shell: executable=/bin/bash export DISPLAY=:0; ~/add_dev_tools_folder.py &> ~/add_dev_tools_folder.log
+  shell: executable=/bin/bash ~/run_app_in_context_of.sh eos-shell ~/add_dev_tools_folder.py &> ~/add_dev_tools_folder.log
   sudo: False
-
-- name: "Setting default personality"
-  service: name=gdm state=restarted

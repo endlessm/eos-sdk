@@ -39,8 +39,6 @@ def get_settings_string(layout):
     settings.sync()
     print root
 
-    time.sleep(20)
-
 if __name__ == "__main__":
     layout = get_default_layout()
     write_folder_data()

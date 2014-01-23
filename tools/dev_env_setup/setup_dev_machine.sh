@@ -7,7 +7,7 @@ DEFAULT_IP="192.168.56.101"
 echo "To run this script, you need to have the following"
 echo " - VM running with the correct dev HD image"
 echo " - A user defined with sudo privileges"
-echo " - sshpass installed on the local machine"
+echo " - sshpass and latest Ansible installed on the local machine"
 echo
 read -p "Press [Enter] to continue..."
 
