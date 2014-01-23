@@ -5,16 +5,13 @@ TEST_LIBS = @EOS_SDK_LIBS@ $(top_builddir)/libendless-@EOS_SDK_API_VERSION@.la
 ENDLESS_TESTS_DIRECTORY = $(top_srcdir)/test
 
 noinst_PROGRAMS = \
-  test/endless/run-tests \
+	test/endless/run-tests \
 	test/smoke-tests/hello \
-  test/demos/flexy-grid
+	test/demos/flexy-grid
 
-include test/endless/Makefile.am.inc
-include test/demos/Makefile.am.inc
-include test/smoke-tests/Makefile.am.inc
-
+# This variable will be updated in Makefile subdirs (test/endless/Makefile.am.inc)
 javascript_tests = \
-  test/tools/eos-application-manifest/testInit.js \
+	test/tools/eos-application-manifest/testInit.js \
 	test/webhelper/testTranslate.js \
 	test/webhelper/testWebActions.js \
 	test/wikipedia/models/testCategoryModel.js \
@@ -22,6 +19,10 @@ javascript_tests = \
 	test/wikipedia/models/testDomainWikiModel.js \
 	$(NULL)
 EXTRA_DIST += $(javascript_tests)
+
+include test/endless/Makefile.am.inc
+include test/demos/Makefile.am.inc
+include test/smoke-tests/Makefile.am.inc
 
 # Run tests when running 'make check'
 TESTS = \

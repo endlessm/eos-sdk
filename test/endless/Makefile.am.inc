@@ -12,6 +12,11 @@ test_endless_run_tests_SOURCES = \
 	$(ENDLESS_TESTS_DIRECTORY)/endless/test-action-menu.c \
 	$(ENDLESS_TESTS_DIRECTORY)/endless/test-action-button.c \
 	$(ENDLESS_TESTS_DIRECTORY)/endless/test-flexy-grid.c \
+	$(ENDLESS_TESTS_DIRECTORY)/endless/test-custom-container.c \
 	$(NULL)
 test_endless_run_tests_CPPFLAGS = $(TEST_FLAGS)
 test_endless_run_tests_LDADD = $(TEST_LIBS)
+
+javascript_tests += \
+	test/endless/testCustomContainer.js \
+	$(NULL)
