@@ -12,9 +12,7 @@
     <file>assets/submenu_background.jpg</file>
     <file>assets/category_hover_arrow.png</file>
     <file>assets/image_strip_back_button.png</file>
-    <file>assets/introduction_back_button_normal.png</file>
-    <file>assets/introduction_back_button_pressed.png</file>
-    <file>assets/introduction_back_button_hover.png</file>
+    <file compressed="true">assets/wikipedia-category-back-symbolic.svg</file>
     <file>assets/topbar_back_icon_normal.png</file>
   </gresource>
 </gresources>

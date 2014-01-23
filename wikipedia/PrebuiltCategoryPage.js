@@ -1,12 +1,10 @@
 const Endless = imports.gi.Endless;
-const Gettext = imports.gettext;
-const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
 const BoxWithBg = imports.wikipedia.widgets.BoxWithBg;
-const Config = imports.wikipedia.config;
+const CategoryBackButton = imports.wikipedia.widgets.category_back_button;
 const FixedSizeTextView = imports.wikipedia.widgets.FixedSizeTextView;
 const ScaledImage = imports.wikipedia.widgets.scaled_image;
 
@@ -15,9 +13,6 @@ const INTRO_TITLE_SEPARATOR_URI = "/com/endlessm/wikipedia-domain/assets/introdu
 const LEFT_MARGIN_FOR_TEXT = 45;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
-
-const _ = function(string) { return GLib.dgettext('eos-sdk', string); };
-Gettext.bindtextdomain('eos-sdk', Config.DATADIR + '/locale');
 
 function _resourceUriToPath(uri) {
     if(uri.startsWith('resource://'))
@@ -118,17 +113,12 @@ const PrebuiltCategoryPage = new Lang.Class({
         this._description_scrolled_window.set_policy(Gtk.PolicyType.NEVER,
             Gtk.PolicyType.AUTOMATIC);
 
-        this._back_button = new Endless.AssetButton({
+        this._back_button = new CategoryBackButton.CategoryBackButton({
             name: "category-back-button",
             expand: true,
             halign: Gtk.Align.START,
-            valign: Gtk.Align.CENTER,
-            normal_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_normal.png",
-            active_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_pressed.png",
-            prelight_image_uri: "resource://com/endlessm/wikipedia-domain/assets/introduction_back_button_hover.png",
-            label: _("OTHER CATEGORIES")
+            valign: Gtk.Align.FILL
         });
-
         this._back_button.connect('clicked', Lang.bind(this, function() {
             this.emit('go-back-home');
         }));
