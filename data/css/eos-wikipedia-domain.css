@@ -10,7 +10,6 @@ EosWindow {
     font-family: "Lato Light";
     color: #ffffff;
     text-shadow: 0px 1px 0px alpha(#23326e, 0.15);
-    padding-top: 15px;
 }
 
 .title.main-element.category.front-page {
@@ -81,7 +80,15 @@ Gjs_CategoryButton.clickable {
 
 Gjs_CategoryButton.clickable:hover {
     background-color: alpha(#212121, 0.5);
-    transition: background-color 150ms ease-in-out;
+}
+
+Gjs_CategoryButton .image {
+    opacity: 0.0;
+    transition: opacity 150ms ease-in-out;
+}
+
+Gjs_CategoryButton.clickable .image:hover {
+    opacity: 1.0;
 }
 
 #side_bar_button:hover {
