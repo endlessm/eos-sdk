@@ -2,7 +2,7 @@
 # vim:ff=unix ts=2 sw=2 ai expandtab
 
 - name: "Setting default personality"
-  shell: executable=/bin/bash eos-select-personality default
+  shell: eos-select-personality default
 
 - name: "Creating ~/.local/share/applications directory"
   file: path=~/.local/share/applications state=directory
