@@ -42,7 +42,7 @@ fi
 
 if [[ ! $(which ansible-playbook) ]]; then
   echo "Installing playbook script softlink"
-  ln -fs ${HOME}/apps/ansible/build/scripts-2.7/ansible-playbook /usr/bin/
+  sudo cp ${HOME}/apps/ansible/build/scripts-2.7/ansible-playbook /usr/bin/
 fi
 
 echo "Checking if this user has a ssh key"
