@@ -1,8 +1,0 @@
----
-# vim:ff=unix ts=2 sw=2 ai expandtab
-
-- name: "Creating /opt/gnome directory"
-file: path=/opt/gnome state=directory mode=777
-
-- name: "Updating apt-file cache"
-  shell: apt-file update
