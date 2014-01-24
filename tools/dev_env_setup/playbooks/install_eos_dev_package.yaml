@@ -1,0 +1,9 @@
+---
+# vim:ff=unix ts=2 sw=2 ai expandtab
+
+- name: "Ensuring that we can call apt from our scripts"
+  raw: "apt-get install -y --force-yes python-apt python"
+
+- name: "Ensuring that eos-dev is installed. If not, this operation will take a signifficant amount of time"
+  apt: name=eos-dev force=yes update_cache=true cache_valid_time=259200
+
