@@ -1,0 +1,12 @@
+---
+# vim:ff=unix ts=2 sw=2 ai expandtab
+- name: "Copying files for desktop generation"
+  copy: src=../templates/$item dest=~/ mode=755
+  with_items:
+    - add_dev_tools_folder.py
+    - run_app_in_context_of.sh
+  sudo: False
+
+- name: "Creating development tools folder"
+  shell: executable=/bin/bash ~/run_app_in_context_of.sh eos-shell ~/add_dev_tools_folder.py &> ~/add_dev_tools_folder.log
+  sudo: False
