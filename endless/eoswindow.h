@@ -59,45 +59,48 @@ struct _EosWindowClass
 };
 
 EOS_SDK_ALL_API_VERSIONS
-GType           eos_window_get_type                             (void) G_GNUC_CONST;
+GType           eos_window_get_type                              (void) G_GNUC_CONST;
 
 EOS_SDK_ALL_API_VERSIONS
-GtkWidget      *eos_window_new                                  (EosApplication *application);
+GtkWidget      *eos_window_new                                   (EosApplication *application);
 
 EOS_SDK_ALL_API_VERSIONS
-EosPageManager *eos_window_get_page_manager                     (EosWindow      *self);
+EosPageManager *eos_window_get_page_manager                      (EosWindow      *self);
 
 EOS_SDK_ALL_API_VERSIONS
-void            eos_window_set_page_manager                     (EosWindow      *self,
-                                                                 EosPageManager *page_manager);
+void            eos_window_set_page_manager                      (EosWindow      *self,
+                                                                  EosPageManager *page_manager);
 
 EOS_SDK_ALL_API_VERSIONS
-gboolean        eos_window_get_font_scaling_active              (EosWindow      *self);
+gboolean        eos_window_get_font_scaling_active               (EosWindow      *self);
 
 EOS_SDK_ALL_API_VERSIONS
-void            eos_window_set_font_scaling_active              (EosWindow *self,
-                                                                 gboolean is_scaling);
+void            eos_window_set_font_scaling_active               (EosWindow *self,
+                                                                  gboolean is_scaling);
 
 EOS_SDK_ALL_API_VERSIONS
-gint            eos_window_get_font_scaling_default_size        (EosWindow *self);
+gint            eos_window_get_font_scaling_default_size         (EosWindow *self);
 
 EOS_SDK_ALL_API_VERSIONS
-void            eos_window_set_font_scaling_default_size        (EosWindow *self,
-                                                                 gint new_default_font_size);
+void            eos_window_set_font_scaling_default_size         (EosWindow *self,
+                                                                  gint new_default_font_size);
 
 EOS_SDK_ALL_API_VERSIONS
-gint            eos_window_get_font_scaling_default_window_size (EosWindow *self);
+gint            eos_window_get_font_scaling_default_window_size  (EosWindow *self);
 
 EOS_SDK_ALL_API_VERSIONS
-void            eos_window_set_font_scaling_default_window_size (EosWindow *self,
-                                                                 gint new_default_window_size);
+void            eos_window_set_font_scaling_default_window_size  (EosWindow *self,
+                                                                  gint new_default_window_size);
 
 EOS_SDK_ALL_API_VERSIONS
-gint            eos_window_get_font_scaling_min_font_size       (EosWindow *self);
+gint            eos_window_get_font_scaling_min_font_size        (EosWindow *self);
 
 EOS_SDK_ALL_API_VERSIONS
-void            eos_window_set_font_scaling_min_font_size       (EosWindow *self,
-                                                                 gint new_min_font_size);
+void            eos_window_set_font_scaling_min_font_size        (EosWindow *self,
+                                                                  gint new_min_font_size);
+
+EOS_SDK_ALL_API_VERSIONS
+gdouble         eos_window_get_font_scaling_calculated_font_size (EosWindow *self);
 
 G_END_DECLS
 

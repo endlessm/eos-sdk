@@ -49,11 +49,15 @@
  * The default minimum font size under which a font will never scale can be set
  * by #EosWindow:font-scaling-min-font-size.
  *
+ * The calculated minimum font size by which children widgets will scale and can
+ * be retrieved by #EosWindow:font-scaling-calculated-font-size. This property is
+ * only readable and is only set by #EosWindow internally.
+ *
  * For instance, supose we have a default font size of 12px, a default window size
- * of 720px, and a window allocation of 360px. The calculated base pixel size
+ * of 720px, and a window allocation of 360px. The calculated font pixel size
  * will be 12px * (360px / 720px) = 6px. A corresponding CSS font-size of 1em will
  * be equivalent to 6 px. A CSS font-size of 0.5em will be equivalent to 3px. If the
- * window is resized to a height of 720px, then the calculated base pixel size will
+ * window is resized to a height of 720px, then the calculated pixel size will
  * be 12px, and the CSS font-size of 1em will be equivalent to 12px. A CSS
  * font-size of 0.5em will be equivalent to 6px. If the minimum font size is set
  * to 12px, then the font-size will be forced to 12px, ignoring the calculated font
@@ -103,6 +107,7 @@ typedef struct {
   gint font_scaling_default_size;
   gint font_scaling_default_window_size;
   gint font_scaling_min_font_size;
+  gdouble font_scaling_calculated_font_size;
 
   /* For keeping track of what to display alongside the current page */
   GtkWidget *current_page;
@@ -122,6 +127,7 @@ enum
   PROP_FONT_SCALING_DEFAULT_SIZE,
   PROP_FONT_SCALING_DEFAULT_WINDOW_SIZE,
   PROP_FONT_SCALING_MIN_FONT_SIZE,
+  PROP_FONT_SCALING_CALCULATED_FONT_SIZE,
   NPROPS
 };
 
@@ -429,6 +435,10 @@ eos_window_get_property (GObject    *object,
       g_value_set_int (value, priv->font_scaling_min_font_size);
       break;
 
+    case PROP_FONT_SCALING_CALCULATED_FONT_SIZE:
+      g_value_set_double (value, priv->font_scaling_calculated_font_size);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     }
@@ -581,15 +591,15 @@ eos_window_size_allocate (GtkWidget *window, GtkAllocation *allocation)
   if (priv->font_scaling_active)
     {
       GtkStyleProvider *provider = GTK_STYLE_PROVIDER (priv->font_size_provider);
-      gdouble base_pixel_size = (gdouble) priv->font_scaling_default_size *
+      priv->font_scaling_calculated_font_size = (gdouble) priv->font_scaling_default_size *
                                 ((gdouble) allocation->height / (gdouble) priv->font_scaling_default_window_size);
 
-      if (base_pixel_size < priv->font_scaling_min_font_size)
-        base_pixel_size = priv->font_scaling_min_font_size;
+      if (priv->font_scaling_calculated_font_size < priv->font_scaling_min_font_size)
+        priv->font_scaling_calculated_font_size = priv->font_scaling_min_font_size;
 
       GError *error = NULL;
 
-      gchar *font_size_css = g_strdup_printf (FONT_SIZE_TEMPLATE, base_pixel_size);
+      gchar *font_size_css = g_strdup_printf (FONT_SIZE_TEMPLATE, priv->font_scaling_calculated_font_size);
       GdkScreen *screen = gdk_screen_get_default ();
 
       gtk_style_context_remove_provider_for_screen (screen, provider);
@@ -699,6 +709,19 @@ eos_window_class_init (EosWindowClass *klass)
                       G_MAXINT,
                       8,
                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+
+  /**
+   * EosWindow:font-scaling-calculated-font-size:
+   *
+   * The calculated font-size by which children widgets scale. Units are in pixels.
+   */
+  eos_window_props[PROP_FONT_SCALING_CALCULATED_FONT_SIZE] =
+    g_param_spec_double ("font-scaling-calculated-font-size", "Font scaling calculated size",
+                      "This is the calculated font-size by which children widgets scale",
+                      1,
+                      G_MAXDOUBLE,
+                      12,
+                      G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, NPROPS, eos_window_props);
 }
@@ -1056,4 +1079,22 @@ eos_window_set_font_scaling_min_font_size (EosWindow *self,
   g_return_if_fail (self != NULL && EOS_IS_WINDOW (self));
   EosWindowPrivate *priv = eos_window_get_instance_private (self);
   priv->font_scaling_min_font_size = new_min_font_size;
+}
+
+/**
+ * eos_window_get_font_scaling_calculated_font_size:
+ * @self: the window
+ *
+ * See #EosWindow:font-scaling-calculated-font-size for details.
+ *
+ * Returns: the calculated font size by which the font size of children widgets
+ * will scale.
+ */
+gdouble
+eos_window_get_font_scaling_calculated_font_size (EosWindow *self)
+{
+  g_return_val_if_fail (self != NULL && EOS_IS_WINDOW (self), -1);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+
+  return priv->font_scaling_calculated_font_size;
 }
