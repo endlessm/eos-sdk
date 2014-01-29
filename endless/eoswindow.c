@@ -813,6 +813,7 @@ eos_window_init (EosWindow *self)
 
   gchar *background_name1 = g_strdup_printf (BACKGROUND_FRAME_NAME_TEMPLATE, 1);
   priv->next_background = g_object_new (GTK_TYPE_FRAME, "name", background_name1, NULL);
+  gtk_widget_show (priv->next_background);
   gtk_container_add (GTK_CONTAINER (priv->background_stack), priv->next_background);
   g_free (background_name1);
 
@@ -820,6 +821,7 @@ eos_window_init (EosWindow *self)
   // will be the first visible page in the stack
   gchar *background_name0 = g_strdup_printf (BACKGROUND_FRAME_NAME_TEMPLATE, 0);
   priv->current_background = g_object_new (GTK_TYPE_FRAME, "name", background_name0, NULL);
+  gtk_widget_show (priv->current_background);
   gtk_container_add (GTK_CONTAINER (priv->background_stack), priv->current_background);
   g_free (background_name0);
 
