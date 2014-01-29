@@ -130,8 +130,10 @@ Gjs_CategoryButton.clickable .image:hover {
 }
 
 .category-page .back {
-    padding-left: 25px;
-    padding-right: 25px;
+    /* button image should be 60px from the right. image needs 15 px padding for
+     * background glow, so we pad by 45 here */
+    padding-left: 45px;
+    padding-right: 45px;
 }
 
 Gjs_BackButton {
