@@ -915,6 +915,7 @@ eos_page_manager_init (EosPageManager *self)
   gtk_widget_set_has_window (self_widget, FALSE);
 
   priv->stack = gtk_stack_new ();
+  gtk_widget_show (priv->stack);
   gtk_widget_set_parent (priv->stack, self_widget);
 }
 

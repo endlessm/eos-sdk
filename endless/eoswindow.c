@@ -877,6 +877,8 @@ eos_window_init (EosWindow *self)
 
   eos_window_set_page_manager (self,
                                EOS_PAGE_MANAGER (eos_page_manager_new ()));
+  // Make our internal widgets visible, so user needs only call show on the window.
+  gtk_widget_show_all (priv->overlay);
 }
 
 /* Public API */

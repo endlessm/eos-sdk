@@ -226,6 +226,25 @@ test_main_area_widgets_visibility (GApplication *app)
   gtk_widget_destroy (win);
 }
 
+static void
+test_internal_widget_visibility (GApplication *app) {
+  GtkWidget *win = eos_window_new (EOS_APPLICATION (app));
+  EosPageManager *pm = eos_window_get_page_manager (EOS_WINDOW (win));
+  GtkWidget *page0 = gtk_label_new ("test");
+
+  gtk_container_add (GTK_CONTAINER (pm), page0);
+  gtk_widget_show (page0);
+  gtk_widget_show (win);
+
+  // We have a lot of internal widgets, if we forgotten to call show on one of
+  // them the label won't be visible, even though we just called show on the
+  // two widgets we created in this test.
+  g_assert (gtk_widget_is_visible (page0));
+
+  gtk_widget_destroy (win);
+}
+
+
 void
 add_window_tests (void)
 {
@@ -249,4 +268,6 @@ add_window_tests (void)
   ADD_APP_WINDOW_TEST ("/window/prop-page-manager", test_prop_page_manager);
   ADD_APP_WINDOW_TEST ("/window/main-area-widgets-visibility",
                        test_main_area_widgets_visibility);
+  ADD_APP_WINDOW_TEST ("/window/internal-widget-visibility",
+                       test_internal_widget_visibility);
 }
