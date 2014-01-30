@@ -21,7 +21,7 @@ const ListTextButton = new Lang.Class({
         this._hover_icon_pixbuf = GdkPixbuf.Pixbuf.new_from_resource(hover_icon_path);
 
         this._image = new Gtk.Image({
-            no_show_all: true
+            opacity: 0,
         });
         this._image.set_from_pixbuf(this._hover_icon_pixbuf);
 
@@ -47,11 +47,11 @@ const ListTextButton = new Lang.Class({
         // If button is hovered over and/or pressed, then show the arrow icon
         if (widget.get_state_flags() & Gtk.StateFlags.ACTIVE || 
             widget.get_state_flags() & Gtk.StateFlags.PRELIGHT) {
-            this._image.show();
+            this._image.set_opacity(1);
             return false;
         }
         // If no hover or press, then hide the arrow icon
-        this._image.hide();
+        this._image.set_opacity(0);
         return false;
     }
 });
