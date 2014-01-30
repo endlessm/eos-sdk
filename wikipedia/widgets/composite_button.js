@@ -47,7 +47,7 @@ const CompositeButton = new Lang.Class({
                 // accordingly
                 let myFlag = myFlags & flag;
                 if (myFlag !== 0)
-                    child.set_state_flags(flag, true);
+                    child.set_state_flags(flag, false);
                 else
                     child.unset_state_flags(flag);
 
