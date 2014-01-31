@@ -17,4 +17,6 @@ const STYLE_CLASS_CATEGORY_CLICKABLE = 'clickable';
 const STYLE_CLASS_ARTICLE = 'article';
 const STYLE_CLASS_FRONT_PAGE = 'front-page';
 const STYLE_CLASS_CATEGORY_PAGE = 'category-page';
+const STYLE_CLASS_CATEGORY_VERTICAL_SEPARATOR = 'category-vertical-separator';
+const STYLE_CLASS_CATEGORY_HORIZONTAL_SEPARATOR = 'category-horizontal-separator';
 const STYLE_CLASS_ARTICLES_PAGE = 'articles-page';
