@@ -653,8 +653,7 @@ eos_flexy_grid_motion_notify (GtkWidget *widget,
     }
 
   EosFlexyGridCell *cell = eos_flexy_grid_get_cell_at_coords (self, relative_x, relative_y);
-  if (cell != NULL)
-    eos_flexy_grid_update_cell_prelight (self, cell);
+  eos_flexy_grid_update_cell_prelight (self, cell);
 
   return GDK_EVENT_PROPAGATE;
 }
