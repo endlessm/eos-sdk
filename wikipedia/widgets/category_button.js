@@ -96,6 +96,25 @@ const CategoryButton = new Lang.Class({
         this._inner_grid.add(this._arrow);
         this.add(this._inner_grid);
         this.show_all();
+
+        // For some reason, on the NUC, setting opacity in CSS for this button does not work.
+        // So we have to set it in Gtk code. Also, we have to set the opacity
+        // to zero upfront. I am putting that here instead of in the initialisation
+        // of the arrow since it is part of this NUC-specific hack 
+        this.connect('state-flags-changed', Lang.bind(this, this._update_appearance));
+        this._arrow.set_opacity(0)
+    },
+
+    _update_appearance: function(widget, flags) {
+        // If button is hovered over and/or pressed, then show the arrow icon
+        if (widget.get_state_flags() & Gtk.StateFlags.ACTIVE || 
+            widget.get_state_flags() & Gtk.StateFlags.PRELIGHT) {
+            this._arrow.set_opacity(1);
+            return false;
+        }
+        // If no hover or press, then hide the arrow icon
+        this._arrow.set_opacity(0);
+        return false;
     },
 
     get image_uri() {
