@@ -1,6 +1,7 @@
 const Endless = imports.gi.Endless;
 const Lang = imports.lang;
 const GObject = imports.gi.GObject;
+const System = imports.system;
 
 //Local Libraries
 const Utils = imports.wikipedia.utils;
@@ -67,8 +68,17 @@ const DomainWikiPresenter = new Lang.Class({
     },
 
     initAppInfoFromJsonFile: function(filename) {
-        let app_content = JSON.parse(Utils.load_file_from_resource(filename));
-        this._model.loadFromJson(app_content);
+        try {
+            let app_content = JSON.parse(Utils.load_file_from_resource(filename));
+            this._model.loadFromJson(app_content);
+        } catch(e) {
+            print(e);
+            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_FOUND)) {
+                print("****** This app does not support the personality",
+                      Endless.get_system_personality(), "******");
+            }
+            System.exit(1);
+        }
     },
 
     // Respond to the front page's 'category-clicked' signal by loading the
