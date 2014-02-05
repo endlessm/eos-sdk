@@ -752,7 +752,7 @@ on_close_clicked_cb (GtkWidget *top_bar,
   gtk_window_close (GTK_WINDOW (self));
 }
 
-static void
+static gboolean
 on_window_state_event_cb (GtkWidget           *widget,
                           GdkEventWindowState *event)
 {
@@ -761,6 +761,7 @@ on_window_state_event_cb (GtkWidget           *widget,
   GdkWindowState window_state = event->new_window_state;
   priv->maximized = window_state & GDK_WINDOW_STATE_MAXIMIZED;
   eos_top_bar_update_window_maximized (EOS_TOP_BAR (priv->top_bar), priv->maximized);
+  return FALSE;
 }
 
 /* Make sure that the edge finishing does not catch input events */
