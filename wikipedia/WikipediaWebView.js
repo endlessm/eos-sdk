@@ -137,13 +137,14 @@ const WikipediaWebView = new Lang.Class({
                 let suffix = parts[parts.length - 1];
                 let id = decodeURI(suffix);
                 this.loadArticleById(id);
-                return true;
+                decision.ignore();
+                return true; // handled
             } else if (GLib.uri_parse_scheme(uri).startsWith('browser-')) {
                 // Open everything that starts with 'browser-' in the system
                 // browser
                 let realURI = uri.slice('browser-'.length);
-                printerr('Showing', realURI);
                 Gtk.show_uri(null, realURI, Gdk.CURRENT_TIME);
+                decision.ignore();
                 return true; // handled
             }
         }
