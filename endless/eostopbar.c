@@ -18,6 +18,7 @@
  * The action buttons area contain "minimize", "maximize" and "close" buttons.
  */
 #define _EOS_STYLE_CLASS_TOP_BAR "top-bar"
+#define _EOS_STYLE_CLASS_UNMAXIMIZED "unmaximized"
 #define _EOS_TOP_BAR_HEIGHT_PX 36
 #define _EOS_TOP_BAR_BUTTON_PADDING_PX 4
 #define _EOS_TOP_BAR_ICON_SIZE_PX 16
@@ -344,4 +345,10 @@ eos_top_bar_update_window_maximized (EosTopBar *self,
   gtk_image_set_from_icon_name (GTK_IMAGE (priv->maximize_icon),
                                 icon_name,
                                 GTK_ICON_SIZE_SMALL_TOOLBAR);
+
+  GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (self));
+  if (!is_maximized)
+    gtk_style_context_add_class (context, _EOS_STYLE_CLASS_UNMAXIMIZED);
+  else
+    gtk_style_context_remove_class (context, _EOS_STYLE_CLASS_UNMAXIMIZED);
 }

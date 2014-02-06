@@ -37,6 +37,10 @@ EosWindow {
         from(#464646), to(#1e1e1e));
 }
 
+.top-bar.unmaximized {
+    border-radius: 7px 7px 0px 0px;
+}
+
 .top-bar:backdrop {
     background-image: -gtk-gradient(linear, center top, center bottom,
         from(#282828), to(#1e1e1e));
