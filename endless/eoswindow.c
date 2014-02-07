@@ -69,7 +69,7 @@
 
 #define BACKGROUND_FRAME_NAME_TEMPLATE "_eos-window-background-%d"
 
-#define FONT_SIZE_TEMPLATE "EosWindow { font-size: %fpx; }"
+#define FONT_SIZE_TEMPLATE "EosWindow { font-size: %spx; }"
 
 #define TRANSPARENT_FRAME_CSS_PROPERTIES "{ background-image: none;\n" \
                                           " background-color: transparent\n;" \
@@ -599,7 +599,15 @@ eos_window_size_allocate (GtkWidget *window, GtkAllocation *allocation)
 
       GError *error = NULL;
 
-      gchar *font_size_css = g_strdup_printf (FONT_SIZE_TEMPLATE, priv->font_scaling_calculated_font_size);
+      /* A float will only have one decimal point when printed as a string.
+       * The decimal point can be represented as a comma or period when using
+       * either Imperial or metric units. However, the CSS parser only recognizes
+       * periods as valid decimal points. Therefore, we convert the float to a
+       * string using a period as the decimal point. */
+      gchar font_size_float_str [G_ASCII_DTOSTR_BUF_SIZE];
+      g_ascii_dtostr (font_size_float_str, G_ASCII_DTOSTR_BUF_SIZE, priv->font_scaling_calculated_font_size);
+
+      gchar *font_size_css = g_strdup_printf (FONT_SIZE_TEMPLATE, font_size_float_str);
       GdkScreen *screen = gdk_screen_get_default ();
 
       gtk_style_context_remove_provider_for_screen (screen, provider);
