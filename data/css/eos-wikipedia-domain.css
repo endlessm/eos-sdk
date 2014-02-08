@@ -75,6 +75,10 @@ Gjs_ArticleList .scrollbar.slider {
     font-size: 1.5em;
 }
 
+.category-page #category-description-align {
+    padding: 0em 3.2em 0em 3.7em;
+}
+
 .category-page #category-scrolled-window .scrollbar.slider {
     border-radius: 6px;
     background-color: alpha(white, 0.3);
@@ -83,6 +87,9 @@ Gjs_ArticleList .scrollbar.slider {
 .category-page #category-title {
     font-family: "Lato Light";
     font-size: 4.17em;
+    /* Set the font size in this widget, so the padding below (in ems) is actually
+     * relative to this font size */
+    padding: .5em .75em .2em .75em;
     color: rgba(255, 255, 255, 0.9);
 }
 

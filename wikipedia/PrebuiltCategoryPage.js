@@ -67,6 +67,13 @@ const PrebuiltCategoryPage = new Lang.Class({
         });
         description_scrolled_window.add(this._description_text_view);
 
+        // Would rather have a more lightweight widget here like alignment,
+        // but alignment doesn't seem to respect padding and margin
+        let description_alignment = new Gtk.Frame({
+            name: 'category-description-align'
+        });
+        description_alignment.add(description_scrolled_window);
+
         let vertical_separator = new Gtk.Frame();
         vertical_separator.get_style_context().add_class(
             EndlessWikipedia.STYLE_CLASS_CATEGORY_VERTICAL_SEPARATOR);
@@ -74,7 +81,7 @@ const PrebuiltCategoryPage = new Lang.Class({
         let grid = new Gtk.Grid();
         grid.attach(this._title_label, 0, 0, 1, 1);
         grid.attach(description_separator, 0, 1, 1, 1);
-        grid.attach(description_scrolled_window, 0, 2, 1, 1);
+        grid.attach(description_alignment, 0, 2, 1, 1);
         grid.attach(vertical_separator, 1, 0, 1, 3);
 
         let frame = new Gtk.Frame({
