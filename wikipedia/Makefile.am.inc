@@ -23,7 +23,6 @@ EXTRA_DIST += wikipedia/config.js.in
 js_sources = \
 	wikipedia/ArticleList.js \
 	wikipedia/widgets/BackButton.js \
-	wikipedia/widgets/BoxWithBg.js \
 	wikipedia/widgets/category_back_button.js \
 	wikipedia/widgets/composite_button.js \
 	wikipedia/widgets/FixedSizeTextView.js \
@@ -34,7 +33,6 @@ js_sources = \
 	wikipedia/PrebuiltWikipediaApplication.js \
 	wikipedia/widgets/ListTextButton.js \
 	wikipedia/config.js \
-	wikipedia/widgets/scaled_image.js \
 	wikipedia/utils.js \
 	wikipedia/WikipediaApplication.js \
 	wikipedia/models/article_model.js \

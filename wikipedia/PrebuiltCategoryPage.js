@@ -3,22 +3,10 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const BoxWithBg = imports.wikipedia.widgets.BoxWithBg;
 const CategoryBackButton = imports.wikipedia.widgets.category_back_button;
 const FixedSizeTextView = imports.wikipedia.widgets.FixedSizeTextView;
-const ScaledImage = imports.wikipedia.widgets.scaled_image;
-
-const SHADOW_SEPARATOR_RESOURCE_PATH = "/com/endlessm/wikipedia-domain/assets/submenu_separator_shadow_a.png";
-const INTRO_TITLE_SEPARATOR_URI = "/com/endlessm/wikipedia-domain/assets/introduction_title_separator.png";
-const LEFT_MARGIN_FOR_TEXT = 45;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
-
-function _resourceUriToPath(uri) {
-    if(uri.startsWith('resource://'))
-        return uri.slice('resource://'.length);
-    throw new Error('Resource URI did not start with "resource://"');
-}
 
 const PrebuiltCategoryPage = new Lang.Class({
     Name: 'PrebuiltCategoryPage',
@@ -46,106 +34,86 @@ const PrebuiltCategoryPage = new Lang.Class({
         'go-back-home':{}
     },
 
-    _init: function(props) {
-        this._shaded_box = new BoxWithBg.BoxWithBg({
-            name: "category_info",
-            orientation: Gtk.Orientation.VERTICAL,
-            vexpand: true
-        });
-
-        this._title = null;
-        this._description = null;
-
-        this._layout_grid = new Gtk.Grid({
-            orientation: Gtk.Orientation.HORIZONTAL,
-            hexpand: true,
-            halign: Gtk.Align.END
-        });
-
+    _get_info_box: function(){
         this._title_label = new Gtk.Label({
-            name:"category_title",
+            name: 'category-title',
             expand: false,
             halign: Gtk.Align.START,
-            margin_left: LEFT_MARGIN_FOR_TEXT,
             xalign: 0.0, // deprecated Gtk.Misc property; necessary because
             wrap: true,  // "wrap" doesn't respect "halign"
             width_chars: 15,
             max_width_chars: 18
         });
 
-        this._submenu_separator = new ScaledImage.ScaledImage({
-            resource: SHADOW_SEPARATOR_RESOURCE_PATH,
-            constraint: Gtk.Orientation.VERTICAL,
-            halign: Gtk.Align.END
-        });
-
-        this._splash_separator = new ScaledImage.ScaledImage({
-            resource: SHADOW_SEPARATOR_RESOURCE_PATH,
-            constraint: Gtk.Orientation.VERTICAL,
-            halign: Gtk.Align.END
-        });
-
-        this._description_separator = new ScaledImage.ScaledImage({
-            resource: INTRO_TITLE_SEPARATOR_URI,
-            constraint: Gtk.Orientation.HORIZONTAL
-        });
+        let description_separator = new Gtk.Frame();
+        description_separator.get_style_context().add_class(
+            EndlessWikipedia.STYLE_CLASS_CATEGORY_HORIZONTAL_SEPARATOR);
 
         this._description_text_view = new FixedSizeTextView.FixedSizeTextView({
-            name:"category_description",
+            name: 'category-description',
             sensitive: false,
             editable: false,
-            cursor_visible: false
+            cursor_visible: false,
+            pixels_inside_wrap: 10,
+            wrap_mode: Gtk.WrapMode.WORD
         });
 
-        this._description_text_view.set_pixels_inside_wrap(10);
-        this._description_text_view.set_wrap_mode(Gtk.WrapMode.WORD);
-        this._description_text_view.right_margin = 20;
-
-        this._description_scrolled_window = new Gtk.ScrolledWindow({
-            name: 'category_scrolled_window',
+        let description_scrolled_window = new Gtk.ScrolledWindow({
+            name: 'category-scrolled-window',
             halign: Gtk.Align.FILL,
             vexpand: true,
-            margin_left: LEFT_MARGIN_FOR_TEXT
+            hscrollbar_policy: Gtk.PolicyType.NEVER,
+            vscrollbar_policy: Gtk.PolicyType.AUTOMATIC
         });
+        description_scrolled_window.add(this._description_text_view);
 
-        this._description_scrolled_window.add(this._description_text_view);
+        let vertical_separator = new Gtk.Frame();
+        vertical_separator.get_style_context().add_class(
+            EndlessWikipedia.STYLE_CLASS_CATEGORY_VERTICAL_SEPARATOR);
 
-        this._description_scrolled_window.set_policy(Gtk.PolicyType.NEVER,
-            Gtk.PolicyType.AUTOMATIC);
+        let grid = new Gtk.Grid();
+        grid.attach(this._title_label, 0, 0, 1, 1);
+        grid.attach(description_separator, 0, 1, 1, 1);
+        grid.attach(description_scrolled_window, 0, 2, 1, 1);
+        grid.attach(vertical_separator, 1, 0, 1, 3);
 
-        this._back_button = new CategoryBackButton.CategoryBackButton({
-            name: "category-back-button",
+        let frame = new Gtk.Frame({
+            name: 'category-info',
+            vexpand: true
+        });
+        frame.add(grid);
+        return frame;
+    },
+
+    _init: function(props) {
+        this._title = null;
+        this._description = null;
+        this._category_provider = new Gtk.CssProvider();
+        this.parent(props);
+
+        let info_box = this._get_info_box();
+
+        let back_button = new CategoryBackButton.CategoryBackButton({
+            name: 'category-back-button',
             expand: true,
             halign: Gtk.Align.START,
             valign: Gtk.Align.FILL
         });
-        this._back_button.connect('clicked', Lang.bind(this, function() {
+        back_button.connect('clicked', Lang.bind(this, function() {
             this.emit('go-back-home');
         }));
-
-        this.parent(props);
-
-        this._shaded_box.add(this._title_label);
-        this._shaded_box.add(this._description_separator);
-        this._shaded_box.add(this._description_scrolled_window);
-
-        this._layout_grid.add(this._splash_separator);
-        this._layout_grid.add(this._shaded_box);
         
-        this._overlay = new Gtk.Overlay({
-            halign: Gtk.Align.END
-        });
-        this._overlay.add(this._layout_grid);
-        this._overlay.add_overlay(this._submenu_separator);
+        let vertical_separator = new Gtk.Frame();
+        vertical_separator.get_style_context().add_class(
+            EndlessWikipedia.STYLE_CLASS_CATEGORY_VERTICAL_SEPARATOR);
 
-        this._outer_most_grid = new Gtk.Grid({
+        let grid = new Gtk.Grid({
             orientation: Gtk.Orientation.HORIZONTAL
         });
-        this._outer_most_grid.add(this._back_button);
-        this._outer_most_grid.add(this._overlay);
-
-        this.add(this._outer_most_grid);
-        this._category_provider = new Gtk.CssProvider();
+        grid.add(back_button);
+        grid.add(vertical_separator);
+        grid.add(info_box);
+        this.add(grid);
 
         // Add style contexts for CSS
         let context = this.get_style_context();
@@ -177,10 +145,11 @@ const PrebuiltCategoryPage = new Lang.Class({
     },
 
     set image_uri(value){
-        this._image_uri = value;
-        let frame_css = "#category_frame{background-image: url('" + value + "');background-repeat:no-repeat;background-size:cover;}";
-        this._category_provider.load_from_data(frame_css);
-        let context = this.get_style_context();
-        context.add_provider(this._category_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+        if (value) {
+            let frame_css = "#category_frame{background-image: url('" + value + "');background-repeat:no-repeat;background-size:cover;}";
+            this._category_provider.load_from_data(frame_css);
+            let context = this.get_style_context();
+            context.add_provider(this._category_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+        }
     }
 });

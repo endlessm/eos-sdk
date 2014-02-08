@@ -53,22 +53,34 @@ Gjs_ArticleList .scrollbar.slider {
     background-color: #babdb6;
 }
 
-.category-page #category_info {
+.category-page .category-horizontal-separator {
+    border-image: url('resource:///com/endlessm/wikipedia-domain/assets/introduction_title_separator.png') 0 0 18 0 stretch;
+    border-width: 0px 0px 18px 0px;
+    border-style: solid;
+}
+
+.category-page .category-vertical-separator {
+    border-image: url('resource:///com/endlessm/wikipedia-domain/assets/panel_shadow.png') 200 8 200 0 stretch;
+    border-width: 200px 8px 200px 0px;
+    border-style: solid;
+}
+
+.category-page #category-info {
     background-color: alpha(#464646, 0.8);
 }
 
-.category-page #category_description{
+.category-page #category-description {
     color:rgba(255, 255, 255, 1.0);
     background-color: rgba(0, 0, 0, 0);
     font-size: 1.5em;
 }
 
-.category-page #category_scrolled_window .scrollbar.slider {
+.category-page #category-scrolled-window .scrollbar.slider {
     border-radius: 6px;
     background-color: alpha(white, 0.3);
 }
 
-.category-page #category_title{
+.category-page #category-title {
     font-family: "Lato Light";
     font-size: 4.17em;
     color: rgba(255, 255, 255, 0.9);
