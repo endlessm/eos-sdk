@@ -1,5 +1,6 @@
 const Lang = imports.lang;
 const Gtk = imports.gi.Gtk;
+const Endless = imports.gi.Endless;
 const EvinceView = imports.gi.EvinceView;
 const EvinceDocument = imports.gi.EvinceDocument;
 
@@ -9,7 +10,10 @@ const DocumentPreviewerPlugin = {
     },
 
     supports_type: function (type) {
-        return type === "application/pdf";
+        if (!this._supported_types) {
+            this._supported_types = Endless.get_evince_supported_formats();
+        }
+        return this._supported_types.indexOf(type) != -1;
     },
 
     get_widget: function (file) {
