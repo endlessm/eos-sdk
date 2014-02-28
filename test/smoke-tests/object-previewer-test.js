@@ -3,9 +3,6 @@
 const Lang = imports.lang;
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
-const GtkClutter = imports.gi.GtkClutter;
-const ClutterGst = imports.gi.ClutterGst;
-const EvinceDocument = imports.gi.EvinceDocument;
 const Endless = imports.gi.Endless;
 
 imports.searchPath.unshift(Endless.getCurrentFileDir() + "/../../");
@@ -44,6 +41,6 @@ ObjectPreviewer.init_plugins();
 let app = new PreviewerApplication({ application_id: TEST_APPLICATION_ID,
                                      flags: Gio.ApplicationFlags.HANDLES_OPEN });
 // Arg parsing in gjs doesn't seem to be working right. Without this dummy
-// variable vfunc_open won't get called
+// variable vfunc_open won't get called.
 ARGV.unshift("dummy");
 app.run(ARGV);
