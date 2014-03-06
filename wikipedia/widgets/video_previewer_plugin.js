@@ -1,17 +1,21 @@
 const Lang = imports.lang;
+const Gst = imports.gi.Gst;
 const Gtk = imports.gi.Gtk;
 const GtkClutter = imports.gi.GtkClutter;
 const Clutter = imports.gi.Clutter;
 const ClutterGst = imports.gi.ClutterGst;
+const Endless = imports.gi.Endless;
 
 const VideoPreviewerPlugin = {
     init: function () {
         GtkClutter.init(null);
         ClutterGst.init(null);
+        // this._supported_types = Endless.get_clutter_gst_supported_formats();
     },
 
     supports_type: function (type) {
-        return type === "video/mp4";
+        // Hackzors
+        return type.indexOf("video") != -1;
     },
 
     get_widget: function (file) {

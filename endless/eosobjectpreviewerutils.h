@@ -11,6 +11,9 @@
 
 /* Utils functions that need C API access for the object previewer. */
 EOS_SDK_ALL_API_VERSIONS
+GList *eos_get_clutter_gst_supported_formats (void);
+
+EOS_SDK_ALL_API_VERSIONS
 GList *eos_get_evince_supported_formats (void);
 
 #endif /* EOS_OBJECT_PREVIEWER_UTILS_H */
