@@ -50,7 +50,7 @@ echo "[OK]"
 echo
 
 
-tmp_inventory=$(mktemp)
+tmp_inventory=$(mktemp setupdevXXXXXX)
 trap "rm -f $tmp_inventory" EXIT
 
 echo "Creating Ansible inventory file in $tmp_inventory"
