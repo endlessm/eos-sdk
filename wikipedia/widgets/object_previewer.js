@@ -1,5 +1,6 @@
 const Lang = imports.lang;
 const Gtk = imports.gi.Gtk;
+const GObject = imports.gi.GObject;
 
 const ImagePreviewerPlugin = imports.wikipedia.widgets.image_previewer_plugin;
 const VideoPreviewerPlugin = imports.wikipedia.widgets.video_previewer_plugin;
@@ -36,6 +37,11 @@ const ObjectPreviewer = new Lang.Class({
         for (let preview_plugin of PreviewPlugins) {
             if (preview_plugin.supports_type(type)) {
                 this._preview_widget = preview_plugin.get_widget(file);
+                let bind_flags = GObject.BindingFlags.SYNC_CREATE;
+                this._preview_widget.bind_property("hexpand", this, "hexpand", bind_flags);
+                this._preview_widget.bind_property("vexpand", this, "vexpand", bind_flags);
+                this._preview_widget.bind_property("halign", this, "halign", bind_flags);
+                this._preview_widget.bind_property("valign", this, "valign", bind_flags);
                 this.add(this._preview_widget);
                 this.show_all();
                 return;

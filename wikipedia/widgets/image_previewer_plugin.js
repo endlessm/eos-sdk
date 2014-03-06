@@ -12,6 +12,8 @@ const ScalableImage = Lang.Class({
   _init: function(params){
     params = params || {};
     params["app-paintable"] = true;
+    params["halign"] = Gtk.Align.CENTER;
+    params["valign"] = Gtk.Align.CENTER;
     this.parent(params);
     this.set_has_window(false);
 

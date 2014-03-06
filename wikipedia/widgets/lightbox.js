@@ -1,6 +1,7 @@
 const Lang = imports.lang;
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
+const GObject = imports.gi.GObject;
 
 const Lightbox = new Lang.Class({
     Name: 'Lightbox',
@@ -16,9 +17,6 @@ const Lightbox = new Lang.Class({
         // will stop the outerbox from receiving mouse release event that
         // originated on the lightbox widget
         this._inner_eventbox = new Gtk.EventBox({
-            // TODODOR
-            // halign: Gtk.Align.CENTER,
-            // valign: Gtk.Align.CENTER,
             margin: 100
         });
         this._inner_eventbox.show();
@@ -62,6 +60,11 @@ const Lightbox = new Lang.Class({
             return;
         }
         this._widget = widget;
+        let bind_flags = GObject.BindingFlags.SYNC_CREATE;
+        this._widget.bind_property("hexpand", this._inner_eventbox, "hexpand", bind_flags);
+        this._widget.bind_property("vexpand", this._inner_eventbox, "vexpand", bind_flags);
+        this._widget.bind_property("halign", this._inner_eventbox, "halign", bind_flags);
+        this._widget.bind_property("valign", this._inner_eventbox, "valign", bind_flags);
         this._inner_eventbox.add(this._widget);
     },
 
@@ -70,7 +73,7 @@ const Lightbox = new Lang.Class({
             printerr("Nothing to remove from lightbox!");
             return;
         }
-        this._inner_eventbox.add(this._widget);
         this._widget = null;
+        this._inner_eventbox.remove(this._widget);
     }
 });
