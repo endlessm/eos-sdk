@@ -17,13 +17,25 @@ if [[ ! $(which sshpass) ]]; then
   exit 1
 fi
 
-read -e -p "Enter your machine's IP: " -i "$DEFAULT_IP" TARGET_IP
-read -e -p "Enter your machine's user: " -i "$DEFAULT_USER" TARGET_USER
-read -e -p "Enter your machine's password: " -i "${DEFAULT_PASSWORD}" TARGET_PASS
+echo -n "[Default: $DEFAULT_IP] "
+read -e -p "Enter your machine's IP: " TARGET_IP
+if [[ -z "$TARGET_IP" ]]; then
+    TARGET_IP="$DEFAULT_IP"
+fi
+echo -n "[Default: $DEFAULT_USER] "
+read -e -p "Enter your machine's user: " TARGET_USER
+if [[ -z "$TARGET_USER" ]]; then
+    TARGET_USER="$DEFAULT_USER"
+fi
+echo -n "[Default: $DEFAULT_PASSWORD] "
+read -e -p "Enter your machine's password: " TARGET_PASS
+if [[ -z "$TARGET_PASS" ]]; then
+    TARGET_PASS="$DEFAULT_PASSWORD"
+fi
 
 API_KEY=""
 while [[ -z $API_KEY ]]; do
-  read -e -p "Enter your Github Personal Access Token (github.com/settings/applications): " -i "$API_KEY" API_KEY
+  read -e -p "Enter your Github Personal Access Token (github.com/settings/applications): " API_KEY
 done
 
 echo
