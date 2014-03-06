@@ -7,12 +7,10 @@ const EvinceDocument = imports.gi.EvinceDocument;
 const DocumentPreviewerPlugin = {
     init: function () {
         EvinceDocument.init();
+        this._supported_types = Endless.get_evince_supported_formats();
     },
 
     supports_type: function (type) {
-        if (!this._supported_types) {
-            this._supported_types = Endless.get_evince_supported_formats();
-        }
         return this._supported_types.indexOf(type) != -1;
     },
 
@@ -22,7 +20,9 @@ const DocumentPreviewerPlugin = {
         document_model.set_document(document);
         let view = new EvinceView.View();
         view.set_model(document_model);
-        let scrolled_window = new Gtk.ScrolledWindow();
+        let scrolled_window = new Gtk.ScrolledWindow({
+            expand: true
+        });
         scrolled_window.add(view);
         return scrolled_window;
     }

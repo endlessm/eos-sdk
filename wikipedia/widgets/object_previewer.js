@@ -25,10 +25,7 @@ const ObjectPreviewer = new Lang.Class({
     },
 
     preview_file: function (file) {
-        if (this._preview_widget !== null) {
-            this.remove(this._preview_widget);
-            this._preview_widget.close();
-        }
+        this.close_preview();
 
         let type = file.query_info("standard::content-type", Gio.FileQueryInfoFlags.NONE, null).get_content_type();
         if (!type) {
@@ -47,6 +44,10 @@ const ObjectPreviewer = new Lang.Class({
         print("No supported previewer found");
     },
 
-    close_file: function() {
+    close_preview: function() {
+        if (this._preview_widget !== null) {
+            this.remove(this._preview_widget);
+            this._preview_widget = null;
+        }
     }
 });
