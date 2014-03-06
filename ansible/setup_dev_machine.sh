@@ -3,6 +3,7 @@
 DEFAULT_USER="endless"
 DEFAULT_PASSWORD="endless"
 DEFAULT_IP="192.168.56.101"
+DEFAULT_PORT="22"
 
 echo "To run this script, you need to have the following"
 echo " - VM running with the correct dev HD image"
@@ -21,6 +22,11 @@ echo -n "[Default: $DEFAULT_IP] "
 read -e -p "Enter your machine's IP: " TARGET_IP
 if [[ -z "$TARGET_IP" ]]; then
     TARGET_IP="$DEFAULT_IP"
+fi
+echo -n "[Default: $DEFAULT_PORT] "
+read -e -p "Enter your machine's SSH port: " TARGET_PORT
+if [[ -z "$TARGET_PORT" ]]; then
+    TARGET_PORT="$DEFAULT_PORT"
 fi
 echo -n "[Default: $DEFAULT_USER] "
 read -e -p "Enter your machine's user: " TARGET_USER
@@ -41,7 +47,7 @@ done
 echo
 
 echo -n "Checking connectivity to VM/machine..."
-sshpass -p "${TARGET_PASS}" ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $TARGET_USER@$TARGET_IP 'uname -a' &> /dev/null
+sshpass -p "${TARGET_PASS}" ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p $TARGET_PORT $TARGET_USER@$TARGET_IP 'uname -a' &> /dev/null
 echo "[OK]"
 
 echo -n "Checking API key..."
@@ -56,7 +62,7 @@ trap "rm -f $tmp_inventory" EXIT
 echo "Creating Ansible inventory file in $tmp_inventory"
 cat << EOF > $tmp_inventory
 [dev_machine]
-dev_machine ansible_ssh_host=$TARGET_IP ansible_ssh_user="$TARGET_USER" ansible_sudo_pass="${TARGET_PASS}" ansible_ssh_pass="${TARGET_PASS}" ansible_connection=ssh
+dev_machine ansible_ssh_host=$TARGET_IP ansible_ssh_port=$TARGET_PORT ansible_ssh_user="$TARGET_USER" ansible_sudo_pass="${TARGET_PASS}" ansible_ssh_pass="${TARGET_PASS}" ansible_connection=ssh
 EOF
 
 ansible-playbook -i $tmp_inventory playbooks/setup_dev_machine_root.yaml
