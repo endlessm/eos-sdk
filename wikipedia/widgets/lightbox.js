@@ -11,25 +11,12 @@ const Lightbox = new Lang.Class({
         params = params || {};
         this.parent(params);
 
-        // Not sure if there's a better way to do this, but this inner event
-        // box is here only to block mouse events to the outer box. Even if
-        // the lightbox widget does not intercept mouse event, this eventbox
-        // will stop the outerbox from receiving mouse release event that
-        // originated on the lightbox widget
-        this._inner_eventbox = new Gtk.EventBox({
-            margin: 100
-        });
-        this._inner_eventbox.show();
-        this._inner_eventbox.connect("button-release-event",
-                                     function (w, e) { return true; });
-
         this._shadow_eventbox = new Gtk.EventBox({
             halign: Gtk.Align.FILL,
             valign: Gtk.Align.FILL,
             no_show_all: true
         });
         this._shadow_eventbox.get_style_context().add_class("lightbox-shadow");
-        this._shadow_eventbox.add(this._inner_eventbox);
         this._shadow_eventbox.connect("button-release-event",
                                       Lang.bind(this, this._button_event));
         this.show_lightbox();
@@ -40,8 +27,23 @@ const Lightbox = new Lang.Class({
 
     _button_event: function (widget, event) {
         // button 1 is the left mouse click
-        if (event.get_button()[1] === 1)
-            this.hide_lightbox();
+        if (event.get_button()[1] !== 1)
+            return;
+        // if the event was generated on our child widgets GdkWindows, don't
+        // hide lightbox
+        if (event.get_window() != this._shadow_eventbox.get_window())
+            return;
+        let event_coords = event.get_coords().slice(1);
+        let child_alloc = this._widget.get_allocation();
+        // if event is generated inside child widgets allocation return, not
+        // all child widgets will have there own GdkWindows capturing mouse
+        // events
+        if (event_coords[0] >= child_alloc.x &&
+            event_coords[1] >= child_alloc.y &&
+            event_coords[0] <= child_alloc.x + child_alloc.width &&
+            event_coords[1] <= child_alloc.y + child_alloc.height)
+            return;
+        this.hide_lightbox();
     },
 
     hide_lightbox: function () {
@@ -60,12 +62,7 @@ const Lightbox = new Lang.Class({
             return;
         }
         this._widget = widget;
-        let bind_flags = GObject.BindingFlags.SYNC_CREATE;
-        this._widget.bind_property("hexpand", this._inner_eventbox, "hexpand", bind_flags);
-        this._widget.bind_property("vexpand", this._inner_eventbox, "vexpand", bind_flags);
-        this._widget.bind_property("halign", this._inner_eventbox, "halign", bind_flags);
-        this._widget.bind_property("valign", this._inner_eventbox, "valign", bind_flags);
-        this._inner_eventbox.add(this._widget);
+        this._shadow_eventbox.add(this._widget);
     },
 
     remove_lightbox_widget: function () {
@@ -74,6 +71,6 @@ const Lightbox = new Lang.Class({
             return;
         }
         this._widget = null;
-        this._inner_eventbox.remove(this._widget);
+        this._shadow_eventbox.remove(this._widget);
     }
 });

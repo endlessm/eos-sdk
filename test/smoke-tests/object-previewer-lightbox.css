@@ -2,3 +2,22 @@
     transition:opacity 200ms ease-in-out;
     background-color: rgba(0,0,0,0.8);
 }
+
+.previewer-toolbar {
+    transition:opacity 300ms ease-in-out;
+    border-radius: 10px;
+    border-width: 0px;
+    background-image: none;
+    background-color: black;
+}
+
+.previewer-toolbar.faded-out {
+    opacity: 0;
+}
+
+.previewer-toolbar .button{
+    border-width: 0px;
+    border-image: none;
+    background-image: none;
+    background-color: transparent;
+}

@@ -10,6 +10,7 @@ const Toolbar = new Lang.Class({
 
     _init: function (params) {
         this.parent(params);
+        this.get_style_context().add_class("previewer-toolbar");
         this._grid = new Gtk.Grid({
             orientation: Gtk.Orientation.HORIZONTAL
         });
@@ -18,6 +19,9 @@ const Toolbar = new Lang.Class({
 
     add_tool: function (widget) {
         this._grid.add(widget);
+        widget.connect("pressed", Lang.bind(this, function () {
+            this.get_style_context().add_class("faded-out");
+        }));
     }
 });
 
