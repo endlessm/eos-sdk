@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: philip@endlessm.com\n"
-"POT-Creation-Date: 2014-03-18 04:47+0000\n"
-"PO-Revision-Date: 2014-03-05 06:31+0000\n"
+"POT-Creation-Date: 2014-03-24 22:37+0000\n"
+"PO-Revision-Date: 2014-03-24 22:41+0000\n"
 "Last-Translator: endlessmobile_build <philip@endlessm.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/teams/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -23,3 +23,7 @@ msgstr ""
 #: wikipedia/widgets/BackButton.js:21
 msgid "BACK"
 msgstr "REGRESA"
+
+#: wikipedia/widgets/category_back_button.js:33
+msgid "OTHER CATEGORIES"
+msgstr "OTRAS CATEGORÍAS"
