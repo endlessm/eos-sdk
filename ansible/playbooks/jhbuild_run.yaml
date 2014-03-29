@@ -14,6 +14,3 @@
 
     - name: "Installing auth key"
       template: src=../templates/.jhbuildrc-auth.j2 dest=~/.jhbuildrc-auth
-
-    - name: "Cloning relevant modules - this will take a very long time - use htop and watch for git processes"
-      shell: executable=/bin/bash ~/.local/bin/jhbuild update endless-apps
