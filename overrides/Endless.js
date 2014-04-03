@@ -1,3 +1,4 @@
+const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
 let Endless;
@@ -9,6 +10,9 @@ function getCurrentFileDir() {
     let caller = e.stack.split('\n')[1];
     let pathAndLine = caller.split('@')[1];
     let path = pathAndLine.split(':')[0];
+    while (GLib.file_test(path, GLib.FileTest.IS_SYMLINK)) {
+        path = GLib.file_read_link(path);
+    }
 
     // Get full path from GIO
     return Gio.File.new_for_path(path).get_parent().get_path();
