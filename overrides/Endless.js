@@ -10,12 +10,15 @@ function getCurrentFileDir() {
     let caller = e.stack.split('\n')[1];
     let pathAndLine = caller.split('@')[1];
     let path = pathAndLine.split(':')[0];
-    while (GLib.file_test(path, GLib.FileTest.IS_SYMLINK)) {
-        path = GLib.file_read_link(path);
+    let file = Gio.File.new_for_path(path);
+    while (GLib.file_test(file.get_path(), GLib.FileTest.IS_SYMLINK)) {
+        let link_path = GLib.file_read_link(file.get_path());
+        // link_path may be relative, we need to resolve it from current dir
+        file = file.get_parent().resolve_relative_path(link_path);
     }
 
     // Get full path from GIO
-    return Gio.File.new_for_path(path).get_parent().get_path();
+    return file.get_parent().get_path();
 }
 
 imports.searchPath.unshift(getCurrentFileDir());
