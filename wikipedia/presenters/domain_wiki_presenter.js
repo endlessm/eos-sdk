@@ -1,6 +1,7 @@
 const Endless = imports.gi.Endless;
-const Lang = imports.lang;
+const Gio = imports.gi.Gio;
 const GObject = imports.gi.GObject;
+const Lang = imports.lang;
 const System = imports.system;
 
 //Local Libraries
