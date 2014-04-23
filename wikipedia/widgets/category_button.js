@@ -1,10 +1,12 @@
 const Gdk = imports.gi.Gdk;
 const GdkPixbuf = imports.gi.GdkPixbuf;
+const Gio = imports.gi.Gio;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
 const CompositeButton = imports.wikipedia.widgets.composite_button;
+const EndlessWikipedia = imports.wikipedia.EndlessWikipedia;
 const Utils = imports.wikipedia.utils;
 
 const CATEGORY_LABEL_LEFT_MARGIN_PIXELS = 5;  // in addition to the 20px below

@@ -4,6 +4,7 @@ const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
 const CategoryBackButton = imports.wikipedia.widgets.category_back_button;
+const EndlessWikipedia = imports.wikipedia.EndlessWikipedia;
 const FixedSizeTextView = imports.wikipedia.widgets.FixedSizeTextView;
 
 GObject.ParamFlags.READWRITE = GObject.ParamFlags.READABLE | GObject.ParamFlags.WRITABLE;
