@@ -1,5 +1,4 @@
 const Gdk = imports.gi.Gdk;
-const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const GObject = imports.gi.GObject;
@@ -14,21 +13,6 @@ const getPageByTitleURI = "getArticleByTitle?";
 const getPageByQueryURI = "getTopArticleByQuery?";
 const getTitlesByQueryURI = "getArticleTitlesByQuery?";
 
-// Interpret image:// URIs as wikipedia images
-WebKit.WebContext.get_default().register_uri_scheme('image', function(request) {
-    let filename = request.get_uri().slice('image://'.length);
-    filename = decodeURI(filename);
-    let pictures_dir = request.get_web_view()._getArticleImagesPath();
-    let parent = Gio.File.new_for_path(pictures_dir);
-    let file = parent.get_child(filename);
-    try {
-        let stream = file.read(null);
-        request.finish(stream, -1, 'image/png');
-    } catch (err) {
-        let stream = new Gio.MemoryInputStream();
-        request.finish(stream, 0, 'image/png');
-    }
-});
 
 const WikipediaWebView = new Lang.Class({
     Name: 'EndlessWikipediaWebView',
@@ -122,11 +106,6 @@ const WikipediaWebView = new Lang.Class({
         let str = JSON.stringify(this._links_to_show);
         let script = "window.links_to_show = " + str;
         this.run_javascript(script, null, this.scriptFinished, null);
-    },
-
-    _getArticleImagesPath: function() {
-        let cur_exec = this.get_toplevel().get_application().application_base_path;
-        return cur_exec + "/web_view/article_images/";
     },
 
     _onNavigation: function(webview, decision, decision_type) {
