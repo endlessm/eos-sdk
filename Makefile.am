@@ -58,6 +58,8 @@ pkgconfig_DATA = @EOS_SDK_API_NAME@.pc
 DISTCLEANFILES += @EOS_SDK_API_NAME@.pc
 
 # SDK sublibraries
+ALL_JS_SRCS =
+
 gjsmodulesdir = $(datadir)/gjs-1.0
 include $(top_srcdir)/webhelper/Makefile.am.inc
 
@@ -134,6 +136,26 @@ include $(top_srcdir)/overrides/Makefile.am.inc
 
 include $(top_srcdir)/tools/Makefile.am.inc
 
+# # # INSTALLED M4 MACROS # # #
+
+m4dir = ${datadir}/aclocal
+m4_DATA = \
+	m4/eos-coverage.m4 \
+	$(NULL)
+
 # # # TESTS # # #
 
 include $(top_srcdir)/test/Makefile.am.inc
+
+# # # COVERAGE # # #
+EOS_JS_COVERAGE_FILES = $(addprefix $(abs_top_srcdir)/,$(ALL_JS_SRCS))
+
+@EOS_COVERAGE_RULES@
+
+AM_JS_LOG_FLAGS += @EOS_AM_JS_LOG_FLAGS_ADD@
+AM_CFLAGS += @EOS_C_COVERAGE_CFLAGS@
+AM_LDFLAGS = @EOS_C_COVERAGE_LDFLAGS@
+
+# # # CLEAN RULES # # #
+# See http://www.gnu.org/software/automake/manual/html_node/Clean.html
+clean-local: clean-coverage

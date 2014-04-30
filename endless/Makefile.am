@@ -63,6 +63,10 @@ libendless_@EOS_SDK_API_VERSION@_la_CPPFLAGS = \
 	-DSYSCONFDIR=\""$(sysconfdir)"\"
 libendless_@EOS_SDK_API_VERSION@_la_CFLAGS = $(AM_CFLAGS)
 libendless_@EOS_SDK_API_VERSION@_la_LIBADD = @EOS_SDK_LIBS@
+
+# AM_LDFLAGS won't be applied automatically where we have an override
+# so we need to add EOS_C_COVERAGE_LDFLAGS here
 libendless_@EOS_SDK_API_VERSION@_la_LDFLAGS = \
 	-version-info @EOS_SDK_LT_VERSION_INFO@ \
-	-export-symbols-regex "^eos_"
+	-export-symbols-regex "^eos_" \
+	@EOS_C_COVERAGE_LDFLAGS@
