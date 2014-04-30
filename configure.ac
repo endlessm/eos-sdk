@@ -203,6 +203,9 @@ PKG_CHECK_MODULES([EOS_SDK], [
 	$EOS_REQUIRED_MODULES_PRIVATE])
 
 
+# Code coverage reports support
+EOS_COVERAGE_REPORT([c js])
+
 AC_CACHE_SAVE
 
 # Output
