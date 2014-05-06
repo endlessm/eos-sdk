@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: philip@endlessm.com\n"
-"POT-Creation-Date: 2014-04-22 04:48+0000\n"
+"POT-Creation-Date: 2014-04-29 04:51+0000\n"
 "PO-Revision-Date: 2014-03-24 22:41+0000\n"
 "Last-Translator: endlessmobile_build <philip@endlessm.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/projects/p/eos-sdk/language/pt/)\n"
@@ -25,6 +25,6 @@ msgstr ""
 msgid "BACK"
 msgstr "Voltar"
 
-#: wikipedia/widgets/category_back_button.js:33
+#: wikipedia/widgets/category_back_button.js:34
 msgid "OTHER CATEGORIES"
 msgstr "OUTRAS CATEGORIAS"
