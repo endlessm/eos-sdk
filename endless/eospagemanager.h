@@ -112,24 +112,6 @@ void         eos_page_manager_set_page_name                       (EosPageManage
                                                                    const gchar    *name);
 
 EOS_SDK_ALL_API_VERSIONS
-gboolean     eos_page_manager_get_page_actions                    (EosPageManager *self,
-                                                                   GtkWidget      *page);
-
-EOS_SDK_ALL_API_VERSIONS
-void         eos_page_manager_set_page_actions                    (EosPageManager *self,
-                                                                   GtkWidget      *page,
-                                                                   gboolean        actions_visible);
-
-EOS_SDK_ALL_API_VERSIONS
-GtkWidget   *eos_page_manager_get_page_custom_toolbox_widget      (EosPageManager *self,
-                                                                   GtkWidget      *page);
-
-EOS_SDK_ALL_API_VERSIONS
-void         eos_page_manager_set_page_custom_toolbox_widget      (EosPageManager *self,
-                                                                   GtkWidget      *page,
-                                                                   GtkWidget      *custom_toolbox_widget);
-
-EOS_SDK_ALL_API_VERSIONS
 GtkWidget   *eos_page_manager_get_page_left_topbar_widget         (EosPageManager *self,
                                                                    GtkWidget      *page);
 

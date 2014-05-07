@@ -93,8 +93,6 @@
 typedef struct {
   GtkWidget *page;
   gchar *name;
-  gboolean fake_page_actions_visible;
-  GtkWidget *custom_toolbox_widget;
   GtkWidget *left_topbar_widget;
   GtkWidget *center_topbar_widget;
   gchar *background_uri;
@@ -147,8 +145,6 @@ enum
 {
   CHILD_PROP_0,
   CHILD_PROP_NAME,
-  CHILD_PROP_PAGE_ACTIONS,
-  CHILD_PROP_CUSTOM_TOOLBOX_WIDGET,
   CHILD_PROP_LEFT_TOPBAR_WIDGET,
   CHILD_PROP_CENTER_TOPBAR_WIDGET,
   CHILD_PROP_BACKGROUND_URI,
@@ -594,17 +590,6 @@ eos_page_manager_get_child_property (GtkContainer *container,
                                                                         child));
       break;
 
-    case CHILD_PROP_PAGE_ACTIONS:
-      g_value_set_boolean (value,
-                           eos_page_manager_get_page_actions (self, child));
-      break;
-
-    case CHILD_PROP_CUSTOM_TOOLBOX_WIDGET:
-      g_value_set_object (value,
-                          eos_page_manager_get_page_custom_toolbox_widget (self,
-                                                                           child));
-      break;
-
     case CHILD_PROP_LEFT_TOPBAR_WIDGET:
       g_value_set_object (value,
                           eos_page_manager_get_page_left_topbar_widget (self,
@@ -656,16 +641,6 @@ eos_page_manager_set_child_property (GtkContainer *container,
     case CHILD_PROP_BACKGROUND_REPEATS:
       eos_page_manager_set_page_background_repeats (self, child,
                                                     g_value_get_boolean (value));
-      break;
-
-    case CHILD_PROP_PAGE_ACTIONS:
-      eos_page_manager_set_page_actions (self, child,
-                                         g_value_get_boolean (value));
-      break;
-
-    case CHILD_PROP_CUSTOM_TOOLBOX_WIDGET:
-      eos_page_manager_set_page_custom_toolbox_widget (self, child,
-                                                       g_value_get_object (value));
       break;
 
     case CHILD_PROP_LEFT_TOPBAR_WIDGET:
@@ -781,39 +756,6 @@ eos_page_manager_class_init (EosPageManagerClass *klass)
   eos_page_manager_child_props[CHILD_PROP_NAME] =
     g_param_spec_string ("name", "Name", "Unique ID for the page",
                          NULL,
-                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * EosPageManager:page-actions:
-   *
-   * The actions exported by this page, to be displayed in the action area on
-   * the right of the window.
-   *
-   * <warning><para>Currently, this property is a boolean value. %TRUE means
-   *   to display a fake action area, and %FALSE means don't display.
-   * </para></warning>
-   */
-  eos_page_manager_child_props[CHILD_PROP_PAGE_ACTIONS] =
-    g_param_spec_boolean ("page-actions", "Page Actions",
-                          "Actions the page exports into the action area",
-                          FALSE,
-                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * EosPageManager:custom-toolbox-widget:
-   *
-   * The custom toolbox widget belonging to this page, to be displayed on the
-   * left of the window when the page is displaying. Setting this to %NULL
-   * indicates that there should be no toolbox widget.
-   *
-   * <warning><para>Currently, there is no such thing as a
-   *   <emphasis>non-</emphasis>custom toolbox widget.
-   * </para></warning>
-   */
-  eos_page_manager_child_props[CHILD_PROP_CUSTOM_TOOLBOX_WIDGET] =
-    g_param_spec_object ("custom-toolbox-widget", "Custom toolbox widget",
-                         "Custom toolbox widget displayed left of the page",
-                         GTK_TYPE_WIDGET,
                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
@@ -1113,133 +1055,6 @@ eos_page_manager_set_page_name (EosPageManager *self,
   gtk_container_child_notify (GTK_CONTAINER (self), page, "name");
 
   assert_internal_state (self);
-}
-
-/**
- * eos_page_manager_get_page_actions:
- * @self: the page manager
- * @page: the page to be queried
- *
- * Gets whether to display a fake actions area when displaying @page.
- * See #EosPageManager:page-actions for more information.
- *
- * <warning><para>This function is a temporary implementation, do not expect
- *   this API to remain stable.
- * </para></warning>
- *
- * Returns: %TRUE if the fake actions area should be visible when displaying
- * @page, or %FALSE if it should not.
- */
-gboolean
-eos_page_manager_get_page_actions (EosPageManager *self,
-                                   GtkWidget      *page)
-{
-  g_return_val_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self), FALSE);
-  g_return_val_if_fail (page != NULL && GTK_IS_WIDGET (page), FALSE);
-
-  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
-  g_return_val_if_fail (info != NULL, FALSE);
-
-  return info->fake_page_actions_visible;
-}
-
-/**
- * eos_page_manager_set_page_actions:
- * @self: the page manager
- * @page: the page
- * @actions_visible: whether to display an action area beside @page
- *
- * Sets whether to display a fake actions area when displaying @page.
- * See #EosPageManager:page-actions for more information.
- *
- * <warning><para>This function is a temporary implementation, do not expect
- *   this API to remain stable.
- * </para></warning>
- */
-void
-eos_page_manager_set_page_actions (EosPageManager *self,
-                                   GtkWidget      *page,
-                                   gboolean        actions_visible)
-{
-  g_return_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self));
-  g_return_if_fail (page != NULL && GTK_IS_WIDGET (page));
-
-  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
-  g_return_if_fail (info != NULL);
-
-  if (info->fake_page_actions_visible == actions_visible)
-    return;
-
-  info->fake_page_actions_visible = actions_visible;
-
-  gtk_container_child_notify (GTK_CONTAINER (self), page, "page-actions");
-}
-
-/**
- * eos_page_manager_get_page_custom_toolbox_widget:
- * @self: the page manager
- * @page: the page to be queried
- *
- * Retrieves @page's custom toolbox widget, if it has one.
- * See #EosPageManager:custom-toolbox-widget for more information.
- *
- * <note><para>
- *   Currently, there is no possible way to have a non-custom toolbox widget.
- * </para></note>
- *
- * Returns: (transfer none): the custom toolbox #GtkWidget of @page, or %NULL if
- * there is none.
- */
-GtkWidget *
-eos_page_manager_get_page_custom_toolbox_widget (EosPageManager *self,
-                                                 GtkWidget      *page)
-{
-  g_return_val_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self), NULL);
-  g_return_val_if_fail (page != NULL && GTK_IS_WIDGET (page), NULL);
-
-  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
-  g_return_val_if_fail (info != NULL, NULL);
-
-  return info->custom_toolbox_widget;
-}
-
-/**
- * eos_page_manager_set_page_custom_toolbox_widget:
- * @self: the page manager
- * @page: the page
- * @custom_toolbox_widget: (allow-none): custom toolbox widget for @page
- *
- * Sets the custom toolbox widget to display to the left of @page.
- * See #EosPageManager:custom-toolbox-widget for more information.
- *
- * <note><para>
- *   Currently, there is no possible way to have a non-custom toolbox widget.
- * </para></note>
- */
-void
-eos_page_manager_set_page_custom_toolbox_widget (EosPageManager *self,
-                                                 GtkWidget      *page,
-                                                 GtkWidget      *custom_toolbox_widget)
-{
-  g_return_if_fail (self != NULL && EOS_IS_PAGE_MANAGER (self));
-  g_return_if_fail (page != NULL && GTK_IS_WIDGET (page));
-  g_return_if_fail (custom_toolbox_widget == NULL ||
-                    GTK_IS_WIDGET (custom_toolbox_widget));
-
-  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
-  g_return_if_fail (info != NULL);
-
-  if (info->custom_toolbox_widget == custom_toolbox_widget)
-    return;
-
-  if (info->custom_toolbox_widget)
-    g_object_unref (info->custom_toolbox_widget);
-
-  g_object_ref (custom_toolbox_widget);
-  info->custom_toolbox_widget = custom_toolbox_widget;
-
-  gtk_container_child_notify (GTK_CONTAINER (self), page,
-                              "custom-toolbox-widget");
 }
 
 /**

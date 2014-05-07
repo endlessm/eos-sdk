@@ -38,7 +38,6 @@ typedef struct
   GtkWidget *page1;
   GtkWidget *page2;
   GtkWidget *page3;
-  GtkWidget *toolbox2;
 } PageManagerFixture;
 
 static void
@@ -49,7 +48,6 @@ pm_fixture_setup (PageManagerFixture *fixture,
   fixture->page1 = gtk_label_new ("1");
   fixture->page2 = gtk_label_new ("2");
   fixture->page3 = gtk_label_new ("3");
-  fixture->toolbox2 = gtk_label_new ("toolbox2");
   gtk_container_add_with_properties (GTK_CONTAINER (fixture->pm),
                                      fixture->page1,
                                      "name", PAGE1_NAME,
@@ -60,7 +58,6 @@ pm_fixture_setup (PageManagerFixture *fixture,
   gtk_container_add_with_properties (GTK_CONTAINER (fixture->pm),
                                      fixture->page2,
                                      "name", PAGE2_NAME,
-                                     "custom-toolbox-widget", fixture->toolbox2,
                                      "background-uri", PAGE2_PROP_STRING,
                                      "background-size", PAGE2_PROP_STRING,
                                      "background-position", PAGE2_PROP_STRING,
@@ -68,7 +65,6 @@ pm_fixture_setup (PageManagerFixture *fixture,
   gtk_container_add_with_properties (GTK_CONTAINER (fixture->pm),
                                      fixture->page3,
                                      "name", PAGE3_NAME,
-                                     "page-actions", TRUE,
                                      "background-uri", PAGE3_PROP_STRING,
                                      "background-size", PAGE3_PROP_STRING,
                                      "background-position", PAGE3_PROP_STRING,
@@ -195,47 +191,6 @@ test_pm_child_prop_name (PageManagerFixture *fixture,
 }
 
 static void
-test_pm_get_set_page_actions (PageManagerFixture *fixture,
-                              gconstpointer unused)
-{
-  gboolean actions;
-  actions = eos_page_manager_get_page_actions (EOS_PAGE_MANAGER (fixture->pm),
-                                               fixture->page1);
-  g_assert (actions == FALSE);
-  actions = eos_page_manager_get_page_actions (EOS_PAGE_MANAGER (fixture->pm),
-                                               fixture->page3);
-  g_assert (actions == TRUE);
-  eos_page_manager_set_page_actions (EOS_PAGE_MANAGER (fixture->pm),
-                                     fixture->page3,
-                                     FALSE);
-  actions = eos_page_manager_get_page_actions (EOS_PAGE_MANAGER (fixture->pm),
-                                               fixture->page3);
-  g_assert (actions == FALSE);
-}
-
-static void
-test_pm_child_prop_page_actions (PageManagerFixture *fixture,
-                                 gconstpointer unused)
-{
-  gboolean actions;
-  gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page1,
-                           "page-actions", &actions,
-                           NULL);
-  g_assert (actions == FALSE);
-  gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page3,
-                           "page-actions", &actions,
-                           NULL);
-  g_assert (actions == TRUE);
-  gtk_container_child_set (GTK_CONTAINER (fixture->pm), fixture->page3,
-                           "page-actions", FALSE,
-                           NULL);
-  gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page3,
-                           "page-actions", &actions,
-                           NULL);
-  g_assert (actions == FALSE);
-}
-
-static void
 test_pm_get_set_background_repeats (PageManagerFixture *fixture,
                               gconstpointer unused)
 {
@@ -274,68 +229,6 @@ test_pm_child_prop_background_repeats (PageManagerFixture *fixture,
                            "background-repeats", &repeats,
                            NULL);
   g_assert (repeats == TRUE);
-}
-
-static void
-test_pm_get_set_page_custom_toolbox (PageManagerFixture *fixture,
-                                     gconstpointer unused)
-{
-  GtkWidget *new_tb = gtk_label_new ("Another toolbox");
-  GtkWidget *tb;
-
-  tb = eos_page_manager_get_page_custom_toolbox_widget (EOS_PAGE_MANAGER (fixture->pm),
-                                                        fixture->page1);
-  g_assert (tb == NULL);
-  tb = eos_page_manager_get_page_custom_toolbox_widget (EOS_PAGE_MANAGER (fixture->pm),
-                                                        fixture->page2);
-  g_assert (tb == fixture->toolbox2);
-
-  eos_page_manager_set_page_custom_toolbox_widget (EOS_PAGE_MANAGER (fixture->pm),
-                                                   fixture->page1,
-                                                   new_tb);
-  eos_page_manager_set_page_custom_toolbox_widget (EOS_PAGE_MANAGER (fixture->pm),
-                                                   fixture->page2,
-                                                   new_tb);
-
-  tb = eos_page_manager_get_page_custom_toolbox_widget (EOS_PAGE_MANAGER (fixture->pm),
-                                                        fixture->page1);
-  g_assert (tb == new_tb);
-  tb = eos_page_manager_get_page_custom_toolbox_widget (EOS_PAGE_MANAGER (fixture->pm),
-                                                        fixture->page2);
-  g_assert (tb == new_tb);
-}
-
-static void
-test_pm_child_prop_custom_toolbox (PageManagerFixture *fixture,
-                                   gconstpointer unused)
-{
-  GtkWidget *new_tb = gtk_label_new ("Another toolbox");
-  GtkWidget *tb;
-
-  gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page1,
-                           "custom-toolbox-widget", &tb,
-                           NULL);
-  g_assert (tb == NULL);
-  gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page2,
-                           "custom-toolbox-widget", &tb,
-                           NULL);
-  g_assert (tb == fixture->toolbox2);
-
-  gtk_container_child_set (GTK_CONTAINER (fixture->pm), fixture->page1,
-                           "custom-toolbox-widget", new_tb,
-                           NULL);
-  gtk_container_child_set (GTK_CONTAINER (fixture->pm), fixture->page2,
-                           "custom-toolbox-widget", new_tb,
-                           NULL);
-
-  gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page1,
-                           "custom-toolbox-widget", &tb,
-                           NULL);
-  g_assert (tb == new_tb);
-  gtk_container_child_get (GTK_CONTAINER (fixture->pm), fixture->page2,
-                           "custom-toolbox-widget", &tb,
-                           NULL);
-  g_assert (tb == new_tb);
 }
 
 static void
@@ -702,14 +595,6 @@ add_page_manager_tests (void)
                          test_pm_get_set_page_name);
   ADD_PAGE_MANAGER_TEST ("/page-manager/child-prop-name",
                          test_pm_child_prop_name);
-  ADD_PAGE_MANAGER_TEST ("/page-manager/get-set-page-actions",
-                         test_pm_get_set_page_actions);
-  ADD_PAGE_MANAGER_TEST ("/page-manager/child-prop-page-actions",
-                         test_pm_child_prop_page_actions);
-  ADD_PAGE_MANAGER_TEST ("/page-manager/get-set-page-custom-toolbox",
-                         test_pm_get_set_page_custom_toolbox);
-  ADD_PAGE_MANAGER_TEST ("/page-manager/child-prop-custom-toolbox",
-                         test_pm_child_prop_custom_toolbox);
   ADD_PAGE_MANAGER_TEST ("/page-manager/page-no-name", test_pm_page_no_name);
   ADD_PAGE_MANAGER_TEST ("/page-manager/set-page-no-name",
                          test_pm_set_page_no_name);
