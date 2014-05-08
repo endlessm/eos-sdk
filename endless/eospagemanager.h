@@ -68,12 +68,12 @@ typedef enum {
  */
 struct _EosPageManager
 {
-  GtkContainer parent;
+  GtkStack parent;
 };
 
 struct _EosPageManagerClass
 {
-  GtkContainerClass parent_class;
+  GtkStackClass parent_class;
 
   /* For further expansion */
   gpointer _padding[8];

@@ -241,7 +241,7 @@ eos_splash_page_manager_set_splash_page (EosSplashPageManager *self,
   if (priv->splash_page != page)
     {
       if (priv->splash_page != NULL)
-        gtk_container_remove (GTK_CONTAINER (self), priv->splash_page);
+        GTK_CONTAINER_CLASS (eos_splash_page_manager_parent_class)->remove (GTK_CONTAINER (self), priv->splash_page);
       if (page != NULL)
         {
           GTK_CONTAINER_CLASS (eos_splash_page_manager_parent_class)->add (GTK_CONTAINER (self), page);
@@ -295,7 +295,7 @@ eos_splash_page_manager_set_main_page (EosSplashPageManager *self,
   if (priv->main_page != page)
     {
       if (priv->main_page != NULL)
-        gtk_container_remove (GTK_CONTAINER (self), priv->main_page);
+        GTK_CONTAINER_CLASS (eos_splash_page_manager_parent_class)->remove (GTK_CONTAINER (self), priv->main_page);
       // Call page manager add not our own.
       if (page != NULL)
         GTK_CONTAINER_CLASS (eos_splash_page_manager_parent_class)->add (GTK_CONTAINER (self), page);
