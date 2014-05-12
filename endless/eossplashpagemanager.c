@@ -246,7 +246,7 @@ eos_splash_page_manager_set_splash_page (EosSplashPageManager *self,
         {
           GTK_CONTAINER_CLASS (eos_splash_page_manager_parent_class)->add (GTK_CONTAINER (self), page);
           if (!priv->main_page_shown)
-            eos_page_manager_set_visible_page (EOS_PAGE_MANAGER (self), page);
+            gtk_stack_set_visible_child (GTK_STACK (self), page);
         }
       priv->splash_page = page;
       g_object_notify( G_OBJECT (self), "splash-page");
@@ -322,7 +322,7 @@ eos_splash_page_manager_show_main_page (EosSplashPageManager *self)
       return;
     }
   priv->main_page_shown = TRUE;
-  eos_page_manager_set_visible_page (EOS_PAGE_MANAGER (self), priv->main_page);
+  gtk_stack_set_visible_child (GTK_STACK (self), priv->main_page);
 }
 
 /**
@@ -345,5 +345,5 @@ eos_splash_page_manager_show_splash_page (EosSplashPageManager *self)
       return;
     }
   priv->main_page_shown = FALSE;
-  eos_page_manager_set_visible_page (EOS_PAGE_MANAGER (self), priv->splash_page);
+  gtk_stack_set_visible_child (GTK_STACK (self), priv->splash_page);
 }

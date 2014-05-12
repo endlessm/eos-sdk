@@ -196,10 +196,10 @@ const DomainWikiView = new Lang.Class({
      * Transition to the front page of the view
      */
     show_front_page: function () {
-        if (this._window.page_manager.visible_page_name === "front")
+        if (this._window.page_manager.visible_child_name === "front")
             return;
-        this._window.page_manager.transition_type = Endless.PageManagerTransitionType.SLIDE_RIGHT;
-        this._window.page_manager.visible_page_name = "front";
+        this._window.page_manager.transition_type = Gtk.StackTransitionType.SLIDE_RIGHT;
+        this._window.page_manager.visible_child_name = "front";
     },
 
     /**
@@ -207,14 +207,14 @@ const DomainWikiView = new Lang.Class({
      * Transition to the category page of the view
      */
     show_category_page: function () {
-        if (this._window.page_manager.visible_page_name === "category")
+        if (this._window.page_manager.visible_child_name === "category")
             return;
         this._category_article_list.scrollToTop();
-        if (this._window.page_manager.visible_page_name === "front")
-            this._window.page_manager.transition_type = Endless.PageManagerTransitionType.SLIDE_LEFT;
+        if (this._window.page_manager.visible_child_name === "front")
+            this._window.page_manager.transition_type = Gtk.StackTransitionType.SLIDE_LEFT;
         else
-            this._window.page_manager.transition_type = Endless.PageManagerTransitionType.SLIDE_RIGHT;
-        this._window.page_manager.visible_page_name = "category";
+            this._window.page_manager.transition_type = Gtk.StackTransitionType.SLIDE_RIGHT;
+        this._window.page_manager.visible_child_name = "category";
     },
 
     /**
@@ -222,11 +222,11 @@ const DomainWikiView = new Lang.Class({
      * Transition to the article page of the view
      */
     show_article_page: function () {
-        if (this._window.page_manager.visible_page_name === "article")
+        if (this._window.page_manager.visible_child_name === "article")
             return;
         this._article_list.scrollToTop();
-        this._window.page_manager.transition_type = Endless.PageManagerTransitionType.SLIDE_LEFT;
-        this._window.page_manager.visible_page_name = "article";
+        this._window.page_manager.transition_type = Gtk.StackTransitionType.SLIDE_LEFT;
+        this._window.page_manager.visible_child_name = "article";
     },
 
     set_categories: function(categories){

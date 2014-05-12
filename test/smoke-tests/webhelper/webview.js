@@ -64,7 +64,7 @@ const TestApplication = new Lang.Class({
 
     /* dict['name'] is the name of the page to move to */
     moveToPage: function(dict) {
-        this._pm.visible_page_name = dict['name'];
+        this._pm.visible_child_name = dict['name'];
     },
 
     /* dict['msg'] is the message to display */
@@ -134,7 +134,7 @@ const TestApplication = new Lang.Class({
         this._page2 = new Gtk.Grid();
         let back_button = new Gtk.Button({ label:"Go back to page 1" });
         back_button.connect('clicked', Lang.bind(this, function() {
-            this._pm.visible_page_name = 'page1';
+            this._pm.visible_child_name = 'page1';
         }));
         this._page2.add(back_button);
 
@@ -144,10 +144,10 @@ const TestApplication = new Lang.Class({
         });
 
         this._pm = this._window.page_manager;
-        this._pm.set_transition_type(Endless.PageManagerTransitionType.CROSSFADE);
+        this._pm.set_transition_type(Gtk.StackTransitionType.CROSSFADE);
         this._pm.add(this._page1, { name: 'page1' });
         this._pm.add(this._page2, { name: 'page2' });
-        this._pm.visible_page = this._page1;
+        this._pm.visible_child = this._page1;
 
         this._window.show_all();
     }

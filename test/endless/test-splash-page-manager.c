@@ -24,10 +24,15 @@ empty_spm_fixture_setup (SplashPageManagerFixture *fixture,
                          gconstpointer             unused)
 {
   fixture->first_splash_page = gtk_label_new ("splash");
+  gtk_widget_show (fixture->first_splash_page);
   fixture->second_splash_page = gtk_label_new ("ham sandwich");
+  gtk_widget_show (fixture->second_splash_page);
   fixture->first_main_page = gtk_label_new ("main");
+  gtk_widget_show (fixture->first_main_page);
   fixture->second_main_page = gtk_label_new ("pikachu");
+  gtk_widget_show (fixture->second_main_page);
   fixture->spm = eos_splash_page_manager_new ();
+  gtk_widget_show (fixture->spm);
 }
 
 static void
@@ -102,12 +107,12 @@ static void
 test_spm_show_main_page (SplashPageManagerFixture *fixture,
                          gconstpointer             unused)
 {
-  GtkWidget *visible_page;
-  visible_page = eos_page_manager_get_visible_page (EOS_PAGE_MANAGER (fixture->spm));
-  g_assert (visible_page != fixture->first_main_page);
+  GtkWidget *visible_child;
+  visible_child = gtk_stack_get_visible_child (GTK_STACK (fixture->spm));
+  g_assert (visible_child != fixture->first_main_page);
   eos_splash_page_manager_show_main_page (EOS_SPLASH_PAGE_MANAGER (fixture->spm));
-  visible_page = eos_page_manager_get_visible_page (EOS_PAGE_MANAGER (fixture->spm));
-  g_assert (visible_page == fixture->first_main_page);
+  visible_child = gtk_stack_get_visible_child (GTK_STACK (fixture->spm));
+  g_assert (visible_child == fixture->first_main_page);
 }
 
 
@@ -115,15 +120,15 @@ static void
 test_spm_show_splash_page (SplashPageManagerFixture *fixture,
                            gconstpointer             unused)
 {
-  GtkWidget *visible_page;
-  visible_page = eos_page_manager_get_visible_page (EOS_PAGE_MANAGER (fixture->spm));
-  g_assert (visible_page == fixture->first_splash_page);
+  GtkWidget *visible_child;
+  visible_child = gtk_stack_get_visible_child (GTK_STACK (fixture->spm));
+  g_assert (visible_child == fixture->first_splash_page);
   eos_splash_page_manager_show_main_page (EOS_SPLASH_PAGE_MANAGER (fixture->spm));
-  visible_page = eos_page_manager_get_visible_page (EOS_PAGE_MANAGER (fixture->spm));
-  g_assert (visible_page != fixture->first_splash_page);
+  visible_child = gtk_stack_get_visible_child (GTK_STACK (fixture->spm));
+  g_assert (visible_child != fixture->first_splash_page);
   eos_splash_page_manager_show_splash_page (EOS_SPLASH_PAGE_MANAGER (fixture->spm));
-  visible_page = eos_page_manager_get_visible_page (EOS_PAGE_MANAGER (fixture->spm));
-  g_assert (visible_page == fixture->first_splash_page);
+  visible_child = gtk_stack_get_visible_child (GTK_STACK (fixture->spm));
+  g_assert (visible_child == fixture->first_splash_page);
 }
 
 static void
@@ -131,13 +136,13 @@ test_spm_default_visible_splash (SplashPageManagerFixture *fixture,
                                  gconstpointer             unused)
 {
   // Even though main page is added first splash page should be visible after it is added.
-  GtkWidget *visible_page;
+  GtkWidget *visible_child;
   eos_splash_page_manager_set_main_page (EOS_SPLASH_PAGE_MANAGER (fixture->spm),
                                          fixture->first_main_page);
   eos_splash_page_manager_set_splash_page (EOS_SPLASH_PAGE_MANAGER (fixture->spm),
                                            fixture->first_splash_page);
-  visible_page = eos_page_manager_get_visible_page (EOS_PAGE_MANAGER (fixture->spm));
-  g_assert (visible_page == fixture->first_splash_page);
+  visible_child = gtk_stack_get_visible_child (GTK_STACK (fixture->spm));
+  g_assert (visible_child == fixture->first_splash_page);
 }
 
 static void

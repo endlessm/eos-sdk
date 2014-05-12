@@ -6,7 +6,6 @@
 
 #include "eosapplication.h"
 #include "eospagemanager.h"
-#include "eospagemanager-private.h"
 #include "eostopbar-private.h"
 
 #include <gtk/gtk.h>
@@ -109,7 +108,7 @@ typedef struct {
 
   /* For keeping track of what to display alongside the current page */
   GtkWidget *current_page;
-  gulong visible_page_property_handler;
+  gulong visible_child_property_handler;
   GtkCssProvider *background_provider;
   gchar *current_background_css_props;
 } EosWindowPrivate;
@@ -207,9 +206,9 @@ sync_stack_animation (EosWindow *self)
   EosWindowPrivate *priv = eos_window_get_instance_private (self);
   EosPageManager *pm = EOS_PAGE_MANAGER (priv->page_manager);
   gtk_stack_set_transition_type (GTK_STACK (priv->background_stack),
-                                 eos_page_manager_get_gtk_stack_transition_type (pm));
+                                 gtk_stack_get_transition_type (GTK_STACK (pm)));
   gtk_stack_set_transition_duration (GTK_STACK (priv->background_stack),
-                                     eos_page_manager_get_transition_duration (pm));
+                                     gtk_stack_get_transition_duration (GTK_STACK (pm)));
 }
 
 // Helper to generate frame css override
@@ -276,7 +275,7 @@ update_page_background (EosWindow *self)
 }
 
 /*
- * update_visible_page_properties:
+ * update_visible_child_properties:
  * @widget: the page
  * @child_property: the property that changed
  * @user_data: pointer to the window
@@ -285,7 +284,7 @@ update_page_background (EosWindow *self)
  * changes.
  */
 static void
-update_visible_page_properties (GtkWidget  *widget,
+update_visible_child_properties (GtkWidget  *widget,
                                 GParamSpec *child_property,
                                 gpointer    data)
 {
@@ -312,15 +311,18 @@ update_visible_page_properties (GtkWidget  *widget,
 static void
 update_page (EosWindow *self)
 {
+  if (gtk_widget_in_destruction (GTK_WIDGET (self)))
+    return;
+
   EosWindowPrivate *priv = eos_window_get_instance_private (self);
   EosPageManager *pm = EOS_PAGE_MANAGER (priv->page_manager);
 
   if (priv->current_page)
     {
       g_signal_handler_disconnect (priv->current_page,
-                                   priv->visible_page_property_handler);
+                                   priv->visible_child_property_handler);
     }
-  priv->current_page = eos_page_manager_get_visible_page (pm);
+  priv->current_page = gtk_stack_get_visible_child (GTK_STACK (pm));
 
   sync_stack_animation (self);
   update_page_left_topbar (self);
@@ -331,10 +333,10 @@ update_page (EosWindow *self)
 
   if (priv->current_page)
     {
-      priv->visible_page_property_handler =
+      priv->visible_child_property_handler =
         g_signal_connect (priv->current_page,
                           "child-notify",
-                          G_CALLBACK (update_visible_page_properties),
+                          G_CALLBACK (update_visible_child_properties),
                           self);
     }
 }
@@ -898,7 +900,7 @@ eos_window_set_page_manager (EosWindow *self,
 
   update_page (self);
 
-  g_signal_connect_swapped (priv->page_manager, "notify::visible-page",
+  g_signal_connect_swapped (priv->page_manager, "notify::visible-child",
                             G_CALLBACK (update_page), self);
 }
 

@@ -32,12 +32,12 @@ const Page0 = new Lang.Class ({
         // Combo box for transition type...
         let typeMenu = new Gtk.ComboBoxText();
         let type_options = {
-            "Transition type: None": Endless.PageManagerTransitionType.NONE,
-            "Transition type: Fade": Endless.PageManagerTransitionType.CROSSFADE,
-            "Transition type: Slide Right": Endless.PageManagerTransitionType.SLIDE_RIGHT,
-            "Transition type: Slide Left": Endless.PageManagerTransitionType.SLIDE_LEFT,
-            "Transition type: Slide Down": Endless.PageManagerTransitionType.SLIDE_DOWN,
-            "Transition type: Slide Up": Endless.PageManagerTransitionType.SLIDE_UP
+            "Transition type: None": Gtk.StackTransitionType.NONE,
+            "Transition type: Fade": Gtk.StackTransitionType.CROSSFADE,
+            "Transition type: Slide Right": Gtk.StackTransitionType.SLIDE_RIGHT,
+            "Transition type: Slide Left": Gtk.StackTransitionType.SLIDE_LEFT,
+            "Transition type: Slide Down": Gtk.StackTransitionType.SLIDE_DOWN,
+            "Transition type: Slide Up": Gtk.StackTransitionType.SLIDE_UP
         }
         for (let key in type_options) {
             typeMenu.append_text(key);
@@ -90,33 +90,6 @@ const Page1 = new Lang.Class ({
     }
 });
 
-const Toolbox = new Lang.Class ({
-    Name: 'Toolbox',
-    Extends: Gtk.Grid,
-
-    _init: function(props) {
-        props = props || {};
-        props.orientation = Gtk.Orientation.VERTICAL;
-        this.parent(props);
-
-        this._label = new Gtk.Label({ label: 'The Toolbox' });
-        this._label1 = new Gtk.Label({ label: 'Actions on page 0' });
-        this._label2 = new Gtk.Label({ label: 'Actions on page 1' });
-        this.switch1 = new Gtk.Switch({ active: false });
-        this.switch2 = new Gtk.Switch({ active: true });
-        this.button1 = new Gtk.Button({ label: 'Scale font down' });
-        this.button2 = new Gtk.Button({ label: 'Scale font up' });
-
-        this.add(this._label);
-        this.add(this._label1);
-        this.add(this.switch1);
-        this.add(this._label2);
-        this.add(this.switch2);
-        this.add(this.button1);
-        this.add(this.button2);
-    }
-});
-
 const LeftTopbar = new Lang.Class ({
     Name: 'LeftTopBar',
     Extends: Gtk.Grid,
@@ -159,19 +132,19 @@ const TestApplication = new Lang.Class ({
         // First page
         this._page0 = new Page0(this._pm);
         this._page0.button1.connect('clicked', Lang.bind(this, function () {
-            this._pm.visible_page = this._page1;
+            this._pm.visible_child = this._page1;
         }));
         this._page0.button2.connect('clicked', Lang.bind(this, function () {
-            this._pm.visible_page_name = "page1";
+            this._pm.visible_child_name = "page1";
         }));
 
         // Second page
         this._page1 = new Page1();
         this._page1.button1.connect('clicked', Lang.bind(this, function () {
-            this._pm.visible_page = this._page0;
+            this._pm.visible_child = this._page0;
         }));
         this._page1.button2.connect('clicked', Lang.bind(this, function () {
-            this._pm.visible_page_name = "page0";
+            this._pm.visible_child_name = "page0";
         }));
         this._page1.button3.connect('clicked', Lang.bind(this, function () {
             this._setupDogBackground(this._page1);
@@ -183,17 +156,6 @@ const TestApplication = new Lang.Class ({
             this._setupCatBackground(this._page1);
         }));
 
-
-        this._toolbox = new Toolbox();
-        this._toolbox.switch1.connect('notify::active', Lang.bind(this, function () {
-            this._pm.set_page_actions(this._page0,
-                this._toolbox.switch1.active);
-        }));
-        this._toolbox.switch2.connect('notify::active', Lang.bind(this, function () {
-            this._pm.set_page_actions(this._page1,
-                this._toolbox.switch2.active);
-        }));
-
         this._left_topbar = new LeftTopbar();
 
         this._center_topbar = new CenterTopbar();
@@ -201,17 +163,14 @@ const TestApplication = new Lang.Class ({
         this._pm.add(this._page0, {
             name: "page0",
             background_uri: CAT_BACKGROUND_PATH,
-            custom_toolbox_widget: this._toolbox,
             left_topbar_widget: this._left_topbar,
             center_topbar_widget: this._center_topbar 
         });
 
         this._pm.add(this._page1, {
             name: "page1",
-            custom_toolbox_widget: this._toolbox,
             left_topbar_widget: this._left_topbar,
-            center_topbar_widget: this._center_topbar,
-            page_actions: true
+            center_topbar_widget: this._center_topbar
         });
 
         this._setupDogBackground(this._page0);
@@ -223,15 +182,6 @@ const TestApplication = new Lang.Class ({
             'font-scaling-active': true,
             'font-scaling-default-size': 16
         });
-
-        this._toolbox.button1.connect('clicked', Lang.bind(this, function () {
-            let current_font_size = this._window.get_font_scaling_default_size();
-            this._window.set_font_scaling_default_size(current_font_size - 1);
-        }));
-        this._toolbox.button2.connect('clicked', Lang.bind(this, function () {
-            let current_font_size = this._window.get_font_scaling_default_size();
-            this._window.set_font_scaling_default_size(current_font_size + 1);
-        }));
 
         let provider = new Gtk.CssProvider();
         provider.load_from_data("EosWindow { font-size: 1em; }");

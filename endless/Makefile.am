@@ -43,7 +43,7 @@ endless_library_sources = \
 	endless/eoscustomcontainer.c \
 	endless/eoshello.c \
 	endless/eosinit.c endless/eosinit-private.h \
-	endless/eospagemanager.c endless/eospagemanager-private.h \
+	endless/eospagemanager.c \
 	endless/eosresource.c endless/eosresource-private.h \
 	endless/eossplashpagemanager.c \
 	endless/eostopbar.c endless/eostopbar-private.h \

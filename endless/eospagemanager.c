@@ -2,7 +2,6 @@
 
 #include "config.h"
 #include "eospagemanager.h"
-#include "eospagemanager-private.h"
 
 #include <gtk/gtk.h>
 
@@ -73,15 +72,9 @@
  * If the removed page was the only page, then the page manager will display
  * nothing.
  * If there are multiple pages still in the page manager, you should never
- * remove the visible-page. Always set a new visible page before removing the
+ * remove the visible-child. Always set a new visible child before removing the
  * current one. A critical warning will be emitted if you remove the visible-
  * page when there are still other pages in the page manager.
- *
- * <warning>
- *   <para>Removing pages with gtk_container_remove() is currently broken due to
- *   a bug in GTK. Use eos_page_manager_remove_page_by_name() for the time
- *   being.</para>
- * </warning>
  *
  * In general, it is convenient to refer to a page by its name when dealing with
  * the page manager, so you should make a point of giving all your pages names.
@@ -92,7 +85,6 @@
 
 typedef struct {
   GtkWidget *page;
-  gchar *name;
   GtkWidget *left_topbar_widget;
   GtkWidget *center_topbar_widget;
   gchar *background_uri;
@@ -103,47 +95,14 @@ typedef struct {
 
 typedef struct {
   GList *page_info; /* GList<EosPageManagerPageInfo> */
-  GHashTable *pages_by_name; /* GHashTable<gchar *, EosPageManagerPageInfo *> */
   GHashTable *pages_by_widget; /* GHashTable<GtkWidget *, EosPageManagerPageInfo *> */
-  EosPageManagerPageInfo *visible_page_info;
-  EosPageManagerTransitionType transition_type;
 } EosPageManagerPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (EosPageManager, eos_page_manager, GTK_TYPE_STACK)
 
-GType
-eos_page_manager_transition_type_get_type (void)
-{
-  static GType etype = 0;
-  if (G_UNLIKELY(etype == 0)) {
-    static const GEnumValue values[] = {
-      { EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE, "EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE", "none" },
-      { EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE, "EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE", "crossfade" },
-      { EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_RIGHT, "EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_RIGHT", "slide_right" },
-      { EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT, "EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT", "slide_left" },
-      { EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP, "EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP", "slide_up" },
-      { EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN, "EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN", "slide_down" },
-      { 0, NULL, NULL }
-    };
-    etype = g_enum_register_static (g_intern_static_string ("EosPageManagerTransitionType"), values);
-  }
-  return etype;
-}
-
-enum
-{
-  PROP_0,
-  PROP_VISIBLE_PAGE,
-  PROP_VISIBLE_PAGE_NAME,
-  PROP_TRANSITION_DURATION,
-  PROP_TRANSITION_TYPE,
-  NPROPS
-};
-
 enum
 {
   CHILD_PROP_0,
-  CHILD_PROP_NAME,
   CHILD_PROP_LEFT_TOPBAR_WIDGET,
   CHILD_PROP_CENTER_TOPBAR_WIDGET,
   CHILD_PROP_BACKGROUND_URI,
@@ -153,13 +112,11 @@ enum
   NCHILDPROPS
 };
 
-static GParamSpec *eos_page_manager_props[NPROPS] = { NULL, };
 static GParamSpec *eos_page_manager_child_props[NCHILDPROPS] = { NULL, };
 
 static void
 page_info_free (EosPageManagerPageInfo *info)
 {
-  g_free (info->name);
   g_free (info->background_uri);
   g_free (info->background_size);
   g_free (info->background_position);
@@ -191,24 +148,6 @@ find_page_info_by_widget (EosPageManager *self,
   return g_hash_table_lookup (priv->pages_by_widget, page);
 }
 
-/*
- * find_page_info_by_name:
- * @self: the page manager
- * @name: the name to look for
- *
- * Searches for the page info corresponding to the child with name @name.
- *
- * Returns: the #EosPageManagerPageInfo for @name, or %NULL if @name is not the
- * name of a child of @self.
- */
-static EosPageManagerPageInfo *
-find_page_info_by_name (EosPageManager *self,
-                        const gchar    *name)
-{
-  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
-  return g_hash_table_lookup (priv->pages_by_name, name);
-}
-
 /* Convenience function, since this warning occurs at several places */
 static void
 warn_page_widget_not_found (EosPageManager *self,
@@ -218,16 +157,6 @@ warn_page_widget_not_found (EosPageManager *self,
               page,
               g_type_name (G_OBJECT_TYPE (page)),
               self);
-}
-
-/* Convenience function, since this warning occurs at several places */
-static void
-warn_page_name_not_found (EosPageManager *self,
-                          const gchar    *name)
-{
-  g_critical ("EosPageManager %p has no page named %s",
-              self,
-              name);
 }
 
 /* Invariants: number of pages in list and number of pages in pages_by_widget
@@ -243,86 +172,7 @@ assert_internal_state (EosPageManager *self)
   g_assert_cmpuint (list_length,
                     ==,
                     g_hash_table_size (priv->pages_by_widget));
-  g_assert_cmpuint (list_length,
-                    >=,
-                    g_hash_table_size (priv->pages_by_name));
 #endif
-}
-
-static void
-set_visible_page_from_info (EosPageManager         *self,
-                            EosPageManagerPageInfo *info)
-{
-  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
-  gtk_stack_set_visible_child (GTK_STACK (self), info->page);
-
-  priv->visible_page_info = info;
-
-  GObject *self_object = G_OBJECT (self);
-  g_object_notify(self_object, "visible-page");
-  g_object_notify(self_object, "visible-page-name");
-}
-
-static void
-eos_page_manager_get_property (GObject    *object,
-                               guint       property_id,
-                               GValue     *value,
-                               GParamSpec *pspec)
-{
-  EosPageManager *self = EOS_PAGE_MANAGER (object);
-
-  switch (property_id)
-    {
-    case PROP_VISIBLE_PAGE:
-      g_value_set_object (value, eos_page_manager_get_visible_page (self));
-      break;
-
-    case PROP_VISIBLE_PAGE_NAME:
-      g_value_set_string (value, eos_page_manager_get_visible_page_name (self));
-      break;
-
-    case PROP_TRANSITION_DURATION:
-      g_value_set_uint (value, eos_page_manager_get_transition_duration (self));
-      break;
-
-    case PROP_TRANSITION_TYPE:
-      g_value_set_enum (value, eos_page_manager_get_transition_type (self));
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-    }
-}
-
-static void
-eos_page_manager_set_property (GObject      *object,
-                               guint         property_id,
-                               const GValue *value,
-                               GParamSpec   *pspec)
-{
-  EosPageManager *self = EOS_PAGE_MANAGER (object);
-
-  switch (property_id)
-    {
-    case PROP_VISIBLE_PAGE:
-      eos_page_manager_set_visible_page (self, g_value_get_object (value));
-      break;
-
-    case PROP_VISIBLE_PAGE_NAME:
-      eos_page_manager_set_visible_page_name (self, g_value_get_string (value));
-      break;
-
-    case PROP_TRANSITION_DURATION:
-      eos_page_manager_set_transition_duration (self, g_value_get_uint (value));
-      break;
-
-    case PROP_TRANSITION_TYPE:
-      eos_page_manager_set_transition_type (self, g_value_get_enum (value));
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-    }
 }
 
 static void
@@ -332,8 +182,6 @@ eos_page_manager_dispose (GObject *object)
   EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
   g_list_foreach (priv->page_info, (GFunc)top_bars_unref, NULL);
 
-  // Unset visible page so it doesn't keep updating as widgets are removed
-  priv->visible_page_info = NULL;
   G_OBJECT_CLASS (eos_page_manager_parent_class)->dispose (object);
 }
 
@@ -343,11 +191,10 @@ eos_page_manager_finalize (GObject *object)
   EosPageManager *self = EOS_PAGE_MANAGER (object);
   EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
+  G_OBJECT_CLASS (eos_page_manager_parent_class)->finalize (object);
+
   g_list_foreach (priv->page_info, (GFunc)page_info_free, NULL);
   g_hash_table_destroy(priv->pages_by_widget);
-  g_hash_table_destroy(priv->pages_by_name);
-
-  G_OBJECT_CLASS (eos_page_manager_parent_class)->finalize (object);
 }
 
 static void
@@ -357,7 +204,6 @@ eos_page_manager_add (GtkContainer *container,
   EosPageManager *self = EOS_PAGE_MANAGER (container);
   EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
 
-  GTK_CONTAINER_CLASS (eos_page_manager_parent_class)->add (container, new_page);
   EosPageManagerPageInfo *info = g_slice_new0 (EosPageManagerPageInfo);
   info->background_size = g_strdup (DEFAULT_BACKGROUND_SIZE);
   info->background_position = g_strdup (DEFAULT_BACKGROUND_POSITION);
@@ -366,10 +212,7 @@ eos_page_manager_add (GtkContainer *container,
   priv->page_info = g_list_prepend (priv->page_info, info);
   g_hash_table_insert (priv->pages_by_widget, new_page, info);
 
-  /* If there were no pages yet, then this one must become the visible one */
-  if (priv->visible_page_info == NULL)
-    eos_page_manager_set_visible_page (self, new_page);
-
+  GTK_CONTAINER_CLASS (eos_page_manager_parent_class)->add (container, new_page);
   assert_internal_state (self);
 }
 
@@ -389,26 +232,6 @@ eos_page_manager_remove (GtkContainer *container,
     }
   priv->page_info = g_list_remove (priv->page_info, info);
   g_hash_table_remove (priv->pages_by_widget, page);
-  if (info->name != NULL)
-    g_hash_table_remove (priv->pages_by_name, info->name);
-
-  if (priv->visible_page_info == info)
-    {
-      /* If this was the only page */
-      if (priv->page_info == NULL)
-        {
-          priv->visible_page_info = NULL;
-        }
-      /* Otherwise set visible page as the first in our list. */
-      else
-        {
-          g_critical ("Removing the currently visible page %p from the page manager.",
-                      page);
-          EosPageManagerPageInfo *visible_info = g_list_first (priv->page_info)->data;
-          set_visible_page_from_info (self, visible_info);
-        }
-
-    }
 
   page_info_free (info);
 
@@ -426,10 +249,6 @@ eos_page_manager_get_child_property (GtkContainer *container,
 
   switch (property_id)
     {
-    case CHILD_PROP_NAME:
-      g_value_set_string (value, eos_page_manager_get_page_name (self, child));
-      break;
-
     case CHILD_PROP_BACKGROUND_URI:
       g_value_set_string (value,
                           eos_page_manager_get_page_background_uri (self,
@@ -483,10 +302,6 @@ eos_page_manager_set_child_property (GtkContainer *container,
 
   switch (property_id)
     {
-    case CHILD_PROP_NAME:
-      eos_page_manager_set_page_name (self, child, g_value_get_string (value));
-      break;
-
     case CHILD_PROP_BACKGROUND_URI:
       eos_page_manager_set_page_background_uri (self, child,
                                                 g_value_get_string (value));
@@ -529,8 +344,6 @@ eos_page_manager_class_init (EosPageManagerClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkContainerClass *container_class = GTK_CONTAINER_CLASS (klass);
 
-  object_class->get_property = eos_page_manager_get_property;
-  object_class->set_property = eos_page_manager_set_property;
   object_class->dispose = eos_page_manager_dispose;
   object_class->finalize = eos_page_manager_finalize;
 
@@ -538,73 +351,6 @@ eos_page_manager_class_init (EosPageManagerClass *klass)
   container_class->remove = eos_page_manager_remove;
   container_class->get_child_property = eos_page_manager_get_child_property;
   container_class->set_child_property = eos_page_manager_set_child_property;
-
-  /**
-   * EosPageManager:visible-page:
-   *
-   * A reference to the page widget that is currently being displayed by the
-   * page manager.
-   * If the page manager has no pages, then this is %NULL.
-   */
-  eos_page_manager_props[PROP_VISIBLE_PAGE] =
-    g_param_spec_object ("visible-page", "Visible page",
-                         "Page widget currently displaying in the page manager",
-                         GTK_TYPE_WIDGET,
-                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-  /**
-   * EosPageManager:visible-page-name:
-   *
-   * The name of the page that is currently being displayed by the page manager.
-   * If the page manager has no pages, or if there is a page currently being
-   * displayed but it has no name, then this is %NULL.
-   */
-  eos_page_manager_props[PROP_VISIBLE_PAGE_NAME] =
-    g_param_spec_string ("visible-page-name", "Visible page name",
-                         "Name of page currently displaying in the page "
-                         "manager",
-                         "",
-                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-
-  /**
-   * EosPageManager:transition-duration:
-   *
-   * The time it will take to animate between pages in the page managers, in
-   * milliseconds.
-   */
-  eos_page_manager_props[PROP_TRANSITION_DURATION] =
-    g_param_spec_uint ("transition-duration", "Transition duration",
-                       "The animation duration, in milliseconds",
-                       0, G_MAXUINT,
-                       200,
-                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
-
-
-  /**
-   * EosPageManager:transition-type:
-   *
-   * The type of animation to use when switching between pages in the page
-   * manager. The pages can crossfade from one to the next, or slide in from
-   * any direction.
-   */
-  eos_page_manager_props[PROP_TRANSITION_TYPE] =
-    g_param_spec_enum ("transition-type", "Transition type",
-                       "The type of animation used to transition",
-                       EOS_TYPE_PAGE_MANAGER_TRANSITION_TYPE,
-                       EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE,
-                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
-
-  g_object_class_install_properties (object_class, NPROPS,
-                                     eos_page_manager_props);
-
-  /**
-   * EosPageManager:name:
-   *
-   * The name of this page. Make sure to choose a unique name.
-   */
-  eos_page_manager_child_props[CHILD_PROP_NAME] =
-    g_param_spec_string ("name", "Name", "Unique ID for the page",
-                         NULL,
-                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   /**
    * EosPageManager:left-topbar-widget:
@@ -685,7 +431,7 @@ eos_page_manager_class_init (EosPageManagerClass *klass)
   /* Install child properties all at once, because there is no
   gtk_container_class_install_child_properties() function */
   int count;
-  for (count = PROP_0 + 1; count < NCHILDPROPS; count++)
+  for (count = CHILD_PROP_0 + 1; count < NCHILDPROPS; count++)
     gtk_container_class_install_child_property (container_class, count,
                                                 eos_page_manager_child_props[count]);
 }
@@ -696,10 +442,6 @@ eos_page_manager_init (EosPageManager *self)
   EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
   priv->pages_by_widget = g_hash_table_new (g_direct_hash,
                                             g_direct_equal);
-  priv->pages_by_name = g_hash_table_new_full (g_str_hash,
-                                               g_str_equal,
-                                               g_free,
-                                               NULL);
 }
 
 /* Public API */
@@ -715,187 +457,6 @@ GtkWidget *
 eos_page_manager_new (void)
 {
   return g_object_new (EOS_TYPE_PAGE_MANAGER, NULL);
-}
-
-/**
- * eos_page_manager_get_visible_page:
- * @self: the page manager
- *
- * Gets the page widget that @self is currently displaying.
- * See #EosPageManager:visible-page for more information.
- *
- * Returns: (transfer none): the page #GtkWidget, or %NULL if @self does not
- * have any pages.
- */
-GtkWidget *
-eos_page_manager_get_visible_page (EosPageManager *self)
-{
-  g_return_val_if_fail (EOS_IS_PAGE_MANAGER (self), NULL);
-
-  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
-  if (priv->visible_page_info == NULL)
-    return NULL;
-
-  return priv->visible_page_info->page;
-}
-
-/**
- * eos_page_manager_set_visible_page:
- * @self: the page manager
- * @page: the page to switch to
- *
- * Switches the page manager @self to display @page.
- * The @page widget must previously have been added to the page manager.
- * See #EosPageManager:visible-page for more information.
- */
-void
-eos_page_manager_set_visible_page (EosPageManager *self,
-                                   GtkWidget      *page)
-{
-  g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
-
-  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
-  if (info == NULL)
-    {
-      warn_page_widget_not_found (self, page);
-      return;
-    }
-
-  set_visible_page_from_info (self, info);
-}
-
-/**
- * eos_page_manager_get_visible_page_name:
- * @self: the page manager
- *
- * Gets the name of the page widget that @self is currently displaying.
- * See #EosPageManager:visible-page for more information.
- *
- * Returns: (allow-none): the name of the page, or %NULL if @self does not have
- * any pages or if the visible page does not have a name.
- */
-const gchar *
-eos_page_manager_get_visible_page_name (EosPageManager *self)
-{
-  g_return_val_if_fail (EOS_IS_PAGE_MANAGER (self), NULL);
-
-  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
-  if (priv->visible_page_info == NULL)
-    return NULL;
-
-  return priv->visible_page_info->name;
-}
-
-/**
- * eos_page_manager_set_visible_page_name:
- * @self: the page manager
- * @page_name: the name of the page to switch to
- *
- * Switches the page manager @self to display the page called @page_name.
- * This page must previously have been added to the page manager.
- * See #EosPageManager:visible-page for more information.
- */
-void
-eos_page_manager_set_visible_page_name (EosPageManager *self,
-                                        const gchar    *page_name)
-{
-  g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
-  g_return_if_fail (page_name != NULL);
-
-  EosPageManagerPageInfo *info = find_page_info_by_name (self, page_name);
-  if (info == NULL)
-    {
-      warn_page_name_not_found (self, page_name);
-      return;
-    }
-
-  set_visible_page_from_info (self, info);
-}
-
-/**
- * eos_page_manager_get_page_name:
- * @self: the page manager
- * @page: the page to be queried
- *
- * Gets the name of @page, which must previously have been added to the
- * page manager.
- * See #EosPageManager:name for more information.
- *
- * Returns: (allow-none): the name of @page, or %NULL if @page does not have a
- * name.
- */
-const gchar *
-eos_page_manager_get_page_name (EosPageManager *self,
-                                GtkWidget      *page)
-{
-  g_return_val_if_fail (EOS_IS_PAGE_MANAGER (self), NULL);
-  g_return_val_if_fail (GTK_IS_WIDGET (page), NULL);
-
-  EosPageManagerPageInfo *info = find_page_info_by_widget (self, page);
-  if (info == NULL)
-    {
-      warn_page_widget_not_found (self, page);
-      return NULL;
-    }
-
-  return info->name;
-}
-
-/**
- * eos_page_manager_set_page_name:
- * @self: the page manager
- * @page: the page to be renamed
- * @name: (allow-none): the new name for @page
- *
- * Changes the name of @page, which must previously have been added to the
- * page manager.
- * To remove @page's name, pass %NULL for @name.
- * See #EosPageManager:name for more information.
- */
-void
-eos_page_manager_set_page_name (EosPageManager *self,
-                                GtkWidget      *page,
-                                const gchar    *name)
-{
-  g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
-  g_return_if_fail (GTK_IS_WIDGET (page));
-
-  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
-  EosPageManagerPageInfo *info;
-
-  /* Two pages with the same name are not allowed */
-  if (name != NULL)
-    {
-      info = find_page_info_by_name (self, name);
-      if (info != NULL && info->page != page)
-        {
-          g_critical ("Not setting page name to \"%s\", because page manager "
-                      "already contains a page by that name",
-                      name);
-          return;
-        }
-    }
-
-  info = find_page_info_by_widget (self, page);
-  if (info == NULL)
-    {
-      warn_page_widget_not_found (self, page);
-      return;
-    }
-
-  if (g_strcmp0(info->name, name) == 0)
-    return;
-
-  if (info->name != NULL)
-    g_hash_table_remove (priv->pages_by_name, info->name);
-  g_free (info->name);
-  info->name = g_strdup (name);
-  if (name != NULL)
-      g_hash_table_insert (priv->pages_by_name, g_strdup (name), info);
-
-  gtk_container_child_notify (GTK_CONTAINER (self), page, "name");
-
-  assert_internal_state (self);
 }
 
 /**
@@ -1241,115 +802,16 @@ eos_page_manager_remove_page_by_name (EosPageManager *self,
 {
   g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
   g_return_if_fail (name != NULL);
+  GtkContainer *container = GTK_CONTAINER (self);
 
-  EosPageManagerPageInfo *info = find_page_info_by_name (self, name);
-  if (info == NULL)
+  GList *l;
+  for (l = gtk_container_get_children (container); l != NULL; l = l->next)
     {
-      warn_page_name_not_found (self, name);
-      return;
+      GtkWidget *child = l->data;
+      gchar *child_name = NULL;
+      gtk_container_child_get (container, child, "name", &child_name, NULL);
+      if (child_name != NULL && g_strcmp0 (child_name, name) == 0)
+          gtk_container_remove (container, child);
+      g_free (child_name);
     }
-
-  gtk_container_remove (GTK_CONTAINER (self), info->page);
-
-  assert_internal_state (self);
-}
-
-/**
- * eos_page_manager_get_transition_duration:
- * @self: the page manager
- *
- * Gets the animation duration of page transitions, in milliseconds. See
- * #EosPageManager:transition-duration for more information.
- *
- * Returns: the current transition time of the page manager.
- */
-guint
-eos_page_manager_get_transition_duration (EosPageManager *self)
-{
-  g_return_val_if_fail (EOS_IS_PAGE_MANAGER (self), 0);
-  return gtk_stack_get_transition_duration (GTK_STACK (self));
-}
-
-/**
- * eos_page_manager_set_transition_duration:
- * @self: the page manager
- * @duration: the duration of page transitions, in milliseconds
- *
- * Sets the animation duration of page transitions, in milliseconds. See
- * #EosPageManager:transition-duration for more information.
- */
-void
-eos_page_manager_set_transition_duration (EosPageManager *self,
-                                          guint           duration)
-{
-  g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
-  gtk_stack_set_transition_duration (GTK_STACK (self), duration);
-  g_object_notify (G_OBJECT (self), "transition-duration");
-}
-
-/**
- * eos_page_manager_get_transition_type:
- * @self: the page manager
- *
- * Gets the animation type of page transitions. See
- * #EosPageManager:transition-type for more information.
- *
- * Returns: the current transition type of the page manager.
- */
-EosPageManagerTransitionType
-eos_page_manager_get_transition_type (EosPageManager *self)
-{
-  g_return_val_if_fail (EOS_IS_PAGE_MANAGER (self), EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE);
-
-  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
-  return priv->transition_type;
-}
-
-
-/**
- * eos_page_manager_set_transition_type:
- * @self: the page manager
- * @transition_type: the type of page transitions
- *
- * Sets the animation type of page transitions. See
- * #EosPageManager:transition-type for more information.
- */
-void
-eos_page_manager_set_transition_type (EosPageManager                *self,
-                                      EosPageManagerTransitionType   transition_type)
-{
-  g_return_if_fail (EOS_IS_PAGE_MANAGER (self));
-
-  EosPageManagerPrivate *priv = eos_page_manager_get_instance_private (self);
-  priv->transition_type = transition_type;
-  GtkStackTransitionType gtk_stack_transition;
-  switch (transition_type)
-    {
-    case EOS_PAGE_MANAGER_TRANSITION_TYPE_NONE:
-    case EOS_PAGE_MANAGER_TRANSITION_TYPE_CROSSFADE:
-    case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_RIGHT:
-    case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_LEFT:
-    case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_UP:
-    case EOS_PAGE_MANAGER_TRANSITION_TYPE_SLIDE_DOWN:
-      gtk_stack_transition = (GtkStackTransitionType)priv->transition_type;
-      break;
-    default:
-      gtk_stack_transition = GTK_STACK_TRANSITION_TYPE_NONE;
-      break;
-    }
-  gtk_stack_set_transition_type (GTK_STACK (self),
-                                 gtk_stack_transition);
-  g_object_notify (G_OBJECT (self), "transition-type");
-}
-
-/*
- * eos_page_manager_get_gtk_stack_transition_type:
- * @self: the page manager
- *
- * Gets the internal gtk_stack transition type used to animate the page manager.
- */
-GtkStackTransitionType
-eos_page_manager_get_gtk_stack_transition_type (EosPageManager *self)
-{
-  return gtk_stack_get_transition_type (GTK_STACK (self));
 }
