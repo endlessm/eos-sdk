@@ -20,7 +20,6 @@
         <xi:include href="xml/application.xml"/>
         <xi:include href="xml/window.xml"/>
         <xi:include href="xml/page-manager.xml"/>
-        <xi:include href="xml/action-button.xml"/>
         <xi:include href="xml/flexy-grid.xml"/>
         <xi:include href="xml/custom-container.xml"/>
         <!--<xi:include href="xml/hello.xml"/>-->

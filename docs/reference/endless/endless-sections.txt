@@ -85,32 +85,6 @@ EosPageManagerPrivate
 </SECTION>
 
 <SECTION>
-<FILE>action-button</FILE>
-EosActionButton
-eos_action_button_new
-eos_action_button_get_icon_id
-eos_action_button_set_icon_id
-eos_action_button_get_label
-eos_action_button_set_label
-eos_action_button_get_size
-eos_action_button_set_size
-eos_action_button_get_label_position
-eos_action_button_set_label_position
-EosActionButtonSize
-<SUBSECTION Standard>
-EOS_ACTION_BUTTON
-EOS_ACTION_BUTTON_CLASS
-EOS_ACTION_BUTTON_GET_CLASS
-EOS_IS_ACTION_BUTTON
-EOS_IS_ACTION_BUTTON_CLASS
-EOS_TYPE_ACTION_BUTTON
-EosActionButtonClass
-eos_action_button_get_type
-<SUBSECTION Private>
-EosActionButtonPrivate
-</SECTION>
-
-<SECTION>
 <FILE>flexy-grid</FILE>
 EosFlexyGrid
 EosFlexyGridCell
