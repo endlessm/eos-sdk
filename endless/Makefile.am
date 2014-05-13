@@ -34,7 +34,6 @@ endless_private_installed_headers = \
 	endless/eospagemanager.h \
 	endless/eostypes.h \
 	endless/eoswindow.h \
-	endless/eosactionmenu-private.h \
 	endless/eosflexygrid.h
 
 endless_library_sources = \
@@ -46,7 +45,6 @@ endless_library_sources = \
 	endless/eosresource.c endless/eosresource-private.h \
 	endless/eostopbar.c endless/eostopbar-private.h \
 	endless/eosactionbutton.c \
-	endless/eosactionmenu.c \
 	endless/eoswindow.c \
 	endless/eosflexygrid.c endless/eosflexygridcell.c endless/eosflexygrid-private.h
 
