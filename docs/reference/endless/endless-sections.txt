@@ -85,29 +85,6 @@ EosPageManagerPrivate
 </SECTION>
 
 <SECTION>
-<FILE>splash-page-manager</FILE>
-EosSplashPageManager
-eos_splash_page_manager_new
-eos_splash_page_manager_get_splash_page
-eos_splash_page_manager_set_splash_page
-eos_splash_page_manager_get_main_page
-eos_splash_page_manager_set_main_page
-eos_splash_page_manager_show_main_page
-eos_splash_page_manager_show_splash_page
-<SUBSECTION Standard>
-EOS_IS_SPLASH_PAGE_MANAGER
-EOS_IS_SPLASH_PAGE_MANAGER_CLASS
-EOS_SPLASH_PAGE_MANAGER
-EOS_SPLASH_PAGE_MANAGER_CLASS
-EOS_SPLASH_PAGE_MANAGER_GET_CLASS
-EOS_TYPE_SPLASH_PAGE_MANAGER
-EosSplashPageManagerClass
-eos_splash_page_manager_get_type
-<SUBSECTION Private>
-EosSplashPageManagerPrivate
-</SECTION>
-
-<SECTION>
 <FILE>action-button</FILE>
 EosActionButton
 eos_action_button_new

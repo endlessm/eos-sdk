@@ -16,7 +16,6 @@ G_BEGIN_DECLS
 #include "eosapplication.h"
 #include "eosflexygrid.h"
 #include "eospagemanager.h"
-#include "eossplashpagemanager.h"
 #include "eoswindow.h"
 #include "eoscustomcontainer.h"
 

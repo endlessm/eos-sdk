@@ -32,7 +32,6 @@ endless_private_installed_headers = \
 	endless/eosenums.h \
 	endless/eosmacros.h \
 	endless/eospagemanager.h \
-	endless/eossplashpagemanager.h \
 	endless/eostypes.h \
 	endless/eoswindow.h \
 	endless/eosactionmenu-private.h \
@@ -45,7 +44,6 @@ endless_library_sources = \
 	endless/eosinit.c endless/eosinit-private.h \
 	endless/eospagemanager.c \
 	endless/eosresource.c endless/eosresource-private.h \
-	endless/eossplashpagemanager.c \
 	endless/eostopbar.c endless/eostopbar-private.h \
 	endless/eosactionbutton.c \
 	endless/eosactionmenu.c \
