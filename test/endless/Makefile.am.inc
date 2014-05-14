@@ -7,10 +7,7 @@ test_endless_run_tests_SOURCES = \
 	$(ENDLESS_TESTS_DIRECTORY)/endless/test-hello.c \
 	$(ENDLESS_TESTS_DIRECTORY)/endless/test-application.c \
 	$(ENDLESS_TESTS_DIRECTORY)/endless/test-page-manager.c \
-	$(ENDLESS_TESTS_DIRECTORY)/endless/test-splash-page-manager.c \
 	$(ENDLESS_TESTS_DIRECTORY)/endless/test-window.c \
-	$(ENDLESS_TESTS_DIRECTORY)/endless/test-action-menu.c \
-	$(ENDLESS_TESTS_DIRECTORY)/endless/test-action-button.c \
 	$(ENDLESS_TESTS_DIRECTORY)/endless/test-flexy-grid.c \
 	$(ENDLESS_TESTS_DIRECTORY)/endless/test-custom-container.c \
 	$(NULL)

@@ -12,11 +12,9 @@ G_BEGIN_DECLS
 
 /* Pull in other header files */
 #include "eostypes.h"
-#include "eosactionbutton.h"
 #include "eosapplication.h"
 #include "eosflexygrid.h"
 #include "eospagemanager.h"
-#include "eossplashpagemanager.h"
 #include "eoswindow.h"
 #include "eoscustomcontainer.h"
 
