@@ -1,0 +1,17 @@
+#!/bin/bash -e
+
+JS_DIR=eos-js-common
+
+# As defined in http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
+if [[ -z "$XDG_DATA_DIRS" ]]; then
+    XDG_DATA_DIRS="/usr/local/share/:/usr/share/"
+fi
+
+# Add JS_DIR to the gjs path in each XDG_DATA_DIR
+for DATA_DIR in ${XDG_DATA_DIRS//:/ }; do
+    GJS_PATH=${GJS_PATH}:${DATA_DIR}/${JS_DIR}
+done
+
+# Strip leading ":" if present and export
+export GJS_PATH=${GJS_PATH#:}
+gjs $@
