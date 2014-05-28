@@ -59,7 +59,6 @@ DISTCLEANFILES += @EOS_SDK_API_NAME@.pc
 
 # SDK sublibraries
 gjsmodulesdir = $(datadir)/gjs-1.0
-include $(top_srcdir)/wikipedia/Makefile.am.inc
 include $(top_srcdir)/webhelper/Makefile.am.inc
 
 # # # INTROSPECTION FILES # # #
@@ -126,21 +125,6 @@ endif
 # # # PURE JAVASCRIPT MODULE DOCUMENTATION # # #
 
 include $(top_srcdir)/docs/reference/webhelper/Makefile.am.inc
-
-# # # SECONDARY GRESOURCES # # #
-
-wikipedia_resource_files = $(shell $(GLIB_COMPILE_RESOURCES) --sourcedir=$(srcdir)/data --generate-dependencies $(srcdir)/data/eos-wikipedia-domain.gresource.xml)
-data/eos-wikipedia-domain.gresource: data/eos-wikipedia-domain.gresource.xml $(wikipedia_resource_files)
-	$(AM_V_GEN) $(MKDIR_P) $(builddir)/data && \
-	$(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(srcdir)/data  $<
-
-wikipediadatadir = $(datadir)/eos-wikipedia-domain
-wikipediadata_DATA = data/eos-wikipedia-domain.gresource
-EXTRA_DIST += \
-	$(wikipedia_resource_files) \
-	data/eos-wikipedia-domain.gresource.xml \
-	$(NULL)
-CLEANFILES += data/eos-wikipedia-domain.gresource
 
 # # # GJS OVERRIDES # # #
 

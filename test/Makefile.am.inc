@@ -15,9 +15,6 @@ javascript_tests = \
 	test/webhelper/testTranslate.js \
 	test/webhelper/testWebActions.js \
 	test/webhelper/testUpdateFontSize.js \
-	test/wikipedia/models/testCategoryModel.js \
-	test/wikipedia/models/testArticleModel.js \
-	test/wikipedia/models/testDomainWikiModel.js \
 	$(NULL)
 EXTRA_DIST += $(javascript_tests)
 

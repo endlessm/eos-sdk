@@ -20,11 +20,3 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: pt\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: wikipedia/widgets/BackButton.js:21
-msgid "BACK"
-msgstr "Voltar"
-
-#: wikipedia/widgets/category_back_button.js:34
-msgid "OTHER CATEGORIES"
-msgstr "OUTRAS CATEGORIAS"

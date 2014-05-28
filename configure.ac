@@ -204,13 +204,6 @@ PKG_CHECK_MODULES([EOS_SDK], [
 	$EOS_REQUIRED_MODULES
 	$EOS_REQUIRED_MODULES_PRIVATE])
 
-# Check installed GIRs for wikipedia module
-EOS_CHECK_GJS_GIR([Gdk], [3.0])
-EOS_CHECK_GJS_GIR([GdkPixbuf], [2.0])
-EOS_CHECK_GJS_GIR([Gio], [2.0])
-EOS_CHECK_GJS_GIR([GObject], [2.0])
-EOS_CHECK_GJS_GIR([Gtk], [3.0])
-EOS_CHECK_GJS_GIR([Json], [1.0])
 
 AC_CACHE_SAVE
 
