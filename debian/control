@@ -60,20 +60,6 @@ Description: Endless SDK
  GObject introspection bindings for the Endless SDK from a language such as
  Javascript.
 
-Package: eos-sdk-wikipedia
-Section: non-free/libs
-Architecture: any
-Depends: ${misc:Depends},
-         eos-sdk (= ${binary:Version}),
-         gir1.2-endless-0 (= ${binary:Version}),
-         gir1.2-gdkpixbuf-2.0,
-         gir1.2-gtk-3.0 (>= 3.8),
-         gir1.2-json-1.0,
-         gir1.2-webkit-3.0 (>=2.0),
-         gjs
-Description: Endless SDK Wikipedia library
- GJS libraries for the Endless SDK Wikipedia library
-
 Package: eos-sdk-webhelper
 Section: non-free/libs
 Architecture: all
