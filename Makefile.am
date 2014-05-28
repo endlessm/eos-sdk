@@ -134,13 +134,6 @@ include $(top_srcdir)/overrides/Makefile.am.inc
 
 include $(top_srcdir)/tools/Makefile.am.inc
 
-# # # INSTALLED M4 MACROS # # #
-
-m4dir = ${datadir}/aclocal
-m4_DATA = \
-	m4/eos-gir.m4 \
-	$(NULL)
-
 # # # TESTS # # #
 
 include $(top_srcdir)/test/Makefile.am.inc
