@@ -73,3 +73,9 @@ EosWindow {
         color-stop(0.95, rgb(71, 71, 71)),
         color-stop(0, rgb(67, 67, 67)));
 }
+
+/* Insensitive Text */
+
+*:insensitive {
+    color: rgba(255, 255, 255, 0.5);
+}
