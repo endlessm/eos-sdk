@@ -5,6 +5,12 @@
 @define-color endless_theme_bg_color #2e3436;
 @define-color endless_wm_shadow alpha(black, 0.5);
 
+/* Insensitive Text */
+
+GtkLabel:insensitive {
+    color: rgba(255, 255, 255, 0.5);
+}
+
 /* Endless app window */
 
 EosWindow {
@@ -83,10 +89,4 @@ EosWindow {
 
 .endless-search-box .cell:selected{
     background-image: url('resource:///com/endlessm/sdk/assets/autocomplete_list_middle_hover.png');
-}
-
-/* Insensitive Text */
-
-*:insensitive {
-    color: rgba(255, 255, 255, 0.5);
 }
