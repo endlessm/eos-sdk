@@ -9,4 +9,5 @@ nobase_dist_gjs_DATA = \
     overrides/Endless.js \
     overrides/endless_private/asset_button.js \
     overrides/endless_private/connection_test.js \
+	overrides/endless_private/search_box.js \
     $(NULL)

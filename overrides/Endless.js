@@ -25,6 +25,7 @@ imports.searchPath.unshift(getCurrentFileDir());
 
 const AssetButton = imports.endless_private.asset_button;
 const ConnectionTest = imports.endless_private.connection_test;
+const SearchBox = imports.endless_private.search_box;
 
 function _init() {
     // this is imports.gi.Endless
@@ -32,6 +33,7 @@ function _init() {
     Endless.getCurrentFileDir = getCurrentFileDir;
     Endless.AssetButton = AssetButton.AssetButton;
     Endless.doConnectionTestAsync = ConnectionTest.doConnectionTestAsync;
+    Endless.SearchBox = SearchBox.SearchBox;
 
     // Override Endless.PageManager.add() so that you can set child properties
     // at the same time
