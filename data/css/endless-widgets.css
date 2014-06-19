@@ -74,6 +74,17 @@ EosWindow {
         color-stop(0, rgb(67, 67, 67)));
 }
 
+.endless-search-box .cell{
+    color: #464646;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url('resource:///com/endlessm/sdk/assets/autocomplete_list_middle.png');
+}
+
+.endless-search-box .cell:selected{
+    background-image: url('resource:///com/endlessm/sdk/assets/autocomplete_list_middle_hover.png');
+}
+
 /* Insensitive Text */
 
 *:insensitive {

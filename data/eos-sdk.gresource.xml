@@ -3,5 +3,7 @@
   <gresource prefix="/com/endlessm/sdk">
     <file>css/reset.css</file>
     <file>css/endless-widgets.css</file>
+    <file>assets/autocomplete_list_middle.png</file>
+    <file>assets/autocomplete_list_middle_hover.png</file>
   </gresource>
 </gresources>
