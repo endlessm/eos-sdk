@@ -14,6 +14,7 @@ const CELL_PADDING_Y = 8;
  */
 const SearchBox = new Lang.Class({
     Name: 'SearchBox',
+    GTypeName: 'EosSearchBox',
     Extends: Gtk.Entry,
     Signals: {
         /**
