@@ -7,6 +7,8 @@ const Gio = imports.gi.Gio;
 // and are called in their relevent outcome cases. If the ping test completed,
 // the userData will be passed to the callbacks. Additionally, the errorCallback
 // will recieve the error as the first argument.
+// If an errorCallback is not provided, errors will be re-thrown (with the 
+// exception of a Gio.ResolverError, which is a connection failure).
 function doConnectionTestAsync(hostname, scheme, port, connectionSuccessCallback,
                                                        connectionFailureCallback,
                                                        errorCallback) {
@@ -33,6 +35,8 @@ function doConnectionTestAsync(hostname, scheme, port, connectionSuccessCallback
                     connectionFailureCallback(userData);
                 } else if (errorCallback) {
                     errorCallback(err, userData);
+                } else {
+                    throw err;
                 }
             }
         });
