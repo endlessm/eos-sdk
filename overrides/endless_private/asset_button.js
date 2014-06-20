@@ -7,6 +7,7 @@ const Lang = imports.lang;
 
 const AssetButton = new Lang.Class({
     Name: 'AssetButton',
+    GTypeName: 'EosAssetButton',
     Extends: Gtk.Button,
     Properties: {
         'normal-image-uri': GObject.ParamSpec.string('normal-image-uri', 'Normal Image URI', 'Normal Image URI',
