@@ -111,13 +111,43 @@ EosWindow {
     border-bottom-right-radius: 5px;
 }
 
-.endless-search-box .cell{
+.top-bar .endless-search-box {
+    background-color: #4d4d4d;
+    color: #eeeeec;
+    padding: 1px 2px 1px 4px;
+    border-radius: 15px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #575757;
+    box-shadow: inset 0px 1px 1px alpha(black, 0.1);
+    /* Can't get the actual gradient border to work, this appears as a square. */
+    /*border-image: linear-gradient(to bottom, #262626, #515151) 1 1 stretch;*/
+}
+
+.top-bar .endless-search-box.image {
+    color: #919191;
+}
+
+.top-bar .endless-search-box:selected {
+    color: #2e3436;
+    background-color: #eeeeec;
+}
+
+.endless-search-box .cell {
     color: #464646;
-    background-repeat: no-repeat;
-    background-size: cover;
+    background-size: 100% 100%;
     background-image: url('resource:///com/endlessm/sdk/assets/autocomplete_list_middle.png');
 }
 
-.endless-search-box .cell:selected{
+.endless-search-box .cell:selected {
     background-image: url('resource:///com/endlessm/sdk/assets/autocomplete_list_middle_hover.png');
+}
+
+/*
+ * We need to set the min scrollbar size smaller than in adwaita (42 pixels)
+ * as it is making our auto-complete results too big if there is only one
+ * entry. This is a bug in GTK
+ */
+.scrollbar {
+    -GtkScrollbar-min-slider-length: 28;
 }
