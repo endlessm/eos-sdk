@@ -56,67 +56,67 @@ struct _EosPageManagerClass
   gpointer _padding[8];
 };
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 GType        eos_page_manager_get_type                            (void) G_GNUC_CONST;
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 GtkWidget   *eos_page_manager_new                                 (void);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 GtkWidget   *eos_page_manager_get_page_left_topbar_widget         (EosPageManager *self,
                                                                    GtkWidget      *page);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 void        eos_page_manager_set_page_left_topbar_widget          (EosPageManager *self,
                                                                    GtkWidget      *page,
                                                                    GtkWidget      *left_topbar_widget);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 GtkWidget *eos_page_manager_get_page_center_topbar_widget         (EosPageManager *self,
                                                                    GtkWidget      *page);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 void        eos_page_manager_set_page_center_topbar_widget        (EosPageManager *self,
                                                                    GtkWidget      *page,
                                                                    GtkWidget      *center_topbar_widget);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 const gchar *eos_page_manager_get_page_background_uri             (EosPageManager *self,
                                                                    GtkWidget      *page);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 void         eos_page_manager_set_page_background_uri             (EosPageManager *self,
                                                                    GtkWidget      *page,
                                                                    const gchar    *background);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 const gchar *eos_page_manager_get_page_background_size            (EosPageManager *self,
                                                                    GtkWidget      *page);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 void         eos_page_manager_set_page_background_size            (EosPageManager *self,
                                                                    GtkWidget      *page,
                                                                    const gchar *size);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 const gchar *eos_page_manager_get_page_background_position        (EosPageManager *self,
                                                                    GtkWidget      *page);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 void         eos_page_manager_set_page_background_position        (EosPageManager *self,
                                                                    GtkWidget      *page,
                                                                    const gchar *position);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 gboolean     eos_page_manager_get_page_background_repeats         (EosPageManager *self,
                                                                    GtkWidget      *page);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 void         eos_page_manager_set_page_background_repeats         (EosPageManager *self,
                                                                    GtkWidget      *page,
                                                                    gboolean        repeats);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 void         eos_page_manager_remove_page_by_name                 (EosPageManager *self,
                                                                    const gchar    *name);
 

@@ -42,6 +42,7 @@ typedef enum
   EOS_FLEXY_SHAPE_LARGE
 } EosFlexyShape;
 
+EOS_SDK_AVAILABLE_IN_0_0
 GType eos_flexy_shape_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS
