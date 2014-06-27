@@ -1,3 +1,12 @@
+eos-sdk (1:0.0.0) unstable; urgency=low
+
+  * Start over at version 0.0.0 since we are doing API versioning now.
+    [endlessm/eos-sdk#418].
+  * Add epoch to version number so that backwards versioning doesn't
+    break things.
+
+ -- Philip Chimento <philip@endlessm.com>  Fri, 27 Jun 2014 12:13:11 -0700
+
 eos-sdk (1.1.5~dev1) unstable; urgency=low
 
   * Updating version to 1.1.5~dev1
