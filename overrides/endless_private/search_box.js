@@ -3,8 +3,8 @@ const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
 const BOX_WIDTH_CHARS = 25;
-const CELL_PADDING_X = 15;
-const CELL_PADDING_Y = 8;
+const CELL_PADDING_X = 8;
+const CELL_PADDING_Y = 6;
 
 /**
  * Class: SearchBox
