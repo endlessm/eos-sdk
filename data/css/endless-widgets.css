@@ -133,14 +133,25 @@ EosWindow {
     background-color: #eeeeec;
 }
 
+.endless-search-box .frame {
+    background-color: #f5f5f5;
+    padding: 7px;
+    border-radius: 4px;
+    border-color: #c6c8c5;
+    border-width: 1px;
+    border-style: solid;
+}
+
 .endless-search-box .cell {
-    color: #464646;
-    background-size: 100% 100%;
-    background-image: url('resource:///com/endlessm/sdk/assets/autocomplete_list_middle.png');
+    color: #333333;
 }
 
 .endless-search-box .cell:selected {
-    background-image: url('resource:///com/endlessm/sdk/assets/autocomplete_list_middle_hover.png');
+    background-color: #d5e1ed;
+    border-radius: 3px;
+    border-color: #bbd4ea;
+    border-width: 1px;
+    border-style: solid;
 }
 
 /*
