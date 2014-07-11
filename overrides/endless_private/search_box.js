@@ -53,6 +53,7 @@ const SearchBox = new Lang.Class({
         cells[0].xpad = CELL_PADDING_X;
         cells[0].ypad = CELL_PADDING_Y;
 
+        this._auto_complete.set_match_func(function () { return true; });
         this.completion = this._auto_complete;
 
         this.connect('icon-press', Lang.bind(this, function () {
