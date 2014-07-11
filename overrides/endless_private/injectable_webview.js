@@ -38,7 +38,7 @@ const InjectableWebview = new Lang.Class({
      */
     inject_js_from_resource: function (js_uri) {
         let js_str = this._read_gresource_file(js_uri);
-        this._run_js_on_loaded_page(js_str);
+        this._run_js_on_loaded_page(js_str, WebKit2.LoadEvent.FINISHED);
     },
 
     /**
@@ -64,7 +64,7 @@ const InjectableWebview = new Lang.Class({
         ].join('\n').replace('CSS_TEXT', css_str.toSource());
 
         // exec the javascript
-        this._run_js_on_loaded_page(inject_css_script);
+        this._run_js_on_loaded_page(inject_css_script, WebKit2.LoadEvent.COMMITTED);
     },
 
     /**
@@ -90,12 +90,12 @@ const InjectableWebview = new Lang.Class({
     // javascript on the page. Also attach a handler to run the javascript
     // whenever the webview's load-changed indicates it's finished loading
     // something
-    _run_js_on_loaded_page: function (script) {
+    _run_js_on_loaded_page: function (script, event) {
         if (this.uri !== null && !this.is_loading) {
             this.run_javascript(script, null, null);
         }
         let handler = this.connect('load-changed', function (webview, status) {
-            if (status == WebKit2.LoadEvent.FINISHED) {
+            if (status == event) {
                 this.run_javascript(script, null, null);
             }
         }.bind(this));
