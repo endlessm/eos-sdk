@@ -50,7 +50,7 @@ const WebUpdateFontSizeTestApplication = new Lang.Class({
 
 // TODO: These tests depend on a running X Server and Window Manager. That means
 // that they are not runnable in a continuous-integration server
-xdescribe("Web Helper Font Sizes", function () {
+describe("Web Helper Font Sizes", function () {
     let app;
 
     beforeEach(function () {

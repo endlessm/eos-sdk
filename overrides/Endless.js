@@ -24,7 +24,6 @@ function getCurrentFileDir() {
 imports.searchPath.unshift(getCurrentFileDir());
 
 const AssetButton = imports.endless_private.asset_button;
-const InjectableWebview = imports.endless_private.injectable_webview;
 const ConnectionTest = imports.endless_private.connection_test;
 const SearchBox = imports.endless_private.search_box;
 const TopbarNavButton = imports.endless_private.topbar_nav_button;
@@ -34,7 +33,6 @@ function _init() {
     Endless = this;
     Endless.getCurrentFileDir = getCurrentFileDir;
     Endless.AssetButton = AssetButton.AssetButton;
-    Endless.InjectableWebview = InjectableWebview.InjectableWebview;
     Endless.doConnectionTestAsync = ConnectionTest.doConnectionTestAsync;
     Endless.SearchBox = SearchBox.SearchBox;
     Endless.TopbarNavButton = TopbarNavButton.TopbarNavButton;
