@@ -172,28 +172,28 @@ EosWindow {
 @define-color endless_menu_fg_color #2e3436;
 @define-color endless_menu_bg_color shade (#ededed, 1.1);
 
-.context-menu {
+.menu {
     font: initial;
     color: @endless_menu_fg_color;
     background-color: @endless_menu_bg_color;
 }
 
-.context-menu .menuitem {
+.menu .menuitem {
     padding: 4px;
     -GtkMenuItem-arrow-scaling: 0.4;
 }
 
-.context-menu .menuitem:active,
-.context-menu .menuitem:hover {
+.menu .menuitem:active,
+.menu .menuitem:hover {
     color: #ffffff;
     background-color: #4a90d9;
 }
 
-.context-menu .menuitem *:insensitive {
+.menu .menuitem *:insensitive {
     color: mix (@endless_menu_fg_color, @endless_menu_bg_color, 0.6);
 }
 
-.context-menu .menuitem.separator {
+.menu .menuitem.separator {
     color: mix (@endless_menu_fg_color, @endless_menu_bg_color, 0.9);
     -GtkMenuItem-horizontal-padding: 0;
 }
