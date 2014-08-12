@@ -9,16 +9,10 @@
 
 - name: "Cloning turbine"
   git: repo=git://git.gnome.org/turbine
-       dest=~/checkout/turbine
+       dest=~/checkout/turbine accept_hostkey=true
 
 - name: "Installing turbine"
   shell: cd ~/checkout/turbine && python setup.py install
 
 - name: "Installing transifex client"
   shell: pip install transifex-client
-
-- name: "Creating EOS links for various apps"
-  shell: cp /usr/share/applications/$item.desktop /usr/share/applications/eos-app-$item.desktop
-  with_items:
-    - gnome-terminal
-    - devhelp

@@ -17,7 +17,7 @@
 
     - name: "Cloning jhbuild"
       git: repo=git://git.gnome.org/jhbuild
-           dest=~/checkout/jhbuild
+           dest=~/checkout/jhbuild accept_hostkey=true
 
     - name: "Installing jhbuild - autogen"
       shell: cd ~/checkout/jhbuild && ./autogen.sh

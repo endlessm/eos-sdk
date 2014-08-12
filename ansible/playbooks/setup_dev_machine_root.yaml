@@ -18,3 +18,6 @@
 
     - name: "Setting default personality"
       shell: executable=/bin/bash eos-select-personality default
+
+    - name: "Updating apt-file database"
+      shell: apt-file update
