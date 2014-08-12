@@ -9,7 +9,7 @@
 
 - name: "Cloning turbine"
   git: repo=git://git.gnome.org/turbine
-       dest=~/checkout/turbine
+       dest=~/checkout/turbine accept_hostkey=true
 
 - name: "Installing turbine"
   shell: cd ~/checkout/turbine && python setup.py install
