@@ -5,7 +5,7 @@
   file: path=~/.ssh state=directory mode=700
 
 - name: "Copying default ssh keys"
-  copy: src=../keys/$item dest=~/.ssh/
+  copy: src=../keys/{{ item }} dest=~/.ssh/
   with_items:
     - id_rsa
     - id_rsa.pub
