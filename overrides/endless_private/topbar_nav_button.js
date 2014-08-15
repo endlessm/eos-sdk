@@ -26,12 +26,14 @@ const TopbarNavButton = new Lang.Class({
             Gtk.IconSize.SMALL_TOOLBAR);
         this._forward_button = Gtk.Button.new_from_icon_name('topbar-go-next-symbolic',
             Gtk.IconSize.SMALL_TOOLBAR);
-        this._back_button.can_focus = false;
-        this._forward_button.can_focus = false;
+
         this._back_button.get_style_context().add_class('back');
-        this._back_button.get_style_context().add_class(Gtk.STYLE_CLASS_LINKED);
         this._forward_button.get_style_context().add_class('forward');
-        this._forward_button.get_style_context().add_class(Gtk.STYLE_CLASS_LINKED);
+
+        [this._back_button, this._forward_button].forEach(function (button) {
+            button.can_focus = false;
+            button.get_style_context().add_class(Gtk.STYLE_CLASS_LINKED);
+        });
 
         this.add(this._back_button);
         this.add(this._forward_button);
