@@ -1,3 +1,4 @@
+const Gdk = imports.gi.Gdk;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
@@ -32,6 +33,16 @@ const TopbarNavButton = new Lang.Class({
 
         [this._back_button, this._forward_button].forEach(function (button) {
             button.can_focus = false;
+            button.add_events(Gdk.EventMask.ENTER_NOTIFY_MASK |
+                Gdk.EventMask.LEAVE_NOTIFY_MASK);
+            button.connect('enter-notify-event', function (widget) {
+                let cursor = Gdk.Cursor.new_for_display(Gdk.Display.get_default(),
+                    Gdk.CursorType.HAND1);
+                widget.window.set_cursor(cursor);
+            });
+            button.connect('leave-notify-event', function (widget) {
+                widget.window.set_cursor(null);
+            });
             button.get_style_context().add_class(Gtk.STYLE_CLASS_LINKED);
         });
 

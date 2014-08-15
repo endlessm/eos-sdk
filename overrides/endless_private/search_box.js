@@ -1,3 +1,4 @@
+const Gdk = imports.gi.Gdk;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
@@ -10,6 +11,11 @@ const CELL_PADDING_Y = 6;
  * Class: SearchBox
  *
  * This is a Search Box with autocompletion functionality.
+ * The primary icon is a magnifying glass and the cursor turns into a hand when
+ * hovering over the icon.
+ *
+ * NOTE: Due to a limitation in GTK, the cursor change will not work if the
+ * search box's alignment is set to Gtk.Align.FILL in either direction.
  *
  */
 const SearchBox = new Lang.Class({
@@ -68,8 +74,44 @@ const SearchBox = new Lang.Class({
             }
             this._entry_changed_by_widget = false;
         }));
+        this.connect('enter-notify-event', this._on_motion.bind(this));
+        this.connect('motion-notify-event', this._on_motion.bind(this));
+        this.connect('leave-notify-event', this._on_leave.bind(this));
 
         this.get_style_context().add_class('endless-search-box');
+    },
+
+    _on_motion: function (widget, event) {
+        let [has_coords, x, y] = event.get_root_coords();
+        if (!has_coords)
+            return;
+        let rect = this.get_icon_area(Gtk.EntryIconPosition.PRIMARY);
+        let top = this.get_toplevel();
+        if (!top.is_toplevel())
+            return;
+        let [realized, icon_x, icon_y] = this.translate_coordinates(top,
+            rect.x, rect.y);
+        if (!realized)
+            return;
+
+        if (x >= icon_x && x <= icon_x + rect.width &&
+            y >= icon_y && y <= icon_y + rect.height) {
+            if (this._has_hand_cursor)
+                return;
+            let cursor = Gdk.Cursor.new_for_display(Gdk.Display.get_default(),
+                Gdk.CursorType.HAND1);
+            this.window.set_cursor(cursor);
+            this._has_hand_cursor = true;
+        } else {
+            this._on_leave(widget);
+        }
+    },
+
+    _on_leave: function (widget) {
+        if (!this._has_hand_cursor)
+            return;
+        this.window.set_cursor(null);
+        this._has_hand_cursor = false;
     },
 
     _onMatchSelected: function (widget, model, iter) {
