@@ -241,9 +241,9 @@ eos_top_bar_init (EosTopBar *self)
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->center_top_bar_attach);
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
-                     priv->maximize_button);
-  gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->minimize_button);
+  gtk_container_add (GTK_CONTAINER (priv->actions_grid),
+                     priv->maximize_button);
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->close_button);
 
