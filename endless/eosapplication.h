@@ -55,14 +55,14 @@ struct _EosApplicationClass
   gpointer _padding[8];
 };
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 GType           eos_application_get_type       (void) G_GNUC_CONST;
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 EosApplication *eos_application_new            (const gchar      *application_id,
                                                 GApplicationFlags flags);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 GFile          *eos_application_get_config_dir (EosApplication *self);
 
 G_END_DECLS

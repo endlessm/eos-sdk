@@ -20,11 +20,11 @@ G_BEGIN_DECLS
 
 #undef _EOS_SDK_INSIDE_ENDLESS_H
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_DEPRECATED_IN_0_0
 gboolean eos_hello_sample_function (GFile   *file,
                                     GError **error);
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 const gchar *   eos_get_system_personality      (void);
 
 G_END_DECLS

@@ -56,10 +56,10 @@ struct _EosCustomContainerClass
   gpointer _padding[8];
 };
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 GType        eos_custom_container_get_type                            (void) G_GNUC_CONST;
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 GtkWidget   *eos_custom_container_new                                 (void);
 
 G_END_DECLS
