@@ -48,7 +48,9 @@ describe("Web Actions Bindings", function() {
             application_id: id_string
         });
         webActionSpy = jasmine.createSpy('quitAction').and.callFake(function() {
-            app.quit();
+            // Calls destroy on the applications window, which decrements the hold count on the
+            // application and implicitly causes the application to close.
+            app.win.destroy();
         });
     });
     
