@@ -111,6 +111,15 @@ EosWindow {
     border-bottom-right-radius: 5px;
 }
 
+.top-bar .forward.rtl {
+    border-radius: 5px 0 0 5px;
+    border-right: 0px none;
+}
+
+.top-bar .back.rtl {
+    border-radius: 0 5px 5px 0;
+}
+
 .top-bar .endless-search-box {
     background-color: #4d4d4d;
     color: #eeeeec;
