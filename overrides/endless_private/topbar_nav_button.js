@@ -23,13 +23,29 @@ const TopbarNavButton = new Lang.Class({
         props.orientation = Gtk.Orientation.HORIZONTAL;
         this.parent(props);
 
-        this._back_button = Gtk.Button.new_from_icon_name('topbar-go-previous-symbolic',
+        let back_button_image;
+        let forward_button_image;
+        let is_rtl = this.get_default_direction() === Gtk.TextDirection.RTL ? true : false;
+        if (is_rtl) {
+            back_button_image = 'topbar-go-previous-rtl-symbolic';
+            forward_button_image = 'topbar-go-next-rtl-symbolic';
+        } else {
+            back_button_image = 'topbar-go-previous-symbolic';
+            forward_button_image = 'topbar-go-next-symbolic';
+        }
+
+        this._back_button = Gtk.Button.new_from_icon_name(back_button_image,
             Gtk.IconSize.SMALL_TOOLBAR);
-        this._forward_button = Gtk.Button.new_from_icon_name('topbar-go-next-symbolic',
+        this._forward_button = Gtk.Button.new_from_icon_name(forward_button_image,
             Gtk.IconSize.SMALL_TOOLBAR);
 
         this._back_button.get_style_context().add_class('back');
         this._forward_button.get_style_context().add_class('forward');
+
+        if (is_rtl) {
+            this._back_button.get_style_context().add_class('rtl');
+            this._forward_button.get_style_context().add_class('rtl');
+        }
 
         [this._back_button, this._forward_button].forEach(function (button) {
             button.can_focus = false;
