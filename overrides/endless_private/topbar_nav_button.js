@@ -64,6 +64,8 @@ const TopbarNavButton = new Lang.Class({
 
         this.add(this._back_button);
         this.add(this._forward_button);
+        this._back_button.show();
+        this._forward_button.show();
     },
 
     get back_button() {
