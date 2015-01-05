@@ -7,9 +7,9 @@
 #error "Please do not include this header file directly."
 #endif
 
+#include "eosversion.h"
 #include "eosenums.h"
 #include "eosmacros.h"
-#include "eosversion.h"
 
 #include <glib-object.h>
 

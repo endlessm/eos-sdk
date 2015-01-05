@@ -191,6 +191,7 @@ eos_top_bar_init (EosTopBar *self)
 
   priv->minimize_button =
     g_object_new (GTK_TYPE_BUTTON,
+                  "can-focus", FALSE,
                   "halign", GTK_ALIGN_END,
                   "valign", GTK_ALIGN_CENTER,
                   NULL);
@@ -206,6 +207,7 @@ eos_top_bar_init (EosTopBar *self)
 
   priv->maximize_button =
     g_object_new (GTK_TYPE_BUTTON,
+                  "can-focus", FALSE,
                   "halign", GTK_ALIGN_END,
                   "valign", GTK_ALIGN_CENTER,
                   NULL);
@@ -220,6 +222,7 @@ eos_top_bar_init (EosTopBar *self)
 
   priv->close_button =
     g_object_new (GTK_TYPE_BUTTON,
+                  "can-focus", FALSE,
                   "halign", GTK_ALIGN_END,
                   "valign", GTK_ALIGN_CENTER,
                   NULL);
@@ -238,9 +241,9 @@ eos_top_bar_init (EosTopBar *self)
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->center_top_bar_attach);
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
-                     priv->maximize_button);
-  gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->minimize_button);
+  gtk_container_add (GTK_CONTAINER (priv->actions_grid),
+                     priv->maximize_button);
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->close_button);
 

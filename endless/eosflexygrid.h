@@ -88,31 +88,31 @@ struct _EosFlexyGridClass
   gpointer _padding[8];
 };
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 GType eos_flexy_grid_get_type (void) G_GNUC_CONST;
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 GtkWidget *             eos_flexy_grid_new                      (void);
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 void                    eos_flexy_grid_set_cell_size            (EosFlexyGrid         *grid,
                                                                  int                   size);
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 guint                   eos_flexy_grid_get_cell_size            (EosFlexyGrid         *grid);
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 void                    eos_flexy_grid_set_cell_spacing         (EosFlexyGrid         *grid,
                                                                  int                   spacing);
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 guint                   eos_flexy_grid_get_cell_spacing         (EosFlexyGrid         *grid);
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 void                    eos_flexy_grid_insert                   (EosFlexyGrid         *grid,
                                                                  GtkWidget            *child,
                                                                  int                   index_);
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 void                    eos_flexy_grid_set_sort_func            (EosFlexyGrid         *grid,
                                                                  EosFlexyGridSortFunc  sort_func,
                                                                  gpointer              data,
                                                                  GDestroyNotify        notify);
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 EosFlexyGridCell *      eos_flexy_grid_get_cell_at_coords       (EosFlexyGrid         *grid,
                                                                  double                x_pos,
                                                                  double                y_pos);
@@ -133,17 +133,17 @@ struct _EosFlexyGridCellClass
   gpointer _padding[8];
 };
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 GType eos_flexy_grid_cell_get_type (void) G_GNUC_CONST;
 
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 GtkWidget *     eos_flexy_grid_cell_new                 (void);
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 void            eos_flexy_grid_cell_set_shape           (EosFlexyGridCell *cell,
                                                          EosFlexyShape     shape);
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 EosFlexyShape   eos_flexy_grid_cell_get_shape           (EosFlexyGridCell *cell);
-EOS_SDK_ALL_API_VERSIONS
+EOS_SDK_AVAILABLE_IN_0_0
 gboolean        eos_flexy_grid_cell_get_selected        (EosFlexyGridCell *cell);
 
 G_END_DECLS

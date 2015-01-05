@@ -4,6 +4,8 @@
 
 webhelper_sources = webhelper/webhelper.js
 
+ALL_JS_SRCS += $(webhelper_sources)
+
 webhelperdir = $(gjsmodulesdir)
 dist_webhelper_DATA = \
     $(webhelper_sources) \

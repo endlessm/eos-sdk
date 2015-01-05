@@ -24,12 +24,18 @@ function getCurrentFileDir() {
 imports.searchPath.unshift(getCurrentFileDir());
 
 const AssetButton = imports.endless_private.asset_button;
+const ConnectionTest = imports.endless_private.connection_test;
+const SearchBox = imports.endless_private.search_box;
+const TopbarNavButton = imports.endless_private.topbar_nav_button;
 
 function _init() {
     // this is imports.gi.Endless
     Endless = this;
     Endless.getCurrentFileDir = getCurrentFileDir;
     Endless.AssetButton = AssetButton.AssetButton;
+    Endless.doConnectionTestAsync = ConnectionTest.doConnectionTestAsync;
+    Endless.SearchBox = SearchBox.SearchBox;
+    Endless.TopbarNavButton = TopbarNavButton.TopbarNavButton;
 
     // Override Endless.PageManager.add() so that you can set child properties
     // at the same time
@@ -41,5 +47,5 @@ function _init() {
                 this.child_set_property(child, prop_id, props[prop_id]);
             }
         }
-    }
+    };
 }

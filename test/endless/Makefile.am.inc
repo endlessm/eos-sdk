@@ -16,4 +16,5 @@ test_endless_run_tests_LDADD = $(TEST_LIBS)
 
 javascript_tests += \
 	test/endless/testCustomContainer.js \
+	test/endless/testTopbarNavButton.js \
 	$(NULL)
