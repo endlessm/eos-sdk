@@ -51,7 +51,8 @@ lib_LTLIBRARIES = libendless-@EOS_SDK_API_VERSION@.la
 libendless_@EOS_SDK_API_VERSION@_la_SOURCES = \
 	$(endless_public_installed_headers) \
 	$(endless_private_installed_headers) \
-	$(endless_library_sources)
+	$(endless_library_sources) \
+	$(NULL)
 # Defining G_LOG_DOMAIN allows you to run any program with
 # G_MESSAGES_DEBUG=EndlessSDK ./myprogram
 # and turn on debug messages
@@ -60,7 +61,8 @@ libendless_@EOS_SDK_API_VERSION@_la_CPPFLAGS = \
 	-DG_LOG_DOMAIN=\"EndlessSDK\" \
 	-DCOMPILING_EOS_SDK \
 	-DDATADIR=\""$(datadir)"\" \
-	-DSYSCONFDIR=\""$(sysconfdir)"\"
+	-DSYSCONFDIR=\""$(sysconfdir)"\" \
+	$(NULL)
 libendless_@EOS_SDK_API_VERSION@_la_CFLAGS = $(AM_CFLAGS)
 libendless_@EOS_SDK_API_VERSION@_la_LIBADD = @EOS_SDK_LIBS@
 
@@ -69,4 +71,5 @@ libendless_@EOS_SDK_API_VERSION@_la_LIBADD = @EOS_SDK_LIBS@
 libendless_@EOS_SDK_API_VERSION@_la_LDFLAGS = \
 	-version-info @EOS_SDK_LT_VERSION_INFO@ \
 	-export-symbols-regex "^eos_" \
-	@EOS_C_COVERAGE_LDFLAGS@
+	@EOS_C_COVERAGE_LDFLAGS@ \
+	$(NULL)
