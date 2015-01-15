@@ -14,7 +14,6 @@ test -f $FILE_MUST_EXIST || {
     exit 1
 }
 
-git remote set-url origin http://github.com/endlessm/eos-sdk.git
 git submodule init .
 git submodule update --recursive
 
