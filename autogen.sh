@@ -14,8 +14,11 @@ test -f $FILE_MUST_EXIST || {
     exit 1
 }
 
-git submodule init .
-git submodule update --recursive
+# Clone and update Jasmine submodule if this is a Git checkout
+if test -d .git; then
+    git submodule init .
+    git submodule update --recursive
+fi
 
 # GNU gettext automake support doesn't get along with git
 # https://bugzilla.gnome.org/show_bug.cgi?id=661128
