@@ -8,3 +8,5 @@ webhelperdir = $(gjsmodulesdir)
 dist_webhelper_DATA = \
     $(webhelper_sources) \
     $(NULL)
+
+EOS_JS_COVERAGE_FILES = $(webhelper_sources)

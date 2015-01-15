@@ -134,6 +134,22 @@ include $(top_srcdir)/overrides/Makefile.am.inc
 
 include $(top_srcdir)/tools/Makefile.am.inc
 
+# # # INSTALLED M4 MACROS # # #
+
+m4dir = ${datadir}/aclocal
+m4_DATA = \
+	m4/eos-coverage.m4 \
+	$(NULL)
+
 # # # TESTS # # #
 
 include $(top_srcdir)/test/Makefile.am.inc
+
+# # # COVERAGE # # #
+EOS_COVERAGE_BLACKLIST_PATTERNS = "*test/endless*"
+
+@EOS_COVERAGE_RULES@
+
+AM_JS_LOG_FLAGS += @EOS_JS_COVERAGE_LOG_FLAGS@
+AM_CFLAGS += @EOS_C_COVERAGE_CFLAGS@
+AM_LDFLAGS = @EOS_C_COVERAGE_LDFLAGS@
