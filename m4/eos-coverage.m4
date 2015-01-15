@@ -351,11 +351,15 @@ _eos_c_coverage_data_output_tmp_file := $(_eos_c_coverage_data_output_file).tmp
 # Add final coverage output file to list of coverage data files
 _eos_coverage_outputs += $(_eos_c_coverage_data_output_file)
 
+# With out of tree builds, abs_top_srcdir is actually the relative path
+# from the absolute top build dir to the top srcdir.
+_eos_normalized_top_srcdir = $(abspath $(abs_top_srcdir))
+
 # Define an eos-c-coverage target to generate the coverage counters
 eos-c-coverage:
 	mkdir -p $(_eos_c_coverage_trace_path)
 	$(LCOV) --compat-libtool --capture --directory $(abs_top_builddir) -o $(_eos_c_coverage_data_output_tmp_file)
-	$(LCOV) --extract $(_eos_c_coverage_data_output_tmp_file) "$(abs_top_srcdir)/*" -o $(_eos_c_coverage_data_output_file)
+	$(LCOV) --extract $(_eos_c_coverage_data_output_tmp_file) "$(_eos_normalized_top_srcdir)/*" -o $(_eos_c_coverage_data_output_file)
 	rm -rf $(_eos_c_coverage_data_output_tmp_file)
 
 eos-clean-c-coverage:
