@@ -63,7 +63,7 @@
  */
 
 #define DEFAULT_WINDOW_WIDTH 800
-#define DEFAULT_WINDOW_HEIGHT 600
+#define DEFAULT_WINDOW_HEIGHT 570
 
 #define BACKGROUND_FRAME_NAME_TEMPLATE "_eos-window-background-%d"
 
