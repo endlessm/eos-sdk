@@ -20,3 +20,7 @@ override_dh_auto_configure:
 # this, but right now the tests fail because Gtk is initialized but can't find
 # an X window
 override_dh_auto_test:
+
+# Debug package setup. See https://wiki.debian.org/DebugPackage.
+override_dh_strip:
+	dh_strip --dbg-package=eos-sdk-0-dbg

@@ -50,6 +50,14 @@ Conflicts: eos-sdk-dev
 Description: Endless SDK development package
  Development headers for the Endless SDK
 
+Package: eos-sdk-0-dbg
+Section: non-free/debug
+Architecture: any
+Depends: ${misc:Depends},
+         libendless-0-0 (= ${binary:Version})
+Description: Endless SDK debugging symbols
+ Debugging symbols for the Endless SDK
+
 Package: eos-sdk-0-doc
 Section: non-free/doc
 Architecture: all
