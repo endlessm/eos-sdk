@@ -1,4 +1,10 @@
-eos-sdk (2:0.0.0) UNRELEASED; urgency=low
+eos-sdk (2:0.1.0) unstable; urgency=low
+
+  * Inaugurate 0.1 unstable series.
+
+ -- Philip Chimento <philip@endlessm.com>  Tue, 10 Feb 2015 12:05:18 -0800
+
+eos-sdk (2:0.0.0) unstable; urgency=low
 
   * Bump epoch to 2, because epoch 1 did not get the proper Version tags
     and ended up 1:1.3.0. [endlessm/eos-sdk#2648].
