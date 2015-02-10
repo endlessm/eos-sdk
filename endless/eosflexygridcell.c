@@ -2,6 +2,7 @@
 
 #include "config.h"
 
+#define EOS_SDK_DISABLE_DEPRECATION_WARNINGS
 #include "eosflexygrid-private.h"
 
 #include <glib-object.h>
@@ -119,6 +120,8 @@ eos_flexy_grid_cell_init (EosFlexyGridCell *self)
  * Creates a new #EosFlexyGridCell widget.
  *
  * Return value: (transfer full): the newly created #EosFlexyGridCell widget
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 GtkWidget *
 eos_flexy_grid_cell_new (void)
@@ -133,6 +136,8 @@ eos_flexy_grid_cell_new (void)
  *
  * Sets the shape of the @cell. The @shape determines the amount of
  * space inside a #EosFlexyGrid that will be assigned to the @cell.
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 void
 eos_flexy_grid_cell_set_shape (EosFlexyGridCell *cell,
@@ -160,6 +165,8 @@ eos_flexy_grid_cell_set_shape (EosFlexyGridCell *cell,
  * Retrieves the shape of @cell.
  *
  * Return value: the shape of the #EosFlexyGridCell
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 EosFlexyShape
 eos_flexy_grid_cell_get_shape (EosFlexyGridCell *cell)
@@ -179,6 +186,8 @@ eos_flexy_grid_cell_get_shape (EosFlexyGridCell *cell)
  * @iter: a #GSequenceIter
  *
  * The #GSequenceIter associated to @cell.
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 void
 eos_flexy_grid_cell_set_iter (EosFlexyGridCell *cell,
@@ -196,6 +205,8 @@ eos_flexy_grid_cell_set_iter (EosFlexyGridCell *cell,
  * Retrieves the #GSequenceIter associated to @cell.
  *
  * Return value: (transfer none): a #GSequenceIter
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 GSequenceIter *
 eos_flexy_grid_cell_get_iter (EosFlexyGridCell *cell)
@@ -211,6 +222,8 @@ eos_flexy_grid_cell_get_iter (EosFlexyGridCell *cell)
  * @selected: %TRUE to select the @cell, and %FALSE otherwise
  *
  * Sets whether the @cell should be selected or not.
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 void
 eos_flexy_grid_cell_set_selected (EosFlexyGridCell *cell,
@@ -235,6 +248,8 @@ eos_flexy_grid_cell_set_selected (EosFlexyGridCell *cell,
  *
  * Return value: %TRUE if the #EosFlexyGridCell is selected,
  *   and %FALSE otherwise
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 gboolean
 eos_flexy_grid_cell_get_selected (EosFlexyGridCell *cell)

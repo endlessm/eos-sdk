@@ -27,6 +27,8 @@ G_BEGIN_DECLS
  * EOS_STYLE_CLASS_FLEXY_GRID:
  *
  * A CSS class to match a grid with flexible layout, used by #EosFlexyGrid.
+ *
+ * Deprecated: 0.2: The #EosFlexyGrid widget should not be used in newly written code
  */
 #define EOS_STYLE_CLASS_FLEXY_GRID      "flexy-grid"
 /**
@@ -34,6 +36,8 @@ G_BEGIN_DECLS
  *
  * A CSS class to match a cell inside a grid with flexible layout, used by
  * #EosFlexyGrid.
+ *
+ * Deprecated: 0.2: The #EosFlexyGrid widget should not be used in newly written code
  */
 #define EOS_STYLE_CLASS_FLEXY_GRID_CELL "flexy-grid-cell"
 
@@ -41,6 +45,8 @@ G_BEGIN_DECLS
  * EosFlexyGrid:
  *
  * This structure contains no public members.
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 typedef struct _EosFlexyGrid            EosFlexyGrid;
 typedef struct _EosFlexyGridClass       EosFlexyGridClass;
@@ -49,6 +55,8 @@ typedef struct _EosFlexyGridClass       EosFlexyGridClass;
  * EosFlexyGridCell:
  *
  * This structure contains no public members.
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 typedef struct _EosFlexyGridCell        EosFlexyGridCell;
 typedef struct _EosFlexyGridCellClass   EosFlexyGridCellClass;
@@ -64,6 +72,8 @@ typedef struct _EosFlexyGridCellClass   EosFlexyGridCellClass;
  *
  * Returns: -1 if @cell_a should come before @cell_b, 1 if @cell_a should come
  * after @cell_b, or 0 if @cell_a and @cell_b are identical.
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 typedef gint (* EosFlexyGridSortFunc) (EosFlexyGridCell *cell_a,
                                        EosFlexyGridCell *cell_b,
@@ -88,31 +98,31 @@ struct _EosFlexyGridClass
   gpointer _padding[8];
 };
 
-EOS_SDK_AVAILABLE_IN_0_0
+EOS_SDK_DEPRECATED_IN_0_2_FOR (GtkGrid)
 GType eos_flexy_grid_get_type (void) G_GNUC_CONST;
 
-EOS_SDK_AVAILABLE_IN_0_0
+EOS_SDK_DEPRECATED_IN_0_2_FOR (GtkGrid)
 GtkWidget *             eos_flexy_grid_new                      (void);
-EOS_SDK_AVAILABLE_IN_0_0
+EOS_SDK_DEPRECATED_IN_0_2_FOR (GtkGrid)
 void                    eos_flexy_grid_set_cell_size            (EosFlexyGrid         *grid,
                                                                  int                   size);
-EOS_SDK_AVAILABLE_IN_0_0
+EOS_SDK_DEPRECATED_IN_0_2_FOR (GtkGrid)
 guint                   eos_flexy_grid_get_cell_size            (EosFlexyGrid         *grid);
-EOS_SDK_AVAILABLE_IN_0_0
+EOS_SDK_DEPRECATED_IN_0_2_FOR (GtkGrid)
 void                    eos_flexy_grid_set_cell_spacing         (EosFlexyGrid         *grid,
                                                                  int                   spacing);
-EOS_SDK_AVAILABLE_IN_0_0
+EOS_SDK_DEPRECATED_IN_0_2_FOR (GtkGrid)
 guint                   eos_flexy_grid_get_cell_spacing         (EosFlexyGrid         *grid);
-EOS_SDK_AVAILABLE_IN_0_0
+EOS_SDK_DEPRECATED_IN_0_2_FOR (GtkGrid)
 void                    eos_flexy_grid_insert                   (EosFlexyGrid         *grid,
                                                                  GtkWidget            *child,
                                                                  int                   index_);
-EOS_SDK_AVAILABLE_IN_0_0
+EOS_SDK_DEPRECATED_IN_0_2_FOR (GtkGrid)
 void                    eos_flexy_grid_set_sort_func            (EosFlexyGrid         *grid,
                                                                  EosFlexyGridSortFunc  sort_func,
                                                                  gpointer              data,
                                                                  GDestroyNotify        notify);
-EOS_SDK_AVAILABLE_IN_0_0
+EOS_SDK_DEPRECATED_IN_0_2_FOR (GtkGrid)
 EosFlexyGridCell *      eos_flexy_grid_get_cell_at_coords       (EosFlexyGrid         *grid,
                                                                  double                x_pos,
                                                                  double                y_pos);
@@ -133,17 +143,17 @@ struct _EosFlexyGridCellClass
   gpointer _padding[8];
 };
 
-EOS_SDK_AVAILABLE_IN_0_0
+EOS_SDK_DEPRECATED_IN_0_2_FOR (GtkGrid)
 GType eos_flexy_grid_cell_get_type (void) G_GNUC_CONST;
 
-EOS_SDK_AVAILABLE_IN_0_0
+EOS_SDK_DEPRECATED_IN_0_2_FOR (GtkGrid)
 GtkWidget *     eos_flexy_grid_cell_new                 (void);
-EOS_SDK_AVAILABLE_IN_0_0
+EOS_SDK_DEPRECATED_IN_0_2_FOR (GtkGrid)
 void            eos_flexy_grid_cell_set_shape           (EosFlexyGridCell *cell,
                                                          EosFlexyShape     shape);
-EOS_SDK_AVAILABLE_IN_0_0
+EOS_SDK_DEPRECATED_IN_0_2_FOR (GtkGrid)
 EosFlexyShape   eos_flexy_grid_cell_get_shape           (EosFlexyGridCell *cell);
-EOS_SDK_AVAILABLE_IN_0_0
+EOS_SDK_DEPRECATED_IN_0_2_FOR (GtkGrid)
 gboolean        eos_flexy_grid_cell_get_selected        (EosFlexyGridCell *cell);
 
 G_END_DECLS
