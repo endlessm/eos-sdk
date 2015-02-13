@@ -454,41 +454,12 @@ eos_window_finalize (GObject *object)
   G_OBJECT_CLASS (eos_window_parent_class)->finalize (object);
 }
 
-/* Clamp our size request calls so we never ask for a minimal size greater than
- the available work area. */
-static void
-clamp_allocation (GtkWidget     *widget,
-                  GtkAllocation *allocation)
-{
-  if (gtk_widget_get_realized (widget))
-    {
-      GdkScreen *default_screen = gdk_screen_get_default ();
-      GdkWindow *gdkwindow = gtk_widget_get_window (widget);
-      int monitor = gdk_screen_get_monitor_at_window (default_screen, gdkwindow);
-      GdkRectangle workarea;
-      gdk_screen_get_monitor_workarea (default_screen, monitor, &workarea);
-      if (allocation->width > workarea.width) {
-        g_critical ("EosWindow receiving allocation %d greater than the available " \
-                    "workarea width %d. This probably means your minimal width request " \
-                    "is too big.", allocation->width, workarea.width);
-        allocation->width = workarea.width;
-      }
-      if (allocation->height > workarea.height) {
-        g_critical ("EosWindow receiving allocation %d greater than the available " \
-                    "workarea height %d. This probably means your minimal height request " \
-                    "is too big.", allocation->height, workarea.height);
-        allocation->height = workarea.height;
-      }
-    }
-}
-
 /* Updates the base font size depending on the window size. */
 static void
 eos_window_size_allocate (GtkWidget *window, GtkAllocation *allocation)
 {
   EosWindow *self = EOS_WINDOW (window);
   EosWindowPrivate *priv = eos_window_get_instance_private (self);
-  clamp_allocation(window, allocation);
 
   if (priv->font_scaling_active)
     {
