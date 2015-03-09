@@ -8,10 +8,13 @@
  * The #EosFlexyGrid widget provides a grid of cells in a layout controlled
  * by the shape of the cells themselves, through the #EosFlexyGridCell:shape
  * property of #EosFlexyGridCell.
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 
 #include "config.h"
 
+#define EOS_SDK_DISABLE_DEPRECATION_WARNINGS
 #include "eosflexygrid-private.h"
 
 #include <string.h>
@@ -872,6 +875,8 @@ eos_flexy_grid_class_init (EosFlexyGridClass *klass)
    * EosFlexyGrid:cell-size:
    *
    * The minimum size of each cell inside a #EosFlexyGrid, or -1 for the default.
+   *
+   * Deprecated: 0.2: Use a #GtkGrid instead
    */
   grid_props[PROP_CELL_SIZE] =
     g_param_spec_int ("cell-size",
@@ -885,6 +890,8 @@ eos_flexy_grid_class_init (EosFlexyGridClass *klass)
    * EosFlexyGrid:cell-spacing:
    *
    * The spacing between each cell inside a #EosFlexyGrid, or -1 for the default.
+   *
+   * Deprecated: 0.2: Use a #GtkGrid instead
    */
   grid_props[PROP_CELL_SPACING] =
     g_param_spec_int ("cell-spacing",
@@ -903,6 +910,8 @@ eos_flexy_grid_class_init (EosFlexyGridClass *klass)
    *
    * The ::cell-selected signal is emitted each time a cell inside @grid
    * is selected. Selection happens by hovering on a cell.
+   *
+   * Deprecated: 0.2: Use a #GtkGrid instead
    */
   grid_signals[CELL_SELECTED] =
     g_signal_new (g_intern_static_string ("cell-selected"),
@@ -921,6 +930,8 @@ eos_flexy_grid_class_init (EosFlexyGridClass *klass)
    *
    * The ::cell-activated signal is emitted each time a cell inside @grid
    * is activated. Activation happens by clicking on a cell.
+   *
+   * Deprecated: 0.2: Use a #GtkGrid instead
    */
   grid_signals[CELL_ACTIVATED] =
     g_signal_new (g_intern_static_string ("cell-activated"),
@@ -958,6 +969,8 @@ eos_flexy_grid_init (EosFlexyGrid *self)
  * Creates a new #EosFlexyGrid widget.
  *
  * Return value: (transfer full): the newly created #EosFlexyGrid widget
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 GtkWidget *
 eos_flexy_grid_new (void)
@@ -984,6 +997,8 @@ eos_flexy_grid_new (void)
  * The @notify function will be called when this function is called
  * with a different @sort_func (or %NULL); or when the @grid widget
  * is destroyed.
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 void
 eos_flexy_grid_set_sort_func (EosFlexyGrid         *grid,
@@ -1010,6 +1025,8 @@ eos_flexy_grid_set_sort_func (EosFlexyGrid         *grid,
  * Sets the size of the cells of @grid.
  *
  * If @size is less than 0, the default size will be used.
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 void
 eos_flexy_grid_set_cell_size (EosFlexyGrid *grid,
@@ -1033,6 +1050,8 @@ eos_flexy_grid_set_cell_size (EosFlexyGrid *grid,
  * Retrieves the size of the cells of @grid.
  *
  * Return value: the size of the cells
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 guint
 eos_flexy_grid_get_cell_size (EosFlexyGrid *grid)
@@ -1055,6 +1074,8 @@ eos_flexy_grid_get_cell_size (EosFlexyGrid *grid)
  * Sets the spacing between each cell of @grid.
  *
  * If @spacing is less than 0, the default value will be used.
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 void
 eos_flexy_grid_set_cell_spacing (EosFlexyGrid *grid,
@@ -1078,6 +1099,8 @@ eos_flexy_grid_set_cell_spacing (EosFlexyGrid *grid,
  * Retrieves the cell spacing of @grid.
  *
  * Return value: the spacing between each cell
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 guint
 eos_flexy_grid_get_cell_spacing (EosFlexyGrid *grid)
@@ -1119,6 +1142,8 @@ do_grid_sort (gconstpointer row_a,
  * If @index_ is less than 0, the @child is appended at the end of the grid.
  *
  * If @index_ is 0, the child is prepended at the beginning of the grid.
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 void
 eos_flexy_grid_insert (EosFlexyGrid *grid,
@@ -1176,6 +1201,8 @@ eos_flexy_grid_insert (EosFlexyGrid *grid,
  * The coordinates to test must be in widget-relative space.
  *
  * Return value: (transfer none): the cell at the given coordinates, or %NULL
+ *
+ * Deprecated: 0.2: Use a #GtkGrid instead
  */
 EosFlexyGridCell *
 eos_flexy_grid_get_cell_at_coords (EosFlexyGrid *grid,
