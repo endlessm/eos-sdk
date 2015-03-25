@@ -44,13 +44,13 @@ struct _EosAttributionClass
   GtkScrolledWindowClass parent_class;
 };
 
-GType      eos_attribution_get_type                (void) G_GNUC_CONST;
+GType      eos_attribution_get_type   (void) G_GNUC_CONST;
 
-GtkWidget *eos_attribution_new                     (void);
+GtkWidget *eos_attribution_new_sync   (GFile              *file,
+                                       GCancellable       *cancellable,
+                                       GError            **error);
 
-gboolean   eos_attribution_populate_from_json_file (EosAttribution *self,
-                                                    GFile          *file,
-                                                    GError        **error);
+GFile *    eos_attribution_get_file   (EosAttribution     *self);
 
 G_END_DECLS
 

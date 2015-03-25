@@ -270,13 +270,11 @@ on_image_credits_activate (GSimpleAction  *action,
   GtkWidget *dialog, *attribution, *content;
   GError *error = NULL;
 
-  attribution = eos_attribution_new ();
-  if (!eos_attribution_populate_from_json_file (EOS_ATTRIBUTION (attribution),
-                                                priv->image_attribution_file,
-                                                &error))
+  attribution = eos_attribution_new_sync (priv->image_attribution_file, NULL,
+                                          &error);
+  if (attribution == NULL)
     {
       g_warning ("Error loading image attribution file: %s", error->message);
-      gtk_widget_destroy (attribution);
       return;
     }
   gtk_widget_set_hexpand (attribution, TRUE);

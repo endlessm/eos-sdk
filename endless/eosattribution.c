@@ -11,12 +11,19 @@
 
 typedef struct
 {
+  GFile *file;
   GtkWidget *view;
   GtkListStore *model;
 } EosAttributionPrivate;
 
-G_DEFINE_TYPE_WITH_PRIVATE (EosAttribution, eos_attribution,
-                            GTK_TYPE_SCROLLED_WINDOW)
+/* Forward declarations */
+static void eos_attribution_init_initable (GInitableIface *, GInterfaceInfo *);
+
+G_DEFINE_TYPE_WITH_CODE (EosAttribution, eos_attribution,
+                         GTK_TYPE_SCROLLED_WINDOW,
+                         G_ADD_PRIVATE (EosAttribution)
+                         G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE,
+                                                eos_attribution_init_initable))
 
 #define ROW_HEIGHT 50  /* Height of the pixbufs in each row */
 
@@ -26,6 +33,15 @@ enum {
 };
 
 static guint attribution_signals[LAST_SIGNAL] = { 0 };
+
+enum
+{
+  PROP_0,
+  PROP_FILE,
+  NPROPS
+};
+
+static GParamSpec *eos_attribution_props[NPROPS] = { NULL, };
 
 /* These are the recognized string values for the "license" field. Any other
 license must be clarified in the comments, or linked to with the "license_uri"
@@ -103,6 +119,45 @@ enum
 };
 
 static void
+eos_attribution_get_property (GObject    *object,
+                              guint       property_id,
+                              GValue     *value,
+                              GParamSpec *pspec)
+{
+  EosAttribution *self = EOS_ATTRIBUTION (object);
+
+  switch (property_id)
+    {
+    case PROP_FILE:
+      g_value_set_object (value, eos_attribution_get_file (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+    }
+}
+
+static void
+eos_attribution_set_property (GObject      *object,
+                              guint         property_id,
+                              const GValue *value,
+                              GParamSpec   *pspec)
+{
+  EosAttribution *self = EOS_ATTRIBUTION (object);
+  EosAttributionPrivate *priv = eos_attribution_get_instance_private (self);
+
+  switch (property_id)
+    {
+    case PROP_FILE:
+      priv->file = g_value_dup_object (value);  /* construct only */
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+    }
+}
+
+static void
 eos_attribution_finalize (GObject *object)
 {
   EosAttribution *self = EOS_ATTRIBUTION (object);
@@ -118,6 +173,8 @@ eos_attribution_class_init (EosAttributionClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
+  object_class->get_property = eos_attribution_get_property;
+  object_class->set_property = eos_attribution_set_property;
   object_class->finalize = eos_attribution_finalize;
 
   attribution_signals[SHOW_URI] =
@@ -128,6 +185,15 @@ eos_attribution_class_init (EosAttributionClass *klass)
                   g_cclosure_marshal_VOID__STRING,
                   G_TYPE_NONE,
                   1, G_TYPE_STRING);
+
+  eos_attribution_props[PROP_FILE] =
+    g_param_spec_object ("file", "File",
+                         "JSON file with attribution information for images",
+                         G_TYPE_FILE,
+                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
+
+  g_object_class_install_properties (object_class, NPROPS,
+                                     eos_attribution_props);
 }
 
 static void
@@ -398,12 +464,6 @@ eos_attribution_init (EosAttribution *self)
   gtk_container_add (GTK_CONTAINER (self), priv->view);
 }
 
-GtkWidget *
-eos_attribution_new (void)
-{
-  return GTK_WIDGET (g_object_new (EOS_TYPE_ATTRIBUTION, NULL));
-}
-
 /* Utility function, returns the index if an array of strings @strv terminated
 by NULL contains the string @entry, -1 if it does not */
 static gint strv_index (gchar * const *, const gchar *) G_GNUC_PURE;
@@ -423,23 +483,33 @@ strv_index (gchar * const *strv, const gchar *entry)
   return -1;
 }
 
-gboolean
-eos_attribution_populate_from_json_file (EosAttribution *self,
-                                         GFile *file,
-                                         GError **error)
+static gboolean
+eos_attribution_initable_init (GInitable    *initable,
+                               GCancellable *cancellable,
+                               GError      **error)
 {
+  EosAttribution *self = EOS_ATTRIBUTION (initable);
   EosAttributionPrivate *priv = eos_attribution_get_instance_private (self);
 
-  GInputStream *stream = G_INPUT_STREAM (g_file_read (file, NULL, error));
+  GInputStream *stream = G_INPUT_STREAM (g_file_read (priv->file, cancellable,
+                                                      error));
   if (stream == NULL)
     return FALSE;
 
   JsonParser *parser = json_parser_new ();
-  gboolean success = json_parser_load_from_stream (parser, stream, NULL, error);
-  g_input_stream_close (stream, NULL, NULL); /* ignore errors */
-  g_object_unref (stream);
+  gboolean success = json_parser_load_from_stream (parser, stream, cancellable,
+                                                   error);
   if (!success)
+    {
+      g_object_unref (stream);
+      goto fail;
+    }
+
+  success = g_input_stream_close (stream, cancellable, error);
+  g_object_unref (stream);
+  if (!success && g_error_matches (*error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
     goto fail;
+  /* Ignore errors other than cancellation */
 
   JsonReader *reader = json_reader_new (json_parser_get_root (parser));
   gint num_images = json_reader_count_elements (reader);
@@ -579,4 +649,35 @@ fail2:
 fail:
   g_object_unref (parser);
   return FALSE;
+}
+
+static void
+eos_attribution_init_initable (GInitableIface *iface,
+                               GInterfaceInfo *info)
+{
+  iface->init = eos_attribution_initable_init;
+}
+
+GtkWidget *
+eos_attribution_new_sync (GFile        *file,
+                          GCancellable *cancellable,
+                          GError      **error)
+{
+  g_return_val_if_fail (G_IS_FILE (file), NULL);
+  g_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable),
+                        NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  return GTK_WIDGET (g_initable_new (EOS_TYPE_ATTRIBUTION, cancellable, error,
+                                     "file", file,
+                                     NULL));
+}
+
+GFile *
+eos_attribution_get_file (EosAttribution *self)
+{
+  g_return_val_if_fail (EOS_IS_ATTRIBUTION (self), NULL);
+
+  EosAttributionPrivate *priv = eos_attribution_get_instance_private (self);
+  return priv->file;
 }
