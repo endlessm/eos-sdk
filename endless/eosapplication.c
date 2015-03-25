@@ -612,6 +612,16 @@ eos_application_class_init (EosApplicationClass *klass)
 }
 
 static void
+set_image_credits_action_enabled (EosApplication *self,
+                                  gboolean        enabled)
+{
+  GAction *action = g_action_map_lookup_action (G_ACTION_MAP (self),
+                                                "image-credits");
+  g_simple_action_set_enabled (G_SIMPLE_ACTION (action), enabled);
+  /* action map owns action */
+}
+
+static void
 eos_application_init (EosApplication *self)
 {
   EosApplicationPrivate *priv = eos_application_get_instance_private (self);
@@ -623,6 +633,7 @@ eos_application_init (EosApplication *self)
   };
   g_action_map_add_action_entries (G_ACTION_MAP (self), actions,
                                    G_N_ELEMENTS (actions), self);
+  set_image_credits_action_enabled (self, FALSE);
 
   g_signal_connect (self, "notify::application-id",
                     G_CALLBACK (on_app_id_set), self);
@@ -734,11 +745,8 @@ eos_application_set_image_attribution_file (EosApplication *self,
 
   if (priv->image_attribution_file == NULL || file == NULL)
     {
-      GAction *action = g_action_map_lookup_action (G_ACTION_MAP (self),
-                                                    "image-credits");
-      gboolean enabled = (file == NULL);
-      g_simple_action_set_enabled (G_SIMPLE_ACTION (self), enabled);
-      /* action map owns action */
+      gboolean enabled = (file != NULL);
+      set_image_credits_action_enabled (self, enabled);
     }
 
   g_clear_object (&priv->image_attribution_file);

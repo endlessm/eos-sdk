@@ -57,6 +57,11 @@ void       eos_top_bar_set_center_widget       (EosTopBar *self,
 void       eos_top_bar_update_window_maximized (EosTopBar *self,
                                                 gboolean   is_maximized);
 
+gboolean   eos_top_bar_get_show_credits_button (EosTopBar *self);
+
+void       eos_top_bar_set_show_credits_button (EosTopBar *self,
+                                                gboolean   show_credits_button);
+
 G_END_DECLS
 
 #endif /* EOS_TOP_BAR_H */
