@@ -1,0 +1,27 @@
+[
+  {
+    "resource_path": "/com/example/attributiontest/test2.jpg",
+    "license": "Public domain",
+    "uri": "http://www.flickr.com/photos/lsuc_archives/10613348833/",
+    "comment": "No known copyright restrictions"
+  },
+  {
+    "resource_path": "/com/example/attributiontest/test1.jpg",
+    "license_uri": "http://www.sxc.hu/txt/license.html",
+    "uri": "http://www.sxc.hu/browse.phtml?f=view&id=146768&rnd=1",
+    "credit": "cressida",
+    "credit_contact": "http://www.sxc.hu/profile/cressida"
+  },
+  {
+    "resource_path": "/com/example/attributiontest/test3.jpg",
+    "copyright_holder": "Philip Chimento",
+    "copyright_year": 2011,
+    "permission": true
+  },
+  {
+    "resource_path": "/com/example/attributiontest/Fahrradrheinpromenade.jpg",
+    "credit": "Florian Scholz",
+    "license": "CC BY 2.0",
+    "uri": "https://www.flickr.com/photos/fscholz/13540636975/"
+  }
+]

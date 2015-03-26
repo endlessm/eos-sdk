@@ -342,6 +342,34 @@ update_page (EosWindow *self)
 }
 
 static void
+on_image_credits_enabled_changed (GActionGroup *group,
+                                  const gchar  *action_name,
+                                  gboolean      enabled,
+                                  EosWindow    *self)
+{
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  eos_top_bar_set_show_credits_button (EOS_TOP_BAR (priv->top_bar), enabled);
+}
+
+static void
+eos_window_constructed (GObject *object)
+{
+  EosWindow *self = EOS_WINDOW (object);
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+
+  G_OBJECT_CLASS (eos_window_parent_class)->constructed (object);
+
+  GtkApplication *application =
+    gtk_window_get_application (GTK_WINDOW (object));
+  GFile *credits_file =
+    eos_application_get_image_attribution_file (EOS_APPLICATION (application));
+  eos_top_bar_set_show_credits_button (EOS_TOP_BAR (priv->top_bar),
+                                       (credits_file != NULL));
+  g_signal_connect (application, "action-enabled-changed::image-credits",
+                    G_CALLBACK (on_image_credits_enabled_changed), self);
+}
+
+static void
 eos_window_get_property (GObject    *object,
                          guint       property_id,
                          GValue     *value,
@@ -510,6 +538,7 @@ eos_window_class_init (EosWindowClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
+  object_class->constructed = eos_window_constructed;
   object_class->get_property = eos_window_get_property;
   object_class->set_property = eos_window_set_property;
   object_class->finalize = eos_window_finalize;
@@ -631,6 +660,16 @@ on_close_clicked_cb (GtkWidget *top_bar,
   gtk_window_close (GTK_WINDOW (self));
 }
 
+static void
+on_credits_clicked (GtkWidget *top_bar,
+                    EosWindow *self)
+{
+  GtkApplication *application = gtk_window_get_application (GTK_WINDOW (self));
+  /* application cannot be NULL */
+  g_action_group_activate_action (G_ACTION_GROUP (application), "image-credits",
+                                  NULL);
+}
+
 static gboolean
 on_window_state_event_cb (GtkWidget           *widget,
                           GdkEventWindowState *event)
@@ -748,6 +787,8 @@ eos_window_init (EosWindow *self)
                     G_CALLBACK (on_maximize_clicked_cb), self);
   g_signal_connect (priv->top_bar, "close-clicked",
                     G_CALLBACK (on_close_clicked_cb), self);
+  g_signal_connect (priv->top_bar, "credits-clicked",
+                    G_CALLBACK (on_credits_clicked), self);
   g_signal_connect (self, "window-state-event",
                     G_CALLBACK (on_window_state_event_cb), NULL);
 

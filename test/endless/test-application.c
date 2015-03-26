@@ -14,7 +14,7 @@ typedef struct
 {
   gchar *unique_id;
   EosApplication *app;
-} ConfigDirFixture;
+} UniqueAppFixture;
 
 static void
 test_two_windows (EosApplication *app)
@@ -36,7 +36,7 @@ test_two_windows (EosApplication *app)
 }
 
 static void
-config_dir_setup (ConfigDirFixture *fixture,
+unique_app_setup (UniqueAppFixture *fixture,
                   gconstpointer     unused)
 {
   fixture->unique_id = generate_unique_app_id ();
@@ -45,7 +45,7 @@ config_dir_setup (ConfigDirFixture *fixture,
 }
 
 static void
-config_dir_teardown (ConfigDirFixture *fixture,
+unique_app_teardown (UniqueAppFixture *fixture,
                      gconstpointer     unused)
 {
   /* Clean up the temporary config directory */
@@ -57,7 +57,7 @@ config_dir_teardown (ConfigDirFixture *fixture,
 }
 
 static void
-test_config_dir_get (ConfigDirFixture *fixture,
+test_config_dir_get (UniqueAppFixture *fixture,
                      gconstpointer     unused)
 {
   GFile *dir1 = eos_application_get_config_dir (fixture->app);
@@ -72,7 +72,30 @@ test_config_dir_get (ConfigDirFixture *fixture,
 }
 
 static void
-test_config_dir_returns_expected_path (ConfigDirFixture *fixture,
+test_image_attribution_file_get_set (UniqueAppFixture *fixture,
+                                     gconstpointer     unused)
+{
+  GFile *file1, *file2;
+  GFileIOStream *stream;
+  g_object_get (fixture->app, "image-attribution-file", &file1, NULL);
+
+  g_assert_null (file1);
+
+  file1 = g_file_new_tmp (NULL, &stream, NULL);
+  g_assert_nonnull (file1);
+  g_io_stream_close (G_IO_STREAM (stream), NULL, NULL);
+  g_object_unref (stream);
+  g_object_set (fixture->app, "image-attribution-file", file1, NULL);
+  g_object_get (fixture->app, "image-attribution-file", &file2, NULL);
+
+  g_assert_true (g_file_equal (file1, file2));
+
+  g_object_unref (file1);
+  g_object_unref (file2);
+}
+
+static void
+test_config_dir_returns_expected_path (UniqueAppFixture *fixture,
                                        gconstpointer     unused)
 {
   GFile *config_dir = eos_application_get_config_dir (fixture->app);
@@ -96,7 +119,7 @@ test_config_dir_returns_expected_path (ConfigDirFixture *fixture,
 }
 
 static void
-test_config_dir_exists (ConfigDirFixture *fixture,
+test_config_dir_exists (UniqueAppFixture *fixture,
                         gconstpointer     unused)
 {
   GFile *config_dir = eos_application_get_config_dir (fixture->app);
@@ -119,7 +142,7 @@ set_writable (GFile   *file,
 }
 
 static void
-test_config_dir_fails_if_not_writable (ConfigDirFixture *fixture,
+test_config_dir_fails_if_not_writable (UniqueAppFixture *fixture,
                                        gconstpointer unused)
 {
   /* Pre-create the config dir and make it non-writable */
@@ -150,27 +173,25 @@ void
 add_application_tests (void)
 {
   ADD_APP_WINDOW_TEST ("/application/two-windows", test_two_windows);
-  g_test_add ("/application/config-dir-get", ConfigDirFixture, NULL,
-              config_dir_setup,
-              test_config_dir_get,
-              config_dir_teardown);
-  g_test_add ("/application/config-dir-expected-path", ConfigDirFixture, NULL,
-              config_dir_setup,
-              test_config_dir_returns_expected_path,
-              config_dir_teardown);
-  g_test_add ("/application/config-dir-exists", ConfigDirFixture, NULL,
-              config_dir_setup,
-              test_config_dir_exists,
-              config_dir_teardown);
+
+#define ADD_APP_TEST(path, func) \
+  g_test_add((path), UniqueAppFixture, NULL, \
+             unique_app_setup, (func), unique_app_teardown)
+
+  ADD_APP_TEST ("/application/config-dir-get", test_config_dir_get);
+  ADD_APP_TEST ("/application/image-attribution-file-get-set",
+                test_image_attribution_file_get_set);
+  ADD_APP_TEST ("/application/config-dir-expected-path",
+                test_config_dir_returns_expected_path);
+  ADD_APP_TEST ("/application/config-dir-exists", test_config_dir_exists);
 
   /* Only run this test if UID is not root; root can write to any directory no
   matter what its permissions. */
   if (getuid() > 0 && geteuid() > 0)
     {
-      g_test_add ("/application/config-dir-fails-if-not-writable",
-                  ConfigDirFixture, NULL,
-                  config_dir_setup,
-                  test_config_dir_fails_if_not_writable,
-                  config_dir_teardown);
+      ADD_APP_TEST ("/application/config-dir-fails-if-not-writable",
+                    test_config_dir_fails_if_not_writable);
     }
+
+#undef ADD_APP_TEST
 }

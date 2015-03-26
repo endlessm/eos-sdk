@@ -37,6 +37,9 @@ endless_private_installed_headers = \
 
 endless_library_sources = \
 	endless/eosapplication.c \
+	endless/eosattribution.c endless/eosattribution-private.h \
+	endless/eoscellrendererpixbuflink.c endless/eoscellrendererpixbuflink-private.h \
+	endless/eoscellrenderertextlink.c endless/eoscellrenderertextlink-private.h \
 	endless/eoscustomcontainer.c \
 	endless/eoshello.c \
 	endless/eosinit.c endless/eosinit-private.h \

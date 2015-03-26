@@ -54,7 +54,11 @@ IGNORE_HFILES= eosinit-private.h \
                eosmainarea-private.h \
                eosactionmenu-private.h \
                eospagemanager-private.h \
-	       eosflexygrid-private.h
+               eosflexygrid-private.h \
+               eosattribution-private.h \
+               eoscellrendererpixbuflink-private.h \
+               eoscellrenderertextlink-private.h \
+               $(NULL)
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png

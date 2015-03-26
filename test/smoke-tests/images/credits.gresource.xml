@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+    <gresource prefix="/com/example/attributiontest">
+        <file>test1.jpg</file>
+        <file>test2.jpg</file>
+        <file>test3.jpg</file>
+        <file>Fahrradrheinpromenade.jpg</file>
+        <file>attribution.json</file>
+    </gresource>
+</gresources>

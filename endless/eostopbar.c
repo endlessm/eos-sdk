@@ -29,6 +29,7 @@
 #define _EOS_TOP_BAR_MAXIMIZE_ICON_NAME "window-maximize-symbolic"
 #define _EOS_TOP_BAR_UNMAXIMIZE_ICON_NAME "window-unmaximize-symbolic"
 #define _EOS_TOP_BAR_CLOSE_ICON_NAME "window-close-symbolic"
+#define _EOS_TOP_BAR_CREDITS_ICON_NAME "user-info-symbolic"
 
 typedef struct {
   GtkWidget *actions_grid;
@@ -44,6 +45,13 @@ typedef struct {
   GtkWidget *maximize_icon;
   GtkWidget *close_button;
   GtkWidget *close_icon;
+  GtkWidget *credits_button;
+  GtkWidget *credits_icon;
+  GtkWidget *credits_stack;
+
+  gboolean show_credits_button;
+  guint credits_enter_handler;
+  guint credits_leave_handler;
 } EosTopBarPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (EosTopBar, eos_top_bar, GTK_TYPE_EVENT_BOX)
@@ -52,10 +60,57 @@ enum {
   CLOSE_CLICKED,
   MINIMIZE_CLICKED,
   MAXIMIZE_CLICKED,
+  CREDITS_CLICKED,
   LAST_SIGNAL
 };
 
 static guint top_bar_signals[LAST_SIGNAL] = { 0 };
+
+enum {
+  PROP_0,
+  PROP_SHOW_CREDITS_BUTTON,
+  NPROPS
+};
+
+static GParamSpec *eos_top_bar_props[NPROPS] = { NULL, };
+
+static void
+eos_top_bar_get_property (GObject    *object,
+                          guint       property_id,
+                          GValue     *value,
+                          GParamSpec *pspec)
+{
+  EosTopBar *self = EOS_TOP_BAR (object);
+
+  switch (property_id)
+    {
+    case PROP_SHOW_CREDITS_BUTTON:
+      g_value_set_boolean (value, eos_top_bar_get_show_credits_button (self));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+    }
+}
+
+static void
+eos_top_bar_set_property (GObject      *object,
+                          guint         property_id,
+                          const GValue *value,
+                          GParamSpec   *pspec)
+{
+  EosTopBar *self = EOS_TOP_BAR (object);
+
+  switch (property_id)
+    {
+    case PROP_SHOW_CREDITS_BUTTON:
+      eos_top_bar_set_show_credits_button (self, g_value_get_boolean (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+    }
+}
 
 static void
 eos_top_bar_get_preferred_height (GtkWidget *widget,
@@ -98,6 +153,8 @@ eos_top_bar_class_init (EosTopBarClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
+  object_class->get_property = eos_top_bar_get_property;
+  object_class->set_property = eos_top_bar_set_property;
   widget_class->get_preferred_height = eos_top_bar_get_preferred_height;
   widget_class->draw = eos_top_bar_draw;
 
@@ -133,6 +190,19 @@ eos_top_bar_class_init (EosTopBarClass *klass)
                     0,
                     NULL, NULL, NULL,
                     G_TYPE_NONE, 0);
+
+  top_bar_signals[CREDITS_CLICKED] =
+    g_signal_new ("credits-clicked", G_OBJECT_CLASS_TYPE (object_class),
+                  G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION, 0, NULL, NULL, NULL,
+                  G_TYPE_NONE, 0);
+
+  eos_top_bar_props[PROP_SHOW_CREDITS_BUTTON] =
+    g_param_spec_boolean ("show-credits-button", "Show credits button",
+                         "Whether the credits button is discoverable",
+                         FALSE,
+                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+
+  g_object_class_install_properties (object_class, NPROPS, eos_top_bar_props);
 }
 
 static void
@@ -157,6 +227,23 @@ on_close_clicked_cb (GtkButton *button,
 {
   EosTopBar *self = EOS_TOP_BAR (user_data);
   g_signal_emit (self, top_bar_signals[CLOSE_CLICKED], 0);
+}
+
+static gboolean
+on_stack_hover (GtkStack *stack,
+                GdkEvent *event,
+                gpointer  data)
+{
+  gboolean show = GPOINTER_TO_INT (data);
+  gtk_stack_set_visible_child_name (stack, show ? "button" : "blank");
+  return GDK_EVENT_PROPAGATE;
+}
+
+static void
+on_credits_clicked (GtkButton *button,
+                    EosTopBar *self)
+{
+  g_signal_emit (self, top_bar_signals[CREDITS_CLICKED], 0);
 }
 
 static void
@@ -236,10 +323,36 @@ eos_top_bar_init (EosTopBar *self)
   gtk_container_add (GTK_CONTAINER (priv->close_button),
                      priv->close_icon);
 
+  /* This works like a revealer but it's really a GtkStack so that it takes up
+  space and presents a target even when it's not shown. */
+  priv->credits_stack = gtk_stack_new ();
+  gtk_stack_set_transition_type (GTK_STACK (priv->credits_stack),
+                                 GTK_STACK_TRANSITION_TYPE_CROSSFADE);
+  gtk_widget_add_events (priv->credits_stack,
+                         GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
+  gtk_stack_add_named (GTK_STACK (priv->credits_stack),
+                       gtk_event_box_new (), "blank");
+  priv->credits_button = g_object_new (GTK_TYPE_BUTTON,
+                                       "can-focus", FALSE,
+                                       "halign", GTK_ALIGN_END,
+                                       "valign", GTK_ALIGN_CENTER,
+                                       NULL);
+  priv->credits_icon =
+    gtk_image_new_from_icon_name (_EOS_TOP_BAR_CREDITS_ICON_NAME,
+                                  GTK_ICON_SIZE_SMALL_TOOLBAR);
+  g_object_set (priv->credits_icon,
+                "pixel-size", _EOS_TOP_BAR_ICON_SIZE_PX,
+                "margin", _EOS_TOP_BAR_BUTTON_PADDING_PX,
+                NULL);
+  gtk_container_add (GTK_CONTAINER (priv->credits_button), priv->credits_icon);
+  gtk_stack_add_named (GTK_STACK (priv->credits_stack),
+                       priv->credits_button, "button");
+
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->left_top_bar_attach);
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->center_top_bar_attach);
+  gtk_container_add (GTK_CONTAINER (priv->actions_grid), priv->credits_stack);
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->minimize_button);
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
@@ -258,6 +371,16 @@ eos_top_bar_init (EosTopBar *self)
                     G_CALLBACK (on_maximize_clicked_cb), self);
   g_signal_connect (priv->close_button, "clicked",
                     G_CALLBACK (on_close_clicked_cb), self);
+  priv->credits_enter_handler =
+    g_signal_connect (priv->credits_stack, "enter-notify-event",
+                      G_CALLBACK (on_stack_hover), GINT_TO_POINTER (TRUE));
+  priv->credits_leave_handler =
+    g_signal_connect (priv->credits_stack, "leave-notify-event",
+                      G_CALLBACK (on_stack_hover), GINT_TO_POINTER (FALSE));
+  g_signal_handler_block (priv->credits_stack, priv->credits_enter_handler);
+  g_signal_handler_block (priv->credits_stack, priv->credits_leave_handler);
+  g_signal_connect (priv->credits_button, "clicked",
+                    G_CALLBACK (on_credits_clicked), self);
 }
 
 GtkWidget *
@@ -354,4 +477,56 @@ eos_top_bar_update_window_maximized (EosTopBar *self,
     gtk_style_context_add_class (context, _EOS_STYLE_CLASS_UNMAXIMIZED);
   else
     gtk_style_context_remove_class (context, _EOS_STYLE_CLASS_UNMAXIMIZED);
+}
+
+/*
+ * eos_top_bar_get_show_credits_button:
+ * @self: the top bar
+ *
+ * See eos_top_bar_set_show_credits_button().
+ *
+ * Returns: %TRUE if credits button should be discoverable, %FALSE if not.
+ */
+gboolean
+eos_top_bar_get_show_credits_button (EosTopBar *self)
+{
+  EosTopBarPrivate *priv = eos_top_bar_get_instance_private (self);
+  return priv->show_credits_button;
+}
+
+/*
+ * eos_top_bar_set_show_credits_button:
+ * @self: the top bar
+ * @show_credits_button: whether the credits button should be discoverable.
+ *
+ * Gets whether the credits button should be discoverable.
+ * Note that the credits button is not visible as such, but when the mouse
+ * hovers over it, it becomes visible if this is set to %TRUE.
+ * If this is %FALSE, the button never becomes visible.
+ */
+void
+eos_top_bar_set_show_credits_button (EosTopBar *self,
+                                     gboolean   show_credits_button)
+{
+  EosTopBarPrivate *priv = eos_top_bar_get_instance_private (self);
+  if (priv->show_credits_button == show_credits_button)
+    return;
+
+  priv->show_credits_button = show_credits_button;
+  if (show_credits_button)
+    {
+      g_signal_handler_unblock (priv->credits_stack,
+                                priv->credits_enter_handler);
+      g_signal_handler_unblock (priv->credits_stack,
+                                priv->credits_leave_handler);
+    }
+  else
+    {
+      gtk_stack_set_visible_child_name (GTK_STACK (priv->credits_stack),
+                                        "blank");
+      g_signal_handler_block (priv->credits_stack, priv->credits_enter_handler);
+      g_signal_handler_block (priv->credits_stack, priv->credits_leave_handler);
+    }
+  g_object_notify_by_pspec (G_OBJECT (self),
+                            eos_top_bar_props[PROP_SHOW_CREDITS_BUTTON]);
 }

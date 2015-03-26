@@ -65,6 +65,13 @@ EosApplication *eos_application_new            (const gchar      *application_id
 EOS_SDK_AVAILABLE_IN_0_0
 GFile          *eos_application_get_config_dir (EosApplication *self);
 
+EOS_SDK_AVAILABLE_IN_0_2
+GFile          *eos_application_get_image_attribution_file (EosApplication *self);
+
+EOS_SDK_AVAILABLE_IN_0_2
+void            eos_application_set_image_attribution_file (EosApplication *self,
+                                                            GFile          *file);
+
 G_END_DECLS
 
 #endif /* EOS_APPLICATION_H */
