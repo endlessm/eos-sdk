@@ -25,6 +25,8 @@ const Page0 = new Lang.Class ({
         this.button2 = new Gtk.Button({ label: 'Go to page named "page1"' });
         this.add(this.button2);
 
+        this.add(new Gtk.Spinner({ active: true }));
+
         this._addTransitionOptions(pm);
     },
 
