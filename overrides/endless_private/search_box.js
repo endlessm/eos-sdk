@@ -81,21 +81,42 @@ const SearchBox = new Lang.Class({
         this.get_style_context().add_class('endless-search-box');
     },
 
+    // Returns true if x, y is on icon at icon_pos.
+    // Throws a string error starting with 'STOP' if the search box was not
+    // realized or not added to a toplevel window.
+    _cursor_is_on_icon: function (x, y, icon_pos) {
+        let rect = this.get_icon_area(icon_pos);
+        let top = this.get_toplevel();
+        if (!top.is_toplevel())
+            throw 'STOP: Search box is not contained in a toplevel.';
+        let [realized, icon_x, icon_y] = this.translate_coordinates(top,
+            rect.x, rect.y);
+        if (!realized)
+            throw 'STOP: Search box is not realized.';
+
+        return (x >= icon_x && x <= icon_x + rect.width &&
+            y >= icon_y && y <= icon_y + rect.height);
+    },
+
     _on_motion: function (widget, event) {
         let [has_coords, x, y] = event.get_root_coords();
         if (!has_coords)
             return;
-        let rect = this.get_icon_area(Gtk.EntryIconPosition.PRIMARY);
-        let top = this.get_toplevel();
-        if (!top.is_toplevel())
-            return;
-        let [realized, icon_x, icon_y] = this.translate_coordinates(top,
-            rect.x, rect.y);
-        if (!realized)
-            return;
+        let should_show_cursor;
+        try {
+            let on_primary = this._cursor_is_on_icon(x, y,
+                Gtk.EntryIconPosition.PRIMARY);
+            let has_secondary = this.secondary_icon_name !== null;
+            let on_secondary = has_secondary && this._cursor_is_on_icon(x, y,
+                Gtk.EntryIconPosition.SECONDARY);
+            should_show_cursor = on_primary || on_secondary;
+        } catch (e) {
+            if (typeof e === 'string' && e.startsWith('STOP'))
+                return;
+            throw e;
+        }
 
-        if (x >= icon_x && x <= icon_x + rect.width &&
-            y >= icon_y && y <= icon_y + rect.height) {
+        if (should_show_cursor) {
             if (this._has_hand_cursor)
                 return;
             let cursor = Gdk.Cursor.new_for_display(Gdk.Display.get_default(),
