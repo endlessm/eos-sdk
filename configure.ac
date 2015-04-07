@@ -18,9 +18,9 @@ m4_define([_EOS_SDK_API_VERSION_MACRO], [0])
 # Minor and micro versions: increment micro version when making a release. Minor
 # version is even for a stable release and odd for a development release.
 # When making any release, if the API changes, set the interface age to 0.
-m4_define([_EOS_SDK_MINOR_VERSION_MACRO], [1])
+m4_define([_EOS_SDK_MINOR_VERSION_MACRO], [2])
 m4_define([_EOS_SDK_MICRO_VERSION_MACRO], [0])
-m4_define([_EOS_SDK_INTERFACE_AGE_MACRO], [1])
+m4_define([_EOS_SDK_INTERFACE_AGE_MACRO], [0])
 
 # Full version, for use in AC_INIT
 m4_define([_EOS_SDK_VERSION_MACRO],
