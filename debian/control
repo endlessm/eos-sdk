@@ -44,6 +44,7 @@ Package: eos-sdk-0-dev
 Section: non-free/libdevel
 Architecture: any
 Depends: ${misc:Depends},
+         libjson-glib-dev,
          libendless-0-0 (= ${binary:Version})
 Replaces: eos-sdk-dev
 Provides: eos-sdk-dev
