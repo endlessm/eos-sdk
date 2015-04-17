@@ -34,7 +34,7 @@ credits_resource_files = \
 	$(NULL)
 test/smoke-tests/images/credits.gresource: test/smoke-tests/images/credits.gresource.xml $(credits_resource_files)
 	$(AM_V_GEN)$(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(srcdir)/test/smoke-tests/images $<
-dist_noinst_DATA = test/smoke-tests/images/credits.gresource
+dist_noinst_DATA += test/smoke-tests/images/credits.gresource
 CLEANFILES += test/smoke-tests/images/credits.gresource
 EXTRA_DIST += \
 	test/smoke-tests/images/credits.gresource.xml \
