@@ -1,7 +1,6 @@
 # Copyright 2013 Endless Mobile, Inc.
 
 bin_SCRIPTS = \
-	tools/eos-run-test \
 	tools/eos-application-manifest/eos-application-manifest \
 	tools/eos-json-extractor/eos-json-extractor \
 	$(NULL)

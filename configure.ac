@@ -220,7 +220,6 @@ AC_CONFIG_FILES([
 	$EOS_SDK_API_NAME.pc
 	tools/eos-json-extractor/eos-json-extractor
 ])
-AC_CONFIG_FILES([tools/eos-run-test], [chmod +x tools/eos-run-test])
 AC_CONFIG_HEADERS([config.h])  dnl Header with system-dependent #defines
 # Make docs/reference/webhelper/eos.css available in the build tree as well as
 # the source tree
