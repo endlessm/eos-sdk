@@ -1,15 +1,15 @@
 # Copyright 2013 Endless Mobile, Inc.
 
 test_endless_run_tests_SOURCES = \
-	$(ENDLESS_TESTS_DIRECTORY)/endless/run-tests.c \
-	$(ENDLESS_TESTS_DIRECTORY)/endless/run-tests.h \
-	$(ENDLESS_TESTS_DIRECTORY)/endless/test-init.c \
-	$(ENDLESS_TESTS_DIRECTORY)/endless/test-hello.c \
-	$(ENDLESS_TESTS_DIRECTORY)/endless/test-application.c \
-	$(ENDLESS_TESTS_DIRECTORY)/endless/test-page-manager.c \
-	$(ENDLESS_TESTS_DIRECTORY)/endless/test-window.c \
-	$(ENDLESS_TESTS_DIRECTORY)/endless/test-flexy-grid.c \
-	$(ENDLESS_TESTS_DIRECTORY)/endless/test-custom-container.c \
+	test/endless/run-tests.c \
+	test/endless/run-tests.h \
+	test/endless/test-init.c \
+	test/endless/test-hello.c \
+	test/endless/test-application.c \
+	test/endless/test-page-manager.c \
+	test/endless/test-window.c \
+	test/endless/test-flexy-grid.c \
+	test/endless/test-custom-container.c \
 	$(NULL)
 test_endless_run_tests_CPPFLAGS = $(TEST_FLAGS)
 test_endless_run_tests_LDADD = $(TEST_LIBS)
