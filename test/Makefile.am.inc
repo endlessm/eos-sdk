@@ -7,7 +7,7 @@ ENDLESS_TESTS_DIRECTORY = $(top_srcdir)/test
 noinst_PROGRAMS = \
 	test/endless/run-tests \
 	test/smoke-tests/hello \
-	test/demos/flexy-grid
+	$(NULL)
 
 # This variable will be updated in Makefile subdirs (test/endless/Makefile.am.inc)
 javascript_tests = \
@@ -19,7 +19,6 @@ javascript_tests = \
 EXTRA_DIST += $(javascript_tests)
 
 include test/endless/Makefile.am.inc
-include test/demos/Makefile.am.inc
 include test/smoke-tests/Makefile.am.inc
 
 # Run tests when running 'make check'
