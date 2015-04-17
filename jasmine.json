@@ -1,0 +1,5 @@
+{
+  "include_paths": ["webhelper", "."],
+  "options": "--verbose",
+  "spec_files": ["test/webhelper", "test/tools/eos-application-manifest"]
+}
