@@ -27,10 +27,15 @@ TESTS = \
 	test/endless/run-tests \
 	$(javascript_tests) \
 	$(NULL)
-TEST_EXTENSIONS =
+JS_LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/tap-driver.sh
+JS_LOG_DRIVER_FLAGS = --comments
+TEST_EXTENSIONS = .js
+JS_LOG_COMPILER = jasmine
 AM_JS_LOG_FLAGS = \
 	--include-path=$(top_srcdir)/webhelper \
 	--include-path=$(top_srcdir) \
+	--tap \
+	--no-config \
 	$(NULL)
 LOG_COMPILER = gtester
 AM_LOG_FLAGS = -k --verbose
