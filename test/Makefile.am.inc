@@ -35,9 +35,6 @@ AM_JS_LOG_FLAGS = \
 LOG_COMPILER = gtester
 AM_LOG_FLAGS = -k --verbose
 
-JASMINE_SUBMODULE_PATH = $(top_srcdir)/test/jasmine
-include test/jasmine/Makefile-jasmine.am.inc
-
 # Use locally built versions of Endless-0.gir and libraries; this may need to be
 # changed to AM_TESTS_ENVIRONMENT in a future version of Automake
 # Set XDG_CONFIG_HOME so as to avoid cluttering the user's actual config
