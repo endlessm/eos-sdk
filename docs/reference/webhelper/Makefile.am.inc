@@ -24,7 +24,7 @@ DISTCLEANFILES += \
 distclean-local:
 	@rm -rf docs/reference/webhelper/html
 
-dist-hook:
+dist-hook::
 	@mkdir -p $(distdir)/docs/reference/webhelper/html
 	@cp -r docs/reference/webhelper/html/* $(distdir)/docs/reference/webhelper/html
 

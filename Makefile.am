@@ -33,9 +33,9 @@ DISTCLEANFILES =
 
 # Make sure that 'make dist' includes documentation
 if CAN_MAKE_DIST
-dist-hook:
+dist-hook::
 else
-dist-hook:
+dist-hook::
 	@echo "***"
 	@echo "*** You must configure with --enable-gtk-doc, --enable-gir-doc, and"
 	@echo "*** --enable-js-doc to run make dist or make distcheck."
