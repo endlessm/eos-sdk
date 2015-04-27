@@ -2,41 +2,72 @@
 
 TEST_FLAGS = @EOS_SDK_CFLAGS@ -I$(top_srcdir) -DCOMPILING_EOS_SDK
 TEST_LIBS = @EOS_SDK_LIBS@ $(top_builddir)/libendless-@EOS_SDK_API_VERSION@.la
-ENDLESS_TESTS_DIRECTORY = $(top_srcdir)/test
 
 noinst_PROGRAMS = \
 	test/endless/run-tests \
 	test/smoke-tests/hello \
-	test/demos/flexy-grid
+	$(NULL)
 
-# This variable will be updated in Makefile subdirs (test/endless/Makefile.am.inc)
+test_endless_run_tests_SOURCES = \
+	test/endless/run-tests.c \
+	test/endless/run-tests.h \
+	test/endless/test-init.c \
+	test/endless/test-hello.c \
+	test/endless/test-application.c \
+	test/endless/test-page-manager.c \
+	test/endless/test-window.c \
+	test/endless/test-flexy-grid.c \
+	test/endless/test-custom-container.c \
+	$(NULL)
+test_endless_run_tests_CPPFLAGS = $(TEST_FLAGS)
+test_endless_run_tests_LDADD = $(TEST_LIBS)
+
+test_smoke_tests_hello_SOURCES = test/smoke-tests/hello.c
+test_smoke_tests_hello_CPPFLAGS = $(TEST_FLAGS)
+test_smoke_tests_hello_LDADD = $(TEST_LIBS)
+
+credits_resource_files = \
+	test/smoke-tests/images/test1.jpg \
+	test/smoke-tests/images/test2.jpg \
+	test/smoke-tests/images/test3.jpg \
+	test/smoke-tests/images/attribution.json \
+	$(NULL)
+test/smoke-tests/images/credits.gresource: test/smoke-tests/images/credits.gresource.xml $(credits_resource_files)
+	$(AM_V_GEN)$(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(srcdir)/test/smoke-tests/images $<
+dist_noinst_DATA += test/smoke-tests/images/credits.gresource
+CLEANFILES += test/smoke-tests/images/credits.gresource
+EXTRA_DIST += \
+	test/smoke-tests/images/credits.gresource.xml \
+	$(credits_resource_files) \
+	$(NULL)
+
 javascript_tests = \
 	test/tools/eos-application-manifest/testInit.js \
 	test/webhelper/testTranslate.js \
 	test/webhelper/testWebActions.js \
 	test/webhelper/testUpdateFontSize.js \
+	test/endless/testCustomContainer.js \
+	test/endless/testTopbarNavButton.js \
 	$(NULL)
 EXTRA_DIST += $(javascript_tests)
-
-include test/endless/Makefile.am.inc
-include test/demos/Makefile.am.inc
-include test/smoke-tests/Makefile.am.inc
 
 # Run tests when running 'make check'
 TESTS = \
 	test/endless/run-tests \
 	$(javascript_tests) \
 	$(NULL)
-TEST_EXTENSIONS =
+JS_LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/tap-driver.sh
+JS_LOG_DRIVER_FLAGS = --comments
+TEST_EXTENSIONS = .js
+JS_LOG_COMPILER = jasmine
 AM_JS_LOG_FLAGS = \
 	--include-path=$(top_srcdir)/webhelper \
 	--include-path=$(top_srcdir) \
+	--tap \
+	--no-config \
 	$(NULL)
 LOG_COMPILER = gtester
 AM_LOG_FLAGS = -k --verbose
-
-JASMINE_SUBMODULE_PATH = $(top_srcdir)/test/jasmine
-include test/jasmine/Makefile-jasmine.am.inc
 
 # Use locally built versions of Endless-0.gir and libraries; this may need to be
 # changed to AM_TESTS_ENVIRONMENT in a future version of Automake

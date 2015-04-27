@@ -16,6 +16,8 @@ ACLOCAL_AMFLAGS = -I m4
 
 # Extra files to distribute in the tarball
 EXTRA_DIST = README.md @EOS_SDK_API_NAME@.pc.in
+# As above, but files in dist_noinst_DATA also need to be built by make
+dist_noinst_DATA =
 
 # Compiler flags
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
@@ -31,9 +33,9 @@ DISTCLEANFILES =
 
 # Make sure that 'make dist' includes documentation
 if CAN_MAKE_DIST
-dist-hook:
+dist-hook::
 else
-dist-hook:
+dist-hook::
 	@echo "***"
 	@echo "*** You must configure with --enable-gtk-doc, --enable-gir-doc, and"
 	@echo "*** --enable-js-doc to run make dist or make distcheck."
