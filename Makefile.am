@@ -124,6 +124,101 @@ CLEANFILES += \
 	docs/reference/endless-js/html/*.js
 endif
 
+# # # LICENSES DATA # # #
+
+licensesdir = $(datadir)
+nobase_dist_licenses_DATA = licenses/creativecommons/C/CC-BY-3.0.html \
+	licenses/creativecommons/C/CC-BY-4.0.html \
+	licenses/creativecommons/C/CC-BY-ND-2.0.html \
+	licenses/creativecommons/C/CC-BY-ND-3.0.html \
+	licenses/creativecommons/C/CC-BY-SA-3.0.html \
+	licenses/creativecommons/C/CC-BY-SA-4.0.html \
+	licenses/creativecommons/ar/CC-BY-3.0.html \
+	licenses/creativecommons/ar/CC-BY-4.0.html \
+	licenses/creativecommons/ar/CC-BY-ND-2.0.html \
+	licenses/creativecommons/ar/CC-BY-ND-3.0.html \
+	licenses/creativecommons/ar/CC-BY-SA-3.0.html \
+	licenses/creativecommons/ar/CC-BY-SA-4.0.html \
+	licenses/creativecommons/es/CC-BY-3.0.html \
+	licenses/creativecommons/es/CC-BY-4.0.html \
+	licenses/creativecommons/es/CC-BY-ND-2.0.html \
+	licenses/creativecommons/es/CC-BY-ND-3.0.html \
+	licenses/creativecommons/es/CC-BY-SA-3.0.html \
+	licenses/creativecommons/es/CC-BY-SA-4.0.html \
+	licenses/creativecommons/fr/CC-BY-3.0.html \
+	licenses/creativecommons/fr/CC-BY-4.0.html \
+	licenses/creativecommons/fr/CC-BY-ND-2.0.html \
+	licenses/creativecommons/fr/CC-BY-ND-3.0.html \
+	licenses/creativecommons/fr/CC-BY-SA-3.0.html \
+	licenses/creativecommons/fr/CC-BY-SA-4.0.html \
+	licenses/creativecommons/pt_BR/CC-BY-3.0.html \
+	licenses/creativecommons/pt_BR/CC-BY-4.0.html \
+	licenses/creativecommons/pt_BR/CC-BY-ND-2.0.html \
+	licenses/creativecommons/pt_BR/CC-BY-ND-3.0.html \
+	licenses/creativecommons/pt_BR/CC-BY-SA-3.0.html \
+	licenses/creativecommons/pt_BR/CC-BY-SA-4.0.html \
+	licenses/creativecommons/legalcode/CC-BY-3.0-legalcode.html \
+	licenses/creativecommons/legalcode/CC-BY-4.0-legalcode.html \
+	licenses/creativecommons/legalcode/CC-BY-ND-2.0-legalcode.html \
+	licenses/creativecommons/legalcode/CC-BY-ND-3.0-legalcode.html \
+	licenses/creativecommons/legalcode/CC-BY-SA-3.0-legalcode.html \
+	licenses/creativecommons/legalcode/CC-BY-SA-4.0-legalcode.html \
+	licenses/creativecommons/images/deed/cc-logo.jpg \
+	licenses/creativecommons/images/deed/by.png \
+	licenses/creativecommons/images/deed/deed-foot-green.png \
+	licenses/creativecommons/images/deed/deed-foot-grey.png \
+	licenses/creativecommons/images/deed/deed-foot-red.png \
+	licenses/creativecommons/images/deed/deed-foot-yellow.png \
+	licenses/creativecommons/images/deed/deed-head-green.png \
+	licenses/creativecommons/images/deed/deed-head-grey.png \
+	licenses/creativecommons/images/deed/deed-head-red.png \
+	licenses/creativecommons/images/deed/deed-head-yellow.png \
+	licenses/creativecommons/images/deed/devnations.png \
+	licenses/creativecommons/images/deed/freedoms-header.png \
+	licenses/creativecommons/images/deed/limitations-header.png \
+	licenses/creativecommons/images/deed/logo_code.gif \
+	licenses/creativecommons/images/deed/more.png \
+	licenses/creativecommons/images/deed/nc-eu.png \
+	licenses/creativecommons/images/deed/nc-gt.png \
+	licenses/creativecommons/images/deed/nc-jp.png \
+	licenses/creativecommons/images/deed/nc.png \
+	licenses/creativecommons/images/deed/nd.png \
+	licenses/creativecommons/images/deed/no-endorse.png \
+	licenses/creativecommons/images/deed/noc.png \
+	licenses/creativecommons/images/deed/nolaw-small.png \
+	licenses/creativecommons/images/deed/nolaw.png \
+	licenses/creativecommons/images/deed/notice.png \
+	licenses/creativecommons/images/deed/remix.png \
+	licenses/creativecommons/images/deed/sa.png \
+	licenses/creativecommons/images/deed/sampling.png \
+	licenses/creativecommons/images/deed/seal.png \
+	licenses/creativecommons/images/deed/share.png \
+	licenses/creativecommons/images/deed/src.png \
+	licenses/creativecommons/images/deed/understanding-header.png \
+	licenses/creativecommons/images/deed/usage-guidelines-small.png \
+	licenses/creativecommons/images/deed/usage-guidelines.png \
+	licenses/creativecommons/images/information.png \
+	licenses/creativecommons/images/international/unported.png \
+	licenses/creativecommons/includes/deed.js \
+	licenses/creativecommons/includes/deeds.css \
+	licenses/creativecommons/includes/deed3-ie.css \
+	licenses/creativecommons/includes/deed3-print.css \
+	licenses/creativecommons/includes/deed3-rtl.css \
+	licenses/creativecommons/includes/deed3.css \
+	licenses/creativecommons/includes/errata.js \
+	licenses/creativecommons/includes/help.js \
+	licenses/creativecommons/includes/jurisdictions.css \
+	licenses/creativecommons/includes/popup.css \
+	licenses/creativecommons/includes/total.css \
+	licenses/creativecommons/includes/yahooapis/2.6.0/connection-min.js \
+	licenses/creativecommons/includes/yahooapis/2.6.0/container-min.js \
+	licenses/creativecommons/includes/yahooapis/2.6.0/container.css \
+	licenses/creativecommons/includes/yahooapis/2.6.0/json-min.js \
+	licenses/creativecommons/includes/yahooapis/2.6.0/sprite.png \
+	licenses/creativecommons/includes/yahooapis/2.6.0/yahoo-dom-event.js \
+	licenses/creativecommons/includes/zero.css \
+	$(NULL)
+
 # # # PURE JAVASCRIPT MODULE DOCUMENTATION # # #
 
 include $(top_srcdir)/docs/reference/webhelper/Makefile.am.inc
