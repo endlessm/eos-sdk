@@ -61,7 +61,8 @@ static gchar * const recognized_licenses[] = {
 
 static gchar * const license_display_names[] = {
   /* TRANSLATORS: These names should be translated as the official names of the
-  licenses in your language. */
+  licenses in your language. Note: these names are markup, and so should not
+  contain any ampersands (&), less-than signs (<) or greater-than signs (>). */
   N_("Public domain"),
   N_("CC0 1.0 (Public domain)"),
   N_("Creative Commons Attribution 2.0"),
@@ -282,7 +283,8 @@ render_license_link (GtkTreeViewColumn *column,
       /* TRANSLATORS: %s will be replaced with the name of an image license,
       such as "Public domain" or "Creative Commons Attribution". These names are
       translated elsewhere in this file. Make sure %s is still in the translated
-      string. */
+      string. Note: this string is markup, and so should not contain any
+      ampersands (&), less-than signs (<), or greater-than signs (>). */
       gchar *license_string = g_strdup_printf (_("%s."),
                                                gettext (license_display_names[license_index]));
       gboolean behave_like_link = (license_uri != NULL);
@@ -296,6 +298,9 @@ render_license_link (GtkTreeViewColumn *column,
   else if (license_uri != NULL)
     {
       g_object_set (renderer,
+                    /* TRANSLATORS: This string is markup, and so should not
+                    contain any ampersands (&), less-than signs (<), or
+                    greater-than signs (>). */
                     "markup", _("Click for image license."),
                     "visible", TRUE,
                     NULL);
@@ -321,10 +326,14 @@ render_contact_link (GtkTreeViewColumn *column,
                       -1);
   if (credit != NULL)
     {
+      gchar *credit_escaped = g_markup_escape_text (credit, -1);
       /* TRANSLATORS: %s will be replaced with the name or account name of the
       person that the image should be credited to. Make sure %s is still in the
-      translated string. */
-      gchar *credit_string = g_strdup_printf (_("Image credit: %s."), credit);
+      translated string. Note: this string is markup and so should not contain
+      any ampersands (&), less-than signs (<), or greater-than signs (>). */
+      gchar *credit_string = g_strdup_printf (_("Image credit: %s."),
+                                              credit_escaped);
+      g_free (credit_escaped);
       g_object_set (renderer,
                     "markup", credit_string,
                     "visible", TRUE,
@@ -360,35 +369,45 @@ render_usage_notes (GtkTreeViewColumn *column,
                       -1);
   if (copyright_holder != NULL)
     {
+      gchar *copy_holder_escaped = g_markup_escape_text (copyright_holder, -1);
       if (copyright_year != -1)
         {
           /* TRANSLATORS: %d will be replaced with the copyright year, %s with
           the copyright holder. Make sure these tokens are in the translated
-          string. */
+          string. Note: this string is markup and so should not contain
+          any ampersands (&), less-than signs (<), or greater-than signs (>). */
           g_string_append_printf (builder, _("Copyright %d %s."),
-                                  copyright_year, copyright_holder);
+                                  copyright_year, copy_holder_escaped);
         }
       else
         {
           /* TRANSLATORS: %s will be replaced with the name of the copyright
-          holder. Make sure %s is still in the translated string. */
+          holder. Make sure %s is still in the translated string. Note: this
+          string is markup and so should not contain any ampersands (&),
+          less-than signs (<), or greater-than signs (>). */
           g_string_append_printf (builder, _("Copyright %s."),
-                                  copyright_holder);
+                                  copy_holder_escaped);
         }
       if (permission || comment != NULL)
         g_string_append_c (builder, ' ');
+      g_free (copyright_holder);
+      g_free (copy_holder_escaped);
     }
   if (permission)
     {
+      /* TRANSLATORS: This string is markup and so should not contain any
+      ampersands (&), less-than signs (<), or greater-than signs (>). */
       g_string_append (builder, _("Used with permission."));
       if (comment != NULL)
         g_string_append_c (builder, ' ');
     }
   if (comment != NULL)
-    g_string_append (builder, comment);
-
-  g_free (copyright_holder);
-  g_free (comment);
+    {
+      gchar *comment_escaped = g_markup_escape_text (comment, -1);
+      g_free (comment);
+      g_string_append (builder, comment_escaped);
+      g_free (comment_escaped);
+    }
 
   gchar *resulting_text = g_string_free (builder, FALSE);
   g_object_set (renderer, "markup", resulting_text, NULL);
