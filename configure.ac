@@ -217,6 +217,9 @@ PKG_CHECK_MODULES([EOS_SDK], [
 	$EOS_REQUIRED_MODULES
 	$EOS_REQUIRED_MODULES_PRIVATE])
 
+# Check installed GIRs for webhelper JS module
+EOS_CHECK_GJS_GIR([GLib], [2.0])
+EOS_CHECK_GJS_GIR([WebKit], [3.0])
 
 # Code coverage reports support
 EOS_COVERAGE_REPORT([c js])
