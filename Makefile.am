@@ -59,9 +59,17 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = @EOS_SDK_API_NAME@.pc
 DISTCLEANFILES += @EOS_SDK_API_NAME@.pc
 
-# SDK sublibraries
+# # # WEBHELPER LIBRARY # # #
+
+webhelper_sources = webhelper/webhelper.js
+
 gjsmodulesdir = $(datadir)/gjs-1.0
-include $(top_srcdir)/webhelper/Makefile.am.inc
+webhelperdir = $(gjsmodulesdir)
+dist_webhelper_DATA = \
+	$(webhelper_sources) \
+	$(NULL)
+
+EOS_JS_COVERAGE_FILES = $(webhelper_sources)
 
 # # # INTROSPECTION FILES # # #
 
