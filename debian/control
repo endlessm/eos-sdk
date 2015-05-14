@@ -12,7 +12,7 @@ Build-Depends: autotools-dev,
                gir1.2-webkit-3.0 (>= 2.0),
                gir1.2-webkit2-3.0 (>= 2.0),
                gjs (>= 1.40),
-               gnome-icon-theme-symbolic,
+               adwaita-icon-theme,
                gobject-introspection,
                gtk-doc-tools (>= 1.18),
                jasmine-gjs,
@@ -33,7 +33,7 @@ Section: non-free/libs
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         gnome-icon-theme-symbolic
+         adwaita-icon-theme
 Recommends: gjs
 Replaces: eos-sdk
 Provides: eos-sdk
