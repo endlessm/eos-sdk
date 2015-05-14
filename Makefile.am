@@ -70,7 +70,6 @@ INTROSPECTION_GIRS =
 INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir) --warn-all
 INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
 
-if HAVE_INTROSPECTION
 introspection_sources = \
 	$(filter-out %-private.h, $(endless_library_sources)) \
 	$(endless_public_installed_headers) \
@@ -96,7 +95,6 @@ typelibdir = $(libdir)/girepository-1.0
 typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 CLEANFILES += $(gir_DATA) $(typelib_DATA)
-endif
 
 # # # GOBJECT INTROSPECTION DOCUMENTATION # # #
 
