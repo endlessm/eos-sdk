@@ -41,6 +41,6 @@ p {
 .prettyprint *,
 .CBody pre,
 .CDLEntry {
-    font-family: "DejaVu Sans Mono";
+    font-family: "DejaVu Sans Mono", Menlo, monospace;
     font-size: 12pt;
 }
