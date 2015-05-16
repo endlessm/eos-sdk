@@ -46,6 +46,27 @@ dist-hook::
 	@false
 endif
 
+# # # SUBSTITUTED FILES # # #
+# These files need to be filled in with make variables
+
+subst = $(SED) \
+	-e 's,%libexecdir%,$(libexecdir),g' \
+	$(NULL)
+
+subst_files = \
+	webhelper/webhelper_private/config.js \
+	$(NULL)
+
+$(subst_files): %: %.in Makefile
+	$(AM_V_GEN)$(MKDIR_P) $(@D) && \
+	rm -f $@ $@.tmp && \
+	$(subst) $< > $@.tmp && \
+	chmod a-w $@.tmp && \
+	mv $@.tmp $@
+
+CLEANFILES += $(subst_files)
+EXTRA_DIST += $(patsubst %,%.in,$(subst_files))
+
 # # # LIBRARY # # #
 
 # Main Open Endless SDK library
@@ -64,15 +85,27 @@ DISTCLEANFILES += @EOS_SDK_API_NAME@.pc
 
 # # # WEBHELPER LIBRARY # # #
 
-webhelper_sources = webhelper/webhelper.js
+webhelper_sources = \
+	webhelper/webhelper.js \
+	webhelper/webhelper2.js \
+	$(NULL)
 
 gjsmodulesdir = $(datadir)/gjs-1.0
 webhelperdir = $(gjsmodulesdir)
+webhelper_privatedir = $(webhelperdir)/webhelper_private
 dist_webhelper_DATA = \
 	$(webhelper_sources) \
 	$(NULL)
+dist_webhelper_private_DATA = webhelper/webhelper_private/config.js
 
 EOS_JS_COVERAGE_FILES = $(webhelper_sources)
+
+webhelper2extensionsdir = $(libexecdir)/webhelper2
+webhelper2extensions_LTLIBRARIES = wh2extension.la
+wh2extension_la_SOURCES = webhelper/webextensions/wh2extension.c
+wh2extension_la_CPPFLAGS = @WEBHELPER2_EXTENSION_CFLAGS@
+wh2extension_la_LIBADD = @WEBHELPER2_EXTENSION_LIBS@
+wh2extension_la_LDFLAGS = -module -avoid-version -no-undefined
 
 # # # INTROSPECTION FILES # # #
 

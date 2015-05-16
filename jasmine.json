@@ -6,6 +6,11 @@
     "test/webhelper",
     "test/tools/eos-application-manifest"
   ],
+  "exclude": [
+    "test/webhelper/testTranslate.js",
+    "test/webhelper/testUpdateFontSize.js",
+    "test/webhelper/testWebActions.js"
+  ],
   "environment": {
     "GI_TYPELIB_PATH": ".",
     "LD_LIBRARY_PATH": ".libs",
