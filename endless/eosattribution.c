@@ -8,6 +8,7 @@
 #include "eosattribution-private.h"
 #include "eoscellrendererpixbuflink-private.h"
 #include "eoscellrenderertextlink-private.h"
+#include "eoslicense-private.h"
 
 typedef struct
 {
@@ -42,27 +43,6 @@ enum
 };
 
 static GParamSpec *eos_attribution_props[NPROPS] = { NULL, };
-
-/* These are the recognized string values for the "license" field. Any other
-license must be clarified in the comments, or linked to with the "license_uri"
-field. Make sure to add new values to the table "image-attribution-licenses" in
-the documentation of EosApplication and to the two arrays below this one. */
-static gchar * const recognized_licenses[] = {
-  "Public domain",
-  "CC0 1.0",
-  "CC BY 2.0",
-  "CC BY 3.0",
-  "CC BY-SA 2.0",
-  "CC BY-SA 2.5",
-  "CC BY-SA 3.0",
-  "CC BY-SA 4.0",
-  "CC BY-NC 2.0",
-  "CC BY-NC 3.0",
-  "CC BY-NC-SA 2.0",
-  "CC BY-ND 2.0",
-  "CC BY-ND 3.0",
-  NULL
-};
 
 static gchar * const license_display_names[] = {
   /* TRANSLATORS: These names should be translated as the official names of the
