@@ -33,12 +33,6 @@ const WebHelperApplicationWithTranslatableText = new Lang.Class({
                 this.quit();
             }
         }));
-
-        // Add an upper bound on how long the app runs, in case app.quit() does
-        // not get called
-        GLib.timeout_add_seconds(GLib.PRIORITY_HIGH, 5, Lang.bind(this, function() {
-            this.quit();
-        }));
     }
 });
 
