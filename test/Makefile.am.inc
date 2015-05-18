@@ -64,6 +64,7 @@ AM_JS_LOG_FLAGS = \
 	--include-path=$(top_srcdir)/webhelper \
 	--include-path=$(top_srcdir) \
 	--tap \
+	@JASMINE_REPORT_ARGUMENT@ \
 	--no-config \
 	$(NULL)
 LOG_COMPILER = gtester
