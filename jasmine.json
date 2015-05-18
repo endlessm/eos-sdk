@@ -1,5 +1,10 @@
 {
   "include_paths": ["webhelper", "."],
   "options": "--verbose",
-  "spec_files": ["test/webhelper", "test/tools/eos-application-manifest"]
+  "spec_files": ["test/webhelper", "test/tools/eos-application-manifest"],
+  "environment": {
+    "GI_TYPELIB_PATH": ".",
+    "LD_LIBRARY_PATH": ".libs",
+    "XDG_CONFIG_HOME": "/tmp"
+  }
 }
