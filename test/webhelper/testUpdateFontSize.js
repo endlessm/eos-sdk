@@ -33,12 +33,6 @@ const WebUpdateFontSizeTestApplication = new Lang.Class({
 
         if (this.accept_callback !== null)
             this.accept_callback(this.win, this.websettings.default_font_size);
-
-        // Add an upper bound on how long the app runs, in case app.quit() does
-        // not get called
-        GLib.timeout_add_seconds(GLib.PRIORITY_HIGH, 5, Lang.bind(this, function () {
-            this.quit();
-        }));
     },
 
     accept_callback: null,

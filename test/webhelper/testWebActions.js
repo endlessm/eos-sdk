@@ -24,12 +24,6 @@ const WebActionTestApplication = new Lang.Class({
         this.scrolled = new Gtk.ScrolledWindow();
         this.scrolled.add(this.webview);
         this.win.page_manager.add(this.scrolled);
-
-        // Add an upper bound on how long the app runs, in case app.quit() does
-        // not get called
-        GLib.timeout_add_seconds(GLib.PRIORITY_HIGH, 5, Lang.bind(this, function() {
-            this.quit();
-        }));
     }
 });
 
