@@ -46,6 +46,7 @@ javascript_tests = \
 	test/webhelper/testTranslate.js \
 	test/webhelper/testTranslate2.js \
 	test/webhelper/testWebActions.js \
+	test/webhelper/testWebActions2.js \
 	test/webhelper/testUpdateFontSize.js \
 	test/endless/testCustomContainer.js \
 	test/endless/testTopbarNavButton.js \

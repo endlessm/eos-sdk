@@ -100,6 +100,18 @@ dist_webhelper_private_DATA = webhelper/webhelper_private/config.js
 
 EOS_JS_COVERAGE_FILES = $(webhelper_sources)
 
+## Workaround for https://bugs.webkit.org/show_bug.cgi?id=116672
+## When that is solved, we can eliminate this private library and go back to
+## using pure Javascript in WebHelper.
+lib_LTLIBRARIES += libwebhelper2private.la
+libwebhelper2private_la_SOURCES = \
+	webhelper/lib/wh2private.c \
+	webhelper/lib/wh2private.h \
+	$(NULL)
+libwebhelper2private_la_CPPFLAGS = @WEBHELPER2_PRIVATE_CFLAGS@
+libwebhelper2private_la_LIBADD = @WEBHELPER2_PRIVATE_LIBS@
+libwebhelper2private_la_LDFLAGS = -avoid-version
+
 webhelper2extensionsdir = $(libexecdir)/webhelper2
 webhelper2extensions_LTLIBRARIES = wh2extension.la
 wh2extension_la_SOURCES = webhelper/webextensions/wh2extension.c
@@ -131,6 +143,16 @@ Endless_@EOS_SDK_API_VERSION@_gir_LIBS = libendless-@EOS_SDK_API_VERSION@.la
 Endless_@EOS_SDK_API_VERSION@_gir_FILES = $(introspection_sources)
 Endless_@EOS_SDK_API_VERSION@_gir_EXPORT_PACKAGES = @EOS_SDK_API_NAME@
 INTROSPECTION_GIRS += Endless-@EOS_SDK_API_VERSION@.gir
+
+WebHelper2Private-1.0.gir: libwebhelper2private.la
+WebHelper2Private_1_0_gir_INCLUDES = GObject-2.0 GLib-2.0 WebKit2-4.0
+WebHelper2Private_1_0_gir_SCANNERFLAGS = \
+	--identifier-prefix=Wh2 \
+	--symbol-prefix=wh2 \
+	$(NULL)
+WebHelper2Private_1_0_gir_LIBS = libwebhelper2private.la
+WebHelper2Private_1_0_gir_FILES = $(libwebhelper2private_la_SOURCES)
+INTROSPECTION_GIRS += WebHelper2Private-1.0.gir
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = $(INTROSPECTION_GIRS)

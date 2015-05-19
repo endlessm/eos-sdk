@@ -2,14 +2,19 @@
 
 imports.gi.versions.WebKit2 = '4.0';
 
+const Format = imports.format;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Lang = imports.lang;
+const WebHelper2Private = imports.gi.WebHelper2Private;
 const WebKit2 = imports.gi.WebKit2;
 
 const Config = imports.webhelper_private.config;
 
+String.prototype.format = Format.format;
+
+const WH2_URI_SCHEME = 'webhelper';
 const DBUS_WEBVIEW_EXPORT_PATH = '/com/endlessm/webview/';
 const WH2_DBUS_EXTENSION_INTERFACE = '\
     <node> \
@@ -35,7 +40,17 @@ const WH2_DBUS_MAIN_PROGRAM_INTERFACE = '\
  * GTK container running WebKitGTK.
  * WebHelper2 is the WebKit2 version.
  *
- * One often-encountered problem is localizing text through the same API as
+ * Although WebKit provides an easy way of communicating from GTK code to
+ * the in-browser Javascript, through the execute_script() method, it is not so
+ * easy to communicate the other way around.
+ *
+ * WebHelper solves that problem by detecting when the web page navigates to a
+ * custom action URI.
+ * The custom URI corresponds to a function that you define using
+ * <WebHelper.define_web_action()>, and you can pass parameters to the
+ * function.
+ *
+ * Another often-encountered problem is localizing text through the same API as
  * your main GTK program.
  * WebHelper solves this problem by allowing you to mark strings in your HTML
  * page and translating them through a function of your choice when you run
@@ -146,6 +161,7 @@ const WebHelper = new Lang.Class({
     },
 
     _init: function (props={}) {
+        this._web_actions = {};
         this._gettext = null;
         this._ProxyConstructor =
             Gio.DBusProxy.makeProxyWrapper(WH2_DBUS_EXTENSION_INTERFACE);
@@ -175,6 +191,45 @@ const WebHelper = new Lang.Class({
             Gio.DBusExportedObject.wrapJSObject(WH2_DBUS_MAIN_PROGRAM_INTERFACE,
                 this);
         this._dbus_impl.export(this.connection, '/com/endlessm/gettext');
+
+        // Set up handling for webhelper:// URIs
+        WebHelper2Private.register_uri_scheme(WH2_URI_SCHEME,
+            this._on_endless_uri_request.bind(this));
+    },
+
+    _on_endless_uri_request: function (request) {
+        let uri = request.get_uri();
+
+        // get the name and parameters for the desired function
+        let f_call = uri.substr((WH2_URI_SCHEME + '://').length).split('?');
+        let function_name = decodeURI(f_call[0]);
+
+        if (!this._web_actions.hasOwnProperty(function_name))
+            throw new Error(('Undefined WebHelper action "%s". Did you define it with ' +
+                'WebHelper.Application.define_web_action()?').format(function_name));
+
+        let parameters = {};
+        if (f_call[1]) {
+            // there are parameters
+            let params = f_call[1].split('&');
+            params.forEach(function (entry) {
+                let param = entry.split('=');
+
+                if (param.length == 2) {
+                    param[0] = decodeURIComponent(param[0]);
+                    param[1] = decodeURIComponent(param[1]);
+                    // and now we add it...
+                    parameters[param[0]] = param[1];
+                }
+            });
+        }
+
+        (this._web_actions[function_name].bind(this))(parameters);
+
+        // Don't call request.finish(), because we don't want to finish the
+        // action, which would involve loading a new page. The request dies
+        // if we return from this function without calling ref() or finish()
+        // on it.
     },
 
     // DBus implementations
@@ -303,6 +358,62 @@ const WebHelper = new Lang.Class({
     translate_html_finish: function (res) {
         if (res.error)
             throw res.error;
+    },
+
+    /**
+     * Method: define_web_action
+     * Define an action that may be invoked from a WebView
+     *
+     * Parameters:
+     *   name - a string, which must be a valid URI location.
+     *   implementation - a function (see Callback Parameters below.)
+     *
+     * Callback Parameters:
+     *   dict - object containing properties corresponding to the query
+     *     parameters that the web action was called with
+     *
+     * Sets up an action that may be invoked from an HTML document inside a
+     * WebView, or from the in-browser Javascript environment inside a WebView.
+     * If you set up an action "setVolume" as follows:
+     * > app.define_web_action('setVolume', function(dict) { ... });
+     * Then you can invoke the action inside the HTML document, e.g. as the
+     * target of a link, as follows:
+     * > <a href="endless://setVolume?volume=11">This one goes to 11</a>
+     * Or from the in-browser Javascript, by navigating to the action URI, as
+     * follows:
+     * > window.location.href = 'endless://setVolume?volume=11';
+     *
+     * In both cases, the function would then be called with the _dict_
+     * parameter equal to
+     * > { "volume": "11" }
+     *
+     * If an action called _name_ is already defined, the new _implementation_
+     * replaces the old one.
+     */
+    define_web_action: function (name, implementation) {
+        if (typeof implementation !== 'function') {
+            throw new Error('The implementation of a web action must be a ' +
+                'function.');
+        }
+        this._web_actions[name] = implementation;
+    },
+
+    /**
+     * Method: define_web_actions
+     * Define several web actions at once
+     *
+     * Parameters:
+     *   dict - an object, with web action names as property names, and their
+     *     implementations as values
+     *
+     * Convenience method to define more than one web action at once.
+     * Calls <define_web_action()> on each property of _dict_.
+     *
+     * *Note* This API is Javascript-only. It will not be implemented in C.
+     */
+    define_web_actions: function (dict) {
+        Object.keys(dict).forEach((key) =>
+            this.define_web_action(key, dict[key]));
     },
 
     /**
