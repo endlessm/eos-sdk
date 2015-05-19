@@ -5,9 +5,13 @@
 #include <string.h>
 
 #include <glib.h>
+#include <JavaScriptCore/JavaScript.h>
 #include <webkit2/webkit-web-extension.h>
 #include <webkitdom/webkitdom.h>
 
+#include "wh2jscutil.h"
+
+#define PRIVATE_NAME "_webhelper_private"
 #define WH2_DBUS_INTERFACE_NAME "com.endlessm.WebHelper2.Translation"
 #define MAIN_PROGRAM_OBJECT_PATH "/com/endlessm/gettext"
 #define MAIN_PROGRAM_INTERFACE_NAME "com.endlessm.WebHelper2.Gettext"
@@ -71,6 +75,51 @@ translation_function (const gchar *message,
   gchar *retval;
   g_variant_get (result, "(s)", &retval);
   g_variant_unref (result);
+  return retval;
+}
+
+static JSValueRef
+gettext_shim (JSContextRef     js,
+              JSObjectRef      function,
+              JSObjectRef      this_object,
+              size_t           n_args,
+              const JSValueRef args[],
+              JSValueRef      *exception)
+{
+  if (n_args != 1)
+    {
+      gchar *errmsg = g_strdup_printf ("Expected one argument to gettext(),"
+                                       "but got %d.", n_args);
+      *exception = throw_exception (js, errmsg);
+      g_free (errmsg);
+      return NULL;
+    }
+  if (!JSValueIsString (js, args[0]))
+    {
+      *exception = throw_exception (js,
+                                    "Expected a string argument to gettext().");
+      return NULL;
+    }
+
+  JSObjectRef window = JSContextGetGlobalObject (js);
+  JSStringRef private_name = JSStringCreateWithUTF8CString (PRIVATE_NAME);
+  JSValueRef private_data = JSObjectGetProperty (js, window, private_name,
+                                                 exception);
+  if (JSValueIsUndefined (js, private_data))
+    return NULL;  /* propagate exception */
+  Context *ctxt = (Context *) JSObjectGetPrivate ((JSObjectRef) private_data);
+
+  JSStringRef message_ref = JSValueToStringCopy (js, args[0], exception);
+  if (message_ref == NULL)
+    return NULL;  /* propagate exception */
+  gchar *message = string_ref_to_string (message_ref);
+  JSStringRelease (message_ref);
+
+  gchar *translation = translation_function (message, ctxt);
+  g_free (message);
+
+  JSValueRef retval = string_to_value_ref (js, translation);
+  g_free (translation);
   return retval;
 }
 
@@ -216,6 +265,41 @@ on_page_created (WebKitWebExtension *extension,
                    pctxt, NULL);
 }
 
+/* window-object-cleared is the best time to define properties on the page's
+window object, according to the documentation. */
+static void
+on_window_object_cleared (WebKitScriptWorld *script_world,
+                          WebKitWebPage     *page,
+                          WebKitFrame       *frame,
+                          Context           *ctxt)
+{
+  JSGlobalContextRef js =
+    webkit_frame_get_javascript_context_for_script_world (frame, script_world);
+  JSObjectRef window = JSContextGetGlobalObject (js);
+
+  /* First we need to create a custom class for a private data object to store
+  our context in, because you can't pass callback data to JavaScriptCore
+  callbacks. You also can't set private data on a Javascript object if it's not
+  of a custom class, because the built-in classes don't allocate space for a
+  private pointer. */
+  JSClassDefinition class_def = {
+    .className = "PrivateContextObject"
+  };
+  JSClassRef klass = JSClassCreate (&class_def);
+  JSObjectRef private_data = JSObjectMake (js, klass, ctxt);
+  JSClassRelease (klass);
+
+  if (!set_object_property (js, window, PRIVATE_NAME, (JSValueRef) private_data,
+                            kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontEnum | kJSPropertyAttributeDontDelete))
+    return;
+
+  JSObjectRef gettext_func =
+    JSObjectMakeFunctionWithCallback (js, NULL, gettext_shim);
+  if (!set_object_property (js, window, "gettext", (JSValueRef) gettext_func,
+                            kJSPropertyAttributeNone))
+    return;
+}
+
 static void
 on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
@@ -224,6 +308,11 @@ on_bus_acquired (GDBusConnection *connection,
   GError *error = NULL;
 
   ctxt->connection = connection;
+
+  /* Get a notification when Javascript is ready */
+  WebKitScriptWorld *script_world = webkit_script_world_get_default ();
+  g_signal_connect (script_world, "window-object-cleared",
+                    G_CALLBACK (on_window_object_cleared), ctxt);
 
   /* Export our interface on the bus */
   ctxt->node = g_dbus_node_info_new_for_xml (introspection_xml, &error);

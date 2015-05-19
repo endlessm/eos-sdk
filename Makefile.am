@@ -114,7 +114,11 @@ libwebhelper2private_la_LDFLAGS = -avoid-version
 
 webhelper2extensionsdir = $(libexecdir)/webhelper2
 webhelper2extensions_LTLIBRARIES = wh2extension.la
-wh2extension_la_SOURCES = webhelper/webextensions/wh2extension.c
+wh2extension_la_SOURCES = \
+	webhelper/webextensions/wh2extension.c \
+	webhelper/webextensions/wh2jscutil.c \
+	webhelper/webextensions/wh2jscutil.h \
+	$(NULL)
 wh2extension_la_CPPFLAGS = @WEBHELPER2_EXTENSION_CFLAGS@
 wh2extension_la_LIBADD = @WEBHELPER2_EXTENSION_LIBS@
 wh2extension_la_LDFLAGS = -module -avoid-version -no-undefined

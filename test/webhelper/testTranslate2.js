@@ -116,4 +116,20 @@ describe('WebHelper2 translator', function () {
             webview.load_html('<html><body></body></html>', null);
         });
     });
+
+    describe('used from client-side Javascript', function () {
+        it('translates a string', function (done) {
+            let webview = new WebKit2.WebView();
+            let gettext_spy = jasmine.createSpy('gettext_spy').and.callFake((s) => {
+                Mainloop.quit('webhelper2');
+                return s;
+            });
+            webhelper.set_gettext(gettext_spy);
+            webview.load_html('<html><body><script type="text/javascript">gettext("Translate Me");</script></body></html>',
+                null);
+            Mainloop.run('webhelper2');
+            expect(gettext_spy).toHaveBeenCalledWith('Translate Me');
+            done();
+        });
+    });
 });

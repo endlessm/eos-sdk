@@ -55,6 +55,7 @@ const WH2_DBUS_MAIN_PROGRAM_INTERFACE = '\
  * WebHelper solves this problem by allowing you to mark strings in your HTML
  * page and translating them through a function of your choice when you run
  * <WebHelper.translate_html()>.
+ * It also exposes a *gettext()* function in the client-side Javascript.
  */
 
 /**
@@ -247,11 +248,16 @@ const WebHelper = new Lang.Class({
      * Parameters:
      *   gettext_func - a function, or null
      *
-     * When you plan to use the <translate_html()> function to translate text in
-     * your web application, set this property to the translation function.
+     * When you plan to translate text in your web application, set this
+     * property to the translation function.
      * The function must take one parameter, a string, and also return a
      * string.
      * The canonical example is gettext().
+     *
+     * This function will be called with each string to translate when you call
+     * <translate_html()>.
+     * The function is also made available directly to the browser-side
+     * Javascript as *gettext()*, a property of the global object.
      *
      * Pass null for _gettext_func_ to unset the translation function.
      *

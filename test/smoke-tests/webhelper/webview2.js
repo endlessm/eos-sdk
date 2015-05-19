@@ -43,6 +43,10 @@ message from parameter in this URL</a></p> \
 <p>This is text that will be italicized: <span name="translatable">Hello, \
 world!</span></p> \
 \
+<p><button onclick="alert(gettext(\'I came from gettext\'));"> \
+    Click me to use gettext \
+</button></p> \
+\
 </body> \
 </html>';
 
