@@ -63,6 +63,29 @@ describe('WebHelper2 translator', function () {
         expect(webhelper.get_gettext()).toBeNull();
     });
 
+    it('complains about a bad ngettext function', function () {
+        expect(function () {
+            webhelper.set_ngettext('I am not a function');
+        }).toThrow();
+    });
+
+    it('gets and sets the ngettext function', function () {
+        let translation_function = (s, p, n) => n == 1 ? s : p;
+        webhelper.set_ngettext(translation_function);
+        expect(webhelper.get_ngettext()).toBe(translation_function);
+    });
+
+    it('has a null ngettext function by default', function () {
+        expect(webhelper.get_ngettext()).toBeNull();
+    });
+
+    it('can remove the ngettext function by setting null', function () {
+        webhelper.set_ngettext((s, p, n) => n == 1 ? s : p);
+        expect(webhelper.get_ngettext()).not.toBeNull();
+        webhelper.set_ngettext(null);
+        expect(webhelper.get_ngettext()).toBeNull();
+    });
+
     describe('translating a page', function () {
         let webview;
 
@@ -118,17 +141,37 @@ describe('WebHelper2 translator', function () {
     });
 
     describe('used from client-side Javascript', function () {
-        it('translates a string', function (done) {
-            let webview = new WebKit2.WebView();
+        let webview;
+
+        beforeEach(function () {
+            webview = new WebKit2.WebView();
+        });
+
+        function load_script(view, script) {
+            view.load_html('<html><body><script type="text/javascript">' +
+                script + '</script></body></html>', null);
+            Mainloop.run('webhelper2');
+        }
+
+        it('translates a string with gettext()', function (done) {
             let gettext_spy = jasmine.createSpy('gettext_spy').and.callFake((s) => {
                 Mainloop.quit('webhelper2');
                 return s;
             });
             webhelper.set_gettext(gettext_spy);
-            webview.load_html('<html><body><script type="text/javascript">gettext("Translate Me");</script></body></html>',
-                null);
-            Mainloop.run('webhelper2');
+            load_script(webview, 'gettext("Translate Me");');
             expect(gettext_spy).toHaveBeenCalledWith('Translate Me');
+            done();
+        });
+
+        it('translates a string with ngettext()', function (done) {
+            let ngettext_spy = jasmine.createSpy('ngettext_spy').and.callFake((s, p, n) => {
+                Mainloop.quit('webhelper2');
+                return n == 1 ? s : p;
+            });
+            webhelper.set_ngettext(ngettext_spy);
+            load_script(webview, 'ngettext("File", "Files", 3);');
+            expect(ngettext_spy).toHaveBeenCalledWith('File', 'Files', 3);
             done();
         });
     });

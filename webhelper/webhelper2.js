@@ -29,6 +29,12 @@ const WH2_DBUS_MAIN_PROGRAM_INTERFACE = '\
                 <arg name="message" type="s" direction="in"/> \
                 <arg name="translation" type="s" direction="out"/> \
             </method> \
+            <method name="NGettext"> \
+                <arg name="message_singular" type="s" direction="in"/> \
+                <arg name="message_plural" type="s" direction="in"/> \
+                <arg name="number" type="t" direction="in"/> \
+                <arg name="translation" type="s" direction="out"/> \
+            </method> \
         </interface> \
     </node>';
 
@@ -164,6 +170,7 @@ const WebHelper = new Lang.Class({
     _init: function (props={}) {
         this._web_actions = {};
         this._gettext = null;
+        this._ngettext = null;
         this._ProxyConstructor =
             Gio.DBusProxy.makeProxyWrapper(WH2_DBUS_EXTENSION_INTERFACE);
         this.parent(props);
@@ -239,6 +246,10 @@ const WebHelper = new Lang.Class({
         return this._gettext(string);
     },
 
+    NGettext: function (singular, plural, number) {
+        return this._ngettext(singular, plural, number);
+    },
+
     // Public API
 
     /**
@@ -287,6 +298,56 @@ const WebHelper = new Lang.Class({
      */
     get_gettext: function () {
         return this._gettext;
+    },
+
+    /**
+     * Method: set_ngettext
+     * Define function which translates singular/plural text
+     *
+     * Parameters:
+     *   ngettext_func - a function, or null
+     *
+     * When you plan to translate text in your web application, set this
+     * property to the translation function.
+     * The function must take three parameters: a string singular message, a
+     * string plural message, and a number for which to generate the message.
+     * The function must return a string.
+     * The canonical example is ngettext().
+     *
+     * This function is made available directly to the browser-side Javascript
+     * as *ngettext()*, a property of the global object.
+     *
+     * Pass null for _ngettext_func_ to unset the translation function.
+     *
+     * If this function has not been called, or has most recently been called
+     * with null, then it is illegal to call *ngettext()* in the client-side
+     * Javascript.
+     *
+     * Example:
+     * > const WebHelper2 = imports.webhelper2;
+     * > const Gettext = imports.gettext;
+     * > const GETTEXT_DOMAIN = 'smoke-grinder';
+     * >
+     * > let webhelper = new WebHelper2.WebHelper('com.example.SmokeGrinder');
+     * > webhelper.set_gettext(Gettext.dngettext.bind(null, GETTEXT_DOMAIN));
+     */
+    set_ngettext: function (ngettext_func) {
+        if (ngettext_func !== null && typeof ngettext_func !== 'function')
+            throw new Error('The translation function must be a function, or ' +
+                'null.');
+        this._ngettext = ngettext_func;
+    },
+
+    /**
+     * Method: get_ngettext
+     * Retrieve the currently set singular/plural translation function
+     *
+     * Returns:
+     *   the translation function previously set with <set_ngettext()>, or null
+     *   if none is currently set.
+     */
+    get_ngettext: function () {
+        return this._ngettext;
     },
 
     /**

@@ -2,6 +2,7 @@
 
 /* Copyright 2015 Endless Mobile, Inc. */
 
+#include <math.h>
 #include <string.h>
 
 #include <glib.h>
@@ -78,6 +79,36 @@ translation_function (const gchar *message,
   return retval;
 }
 
+static gchar *
+ngettext_translation_function (const gchar *singular,
+                               const gchar *plural,
+                               gulong       number,
+                               Context     *ctxt)
+{
+  GError *error = NULL;
+  GVariant *result =
+    g_dbus_connection_call_sync (ctxt->connection, ctxt->main_program_name,
+                                 MAIN_PROGRAM_OBJECT_PATH,
+                                 MAIN_PROGRAM_INTERFACE_NAME, "NGettext",
+                                 g_variant_new ("(sst)", singular, plural,
+                                                number),
+                                 (GVariantType *) "(s)",
+                                 G_DBUS_CALL_FLAGS_NO_AUTO_START,
+                                 -1 /* timeout */, NULL /* cancellable */,
+                                 &error);
+  if (result == NULL)
+    {
+      g_warning ("No return value from ngettext: %s", error->message);
+      g_clear_error (&error);
+      return g_strdup (number == 1 ? singular : plural);
+    }
+
+  gchar *retval;
+  g_variant_get (result, "(s)", &retval);
+  g_variant_unref (result);
+  return retval;
+}
+
 static JSValueRef
 gettext_shim (JSContextRef     js,
               JSObjectRef      function,
@@ -117,6 +148,82 @@ gettext_shim (JSContextRef     js,
 
   gchar *translation = translation_function (message, ctxt);
   g_free (message);
+
+  JSValueRef retval = string_to_value_ref (js, translation);
+  g_free (translation);
+  return retval;
+}
+
+static JSValueRef
+ngettext_shim (JSContextRef     js,
+               JSObjectRef      function,
+               JSObjectRef      this_object,
+               size_t           n_args,
+               const JSValueRef args[],
+               JSValueRef      *exception)
+{
+  if (n_args != 3)
+    {
+      gchar *errmsg = g_strdup_printf ("Expected three arguments to ngettext(),"
+                                       "but got %d.", n_args);
+      *exception = throw_exception (js, errmsg);
+      g_free (errmsg);
+      return NULL;
+    }
+  if (!JSValueIsString (js, args[0]))
+    {
+      *exception = throw_exception (js, "The first argument to ngettext() "
+                                    "must be a string.");
+      return NULL;
+    }
+  if (!JSValueIsString (js, args[1]))
+    {
+      *exception = throw_exception (js, "The second argument to ngettext() "
+                                    "must be a string.");
+      return NULL;
+    }
+  if (!JSValueIsNumber (js, args[2]))
+    {
+      *exception = throw_exception (js, "The third argument to ngettext() "
+                                    "must be a number.");
+      return NULL;
+    }
+
+  JSObjectRef window = JSContextGetGlobalObject (js);
+  JSStringRef private_name = JSStringCreateWithUTF8CString (PRIVATE_NAME);
+  JSValueRef private_data = JSObjectGetProperty (js, window, private_name,
+                                                 exception);
+  if (JSValueIsUndefined (js, private_data))
+    return NULL;  /* propagate exception */
+  Context *ctxt = (Context *) JSObjectGetPrivate ((JSObjectRef) private_data);
+
+  JSStringRef singular_ref = JSValueToStringCopy (js, args[0], exception);
+  if (singular_ref == NULL)
+    return NULL;  /* propagate exception */
+  gchar *singular_msg = string_ref_to_string (singular_ref);
+  JSStringRelease (singular_ref);
+
+  JSStringRef plural_ref = JSValueToStringCopy (js, args[1], exception);
+  if (plural_ref == NULL)
+    {
+      g_free (singular_msg);
+      return NULL;  /* propagate exception */
+    }
+  gchar *plural_msg = string_ref_to_string (plural_ref);
+  JSStringRelease (plural_ref);
+
+  double number = JSValueToNumber (js, args[2], exception);
+  if (isnan (number))
+    {
+      g_free (singular_msg);
+      g_free (plural_msg);
+      return NULL;  /* propagate exception */
+    }
+
+  gchar *translation = ngettext_translation_function (singular_msg, plural_msg,
+                                                      (gulong) number, ctxt);
+  g_free (singular_msg);
+  g_free (plural_msg);
 
   JSValueRef retval = string_to_value_ref (js, translation);
   g_free (translation);
@@ -296,6 +403,12 @@ on_window_object_cleared (WebKitScriptWorld *script_world,
   JSObjectRef gettext_func =
     JSObjectMakeFunctionWithCallback (js, NULL, gettext_shim);
   if (!set_object_property (js, window, "gettext", (JSValueRef) gettext_func,
+                            kJSPropertyAttributeNone))
+    return;
+
+  JSObjectRef ngettext_func =
+    JSObjectMakeFunctionWithCallback (js, NULL, ngettext_shim);
+  if (!set_object_property (js, window, "ngettext", (JSValueRef) ngettext_func,
                             kJSPropertyAttributeNone))
     return;
 }

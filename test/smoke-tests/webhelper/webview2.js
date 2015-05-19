@@ -25,6 +25,16 @@ body { \
 </head> \
 \
 <body> \
+<script type="text/javascript"> \
+    window.ngettextButton = (function () { \
+        var times = 0; \
+        return function () { \
+            times++; \
+            var message = ngettext("You have clicked me __ time", "You have clicked me __ times", times); \
+            alert(message.replace("__", times.toString())); \
+        }; \
+    })(); \
+</script> \
 <h1>First page</h1> \
 \
 <p><a href="webhelper://moveToPage?name=page2">Move to page 2</a></p> \
@@ -43,9 +53,12 @@ message from parameter in this URL</a></p> \
 <p>This is text that will be italicized: <span name="translatable">Hello, \
 world!</span></p> \
 \
-<p><button onclick="alert(gettext(\'I came from gettext\'));"> \
-    Click me to use gettext \
-</button></p> \
+<p> \
+    <button onclick="alert(gettext(\'I came from gettext\'));"> \
+        Click me to use gettext \
+    </button> \
+    <button onclick="ngettextButton();">Click me to use ngettext</button> \
+</p> \
 \
 </body> \
 </html>';
@@ -66,6 +79,8 @@ const TestApplication = new Lang.Class({
         this.parent();
 
         this._webhelper.set_gettext((s) => s.italics());
+        this._webhelper.set_ngettext((s, p, n) =>
+            '** ' + (n == 1 ? s : p) + ' **');
         this._webhelper.define_web_actions({
             moveToPage: this.moveToPage.bind(this),
             showMessageFromParameter: this.showMessageFromParameter.bind(this),
