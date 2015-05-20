@@ -265,8 +265,8 @@ eos_top_bar_init (EosTopBar *self)
                   "column-spacing", _EOS_TOP_BAR_BUTTON_SEPARATION_PX,
                   "margin-top", _EOS_TOP_BAR_VERTICAL_BUTTON_MARGIN_PX,
                   "margin-bottom", _EOS_TOP_BAR_VERTICAL_BUTTON_MARGIN_PX,
-                  "margin-left", _EOS_TOP_BAR_HORIZONTAL_BUTTON_MARGIN_PX,
-                  "margin-right", _EOS_TOP_BAR_HORIZONTAL_BUTTON_MARGIN_PX,
+                  "margin-start", _EOS_TOP_BAR_HORIZONTAL_BUTTON_MARGIN_PX,
+                  "margin-end", _EOS_TOP_BAR_HORIZONTAL_BUTTON_MARGIN_PX,
                   NULL);
 
   priv->left_top_bar_attach = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
