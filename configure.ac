@@ -201,6 +201,16 @@ AM_COND_IF([ENABLE_JS_DOC], [], [can_make_dist=no])
 AM_CONDITIONAL([CAN_MAKE_DIST], [test "x$can_make_dist" = "xyes"])
 AC_MSG_RESULT([$can_make_dist])
 
+# JASMINE_JUNIT_REPORTS_DIR: Where to put test reports
+AC_MSG_CHECKING([where to put test reports])
+AC_ARG_VAR([JASMINE_JUNIT_REPORTS_DIR], [Where to put test reports])
+AS_IF([test -n "$JASMINE_JUNIT_REPORTS_DIR"],
+	[JASMINE_REPORT_ARGUMENT="--junit $JASMINE_JUNIT_REPORTS_DIR/\$\${log/%.log/.js.xml}"
+	AC_MSG_RESULT([in $JASMINE_JUNIT_REPORTS_DIR])],
+	[JASMINE_REPORT_ARGUMENT=
+	AC_MSG_RESULT([nowhere])])
+AC_SUBST([JASMINE_REPORT_ARGUMENT])
+
 # Required libraries
 # ------------------
 PKG_CHECK_MODULES([EOS_SDK], [
