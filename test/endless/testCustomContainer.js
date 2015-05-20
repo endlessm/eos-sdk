@@ -15,6 +15,8 @@ const TestContainer = new Lang.Class({
     }
 });
 
+Gtk.init(null);
+
 describe("CustomContainer", function () {
     it("Instantiates a CustomContainer subclass to make sure no exceptions/segfaults", function () {
         let createContainer = function () {
