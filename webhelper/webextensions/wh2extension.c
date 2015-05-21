@@ -21,17 +21,18 @@
 void webkit_web_extension_initialize_with_user_data (WebKitWebExtension *, const GVariant *);
 
 typedef struct {
+  WebKitWebExtension *extension;  /* unowned */
   GDBusConnection *connection;  /* unowned */
   GDBusNodeInfo *node;  /* owned */
   GDBusInterfaceInfo *interface;  /* owned by node */
   GSList *bus_ids;  /* GSList<guint>; owned */
-  GSList *page_ctxts;  /* GSList<PageContext *>; owned */
+  GArray *unregistered_pages;  /* GArray<guint64>; owned */
   gchar *main_program_name;  /* owned; well-known-name of main program */
 } Context;
 
 typedef struct {
   Context *ctxt;  /* unowned */
-  WebKitWebPage *page;  /* unowned */
+  guint64 page_id;
 } PageContext;
 
 static const gchar introspection_xml[] =
@@ -46,9 +47,10 @@ context_free (Context *ctxt)
 {
   g_clear_pointer (&ctxt->node, g_dbus_node_info_unref);
   g_clear_pointer (&ctxt->bus_ids, g_slist_free);
+  if (ctxt->unregistered_pages != NULL)
+    g_array_free (ctxt->unregistered_pages, TRUE);
+  ctxt->unregistered_pages = NULL;
   g_clear_pointer (&ctxt->main_program_name, g_free);
-  g_slist_free_full (ctxt->page_ctxts, (GDestroyNotify) g_free);
-  ctxt->page_ctxts = NULL;
   g_free (ctxt);
 }
 
@@ -301,7 +303,13 @@ on_wh2_method_call (GDBusConnection       *connection,
       return;
     }
 
-  WebKitDOMDocument *document = webkit_web_page_get_dom_document (pctxt->page);
+  WebKitWebPage *page = webkit_web_extension_get_page (pctxt->ctxt->extension,
+                                                       pctxt->page_id);
+  if (page == NULL)
+    return;
+  /* The page may have been destroyed, but WebKit doesn't let us find out. */
+
+  WebKitDOMDocument *document = webkit_web_page_get_dom_document (page);
   if (document == NULL)
     {
       g_dbus_method_invocation_return_error_literal (invocation, G_IO_ERROR,
@@ -321,40 +329,39 @@ static GDBusInterfaceVTable dbus_impl_vtable = {
   NULL /* set property */
 };
 
-static gboolean
-register_object (PageContext *pctxt)
+static void
+register_object (guint64  page_id,
+                 Context *ctxt)
 {
   GError *error = NULL;
 
-  if (pctxt->ctxt->connection == NULL)
-    return G_SOURCE_CONTINUE;  /* Try again when the connection is ready */
-
-  /* The ID is known to the main process and the web process. So we can address
-  a specific web page over DBus. */
-  guint64 id = webkit_web_page_get_id (pctxt->page);
+  g_assert (ctxt->connection != NULL);
 
   gchar *object_path = g_strdup_printf("/com/endlessm/webview/%"
-                                       G_GUINT64_FORMAT, id);
+                                       G_GUINT64_FORMAT, page_id);
 
-  guint bus_id = g_dbus_connection_register_object (pctxt->ctxt->connection,
-                                                    object_path,
-                                                    pctxt->ctxt->interface,
-                                                    &dbus_impl_vtable,
-                                                    pctxt, NULL,
-                                                    &error);
+  /* This struct is owned by the registered DBus object */
+  PageContext *pctxt = g_new0 (PageContext, 1);
+  pctxt->ctxt = ctxt;
+  pctxt->page_id = page_id;
+
+  guint bus_id =
+    g_dbus_connection_register_object (ctxt->connection, object_path,
+                                       ctxt->interface, &dbus_impl_vtable,
+                                       pctxt, (GDestroyNotify) g_free, &error);
+  g_free (object_path);
   if (bus_id == 0)
     {
       g_critical ("Failed to export webview object on bus: %s", error->message);
       g_clear_error (&error);
-      goto out;
+      goto fail;
     }
 
-  pctxt->ctxt->bus_ids = g_slist_prepend (pctxt->ctxt->bus_ids,
-                                          GUINT_TO_POINTER (bus_id));
+  ctxt->bus_ids = g_slist_prepend (ctxt->bus_ids, GUINT_TO_POINTER (bus_id));
+  return;
 
-out:
-  g_free (object_path);
-  return G_SOURCE_REMOVE;
+fail:
+  g_free (pctxt);
 }
 
 static void
@@ -362,14 +369,19 @@ on_page_created (WebKitWebExtension *extension,
                  WebKitWebPage      *page,
                  Context            *ctxt)
 {
-  PageContext *pctxt = g_new0 (PageContext, 1);
-  pctxt->ctxt = ctxt;
-  pctxt->page = page;
+  /* The ID is known to the main process and the web process. So we can address
+  a specific web page over DBus. */
+  guint64 id = webkit_web_page_get_id (page);
 
-  ctxt->page_ctxts = g_slist_prepend (ctxt->page_ctxts, pctxt);
+  if (ctxt->connection == NULL)
+    {
+      /* The connection is not ready yet. Save the page ID in a list of pages
+      for which we need to register objects later. */
+      g_array_append_val (ctxt->unregistered_pages, id);
+      return;
+    }
 
-  g_idle_add_full (G_PRIORITY_HIGH_IDLE, (GSourceFunc) register_object,
-                   pctxt, NULL);
+  register_object (id, ctxt);
 }
 
 /* window-object-cleared is the best time to define properties on the page's
@@ -436,6 +448,16 @@ on_bus_acquired (GDBusConnection *connection,
   if (ctxt->interface == NULL)
     goto fail;
 
+  /* Register DBus objects for any pages that were created before we got here */
+  guint ix;
+  for (ix = 0; ix < ctxt->unregistered_pages->len; ix++)
+    {
+      guint64 id = g_array_index (ctxt->unregistered_pages, guint64, ix);
+      register_object (id, ctxt);
+    }
+  g_array_remove_range (ctxt->unregistered_pages, 0,
+                        ctxt->unregistered_pages->len);
+
   return;
 
 fail:
@@ -483,6 +505,8 @@ webkit_web_extension_initialize_with_user_data (WebKitWebExtension *extension,
   const gchar *name = g_variant_get_string ((GVariant *) data_from_app, NULL);
 
   Context *ctxt = g_new0 (Context, 1);
+  ctxt->extension = extension;
+  ctxt->unregistered_pages = g_array_new (FALSE, FALSE, sizeof (guint64));
   ctxt->main_program_name = g_strdup (name);
   gchar *well_known_name = g_strconcat (name, ".webhelper", NULL);
 
