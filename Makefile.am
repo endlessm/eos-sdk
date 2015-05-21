@@ -31,6 +31,9 @@ DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --enable-gir-doc --enable-js-doc
 CLEANFILES =
 DISTCLEANFILES =
 
+# Other targets to add to
+lib_LTLIBRARIES =
+
 # Make sure that 'make dist' includes documentation
 if CAN_MAKE_DIST
 dist-hook::
