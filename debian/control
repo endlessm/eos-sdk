@@ -7,10 +7,11 @@ Build-Depends: autotools-dev,
                eos-node-modules-dev (>= 1.0.0),
                gettext (>= 0.18.1),
                gir1.2-gdkpixbuf-2.0,
+               gir1.2-glib-2.0,
                gir1.2-gtk-3.0 (>= 3.8),
                gir1.2-json-1.0,
                gir1.2-webkit-3.0 (>= 2.0),
-               gir1.2-webkit2-3.0 (>= 2.0),
+               gir1.2-webkit2-4.0,
                gjs (>= 1.40),
                adwaita-icon-theme,
                gobject-introspection,
@@ -86,12 +87,15 @@ Description: Endless SDK
 
 Package: eos-sdk-0-webhelper
 Section: non-free/libs
-Architecture: all
+Architecture: any
 Depends: ${misc:Depends},
+         ${shlibs:Depends},
          gir1.2-endless-0 (= ${binary:Version}),
+         gir1.2-glib-2.0,
          gir1.2-gtk-3.0 (>= 3.8),
+         gir1.2-webhelper2private-1.0 (= ${binary:Version}),
          gir1.2-webkit-3.0 (>= 2.0),
-         gir1.2-webkit2-3.0 (>= 2.0),
+         gir1.2-webkit2-4.0,
          gjs
 Replaces: eos-sdk-webhelper
 Provides: eos-sdk-webhelper
@@ -99,6 +103,15 @@ Conflicts: eos-sdk-webhelper
 Description: Endless SDK web helper
  Internal convenience library to simplify creation of web apps using the
  Endless SDK.
+
+Package: gir1.2-webhelper2private-1.0
+Section: non-free/introspection
+Architecture: any
+Depends: ${gir:Depends},
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: Endless SDK web helper
+ "Private" library used by WebHelper.
 
 Package: eos-sdk-0-bin
 Section: non-free/libdevel
