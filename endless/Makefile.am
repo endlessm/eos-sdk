@@ -50,7 +50,7 @@ endless_library_sources = \
 	endless/eosflexygrid.c endless/eosflexygridcell.c endless/eosflexygrid-private.h
 
 # Endless GUI library
-lib_LTLIBRARIES = libendless-@EOS_SDK_API_VERSION@.la
+lib_LTLIBRARIES += libendless-@EOS_SDK_API_VERSION@.la
 libendless_@EOS_SDK_API_VERSION@_la_SOURCES = \
 	$(endless_public_installed_headers) \
 	$(endless_private_installed_headers) \

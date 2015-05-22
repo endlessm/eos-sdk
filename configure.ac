@@ -83,6 +83,7 @@ GOBJECT_REQUIREMENT="gobject-2.0"
 GIO_REQUIREMENT="gio-2.0"
 GTK_REQUIREMENT="gtk+-3.0 >= 3.10"
 JSON_GLIB_REQUIREMENT="json-glib-1.0 >= 0.12"
+WEBKIT2_REQUIREMENT="webkit2gtk-4.0"
 # These go into the pkg-config file as Requires: and Requires.private:
 # (Generally, use Requires.private: instead of Requires:)
 EOS_REQUIRED_MODULES=
@@ -216,7 +217,18 @@ AC_SUBST([JASMINE_REPORT_ARGUMENT])
 PKG_CHECK_MODULES([EOS_SDK], [
 	$EOS_REQUIRED_MODULES
 	$EOS_REQUIRED_MODULES_PRIVATE])
+PKG_CHECK_MODULES([WEBHELPER2_EXTENSION], [
+	$GLIB_REQUIREMENT
+	$GOBJECT_REQUIREMENT
+	$WEBKIT2_REQUIREMENT])
+PKG_CHECK_MODULES([WEBHELPER2_PRIVATE], [
+	$GLIB_REQUIREMENT
+	$WEBKIT2_REQUIREMENT])
 
+# Check installed GIRs for webhelper JS module
+EOS_CHECK_GJS_GIR([GLib], [2.0])
+EOS_CHECK_GJS_GIR([WebKit], [3.0])
+EOS_CHECK_GJS_GIR([WebKit2], [4.0])
 
 # Code coverage reports support
 EOS_COVERAGE_REPORT([c js])

@@ -31,6 +31,9 @@ DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --enable-gir-doc --enable-js-doc
 CLEANFILES =
 DISTCLEANFILES =
 
+# Other targets to add to
+lib_LTLIBRARIES =
+
 # Make sure that 'make dist' includes documentation
 if CAN_MAKE_DIST
 dist-hook::
@@ -42,6 +45,27 @@ dist-hook::
 	@echo "***"
 	@false
 endif
+
+# # # SUBSTITUTED FILES # # #
+# These files need to be filled in with make variables
+
+subst = $(SED) \
+	-e 's,%libexecdir%,$(libexecdir),g' \
+	$(NULL)
+
+subst_files = \
+	webhelper/webhelper_private/config.js \
+	$(NULL)
+
+$(subst_files): %: %.in Makefile
+	$(AM_V_GEN)$(MKDIR_P) $(@D) && \
+	rm -f $@ $@.tmp && \
+	$(subst) $< > $@.tmp && \
+	chmod a-w $@.tmp && \
+	mv $@.tmp $@
+
+CLEANFILES += $(subst_files)
+EXTRA_DIST += $(patsubst %,%.in,$(subst_files))
 
 # # # LIBRARY # # #
 
@@ -59,9 +83,45 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = @EOS_SDK_API_NAME@.pc
 DISTCLEANFILES += @EOS_SDK_API_NAME@.pc
 
-# SDK sublibraries
+# # # WEBHELPER LIBRARY # # #
+
+webhelper_sources = \
+	webhelper/webhelper.js \
+	webhelper/webhelper2.js \
+	$(NULL)
+
 gjsmodulesdir = $(datadir)/gjs-1.0
-include $(top_srcdir)/webhelper/Makefile.am.inc
+webhelperdir = $(gjsmodulesdir)
+webhelper_privatedir = $(webhelperdir)/webhelper_private
+dist_webhelper_DATA = \
+	$(webhelper_sources) \
+	$(NULL)
+dist_webhelper_private_DATA = webhelper/webhelper_private/config.js
+
+EOS_JS_COVERAGE_FILES = $(webhelper_sources)
+
+## Workaround for https://bugs.webkit.org/show_bug.cgi?id=116672
+## When that is solved, we can eliminate this private library and go back to
+## using pure Javascript in WebHelper.
+lib_LTLIBRARIES += libwebhelper2private.la
+libwebhelper2private_la_SOURCES = \
+	webhelper/lib/wh2private.c \
+	webhelper/lib/wh2private.h \
+	$(NULL)
+libwebhelper2private_la_CPPFLAGS = @WEBHELPER2_PRIVATE_CFLAGS@
+libwebhelper2private_la_LIBADD = @WEBHELPER2_PRIVATE_LIBS@
+libwebhelper2private_la_LDFLAGS = -avoid-version
+
+webhelper2extensionsdir = $(libexecdir)/webhelper2
+webhelper2extensions_LTLIBRARIES = wh2extension.la
+wh2extension_la_SOURCES = \
+	webhelper/webextensions/wh2extension.c \
+	webhelper/webextensions/wh2jscutil.c \
+	webhelper/webextensions/wh2jscutil.h \
+	$(NULL)
+wh2extension_la_CPPFLAGS = @WEBHELPER2_EXTENSION_CFLAGS@
+wh2extension_la_LIBADD = @WEBHELPER2_EXTENSION_LIBS@
+wh2extension_la_LDFLAGS = -module -avoid-version -no-undefined
 
 # # # INTROSPECTION FILES # # #
 
@@ -70,7 +130,6 @@ INTROSPECTION_GIRS =
 INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir) --warn-all
 INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
 
-if HAVE_INTROSPECTION
 introspection_sources = \
 	$(filter-out %-private.h, $(endless_library_sources)) \
 	$(endless_public_installed_headers) \
@@ -89,6 +148,16 @@ Endless_@EOS_SDK_API_VERSION@_gir_FILES = $(introspection_sources)
 Endless_@EOS_SDK_API_VERSION@_gir_EXPORT_PACKAGES = @EOS_SDK_API_NAME@
 INTROSPECTION_GIRS += Endless-@EOS_SDK_API_VERSION@.gir
 
+WebHelper2Private-1.0.gir: libwebhelper2private.la
+WebHelper2Private_1_0_gir_INCLUDES = GObject-2.0 GLib-2.0 WebKit2-4.0
+WebHelper2Private_1_0_gir_SCANNERFLAGS = \
+	--identifier-prefix=Wh2 \
+	--symbol-prefix=wh2 \
+	$(NULL)
+WebHelper2Private_1_0_gir_LIBS = libwebhelper2private.la
+WebHelper2Private_1_0_gir_FILES = $(libwebhelper2private_la_SOURCES)
+INTROSPECTION_GIRS += WebHelper2Private-1.0.gir
+
 girdir = $(datadir)/gir-1.0
 gir_DATA = $(INTROSPECTION_GIRS)
 
@@ -96,7 +165,6 @@ typelibdir = $(libdir)/girepository-1.0
 typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 CLEANFILES += $(gir_DATA) $(typelib_DATA)
-endif
 
 # # # GOBJECT INTROSPECTION DOCUMENTATION # # #
 

@@ -44,7 +44,9 @@ EXTRA_DIST += \
 javascript_tests = \
 	test/tools/eos-application-manifest/testInit.js \
 	test/webhelper/testTranslate.js \
+	test/webhelper/testTranslate2.js \
 	test/webhelper/testWebActions.js \
+	test/webhelper/testWebActions2.js \
 	test/webhelper/testUpdateFontSize.js \
 	test/endless/testCustomContainer.js \
 	test/endless/testTopbarNavButton.js \
@@ -78,4 +80,5 @@ TESTS_ENVIRONMENT = \
 	export GI_TYPELIB_PATH="$(top_builddir)$${GI_TYPELIB_PATH:+:$$GI_TYPELIB_PATH}"; \
 	export LD_LIBRARY_PATH="$(top_builddir)/.libs$${LD_LIBRARY_PATH:+:$$LD_LIBRARY_PATH}"; \
 	export XDG_CONFIG_HOME=`mktemp -d $${TMPDIR:-/tmp}/sdktestconfig.XXXXXXXX`; \
+	export WEBHELPER_UNINSTALLED_EXTENSION_DIR="$(top_builddir)/.libs"; \
 	$(NULL)

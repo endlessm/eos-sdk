@@ -1,10 +1,20 @@
 {
   "include_paths": ["webhelper", "."],
   "options": "--verbose",
-  "spec_files": ["test/webhelper", "test/tools/eos-application-manifest"],
+  "spec_files": [
+    "test/endless",
+    "test/webhelper",
+    "test/tools/eos-application-manifest"
+  ],
+  "exclude": [
+    "test/webhelper/testTranslate.js",
+    "test/webhelper/testUpdateFontSize.js",
+    "test/webhelper/testWebActions.js"
+  ],
   "environment": {
     "GI_TYPELIB_PATH": ".",
     "LD_LIBRARY_PATH": ".libs",
-    "XDG_CONFIG_HOME": "/tmp"
+    "XDG_CONFIG_HOME": "/tmp",
+    "WEBHELPER_UNINSTALLED_EXTENSION_DIR": ".libs"
   }
 }
