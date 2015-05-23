@@ -75,6 +75,7 @@ EXTRA_DIST += \
 	test/run-with-dbus \
 	test/test-bus.conf \
 	$(NULL)
+CLEANFILES += stderr.log
 
 # Use locally built versions of Endless-0.gir and libraries; this may need to be
 # changed to AM_TESTS_ENVIRONMENT in a future version of Automake
