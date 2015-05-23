@@ -58,7 +58,7 @@ TESTS = \
 	test/endless/run-tests \
 	$(javascript_tests) \
 	$(NULL)
-JS_LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/tap-driver.sh
+JS_LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(top_srcdir)/test/run-with-dbus --session $(SHELL) $(top_srcdir)/tap-driver.sh
 JS_LOG_DRIVER_FLAGS = --comments
 TEST_EXTENSIONS = .js
 JS_LOG_COMPILER = jasmine
@@ -71,6 +71,10 @@ AM_JS_LOG_FLAGS = \
 	$(NULL)
 LOG_COMPILER = gtester
 AM_LOG_FLAGS = -k --verbose
+EXTRA_DIST += \
+	test/run-with-dbus \
+	test/test-bus.conf \
+	$(NULL)
 
 # Use locally built versions of Endless-0.gir and libraries; this may need to be
 # changed to AM_TESTS_ENVIRONMENT in a future version of Automake
@@ -81,4 +85,6 @@ TESTS_ENVIRONMENT = \
 	export LD_LIBRARY_PATH="$(top_builddir)/.libs$${LD_LIBRARY_PATH:+:$$LD_LIBRARY_PATH}"; \
 	export XDG_CONFIG_HOME=`mktemp -d $${TMPDIR:-/tmp}/sdktestconfig.XXXXXXXX`; \
 	export WEBHELPER_UNINSTALLED_EXTENSION_DIR="$(top_builddir)/.libs"; \
+	export TOP_SRCDIR="$(abs_top_srcdir)"; \
+	export BUILDDIR=".";
 	$(NULL)
