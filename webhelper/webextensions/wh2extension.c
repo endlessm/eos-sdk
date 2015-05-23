@@ -84,7 +84,7 @@ translation_function (const gchar *message,
 static gchar *
 ngettext_translation_function (const gchar *singular,
                                const gchar *plural,
-                               gulong       number,
+                               guint64      number,
                                Context     *ctxt)
 {
   GError *error = NULL;
@@ -223,7 +223,7 @@ ngettext_shim (JSContextRef     js,
     }
 
   gchar *translation = ngettext_translation_function (singular_msg, plural_msg,
-                                                      (gulong) number, ctxt);
+                                                      (guint64) number, ctxt);
   g_free (singular_msg);
   g_free (plural_msg);
 
