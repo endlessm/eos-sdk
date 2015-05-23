@@ -3,6 +3,7 @@ Section: non-free/libs
 Priority: standard
 Maintainer: Endless Mobile <maintainers@endlessm.com>
 Build-Depends: autotools-dev,
+               dbus-x11,
                debhelper (>= 8.0.0),
                eos-node-modules-dev (>= 1.0.0),
                gettext (>= 0.18.1),
