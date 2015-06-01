@@ -30,7 +30,8 @@ def get_settings_string(layout):
     loaded_layout = json.loads(layout)
     loaded_layout['desktop'].append(DIRECTORY_ID)
     loaded_layout[DIRECTORY_ID] = [ 'eos-app-gnome-terminal.desktop' ,
-                                    'eos-app-devhelp.desktop' ]
+                                    'eos-app-devhelp.desktop',
+                                    'glade.desktop' ]
 
     root=GLib.Variant('a{sas}', loaded_layout)
     print "Setting the value"
