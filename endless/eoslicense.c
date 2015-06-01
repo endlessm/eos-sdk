@@ -17,35 +17,39 @@ field. Make sure to add new values to the table "image-attribution-licenses" in
 the documentation of EosApplication and to the two arrays below this one. */
 char * const recognized_licenses[] = {
   "Public domain",
-  "CC0 1.0",
-  "CC BY 2.0",
-  "CC BY 3.0",
-  "CC BY-SA 2.0",
-  "CC BY-SA 2.5",
-  "CC BY-SA 3.0",
-  "CC BY-SA 4.0",
-  "CC BY-NC 2.0",
-  "CC BY-NC 3.0",
-  "CC BY-NC-SA 2.0",
-  "CC BY-ND 2.0",
-  "CC BY-ND 3.0",
+  "Owner permission",
+  "CC-BY 2.0",
+  "CC-BY 3.0",
+  "CC-BY 4.0",
+  "CC-BY-NC 2.0",
+  "CC-BY-NC 3.0",
+  "CC-BY-NC-SA 2.0",
+  "CC-BY-ND 2.0",
+  "CC-BY-ND 3.0",
+  "CC-BY-SA 2.0",
+  "CC-BY-SA 2.5",
+  "CC-BY-SA 3.0",
+  "CC-BY-SA 4.0",
   NULL
 };
 
+/* These are the actual filenames for license files. There is a 1-to-1
+correspondence between these two arrays. */
 static gchar * const recognized_licenses_filenames[] = {
   NULL,
-  "CC0-1.0.html",
+  NULL,
   "CC-BY-2.0.html",
   "CC-BY-3.0.html",
-  "CC-BY-SA-2.0.html",
-  "CC-BY-SA-2.5.html",
-  "CC-BY-SA-3.0.html",
-  "CC-BY-SA-4.0.html",
+  "CC-BY-4.0.html",
   "CC-BY-NC-2.0.html",
   "CC-BY-NC-3.0.html",
   "CC-BY-NC-SA-2.0.html",
   "CC-BY-ND-2.0.html",
   "CC-BY-ND-3.0.html",
+  "CC-BY-SA-2.0.html",
+  "CC-BY-SA-2.5.html",
+  "CC-BY-SA-3.0.html",
+  "CC-BY-SA-4.0.html",
   NULL
 };
 
@@ -99,6 +103,8 @@ eos_get_license_file (const gchar *license)
         }
     }
 
+  g_print("%s\n", license);
+  g_print("recognized_licenses[i]=%s\n", recognized_licenses[i]);
   g_return_val_if_fail(recognized_licenses[i]!=NULL, NULL);
 
   // If the array value is null, it means we don't have a license file for that
