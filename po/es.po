@@ -1,0 +1,185 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Endless Mobile, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# Fernando Farfan <fernando@endlessm.com>, 2015
+# Joel Gil Leon <joel@endlessm.com>, 2013
+# Nuritzi Sanchez <ns@endlessm.com>, 2013
+# Philip Chimento <philip.chimento@gmail.com>, 2013
+msgid ""
+msgstr ""
+"Project-Id-Version: eos-sdk\n"
+"Report-Msgid-Bugs-To: philip@endlessm.com\n"
+"POT-Creation-Date: 2015-06-01 10:03-0700\n"
+"PO-Revision-Date: 2015-06-02 18:19+0000\n"
+"Last-Translator: Fernando Farfan <fernando@endlessm.com>\n"
+"Language-Team: Spanish (http://www.transifex.com/projects/p/eos-sdk/language/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: endless/eosapplication.c:291
+msgid "Image credits"
+msgstr "Créditos de Imágenes"
+
+#. TRANSLATORS: These names should be translated as the official names of the
+#. licenses in your language. Note: these names are markup, and so should not
+#. contain any ampersands (&), less-than signs (<) or greater-than signs (>).
+#: endless/eosattribution.c:71
+msgid "Public domain"
+msgstr "Dominio público"
+
+#: endless/eosattribution.c:72
+msgid "CC0 1.0 (Public domain)"
+msgstr "CC0 1.0 (Dominio Público)"
+
+#: endless/eosattribution.c:73
+msgid "Creative Commons Attribution 2.0"
+msgstr "Creative Commons Atribución 2.0"
+
+#: endless/eosattribution.c:74
+msgid "Creative Commons Attribution 3.0"
+msgstr "Creative Commons Atribución 3.0"
+
+#: endless/eosattribution.c:75
+msgid "Creative Commons Attribution-ShareAlike 2.0"
+msgstr "Creative Commons Atribución-CompartirIgual 2.0"
+
+#: endless/eosattribution.c:76
+msgid "Creative Commons Attribution-ShareAlike 2.5 Generic"
+msgstr "Creative Commons Atribución-CompartirIgual 2.5 Genérica"
+
+#: endless/eosattribution.c:77
+msgid "Creative Commons Attribution-ShareAlike 3.0"
+msgstr "Creative Commons Atribución-CompartirIgual 3.0 Unported"
+
+#: endless/eosattribution.c:78
+msgid "Creative Commons Attribution-ShareAlike 4.0 International"
+msgstr "Creative Commons Atribución-CompartirIgual 4.0 Internacional"
+
+#: endless/eosattribution.c:79
+msgid "Creative Commons Attribution-NonCommercial 2.0"
+msgstr "Creative Commons Atribución-NoComercial 2.0 Genérica"
+
+#: endless/eosattribution.c:80
+msgid "Creative Commons Attribution-NonCommercial 3.0"
+msgstr "Creative Commons Atribución-NoComercial 3.0 Unported"
+
+#: endless/eosattribution.c:81
+msgid "Creative Commons Attribution-NonCommercial-ShareAlike 2.0 Generic"
+msgstr "Creative Commons Atribución-NoComercial-CompartirIgual 2.0 Genérica"
+
+#: endless/eosattribution.c:82
+msgid "Creative Commons Attribution-NoDerivs 2.0"
+msgstr "Creative Commons Atribución-SinDerivadas 2.0 Genérica"
+
+#: endless/eosattribution.c:83
+msgid "Creative Commons Attribution-NoDerivs 3.0"
+msgstr "Creative Commons Atribución-SinDerivadas 3.0 Unported"
+
+#. TRANSLATORS: These URIs should be translated as a link to the license page
+#. in your language. For example, for Spanish,
+#. "http://creativecommons.org/licenses/by/3.0/" should become
+#. "http://creativecommons.org/licenses/by/3.0/deed.es". However, if no such
+#. page
+#. exists, then leave these untranslated.
+#: endless/eosattribution.c:94
+msgid "http://creativecommons.org/publicdomain/zero/1.0/"
+msgstr "http://creativecommons.org/publicdomain/zero/1.0/deed.es"
+
+#: endless/eosattribution.c:95
+msgid "http://creativecommons.org/licenses/by/2.0/"
+msgstr "http://creativecommons.org/licenses/by/2.0/deed.es"
+
+#: endless/eosattribution.c:96
+msgid "http://creativecommons.org/licenses/by/3.0/"
+msgstr "http://creativecommons.org/licenses/by/3.0/deed.es"
+
+#: endless/eosattribution.c:97
+msgid "http://creativecommons.org/licenses/by-sa/2.0/"
+msgstr "http://creativecommons.org/licenses/by-sa/2.0/deed.es"
+
+#: endless/eosattribution.c:98
+msgid "http://creativecommons.org/licenses/by-sa/2.5/"
+msgstr "http://creativecommons.org/licenses/by-sa/2.5/deed.es"
+
+#: endless/eosattribution.c:99
+msgid "http://creativecommons.org/licenses/by-sa/3.0/"
+msgstr "http://creativecommons.org/licenses/by-sa/3.0/deed.es"
+
+#: endless/eosattribution.c:100
+msgid "http://creativecommons.org/licenses/by-sa/4.0/"
+msgstr "http://creativecommons.org/licenses/by-sa/4.0/deed.es"
+
+#: endless/eosattribution.c:101
+msgid "http://creativecommons.org/licenses/by-nc/2.0/"
+msgstr "http://creativecommons.org/licenses/by-nc/2.0/deed.es"
+
+#: endless/eosattribution.c:102
+msgid "http://creativecommons.org/licenses/by-nc/3.0/"
+msgstr "http://creativecommons.org/licenses/by-nc/3.0/deed.es"
+
+#: endless/eosattribution.c:103
+msgid "http://creativecommons.org/licenses/by-nc-sa/2.0/"
+msgstr "http://creativecommons.org/licenses/by-nc-sa/2.0/deed.es"
+
+#: endless/eosattribution.c:104
+msgid "http://creativecommons.org/licenses/by-nd/2.0/"
+msgstr "http://creativecommons.org/licenses/by-nd/2.0/deed.es"
+
+#: endless/eosattribution.c:105
+msgid "http://creativecommons.org/licenses/by-nd/3.0/"
+msgstr "http://creativecommons.org/licenses/by-nd/3.0/deed.es"
+
+#. TRANSLATORS: %s will be replaced with the name of an image license,
+#. such as "Public domain" or "Creative Commons Attribution". These names are
+#. translated elsewhere in this file. Make sure %s is still in the translated
+#. string. Note: this string is markup, and so should not contain any
+#. ampersands (&), less-than signs (<), or greater-than signs (>).
+#: endless/eosattribution.c:290
+#, c-format
+msgid "%s."
+msgstr "%s."
+
+#. TRANSLATORS: This string is markup, and so should not
+#. contain any ampersands (&), less-than signs (<), or
+#. greater-than signs (>).
+#: endless/eosattribution.c:306
+msgid "Click for image license."
+msgstr "Clic para licencia de la imagen."
+
+#. TRANSLATORS: %s will be replaced with the name or account name of the
+#. person that the image should be credited to. Make sure %s is still in the
+#. translated string. Note: this string is markup and so should not contain
+#. any ampersands (&), less-than signs (<), or greater-than signs (>).
+#: endless/eosattribution.c:336
+#, c-format
+msgid "Image credit: %s."
+msgstr "Crédito de Imagen: %s."
+
+#. TRANSLATORS: %d will be replaced with the copyright year, %s with
+#. the copyright holder. Make sure these tokens are in the translated
+#. string. Note: this string is markup and so should not contain
+#. any ampersands (&), less-than signs (<), or greater-than signs (>).
+#: endless/eosattribution.c:381
+#, c-format
+msgid "Copyright %d %s."
+msgstr "Derechos de autor %d %s."
+
+#. TRANSLATORS: %s will be replaced with the name of the copyright
+#. holder. Make sure %s is still in the translated string. Note: this
+#. string is markup and so should not contain any ampersands (&),
+#. less-than signs (<), or greater-than signs (>).
+#: endless/eosattribution.c:390
+#, c-format
+msgid "Copyright %s."
+msgstr "Derechos de autor %s."
+
+#. TRANSLATORS: This string is markup and so should not contain any
+#. ampersands (&), less-than signs (<), or greater-than signs (>).
+#: endless/eosattribution.c:402
+msgid "Used with permission."
+msgstr "Utilizada con permiso."
