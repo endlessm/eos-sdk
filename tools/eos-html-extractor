@@ -21,18 +21,21 @@ class TranslatableHTMLParser(HTMLParser):
         if data not in self._translatable_strings:
             return
 
-        # Determine if comment should be included
-        most_recent_comment = self._comments_with_line_numbers[-1]
-        comment_string, comment_line = most_recent_comment
         code_line = self.getpos()[0]
+        optional_comment = None
 
-        # Comment takes up at least one line by default (hence the +1)
-        comment_length = len(re.findall(r'\n', comment_string)) + 1
-        optional_comment = ''
+        if self._comments_with_line_numbers:
+            # Determine if comment should be included
+            most_recent_comment = self._comments_with_line_numbers[-1]
+            comment_string, comment_line = most_recent_comment
 
-        # If the comment immediately preceded this string, include it
-        if comment_line + comment_length == code_line:
-            optional_comment = ' '.join(comment_string.split())
+            # Comment takes up at least one line by default (hence the +1)
+            comment_length = len(re.findall(r'\n', comment_string)) + 1
+
+            # If the comment immediately preceded this string, include it
+            if comment_line + comment_length == code_line:
+                optional_comment = ' '.join(comment_string.split())
+
         self.all_translatable_data.append((data.strip(), code_line, optional_comment))
 
     def handle_comment(self, comment):
@@ -68,6 +71,6 @@ parser.feed(page)
 # Write out all info about the translatable strings found in this file
 for string, line_num, optional_comment in parser.all_translatable_data:
     print('#line {line} "{path}"'.format(line=line_num, path=final_path))
-    if optional_comment != '':
+    if optional_comment:
         print('// ' + optional_comment)
     print('_("{string}");'.format(string=string))
