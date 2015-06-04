@@ -18,7 +18,8 @@ const programVersion = "@PACKAGE_VERSION@";
  * Print command-line help message.
  */
 function usage() {
-    print('Extracts translatable strings fron JSON configuration file.\n');
+    print('Extracts translatable strings from JSON configuration file.\n' +
+        'This is xgettext for JSON.\n');
     print('Usage: %s [Options | <INPUT-FILE> <TOP-SRCDIR>]\n'.format(
         System.programInvocationName));
     print('Options:');
@@ -33,7 +34,7 @@ function usage() {
  * Print command-line version output.
  */
 function version() {
-    print('%s %s - Discover unit tests in a source tree'.format(
+    print('%s %s'.format(
         System.programInvocationName, programVersion));
     System.exit(0);
 }
