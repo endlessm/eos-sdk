@@ -1,0 +1,57 @@
+eos-sdk (2:0.1.0) unstable; urgency=low
+
+  * Inaugurate 0.1 unstable series.
+
+ -- Philip Chimento <philip@endlessm.com>  Tue, 10 Feb 2015 12:05:18 -0800
+
+eos-sdk (2:0.0.0) unstable; urgency=low
+
+  * Bump epoch to 2, because epoch 1 did not get the proper Version tags
+    and ended up 1:1.3.0. [endlessm/eos-sdk#2648].
+
+ -- Philip Chimento <philip@endlessm.com>  Fri, 16 Jan 2015 16:53:43 -0800
+
+eos-sdk (1:0.0.0) unstable; urgency=low
+
+  * Start over at version 0.0.0 since we are doing API versioning now.
+    [endlessm/eos-sdk#418].
+  * Add epoch to version number so that backwards versioning doesn't
+    break things.
+
+ -- Philip Chimento <philip@endlessm.com>  Fri, 27 Jun 2014 12:13:11 -0700
+
+eos-sdk (1.1.5~dev1) unstable; urgency=low
+
+  * Updating version to 1.1.5~dev1
+
+ -- Roddy Shuler <roddy@endlessm.com>  Thu, 12 Sep 2013 13:36:08 -0500
+
+eos-sdk (1.1.4~dev1) unstable; urgency=low
+
+  * Updating version to 1.1.4~dev1
+
+ -- Roddy Shuler <roddy@endlessm.com>  Mon, 12 Aug 2013 15:36:31 -0500
+
+eos-sdk (1.1.2~dev2) unstable; urgency=low
+
+  * Updating version to 1.1.2~dev2
+
+ -- Roddy Shuler <roddy@endlessm.com>  Mon, 01 Jul 2013 11:42:03 -0500
+
+eos-sdk (1.1.2~dev1) unstable; urgency=low
+
+  * Updating version to 1.1.2~dev1
+
+ -- Roddy Shuler <roddy@endlessm.com>  Thu, 20 Jun 2013 14:38:13 -0500
+
+eos-sdk (1.1.1~dev5) unstable; urgency=low
+
+  * Updating version to 1.1.1~dev5
+
+ -- Roddy Shuler <roddy@endlessm.com>  Wed, 12 Jun 2013 13:59:42 -0500
+
+eos-sdk (1.0) unstable; urgency=low
+
+  * Initial release
+
+ -- Philip Chimento <philip@endlessm.com>  Wed, 10 Apr 2013 17:43:06 +0100
