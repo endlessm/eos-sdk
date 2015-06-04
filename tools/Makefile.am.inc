@@ -3,6 +3,7 @@
 bin_SCRIPTS = \
 	tools/eos-application-manifest/eos-application-manifest \
 	tools/eos-json-extractor/eos-json-extractor \
+	tools/eos-html-extractor \
 	$(NULL)
 
 # Use the following script to replace $datadir inside the script, as suggested
@@ -29,6 +30,7 @@ CLEANFILES += \
 EXTRA_DIST += \
 	tools/eos-application-manifest/eos-application-manifest.in \
 	tools/eos-json-extractor/eos-json-extractor.in \
+	tools/eos-html-extractor \
 	$(NULL)
 
 commandsdir = $(libexecdir)/eos-application-manifest/commands

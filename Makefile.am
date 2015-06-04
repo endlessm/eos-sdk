@@ -302,8 +302,9 @@ include $(top_srcdir)/tools/Makefile.am.inc
 # # # INSTALLED M4 MACROS # # #
 
 m4dir = ${datadir}/aclocal
-m4_DATA = \
+dist_m4_DATA = \
 	m4/eos-coverage.m4 \
+	m4/eos-i18n-extras.m4 \
 	$(NULL)
 
 # # # TESTS # # #
