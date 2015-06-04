@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2013-2015 Endless Mobile, Inc.
 
@@ -6,16 +6,16 @@ import argparse
 import os.path
 import re
 from bs4 import BeautifulSoup
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 
 
 # Parser that adds line numbers to the HTML strings that need translating
 class TranslatableHTMLParser(HTMLParser):
     def __init__(self, translatable_strings):
-        HTMLParser.__init__(self)
+        super().__init__()
         self.all_translatable_data = []
         self._comments_with_line_numbers = []
-        self._translatable_strings = translatable_strings
+        self._translatable_strings = set(translatable_strings)
 
     def handle_data(self, data):
         if data not in self._translatable_strings:
@@ -61,8 +61,7 @@ soup = BeautifulSoup(page)
 
 # Extract all translatable strings from that HTML
 translatable_divs = soup.find_all(attrs={'name': 'translatable'})
-translatable_strings = map(lambda div: div.contents[0].encode('utf-8'),
-    translatable_divs)
+translatable_strings = map(lambda div: div.contents[0], translatable_divs)
 
 # Find the line numbers for those strings
 parser = TranslatableHTMLParser(translatable_strings)
