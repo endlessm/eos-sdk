@@ -3,9 +3,8 @@
 # Copyright 2013-2015 Endless Mobile, Inc.
 
 import argparse
-import os
+import os.path
 import re
-import urllib
 from bs4 import BeautifulSoup
 from HTMLParser import HTMLParser
 
@@ -47,7 +46,8 @@ top_dir = args.top_srcdir
 final_path = os.path.relpath(html_file, top_dir)
 
 # Create the BeautifulSoup HTML-parsing object
-page = urllib.urlopen(urllib.pathname2url(html_file)).read()
+with open(html_file) as f:
+    page = f.read()
 soup = BeautifulSoup(page)
 
 # Extract all translatable strings from that HTML
