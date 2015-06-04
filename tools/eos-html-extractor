@@ -7,7 +7,8 @@ Created on July 19, 2013
 # This scraper depends on the BeautifulSoup4 module, make sure
 # it's installed by running the following:
 # apt-get install python-bs4
-import os, re, sys, urllib
+import argparse
+import os, re, urllib
 from bs4 import BeautifulSoup
 from HTMLParser import HTMLParser
 
@@ -31,15 +32,17 @@ class TranslatableHTMLParser(HTMLParser):
     def handle_comment(self, comment):
         comments_with_line_numbers.append((comment, HTMLParser.getpos(self)[0]))
 
-# Ensure proper usage
-if len(sys.argv) != 3:
-    print("Usage:")
-    print("  html_extractor.py <input-file> <top-srcdir>")
-    sys.exit(1)
+parser = argparse.ArgumentParser(description='Extract translatable strings ' +
+    'from HTML files. This is xgettext for HTML.')
+parser.add_argument('input_file', type=str,
+    help='Input file to scan')
+parser.add_argument('top_srcdir', type=str, nargs='?', default='.',
+    help='Top-level source directory (for printing correct #line directives)')
+args = parser.parse_args()
 
 # Path from current directory to top-level app directory
-html_file = sys.argv[1]
-top_dir = sys.argv[2]
+html_file = args.input_file
+top_dir = args.top_srcdir
 final_path = os.path.relpath(html_file, top_dir)
 
 # Create the BeautifulSoup HTML-parsing object
