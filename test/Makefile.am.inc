@@ -43,6 +43,7 @@ EXTRA_DIST += \
 
 javascript_tests = \
 	test/tools/eos-application-manifest/testInit.js \
+	test/tools/testHtmlExtractor.js \
 	test/webhelper/testTranslate.js \
 	test/webhelper/testTranslate2.js \
 	test/webhelper/testWebActions.js \
@@ -51,7 +52,10 @@ javascript_tests = \
 	test/endless/testCustomContainer.js \
 	test/endless/testTopbarNavButton.js \
 	$(NULL)
-EXTRA_DIST += $(javascript_tests)
+EXTRA_DIST += \
+	$(javascript_tests) \
+	test/tools/test.html \
+	$(NULL)
 
 # Run tests when running 'make check'
 TESTS = \

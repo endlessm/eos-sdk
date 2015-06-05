@@ -4,7 +4,8 @@
   "spec_files": [
     "test/endless",
     "test/webhelper",
-    "test/tools/eos-application-manifest"
+    "test/tools/eos-application-manifest",
+    "test/tools/testHtmlExtractor.js"
   ],
   "exclude": [
     "test/webhelper/testTranslate.js",
