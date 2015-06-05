@@ -9,7 +9,11 @@
 #include "eoslicense.h"
 
 /**
- * SECTION:
+ * SECTION:license
+ * @short_description: License provider for applications
+ * @title: License
+ *
+ * It provides an API to serve license information and files to applications.
  */
 
 /* These are the recognized string values for the "license" field. Any other
@@ -141,6 +145,8 @@ get_license_index (const gchar *license)
  * eos_get_license_display_name:
  * @license: The license name
  *
+ * Retrieves the display name for the specified license and the current locale.
+ *
  * Returns: A string for the specified @license name and the
  *          current locale.
  * Since: 0.4
@@ -164,6 +170,8 @@ eos_get_license_display_name (const gchar *license)
 /**
  * eos_get_license_file:
  * @license: The license name
+ *
+ * Retrieves a GFile for the specified licene and the current locale.
  *
  * Returns: (transfer full): A GFile for the specified @license name and the
  *                           current locale. It returns NULL if the license
