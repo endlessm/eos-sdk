@@ -55,8 +55,8 @@ top_dir = args.top_srcdir
 final_path = os.path.relpath(html_file, top_dir)
 
 # Create the BeautifulSoup HTML-parsing object
-with open(html_file) as f:
-    page = f.read()
+with open(html_file, 'rb') as f:
+    page = f.read().decode('utf-8')
 soup = BeautifulSoup(page)
 
 # Extract all translatable strings from that HTML
