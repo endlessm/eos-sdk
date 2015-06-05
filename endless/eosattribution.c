@@ -8,6 +8,7 @@
 #include "eosattribution-private.h"
 #include "eoscellrendererpixbuflink-private.h"
 #include "eoscellrenderertextlink-private.h"
+#include "eoslicense.h"
 
 typedef struct
 {
@@ -42,69 +43,6 @@ enum
 };
 
 static GParamSpec *eos_attribution_props[NPROPS] = { NULL, };
-
-/* These are the recognized string values for the "license" field. Any other
-license must be clarified in the comments, or linked to with the "license_uri"
-field. Make sure to add new values to the table "image-attribution-licenses" in
-the documentation of EosApplication and to the two arrays below this one. */
-static gchar * const recognized_licenses[] = {
-  "Public domain",
-  "CC0 1.0",
-  "CC BY 2.0",
-  "CC BY 3.0",
-  "CC BY-SA 2.0",
-  "CC BY-SA 2.5",
-  "CC BY-SA 3.0",
-  "CC BY-SA 4.0",
-  "CC BY-NC 2.0",
-  "CC BY-NC 3.0",
-  "CC BY-NC-SA 2.0",
-  "CC BY-ND 2.0",
-  "CC BY-ND 3.0",
-  NULL
-};
-
-static gchar * const license_display_names[] = {
-  /* TRANSLATORS: These names should be translated as the official names of the
-  licenses in your language. Note: these names are markup, and so should not
-  contain any ampersands (&), less-than signs (<) or greater-than signs (>). */
-  N_("Public domain"),
-  N_("CC0 1.0 (Public domain)"),
-  N_("Creative Commons Attribution 2.0"),
-  N_("Creative Commons Attribution 3.0"),
-  N_("Creative Commons Attribution-ShareAlike 2.0"),
-  N_("Creative Commons Attribution-ShareAlike 2.5 Generic"),
-  N_("Creative Commons Attribution-ShareAlike 3.0"),
-  N_("Creative Commons Attribution-ShareAlike 4.0 International"),
-  N_("Creative Commons Attribution-NonCommercial 2.0"),
-  N_("Creative Commons Attribution-NonCommercial 3.0"),
-  N_("Creative Commons Attribution-NonCommercial-ShareAlike 2.0 Generic"),
-  N_("Creative Commons Attribution-NoDerivs 2.0"),
-  N_("Creative Commons Attribution-NoDerivs 3.0"),
-  NULL
-};
-
-static gchar * const license_uris[] = {
-  NULL,
-  /* TRANSLATORS: These URIs should be translated as a link to the license page
-  in your language. For example, for Spanish,
-  "http://creativecommons.org/licenses/by/3.0/" should become
-  "http://creativecommons.org/licenses/by/3.0/deed.es". However, if no such page
-  exists, then leave these untranslated. */
-  N_("http://creativecommons.org/publicdomain/zero/1.0/"),
-  N_("http://creativecommons.org/licenses/by/2.0/"),
-  N_("http://creativecommons.org/licenses/by/3.0/"),
-  N_("http://creativecommons.org/licenses/by-sa/2.0/"),
-  N_("http://creativecommons.org/licenses/by-sa/2.5/"),
-  N_("http://creativecommons.org/licenses/by-sa/3.0/"),
-  N_("http://creativecommons.org/licenses/by-sa/4.0/"),
-  N_("http://creativecommons.org/licenses/by-nc/2.0/"),
-  N_("http://creativecommons.org/licenses/by-nc/3.0/"),
-  N_("http://creativecommons.org/licenses/by-nc-sa/2.0/"),
-  N_("http://creativecommons.org/licenses/by-nd/2.0/"),
-  N_("http://creativecommons.org/licenses/by-nd/3.0/"),
-  NULL
-};
 
 enum
 {
@@ -274,13 +212,13 @@ render_license_link (GtkTreeViewColumn *column,
                      GtkTreeModel      *model,
                      GtkTreeIter       *iter)
 {
+  gchar *license_code;
   gchar *license_uri;
-  gint license_index;
   gtk_tree_model_get (model, iter,
-                      COLUMN_LICENSE, &license_index,
+                      COLUMN_LICENSE, &license_code,
                       COLUMN_LICENSE_URI, &license_uri,
                       -1);
-  if (license_index != -1)
+  if (license_code != NULL)
     {
       /* TRANSLATORS: %s will be replaced with the name of an image license,
       such as "Public domain" or "Creative Commons Attribution". These names are
@@ -288,7 +226,7 @@ render_license_link (GtkTreeViewColumn *column,
       string. Note: this string is markup, and so should not contain any
       ampersands (&), less-than signs (<), or greater-than signs (>). */
       gchar *license_string = g_strdup_printf (_("%s."),
-                                               gettext (license_display_names[license_index]));
+                                               gettext (eos_get_license_display_name (license_code)));
       gboolean behave_like_link = (license_uri != NULL);
       g_object_set (renderer,
                     "markup", license_string,
@@ -312,6 +250,7 @@ render_license_link (GtkTreeViewColumn *column,
       g_object_set (renderer, "visible", FALSE, NULL);
     }
 
+  g_free (license_code);
   g_free (license_uri);
 }
 
@@ -423,7 +362,7 @@ eos_attribution_init (EosAttribution *self)
   priv->model = gtk_list_store_new (NUM_MODEL_COLUMNS,
                                     GDK_TYPE_PIXBUF,
                                     G_TYPE_STRING,
-                                    G_TYPE_INT,
+                                    G_TYPE_STRING,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
                                     G_TYPE_STRING,
@@ -615,18 +554,18 @@ eos_attribution_initable_init (GInitable    *initable,
                      "copyright_holder.", resource_path);
           continue;
         }
-      gint license_index = -1;
+
       if (license != NULL)
         {
-          license_index = strv_index (recognized_licenses, license);
-          if (license_index == -1)
-            {
-              g_warning ("License string for image %s not recognized: %s",
-                         resource_path, license);
-              continue;
-            }
           if (license_uri == NULL)
-            license_uri = license_uris[license_index];
+            {
+              GFile *license_file = eos_get_license_file (license);
+              if (license_file != NULL)
+                {
+                  license_uri = g_file_get_uri (license_file);
+                  g_object_unref (license_file);
+                }
+            }
         }
 
       /* Populate a row of the model */
@@ -649,7 +588,7 @@ eos_attribution_initable_init (GInitable    *initable,
       gtk_list_store_set (priv->model, &new_row,
                           COLUMN_PIXBUF, pixbuf,
                           COLUMN_ORIGINAL_URI, original_uri,
-                          COLUMN_LICENSE, license_index,
+                          COLUMN_LICENSE, license,
                           COLUMN_LICENSE_URI, license_uri,
                           COLUMN_CREDIT, credit,
                           COLUMN_CREDIT_CONTACT, credit_contact,

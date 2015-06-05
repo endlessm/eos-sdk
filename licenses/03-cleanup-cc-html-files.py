@@ -6,23 +6,34 @@ import re
 import sys
 
 def main(argv):
-    source_dir = 'creativecommons/'
-
-    licenses = [
-        'CC-BY-3.0',
-        'CC-BY-4.0',
-        'CC-BY-SA-3.0',
-        'CC-BY-SA-4.0',
-        'CC-BY-ND-2.0',
-        'CC-BY-ND-3.0',
-    ]
-
     langs = ['C', 'ar', 'es', 'fr', 'pt_BR']
 
-    for license in licenses:
-        cleanup_legalcode_file(source_dir, license)
+    # Clean up Public domain license files
+    cleanup_legalcode_file('publicdomain/', 'CC0-1.0')
+    for lang in langs:
+        cleanup_deed_file('publicdomain/', 'CC0-1.0', lang)
+    print ''
+
+    # Clean up Creative Commons license files
+    cc_licenses = [
+        'CC-BY-2.0',
+        'CC-BY-3.0',
+        'CC-BY-4.0',
+        'CC-BY-NC-2.0',
+        'CC-BY-NC-3.0',
+        'CC-BY-NC-SA-2.0',
+        'CC-BY-ND-2.0',
+        'CC-BY-ND-3.0',
+        'CC-BY-SA-2.0',
+        'CC-BY-SA-2.5',
+        'CC-BY-SA-3.0',
+        'CC-BY-SA-4.0',
+    ]
+
+    for license in cc_licenses:
+        cleanup_legalcode_file('creativecommons/', license)
         for lang in langs:
-            cleanup_deed_file(source_dir, license, lang)
+            cleanup_deed_file('creativecommons/', license, lang)
         print ''
 
 def cleanup_legalcode_file(src_dir, license):
@@ -42,11 +53,11 @@ def cleanup_legalcode_file(src_dir, license):
                 script.extract()
 
         # Make attributes relative
-        rewrite_attr(soup, 'img', 'src', '.*creativecommons.org/images/', '../images/')
-        rewrite_attr(soup, 'img', 'src', '^/images/', '../images/')
-        rewrite_attr(soup, 'link', 'href', '.*creativecommons.org/includes/', '../includes/')
-        rewrite_attr(soup, 'link', 'href', '^/includes/', '../includes/')
-        rewrite_attr(soup, 'script', 'src', '.*creativecommons.org/includes/', '../includes/')
+        rewrite_attr(soup, 'img', 'src', '.*creativecommons.org/images/', '../../images/')
+        rewrite_attr(soup, 'img', 'src', '^/images/', '../../images/')
+        rewrite_attr(soup, 'link', 'href', '.*creativecommons.org/includes/', '../../includes/')
+        rewrite_attr(soup, 'link', 'href', '^/includes/', '../../includes/')
+        rewrite_attr(soup, 'script', 'src', '.*creativecommons.org/includes/', '../../includes/')
         rewrite_attr(soup, 'a', 'href', '^creativecommons.org/', 'http://creativecommons.org/')
         rewrite_attr(soup, 'a', 'href', '^//creativecommons.org/', 'http://creativecommons.org/')
 
@@ -83,13 +94,13 @@ def cleanup_deed_file(src_dir, license, lang):
         # Make attributes relative
         rewrite_attr(soup, 'a', 'href', '.*legalcode$', '../legalcode/' + license + '-legalcode.html')
         rewrite_attr(soup, 'a', 'href', '^/choose/', 'http://creativecommons.org/choose/')
-        rewrite_attr(soup, 'img', 'src', '.*creativecommons.org/images/', '../images/')
-        rewrite_attr(soup, 'img', 'src', '^/images/', '../images/')
-        rewrite_attr(soup, 'link', 'href', '.*creativecommons.org/includes/', '../includes/')
-        rewrite_attr(soup, 'link', 'href', '^/includes/', '../includes/')
-        rewrite_attr(soup, 'script', 'src', '.*creativecommons.org/includes/', '../includes/')
-        rewrite_attr(soup, 'script', 'src', '^/includes/', '../includes/')
-        rewrite_attr(soup, 'script', 'src', '^//scraper.creativecommons.org/js/deed.js', '../includes/deed.js')
+        rewrite_attr(soup, 'img', 'src', '.*creativecommons.org/images/', '../../images/')
+        rewrite_attr(soup, 'img', 'src', '^/images/', '../../images/')
+        rewrite_attr(soup, 'link', 'href', '.*creativecommons.org/includes/', '../../includes/')
+        rewrite_attr(soup, 'link', 'href', '^/includes/', '../../includes/')
+        rewrite_attr(soup, 'script', 'src', '.*creativecommons.org/includes/', '../../includes/')
+        rewrite_attr(soup, 'script', 'src', '^/includes/', '../../includes/')
+        rewrite_attr(soup, 'script', 'src', '^//scraper.creativecommons.org/js/deed.js', '../../includes/deed.js')
 
         # Remove inline JS
         for script in soup.findAll('script'):
