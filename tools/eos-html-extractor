@@ -5,6 +5,7 @@
 import argparse
 import os.path
 import re
+import sys
 from bs4 import BeautifulSoup
 from html.parser import HTMLParser
 
@@ -47,16 +48,20 @@ parser.add_argument('input_file', type=str,
     help='Input file to scan')
 parser.add_argument('top_srcdir', type=str, nargs='?', default='.',
     help='Top-level source directory (for printing correct #line directives)')
+parser.add_argument('-o', '--output', default=sys.stdout,
+    type=argparse.FileType('w', encoding='utf-8'),
+    help='File to write (default: stdout)')
 args = parser.parse_args()
 
 # Path from current directory to top-level app directory
 html_file = args.input_file
 top_dir = args.top_srcdir
 final_path = os.path.relpath(html_file, top_dir)
+out_file = args.output
 
 # Create the BeautifulSoup HTML-parsing object
-with open(html_file, 'rb') as f:
-    page = f.read().decode('utf-8')
+with open(html_file, encoding='utf-8') as f:
+    page = f.read()
 soup = BeautifulSoup(page)
 
 # Extract all translatable strings from that HTML
@@ -69,7 +74,7 @@ parser.feed(page)
 
 # Write out all info about the translatable strings found in this file
 for string, line_num, optional_comment in parser.all_translatable_data:
-    print('#line {line} "{path}"'.format(line=line_num, path=final_path))
+    out_file.write('#line {line} "{path}"\n'.format(line=line_num, path=final_path))
     if optional_comment:
-        print('// ' + optional_comment)
-    print('_("{string}");'.format(string=string))
+        out_file.write('// {}\n'.format(optional_comment))
+    out_file.write('_("{string}");\n'.format(string=string))
