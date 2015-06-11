@@ -25,7 +25,7 @@ const TopbarNavButton = new Lang.Class({
 
         let back_button_image;
         let forward_button_image;
-        let is_rtl = this.get_default_direction() === Gtk.TextDirection.RTL ? true : false;
+        let is_rtl = (Gtk.Widget.get_default_direction() === Gtk.TextDirection.RTL);
         if (is_rtl) {
             back_button_image = 'topbar-go-previous-rtl-symbolic';
             forward_button_image = 'topbar-go-next-rtl-symbolic';
