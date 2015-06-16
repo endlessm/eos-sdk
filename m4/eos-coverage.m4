@@ -350,7 +350,7 @@ _eos_coverage_outputs += $(_eos_js_coverage_data_output_file)
         # cond evalutes to a non-empty string. The documentation on this
         # point suggests that conditional operators can be used. This is
         # misleading.
-        EOS_JS_COVERAGE_LOG_FLAGS='$(addprefix --coverage-prefix=,$(foreach p,$(filter-out $(subst */,,$(EOS_COVERAGE_BLACKLIST_PATTERNS)),$(filter-out $(subst *,%,$(EOS_COVERAGE_BLACKLIST_PATTERNS)),$(EOS_JS_COVERAGE_FILES))),$(if $(filter resource,$(firstword $(subst :, ,$(p)))),$(p),$(abs_top_srcdir)/$(p)))) --coverage-output=$(_eos_js_coverage_trace_path)'
+        EOS_JS_COVERAGE_LOG_FLAGS='$(addprefix --coverage-prefix=,$(foreach p,$(filter-out $(subst */,,$(EOS_COVERAGE_BLACKLIST_PATTERNS)),$(filter-out $(subst *,%,$(EOS_COVERAGE_BLACKLIST_PATTERNS)),$(EOS_JS_COVERAGE_FILES))),$(if $(filter resource,$(firstword $(subst :, ,$(p)))),$(p),$(abspath $(abs_top_srcdir)/$(p))))) --coverage-output=$(_eos_js_coverage_trace_path)'
 ], [
         EOS_JS_COVERAGE_RULES=''
 ])
