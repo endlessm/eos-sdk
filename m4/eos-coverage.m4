@@ -126,9 +126,12 @@ AC_DEFUN_ONCE([EOS_COVERAGE_REPORT], [
             ])
 
             AC_MSG_CHECKING([where to put coverage data])
-            AC_ARG_VAR([EOS_COVERAGE_DIR], [Where to put coverage data])
             EOS_DEFAULT_COVERAGE_DIR='$(abs_top_builddir)/_coverage'
-            AS_IF([test -n "$EOS_COVERAGE_DIR"], [
+            AC_ARG_WITH([coverage-dir], [
+                AS_HELP_STRING([--with-coverage-dir=DIRECTORY],
+                    [Where to put coverage reports @<:@default=_coverage@:>@])
+            ], [
+                EOS_COVERAGE_DIR="$withval"
                 AC_MSG_RESULT([in $EOS_COVERAGE_DIR])
             ], [
                 EOS_COVERAGE_DIR="$EOS_DEFAULT_COVERAGE_DIR"
