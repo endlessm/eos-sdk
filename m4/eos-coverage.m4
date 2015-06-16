@@ -35,8 +35,10 @@ dnl If you wish to use the JavaScript coverage function, Makefile-jasmine.am.inc
 dnl should be included before calling EOS_COVERAGE_RULES.
 dnl
 dnl Add clean-coverage to the clean-local target in your Makefile to get the
-dnl clean rules for the coverage data. Or, if clean-local is not defined in your
-dnl Makefile, you can just use EOS_COVERAGE_CLEAN_RULES.
+dnl clean rules for the coverage data.
+dnl
+dnl You should also add coverage-install-exec-hook to install-exec-local to
+dnl ensure that coverage reports are generated on distcheck.
 dnl
 dnl Variables that affect the operation of the inserted make rules:
 dnl
@@ -74,6 +76,25 @@ AC_DEFUN_ONCE([EOS_COVERAGE_REPORT], [
         [AS_HELP_STRING([--enable-coverage],
             [Generate code coverage statistics when running tests @<:@default=no@:>@])
     ])
+
+    # The --enable-coverage-before-install flag is internal and implies
+    # --enable-coverage. It should be used by DISTCHECK_CONFIGURE_FLAGS
+    # such that coverage reports will be generated as part of distcheck, running
+    # after the check target has completed but before the install-exec-am
+    # target runs
+    AC_ARG_ENABLE([coverage-before-install],
+        [AS_HELP_STRING([--enable-coverage-before-install],
+            [Generate code coverage statistics after running the check target @<:@default=no@:>@])
+    ])
+
+    # This needs to be defined here so that AC_MSG_RESULT sees it
+    EOS_COVERAGE_BEFORE_INSTALL_REQUESTED=no
+    AC_MSG_CHECKING(whether automatic generation of coverage reports was requested)
+    AS_IF([test "x$enable_coverage_before_install" = "xyes"], [
+        EOS_COVERAGE_BEFORE_INSTALL_REQUESTED=yes
+        enable_coverage=yes
+    ])
+    AC_MSG_RESULT([$EOS_COVERAGE_BEFORE_INSTALL_REQUESTED])
 
     # This needs to be defined here so that AC_MSG_RESULT sees it
     EOS_COVERAGE_REQUESTED=no
@@ -184,6 +205,21 @@ AC_DEFUN_ONCE([EOS_COVERAGE_REPORT], [
             ])
             AC_MSG_CHECKING(whether code coverage support can be enabled)
             AC_MSG_RESULT([$EOS_ENABLE_COVERAGE])
+
+            # EOS_ENABLE_COVERAGE_BEFORE_INSTALL is set to "no" unless
+            # EOS_COVERAGE_BEFORE_INSTALL_REQUESTED is set and
+            # EOS_ENABLE_COVERAGE is set and
+            # EOS_HAVE_COBERTURA is set
+            EOS_ENABLE_COVERAGE_BEFORE_INSTALL=no
+            AS_IF([test "x$EOS_COVERAGE_BEFORE_INSTALL_REQUESTED" = "xyes"], [
+                AS_IF([test "x$EOS_ENABLE_COVERAGE" = "xyes"], [
+                    AS_IF([test "x$EOS_HAVE_COBERTURA" = "xyes"], [
+                        EOS_ENABLE_COVERAGE_BEFORE_INSTALL=yes
+                    ])
+                ])
+            ])
+            AC_MSG_CHECKING(whether cobertura reports will be generated on make check)
+            AC_MSG_RESULT([$EOS_ENABLE_COVERAGE_BEFORE_INSTALL])
         ])
     ])
 
@@ -396,15 +432,29 @@ eos-clean-c-coverage: eos-c-coverage
 '
 ])
 
+    AS_IF([test "x$EOS_ENABLE_COVERAGE_BEFORE_INSTALL" = "xyes"], [
+        EOS_COVERAGE_INSTALL_EXEC_LOCAL_TARGET='
+coverage-install-exec-local-hook: coverage-cobertura
+'
+], [
+        AS_IF([test "x$EOS_ENABLE_COVERAGE" = "xyes"], [
+            EOS_COVERAGE_INSTALL_EXEC_LOCAL_TARGET='
+coverage-install-exec-local-hook:
+	@echo "To generate a coverage report, use either make coverage-cobertura or coverage-lcov"
+'
+], [
+            EOS_COVERAGE_INSTALL_EXEC_LOCAL_TARGET='
+coverage-install-exec-local-hook:
+	@echo "Coverage report generation was not requested, so not generating coverage report"
+'
+])
+])
+
     EOS_COVERAGE_RULES_FOOTER='
-.PHONY: eos-clean-c-coverage eos-c-coverage clean-coverage eos-collect-coverage coverage-cobertura coverage-genhtml
+.PHONY: eos-clean-c-coverage eos-c-coverage clean-coverage eos-collect-coverage coverage-cobertura coverage-genhtml coverage-install-exec-local-hook
   '
 
-    EOS_COVERAGE_CLEAN_RULES='
-clean-local: clean-coverage
-'
-
-    EOS_COVERAGE_RULES="$EOS_COVERAGE_RULES_HEADER $EOS_GENHTML_COVERAGE_RULES $EOS_COBERTURA_COVERAGE_RULES $EOS_C_COVERAGE_RULES $EOS_JS_COVERAGE_RULES $EOS_COVERAGE_RULES_TARGETS $EOS_COVERAGE_RULES_FOOTER"
+    EOS_COVERAGE_RULES="$EOS_COVERAGE_RULES_HEADER $EOS_GENHTML_COVERAGE_RULES $EOS_COBERTURA_COVERAGE_RULES $EOS_C_COVERAGE_RULES $EOS_JS_COVERAGE_RULES $EOS_COVERAGE_RULES_TARGETS $EOS_COVERAGE_INSTALL_EXEC_LOCAL_TARGET $EOS_COVERAGE_RULES_FOOTER"
 
     # Substitute at the top first
     AC_SUBST([EOS_COVERAGE_DIR])
