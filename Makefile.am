@@ -365,3 +365,4 @@ libwebhelper2private_la_LDFLAGS += @EOS_C_COVERAGE_LDFLAGS@
 wh2extension_la_LDFLAGS += @EOS_C_COVERAGE_LDFLAGS@
 
 install-exec-local:: coverage-install-exec-local-hook
+clean-local:: clean-coverage
