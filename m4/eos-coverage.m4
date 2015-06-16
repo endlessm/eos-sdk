@@ -125,7 +125,15 @@ AC_DEFUN_ONCE([EOS_COVERAGE_REPORT], [
                     ])
             ])
 
-            EOS_COVERAGE_SUBDIR='_coverage'
+            AC_MSG_CHECKING([where to put coverage data])
+            AC_ARG_VAR([EOS_COVERAGE_DIR], [Where to put coverage data])
+            EOS_DEFAULT_COVERAGE_DIR='$(abs_top_builddir)/_coverage'
+            AS_IF([test -n "$EOS_COVERAGE_DIR"], [
+                AC_MSG_RESULT([in $EOS_COVERAGE_DIR])
+            ], [
+                EOS_COVERAGE_DIR="$EOS_DEFAULT_COVERAGE_DIR"
+                AC_MSG_RESULT([in default location (_coverage)])
+            ])
 
             AS_IF([test "x$EOS_HAVE_C_COVERAGE" = "xyes" || test "x$EOS_HAVE_JS_COVERAGE" = "xyes"], [
                 AC_PATH_PROG([GENHTML], [genhtml], [notfound])
@@ -187,10 +195,10 @@ _eos_collect_coverage_targets =
 _eos_clean_coverage_targets =
 
 # Full path to coverage report folder
-_eos_coverage_report_path := $(abs_top_builddir)/$(EOS_COVERAGE_SUBDIR)/report
+_eos_coverage_report_path := $(EOS_COVERAGE_DIR)/report
 
 # Full path to coverage tracefile output
-_eos_coverage_trace_path := $(abs_top_builddir)/$(EOS_COVERAGE_SUBDIR)/output
+_eos_coverage_trace_path := $(EOS_COVERAGE_DIR)/output
 
 '
 
@@ -220,8 +228,14 @@ eos-collect-coverage: $(_eos_collect_coverage_targets)
 
 # The clean-coverage target runs the language specific
 # clean rules and also cleans the generated html reports
+#
+# NOTE: We only delete the default coverage dir and not
+# any overriden coverage dir. The reason is that the user
+# may have specified a coverage dir that is outside
+# the source or build directory and wants to keep
+# coverage reports for some later use.
 clean-coverage: $(_eos_clean_coverage_targets)
-	rm -rf $(EOS_COVERAGE_SUBDIR)
+	rm -rf $(EOS_DEFAULT_COVERAGE_DIR)
 '
   ], [
         EOS_COVERAGE_RULES_TARGETS='
@@ -390,7 +404,8 @@ clean-local: clean-coverage
     EOS_COVERAGE_RULES="$EOS_COVERAGE_RULES_HEADER $EOS_GENHTML_COVERAGE_RULES $EOS_COBERTURA_COVERAGE_RULES $EOS_C_COVERAGE_RULES $EOS_JS_COVERAGE_RULES $EOS_COVERAGE_RULES_TARGETS $EOS_COVERAGE_RULES_FOOTER"
 
     # Substitute at the top first
-    AC_SUBST([EOS_COVERAGE_SUBDIR])
+    AC_SUBST([EOS_COVERAGE_DIR])
+    AC_SUBST([EOS_DEFAULT_COVERAGE_DIR])
 
     # We only want to define this to use it for full substitution, not as a variable
     AC_SUBST([EOS_COVERAGE_RULES])
