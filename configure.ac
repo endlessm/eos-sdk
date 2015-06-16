@@ -81,7 +81,7 @@ AC_SUBST(EOS_SDK_LT_VERSION_INFO)
 GLIB_REQUIREMENT="glib-2.0 >= 2.38"
 GOBJECT_REQUIREMENT="gobject-2.0"
 GIO_REQUIREMENT="gio-2.0"
-GTK_REQUIREMENT="gtk+-3.0 >= 3.10"
+GTK_REQUIREMENT="gtk+-3.0 >= 3.16"
 JSON_GLIB_REQUIREMENT="json-glib-1.0 >= 0.12"
 WEBKIT2_REQUIREMENT="webkit2gtk-4.0"
 # These go into the pkg-config file as Requires: and Requires.private:
