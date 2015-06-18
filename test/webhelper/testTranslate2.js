@@ -87,9 +87,10 @@ describe('WebHelper2 translator', function () {
     });
 
     describe('translating a page', function () {
-        let webview;
+        let webview, gettext_spy;
+        const MINIMAL_HTML = '<p name="translatable">Translate Me</p>';
 
-        function run_loop() {
+        function run_loop(html=MINIMAL_HTML) {
             webview.connect('load-changed', (webview, event) => {
                 if (event === WebKit2.LoadEvent.FINISHED) {
                     webhelper.translate_html(webview, null, (obj, res) => {
@@ -98,18 +99,17 @@ describe('WebHelper2 translator', function () {
                     });
                 }
             });
-            webview.load_html('<html><body><p name="translatable">Translate Me</p></body></html>',
-                null);
+            webview.load_html('<html><body>' + html + '</body></html>', null);
             Mainloop.run('webhelper2');
         }
 
         beforeEach(function () {
             webview = new WebKit2.WebView();
+            gettext_spy = jasmine.createSpy('gettext_spy').and.callFake((s) => s);
+            webhelper.set_gettext(gettext_spy);
         });
 
         it('translates a string', function () {
-            let gettext_spy = jasmine.createSpy('gettext_spy').and.callFake((s) => s);
-            webhelper.set_gettext(gettext_spy);
             run_loop();
             expect(gettext_spy).toHaveBeenCalledWith('Translate Me');
         });
@@ -137,6 +137,13 @@ describe('WebHelper2 translator', function () {
                 }
             });
             webview.load_html('<html><body></body></html>', null);
+        });
+
+        it('normalizes a string before translating it', function () {
+            run_loop('<p name="translatable">\n\
+                Translate       Me\n\
+                </p>');
+            expect(gettext_spy).toHaveBeenCalledWith('Translate Me');
         });
     });
 

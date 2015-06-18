@@ -7,7 +7,9 @@ _("Finance Builder");\n\
 // TRANSLATORS: This is a test of UTF-8 encoded characters\n\
 _("My Bü∂get");\n\
 #line 13 "test/tools/test.html"\n\
-_("Choose a template");\n';
+_("Choose a template");\n\
+#line 21 "test/tools/test.html"\n\
+_("This is a string that is spread over multiple lines, but that doesn\'t matter to HTML.");\n'
 
 describe('eos-html-extractor', function () {
     it('works correctly at a minimum', function () {

@@ -10,6 +10,9 @@ import sys
 from bs4 import BeautifulSoup
 from html.parser import HTMLParser
 
+def normalize_string(string):
+    return re.sub(r'\s+', ' ', string.strip())
+
 
 # Parser that adds line numbers to the HTML strings that need translating
 class TranslatableHTMLParser(HTMLParser):
@@ -38,7 +41,7 @@ class TranslatableHTMLParser(HTMLParser):
             if comment_line + comment_length == code_line:
                 optional_comment = ' '.join(comment_string.split())
 
-        self.all_translatable_data.append((data.strip(), code_line, optional_comment))
+        self.all_translatable_data.append((normalize_string(data), code_line, optional_comment))
 
     def handle_comment(self, comment):
         self._comments_with_line_numbers.append((comment, self.getpos()[0]))
