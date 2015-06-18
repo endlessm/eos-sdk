@@ -682,17 +682,6 @@ on_window_state_event_cb (GtkWidget           *widget,
   return FALSE;
 }
 
-/* Make sure that the edge finishing does not catch input events */
-static void
-after_edge_finishing_realize_cb (GtkWidget *edge_finishing)
-{
-  cairo_rectangle_int_t empty = { 0, 0, 0, 0 };
-  cairo_region_t *empty_region = cairo_region_create_rectangle (&empty);
-  gdk_window_input_shape_combine_region (gtk_widget_get_window (edge_finishing),
-                                         empty_region, 0, 0);
-  cairo_region_destroy (empty_region);
-}
-
 /* Draw the edge finishing on the two lines on top of the window's content;
 see eos_top_bar_draw() for the two lines inside the top bar */
 static gboolean
@@ -771,8 +760,6 @@ eos_window_init (EosWindow *self)
   gtk_widget_set_has_window (priv->edge_finishing, FALSE);
   gtk_widget_set_size_request (priv->edge_finishing,
                                -1, _EOS_TOP_BAR_EDGE_FINISHING_HEIGHT_PX);
-  g_signal_connect_after (priv->edge_finishing, "realize",
-                          G_CALLBACK (after_edge_finishing_realize_cb), NULL);
   g_signal_connect (priv->edge_finishing, "draw",
                     G_CALLBACK (on_edge_finishing_draw_cb), NULL);
   // We ref the edge finishing as it gets reparented when page managers change
@@ -865,6 +852,9 @@ eos_window_set_page_manager (EosWindow *self,
                            GTK_WIDGET (priv->page_manager));
   gtk_overlay_add_overlay (GTK_OVERLAY (priv->overlay),
                            priv->edge_finishing);
+  gtk_overlay_set_overlay_pass_through(GTK_OVERLAY (priv->overlay),
+                                       priv->edge_finishing,
+                                       TRUE);
   gtk_size_group_add_widget (priv->overlay_size_group,
                              GTK_WIDGET (priv->page_manager));
 
