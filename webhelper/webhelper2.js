@@ -391,14 +391,22 @@ const WebHelper = new Lang.Class({
                 // name appeared
                 let webview_object_path = DBUS_WEBVIEW_EXPORT_PATH +
                     webview.get_page_id();
-                let proxy = new this._ProxyConstructor(connection,
-                    this._extension_name, webview_object_path);
-                if (cancellable)
-                    proxy.TranslateRemote(cancellable,
-                        this._translate_callback.bind(this, task));
-                else
-                    proxy.TranslateRemote(this._translate_callback.bind(this,
-                        task));
+                // Warning: this._ProxyConstructor will do a synchronous
+                // operation unless you pass in a callback
+                new this._ProxyConstructor(connection, this._extension_name,
+                    webview_object_path, (proxy, error) =>
+                {
+                    if (error) {
+                        this._translate_callback(task, null, error);
+                        return;
+                    }
+                    if (cancellable)
+                        proxy.TranslateRemote(cancellable,
+                            this._translate_callback.bind(this, task));
+                    else
+                        proxy.TranslateRemote(this._translate_callback.bind(this,
+                            task));
+                }, cancellable);
             },
             null);  // do nothing when name vanishes
         return task;
