@@ -10,6 +10,10 @@ import sys
 from bs4 import BeautifulSoup
 from html.parser import HTMLParser
 
+ESCAPES = str.maketrans({
+    '"': '\\"',
+})
+
 def normalize_string(string):
     return re.sub(r'\s+', ' ', string.strip())
 
@@ -84,4 +88,4 @@ for string, line_num, optional_comment in parser.all_translatable_data:
     out_file.write('#line {line} "{path}"\n'.format(line=line_num, path=final_path))
     if optional_comment:
         out_file.write('// {}\n'.format(optional_comment))
-    out_file.write('_("{string}");\n'.format(string=string))
+    out_file.write('_("{string}");\n'.format(string=string.translate(ESCAPES)))

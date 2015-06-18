@@ -145,6 +145,11 @@ describe('WebHelper2 translator', function () {
                 </p>');
             expect(gettext_spy).toHaveBeenCalledWith('Translate Me');
         });
+
+        it('handles quotes correctly', function () {
+            run_loop('<p name="translatable">String with "quotes"</p>');
+            expect(gettext_spy).toHaveBeenCalledWith('String with "quotes"');
+        });
     });
 
     describe('used from client-side Javascript', function () {
