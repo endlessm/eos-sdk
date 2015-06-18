@@ -7,20 +7,53 @@ import io
 import os.path
 import re
 import sys
-from bs4 import BeautifulSoup
 from html.parser import HTMLParser
+
+ESCAPES = str.maketrans({
+    '"': '\\"',
+})
+
+def normalize_string(string):
+    return re.sub(r'\s+', ' ', string.strip())
 
 
 # Parser that adds line numbers to the HTML strings that need translating
 class TranslatableHTMLParser(HTMLParser):
-    def __init__(self, translatable_strings):
+    def __init__(self):
         super().__init__()
         self.all_translatable_data = []
         self._comments_with_line_numbers = []
-        self._translatable_strings = set(translatable_strings)
+        self._current_translatable_tag_level = None
+        self._opened_tags = []
+        self._tag_level = 0
+        self._text = ''
 
-    def handle_data(self, data):
-        if data not in self._translatable_strings:
+    def handle_starttag(self, tag, attrs):
+        self._tag_level += 1
+        self._opened_tags.append(tag)
+
+        if self._current_translatable_tag_level is not None:
+            self._text += self.get_starttag_text()
+            return
+
+        if ('name', 'translatable') in attrs:
+            self._current_translatable_tag_level = self._tag_level
+
+    def handle_endtag(self, tag):
+        self._tag_level -= 1
+        # In non-X HTML, there can be tags that don't close, e.g. <meta>, <br>
+        while self._opened_tags.pop() != tag:
+            self._tag_level -= 1
+
+        if (self._current_translatable_tag_level is not None and
+            self._current_translatable_tag_level >= self._tag_level + 1):
+            self._current_translatable_tag_level = None
+
+        if self._current_translatable_tag_level is not None:
+            self._text += '</' + tag + '>'
+            return
+
+        if not self._text:
             return
 
         code_line = self.getpos()[0]
@@ -38,7 +71,13 @@ class TranslatableHTMLParser(HTMLParser):
             if comment_line + comment_length == code_line:
                 optional_comment = ' '.join(comment_string.split())
 
-        self.all_translatable_data.append((data.strip(), code_line, optional_comment))
+        self.all_translatable_data.append((normalize_string(self._text), code_line, optional_comment))
+        self._text = ''
+
+    def handle_data(self, data):
+        if self._current_translatable_tag_level is None:
+            return
+        self._text += data
 
     def handle_comment(self, comment):
         self._comments_with_line_numbers.append((comment, self.getpos()[0]))
@@ -63,17 +102,12 @@ top_dir = args.top_srcdir
 final_path = os.path.relpath(html_file, top_dir)
 out_file = args.output
 
-# Create the BeautifulSoup HTML-parsing object
 with open(html_file, encoding='utf-8') as f:
     page = f.read()
-soup = BeautifulSoup(page)
 
-# Extract all translatable strings from that HTML
-translatable_divs = soup.find_all(attrs={'name': 'translatable'})
-translatable_strings = map(lambda div: div.contents[0], translatable_divs)
-
-# Find the line numbers for those strings
-parser = TranslatableHTMLParser(translatable_strings)
+# Extract all translatable strings from the HTML and find the line numbers for
+# those strings
+parser = TranslatableHTMLParser()
 parser.feed(page)
 
 # Write out all info about the translatable strings found in this file
@@ -81,4 +115,4 @@ for string, line_num, optional_comment in parser.all_translatable_data:
     out_file.write('#line {line} "{path}"\n'.format(line=line_num, path=final_path))
     if optional_comment:
         out_file.write('// {}\n'.format(optional_comment))
-    out_file.write('_("{string}");\n'.format(string=string))
+    out_file.write('_("{string}");\n'.format(string=string.translate(ESCAPES)))

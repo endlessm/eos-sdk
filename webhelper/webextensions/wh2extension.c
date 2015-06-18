@@ -232,6 +232,39 @@ ngettext_shim (JSContextRef     js,
   return retval;
 }
 
+static gchar *
+normalize_string (const gchar *string)
+{
+  static GRegex *whitespace = NULL;
+
+  if (g_once_init_enter (&whitespace))
+    {
+      GError *regex_error = NULL;
+      GRegex *new_regex = g_regex_new ("\\s+", G_REGEX_OPTIMIZE, 0,
+                                       &regex_error);
+      // Don't free; will persist until exit
+      if (new_regex == NULL)
+        {
+          g_critical ("Trouble creating regex: %s\n", regex_error->message);
+          g_clear_error (&regex_error);
+        }
+
+      g_once_init_leave (&whitespace, new_regex);
+    }
+
+  GError *error = NULL;
+  gchar *copy = g_strstrip (g_strdup (string));
+  gchar *retval = g_regex_replace_literal (whitespace, copy, -1, 0, " ", 0, &error);
+  if (retval == NULL)
+    {
+      g_critical ("Trouble normalizing string: %s\n", error->message);
+      g_clear_error (&error);
+      return copy;
+    }
+  g_free (copy);
+  return retval;
+}
+
 static void
 translate_html (WebKitDOMDocument *dom,
                 Context           *ctxt)
@@ -251,7 +284,8 @@ translate_html (WebKitDOMDocument *dom,
         {
           WebKitDOMHTMLElement *el_html = WEBKIT_DOM_HTML_ELEMENT (element);
           gchar *inner_html = webkit_dom_html_element_get_inner_html (el_html);
-          gchar *translated_html = translation_function (inner_html, ctxt);
+          gchar *normalized = normalize_string (inner_html);
+          gchar *translated_html = translation_function (normalized, ctxt);
           webkit_dom_html_element_set_inner_html (el_html, translated_html,
                                                   &error);
           if (error != NULL)
@@ -263,11 +297,13 @@ translate_html (WebKitDOMDocument *dom,
 
           g_free (translated_html);
           g_free (inner_html);
+          g_free (normalized);
         }
       else
         {
           gchar *text = webkit_dom_node_get_text_content (element);
-          gchar *translated_text = translation_function (text, ctxt);
+          gchar *normalized = normalize_string (text);
+          gchar *translated_text = translation_function (normalized, ctxt);
           webkit_dom_node_set_text_content (element, translated_text, &error);
           if (error != NULL)
             {
@@ -278,6 +314,7 @@ translate_html (WebKitDOMDocument *dom,
 
           g_free (translated_text);
           g_free (text);
+          g_free (normalized);
         }
     }
 
