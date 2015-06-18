@@ -11,7 +11,9 @@ _("Choose a template");\n\
 #line 21 "test/tools/test.html"\n\
 _("This is a string that is spread over multiple lines, but that doesn\'t matter to HTML.");\n\
 #line 22 "test/tools/test.html"\n\
-_("String with a \\"quote\\"");\n';
+_("String with a \\"quote\\"");\n\
+#line 23 "test/tools/test.html"\n\
+_("String with<br>embedded <b>tags</b>");\n';
 
 describe('eos-html-extractor', function () {
     it('works correctly at a minimum', function () {

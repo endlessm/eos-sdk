@@ -150,6 +150,11 @@ describe('WebHelper2 translator', function () {
             run_loop('<p name="translatable">String with "quotes"</p>');
             expect(gettext_spy).toHaveBeenCalledWith('String with "quotes"');
         });
+
+        it('handles embedded tags correctly', function () {
+            run_loop('<p name="translatable">Embedded<br><b>tags</b></p>');
+            expect(gettext_spy).toHaveBeenCalledWith('Embedded<br><b>tags</b>');
+        });
     });
 
     describe('used from client-side Javascript', function () {
