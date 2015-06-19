@@ -33,6 +33,11 @@ EosWindow {
     box-shadow: 0 2px 5px 1px @endless_wm_shadow;
 }
 
+.window-frame.tooltip {
+    border-radius: 5px;
+    box-shadow: none;
+}
+
 /* Endless window top bar */
 
 .top-bar {
