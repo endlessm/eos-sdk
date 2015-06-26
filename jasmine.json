@@ -3,6 +3,7 @@
   "options": "--verbose",
   "spec_files": [
     "test/endless",
+    "test/webhelper/testTranslate2.js",
     "test/webhelper",
     "test/tools/eos-application-manifest",
     "test/tools/testHtmlExtractor.js"

@@ -9,6 +9,15 @@ const WebKit2 = imports.gi.WebKit2;
 
 const WELL_KNOWN_NAME = 'com.endlessm.WebHelper.testTranslate2';
 
+/* CAUTION:
+ * All tests trying to use the translation functionality of WebHelper2 must be
+ * run in this file, and this file must be run before any other WebHelper2
+ * tests in the same process.
+ * That is because we can only tell the default web context to load web
+ * extensions with user data once per process. WebHelper doesn't support web
+ * contexts other than the default one.
+ */
+
 Gtk.init(null);
 
 describe('WebHelper2 translator', function () {
