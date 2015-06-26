@@ -100,10 +100,16 @@ describe('WebHelper2 translator', function () {
         const MINIMAL_HTML = '<p name="translatable">Translate Me</p>';
 
         function run_loop(html=MINIMAL_HTML) {
-            webview.connect('load-changed', (webview, event) => {
+            let error_spy = jasmine.createSpy('error_spy');
+            webview.connect('load-failed', error_spy);
+            let id = webview.connect('load-changed', (webview, event) => {
                 if (event === WebKit2.LoadEvent.FINISHED) {
                     webhelper.translate_html(webview, null, (obj, res) => {
-                        webhelper.translate_html_finish(res);
+                        expect(function () {
+                            webhelper.translate_html_finish(res);
+                        }).not.toThrow();
+                        webview.disconnect(id);
+                        expect(error_spy).not.toHaveBeenCalled();
                         Mainloop.quit('webhelper2');
                     });
                 }
@@ -133,7 +139,9 @@ describe('WebHelper2 translator', function () {
 
         it('can cancel the translation operation', function (done) {
             webhelper.set_gettext((s) => s);
-            webview.connect('load-changed', (webview, event) => {
+            let error_spy = jasmine.createSpy('error_spy');
+            webview.connect('load-failed', error_spy);
+            let id = webview.connect('load-changed', (webview, event) => {
                 if (event === WebKit2.LoadEvent.FINISHED) {
                     let cancellable = new Gio.Cancellable();
                     cancellable.cancel();
@@ -141,6 +149,8 @@ describe('WebHelper2 translator', function () {
                         expect(function () {
                             webhelper.translate_html_finish(res);
                         }).toThrow();
+                        webview.disconnect(id);
+                        expect(error_spy).not.toHaveBeenCalled();
                         done();
                     });
                 }
