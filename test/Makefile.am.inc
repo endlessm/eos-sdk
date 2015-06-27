@@ -44,6 +44,7 @@ EXTRA_DIST += \
 javascript_tests = \
 	test/tools/eos-application-manifest/testInit.js \
 	test/tools/testHtmlExtractor.js \
+	test/webhelper/testLocal.js \
 	test/webhelper/testTranslate.js \
 	test/webhelper/testTranslate2.js \
 	test/webhelper/testWebActions.js \

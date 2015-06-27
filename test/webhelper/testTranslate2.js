@@ -9,6 +9,15 @@ const WebKit2 = imports.gi.WebKit2;
 
 const WELL_KNOWN_NAME = 'com.endlessm.WebHelper.testTranslate2';
 
+/* CAUTION:
+ * All tests trying to use the translation functionality of WebHelper2 must be
+ * run in this file, and this file must be run before any other WebHelper2
+ * tests in the same process.
+ * That is because we can only tell the default web context to load web
+ * extensions with user data once per process. WebHelper doesn't support web
+ * contexts other than the default one.
+ */
+
 Gtk.init(null);
 
 describe('WebHelper2 translator', function () {
@@ -91,10 +100,16 @@ describe('WebHelper2 translator', function () {
         const MINIMAL_HTML = '<p name="translatable">Translate Me</p>';
 
         function run_loop(html=MINIMAL_HTML) {
-            webview.connect('load-changed', (webview, event) => {
+            let error_spy = jasmine.createSpy('error_spy');
+            webview.connect('load-failed', error_spy);
+            let id = webview.connect('load-changed', (webview, event) => {
                 if (event === WebKit2.LoadEvent.FINISHED) {
                     webhelper.translate_html(webview, null, (obj, res) => {
-                        webhelper.translate_html_finish(res);
+                        expect(function () {
+                            webhelper.translate_html_finish(res);
+                        }).not.toThrow();
+                        webview.disconnect(id);
+                        expect(error_spy).not.toHaveBeenCalled();
                         Mainloop.quit('webhelper2');
                     });
                 }
@@ -124,7 +139,9 @@ describe('WebHelper2 translator', function () {
 
         it('can cancel the translation operation', function (done) {
             webhelper.set_gettext((s) => s);
-            webview.connect('load-changed', (webview, event) => {
+            let error_spy = jasmine.createSpy('error_spy');
+            webview.connect('load-failed', error_spy);
+            let id = webview.connect('load-changed', (webview, event) => {
                 if (event === WebKit2.LoadEvent.FINISHED) {
                     let cancellable = new Gio.Cancellable();
                     cancellable.cancel();
@@ -132,6 +149,8 @@ describe('WebHelper2 translator', function () {
                         expect(function () {
                             webhelper.translate_html_finish(res);
                         }).toThrow();
+                        webview.disconnect(id);
+                        expect(error_spy).not.toHaveBeenCalled();
                         done();
                     });
                 }

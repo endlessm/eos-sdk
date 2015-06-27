@@ -3,6 +3,7 @@
   "options": "--verbose",
   "spec_files": [
     "test/endless",
+    "test/webhelper/testTranslate2.js",
     "test/webhelper",
     "test/tools/eos-application-manifest",
     "test/tools/testHtmlExtractor.js"
@@ -15,7 +16,8 @@
   "environment": {
     "GI_TYPELIB_PATH": ".",
     "LD_LIBRARY_PATH": ".libs",
-    "XDG_CONFIG_HOME": "/tmp",
-    "WEBHELPER_UNINSTALLED_EXTENSION_DIR": ".libs"
+    "TOP_SRCDIR": ".",
+    "WEBHELPER_UNINSTALLED_EXTENSION_DIR": ".libs",
+    "XDG_CONFIG_HOME": "/tmp"
   }
 }

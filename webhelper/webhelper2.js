@@ -15,6 +15,7 @@ const Config = imports.webhelper_private.config;
 String.prototype.format = Format.format;
 
 const WH2_URI_SCHEME = 'webhelper';
+const WH2_LOCAL_FILE_SCHEME = 'local';
 const DBUS_WEBVIEW_EXPORT_PATH = '/com/endlessm/webview/';
 const WH2_DBUS_EXTENSION_INTERFACE = '\
     <node> \
@@ -62,6 +63,11 @@ const WH2_DBUS_MAIN_PROGRAM_INTERFACE = '\
  * page and translating them through a function of your choice when you run
  * <WebHelper.translate_html()>.
  * It also exposes a *gettext()* function in the client-side Javascript.
+ *
+ * For cases where you need to load local files for your web applications,
+ * WebHelper also provides the local:// URI scheme.
+ * For this to work, you must also load your main page via the local:// URI
+ * scheme.
  */
 
 /**
@@ -200,9 +206,11 @@ const WebHelper = new Lang.Class({
                 this);
         this._dbus_impl.export(this.connection, '/com/endlessm/gettext');
 
-        // Set up handling for webhelper:// URIs
+        // Set up handling for custom URIs
         WebHelper2Private.register_uri_scheme(WH2_URI_SCHEME,
             this._on_endless_uri_request.bind(this));
+        WebHelper2Private.register_uri_scheme(WH2_LOCAL_FILE_SCHEME,
+            this._on_local_file_request.bind(this));
     },
 
     _on_endless_uri_request: function (request) {
@@ -238,6 +246,18 @@ const WebHelper = new Lang.Class({
         // action, which would involve loading a new page. The request dies
         // if we return from this function without calling ref() or finish()
         // on it.
+    },
+
+    _on_local_file_request: function (request) {
+        let path = request.get_path();
+        let file = Gio.File.new_for_path(path);
+        let [content_type, certain] = Gio.content_type_guess(path, null);
+        try {
+            let stream = file.read(null);
+            request.finish(stream, -1, content_type);
+        } catch (error) {
+            request.finish_error(error);
+        }
     },
 
     // DBus implementations
