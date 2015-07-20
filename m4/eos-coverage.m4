@@ -77,7 +77,7 @@ AC_DEFUN_ONCE([EOS_COVERAGE_REPORT], [
 
     # This needs to be defined here so that AC_MSG_RESULT sees it
     EOS_COVERAGE_REQUESTED=no
-    AC_MSG_CHECKING(whether code coverage support was requested)
+    AC_MSG_CHECKING([whether code coverage support was requested])
     AS_IF([test "x$enable_coverage" = "xyes"], [
         EOS_COVERAGE_REQUESTED=yes
     ])
@@ -103,7 +103,7 @@ AC_DEFUN_ONCE([EOS_COVERAGE_REPORT], [
 
                         LAST_CFLAGS="$CFLAGS"
                         CFLAGS="$CFLAGS $EOS_COVERAGE_COMPILER_FLAGS"
-                        AC_MSG_CHECKING(if compiler supports $EOS_COVERAGE_COMPILER_FLAGS)
+                        AC_MSG_CHECKING([if compiler supports $EOS_COVERAGE_COMPILER_FLAGS])
                         AC_TRY_COMPILE([], [], [EOS_COVERAGE_CFLAGS_SUPPORTED=yes])
                         CFLAGS="$LAST_CFLAGS"
                         AC_MSG_RESULT($EOS_COVERAGE_CFLAGS_SUPPORTED)
@@ -149,7 +149,7 @@ AC_DEFUN_ONCE([EOS_COVERAGE_REPORT], [
                 AC_PATH_PROG([LCOV_RESULT_MERGER], [node-lcov-result-merger], [notfound])
                 AC_ARG_VAR([LCOV_RESULT_MERGER], [Path to lcov-result-merger])
 
-                AC_MSG_CHECKING(for lcov_cobertura)
+                AC_MSG_CHECKING([for lcov_cobertura])
                 python -c "import lcov_cobertura" > /dev/null 2>&1
                 AS_IF([test "$?" = "0"], [
                     EOS_COVERAGE_HAVE_LCOV_COBERTURA=yes
@@ -182,7 +182,7 @@ AC_DEFUN_ONCE([EOS_COVERAGE_REPORT], [
                 EOS_ENABLE_JS_COVERAGE=$EOS_HAVE_JS_COVERAGE
                 EOS_ENABLE_COVERAGE=yes
             ])
-            AC_MSG_CHECKING(whether code coverage support can be enabled)
+            AC_MSG_CHECKING([whether code coverage support can be enabled])
             AC_MSG_RESULT([$EOS_ENABLE_COVERAGE])
         ])
     ])
