@@ -295,7 +295,7 @@ coverage-cobertura: eos-collect-coverage
 ], [
         EOS_COBERTURA_COVERAGE_RULES='
 coverage-cobertura:
-	@echo "Cannot generate Cobertura coverage report as lcov-result-merger or lcov_cobertura was not found in PATH"
+	@echo "Cannot generate Cobertura coverage report as lcov-result-merger was not found in PATH or lcov_cobertura was not found in PYTHONPATH"
 	@exit 1
 '
         EOS_COBERTURA_AUTO_COVERAGE_CMD='echo "Not generating Cobertura report"'
