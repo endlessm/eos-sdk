@@ -62,10 +62,11 @@ EXTRA_DIST += \
 TESTS = \
 	test/endless/run-tests \
 	$(javascript_tests) \
+	run_coverage.coverage \
 	$(NULL)
 JS_LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(top_srcdir)/test/run-with-dbus --session $(SHELL) $(top_srcdir)/tap-driver.sh
 JS_LOG_DRIVER_FLAGS = --comments
-TEST_EXTENSIONS = .js
+TEST_EXTENSIONS = .js .coverage
 JS_LOG_COMPILER = jasmine
 AM_JS_LOG_FLAGS = \
 	--include-path=$(top_srcdir)/webhelper \
