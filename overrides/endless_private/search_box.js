@@ -141,6 +141,16 @@ const SearchBox = new Lang.Class({
         return Gdk.EVENT_STOP;
     },
 
+    /* Set the entry text without triggering the text-changed signal.
+    */
+    set_text_programmatically: function (text) {
+        if (this.text === text)
+            return;
+        this._entry_changed_by_widget = true;
+        this.text = text;
+        this.set_position(-1);
+    },
+
     /* Set the menu items by providing an array of item objects:
         [
             {
