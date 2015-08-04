@@ -138,6 +138,7 @@ const SearchBox = new Lang.Class({
     _onMatchSelected: function (widget, model, iter) {
         let index = model.get_path(iter).get_indices();
         this.emit('menu-item-selected', this._items[index]['id']);
+        return Gdk.EVENT_STOP;
     },
 
     /* Set the menu items by providing an array of item objects:
