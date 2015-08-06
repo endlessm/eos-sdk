@@ -37,6 +37,9 @@ gchar * const recognized_licenses[] = {
   "CC BY-SA 2.5",
   "CC BY-SA 3.0",
   "CC BY-SA 4.0",
+  "GFDL 1.1",
+  "GFDL 1.2",
+  "GFDL 1.3",
   NULL
 };
 
@@ -62,6 +65,9 @@ gchar * const recognized_licenses_display_names[] = {
   N_("Creative Commons Attribution-ShareAlike 2.5 Generic"),
   N_("Creative Commons Attribution-ShareAlike 3.0"),
   N_("Creative Commons Attribution-ShareAlike 4.0 International"),
+  N_("GNU Free Documentation License, version 1.1"),
+  N_("GNU Free Documentation License, version 1.2"),
+  N_("GNU Free Documentation License, version 1.3"),
   NULL
 };
 
@@ -84,6 +90,9 @@ static gchar * const recognized_licenses_filenames[] = {
   "creativecommons/CC-BY-SA-2.5.html",
   "creativecommons/CC-BY-SA-3.0.html",
   "creativecommons/CC-BY-SA-4.0.html",
+  "gnu/FDL-1.1.html",
+  "gnu/FDL-1.2.html",
+  "gnu/FDL-1.3.html",
   NULL
 };
 
