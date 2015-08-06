@@ -52,10 +52,12 @@ javascript_tests = \
 	test/webhelper/testUpdateFontSize.js \
 	test/endless/testCustomContainer.js \
 	test/endless/testTopbarNavButton.js \
+	test/endless/testSearchBox.js \
 	$(NULL)
 EXTRA_DIST += \
 	$(javascript_tests) \
 	test/tools/test.html \
+	test/utils.js \
 	$(NULL)
 
 # Run tests when running 'make check'
