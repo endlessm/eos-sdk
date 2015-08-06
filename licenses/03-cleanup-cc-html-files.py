@@ -5,6 +5,8 @@ import os
 import re
 import sys
 
+from license_utils import rewrite_attr
+
 def main(argv):
     langs = ['C', 'ar', 'es', 'fr', 'pt_BR']
 
@@ -117,12 +119,6 @@ def cleanup_deed_file(src_dir, license, lang):
         f.truncate()
         f.write(html)
         f.close()
-
-def rewrite_attr(html, elem, attr, source, target):
-    for element in html.findAll(elem):
-        if element.has_key(attr):
-            attr_val = re.sub(source, target, element[attr])
-            element[attr] = attr_val
 
 def cleanup_conditional_comments(html):
     comments = html.findAll(text=lambda text:isinstance(text, Comment) and '[if' in text)
