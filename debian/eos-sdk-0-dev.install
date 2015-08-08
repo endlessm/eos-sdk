@@ -3,4 +3,5 @@ usr/lib/pkgconfig/endless*.pc
 usr/lib/libendless*.so
 usr/share/gir-1.0/Endless*.gir
 usr/share/gir-1.0/WebHelper2Private-1.0.gir
+usr/share/gir-1.0/WebHelper2OldPrivate-1.0.gir
 usr/share/aclocal/eos-*.m4
