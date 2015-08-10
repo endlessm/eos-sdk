@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from bs4 import BeautifulSoup, Comment
 import os
@@ -12,7 +12,7 @@ def main(argv):
     cleanup_legalcode_file('publicdomain/', 'CC0-1.0')
     for lang in langs:
         cleanup_deed_file('publicdomain/', 'CC0-1.0', lang)
-    print ''
+    print('')
 
     # Clean up Creative Commons license files
     cc_licenses = [
@@ -34,11 +34,11 @@ def main(argv):
         cleanup_legalcode_file('creativecommons/', license)
         for lang in langs:
             cleanup_deed_file('creativecommons/', license, lang)
-        print ''
+        print('')
 
 def cleanup_legalcode_file(src_dir, license):
     f_legalcode = os.path.join(src_dir, 'legalcode', license + '-legalcode.html')
-    print 'Cleaning up ' + f_legalcode
+    print('Cleaning up ' + f_legalcode)
 
     with open(f_legalcode, 'r+') as f:
         html = f.read()
@@ -74,7 +74,7 @@ def cleanup_legalcode_file(src_dir, license):
 
 def cleanup_deed_file(src_dir, license, lang):
     f_deed = os.path.join(src_dir, lang, license + '.html')
-    print 'Cleaning up ' + f_deed
+    print('Cleaning up ' + f_deed)
 
     with open(f_deed, 'r+') as f:
         html = f.read()

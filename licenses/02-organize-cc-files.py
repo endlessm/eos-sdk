@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os
 import shutil
@@ -88,7 +88,7 @@ def copy_license_files(source_dir, target_dir, licenses):
         # Move legalcode file for license_name
         source_legalcode_path = source_license_dir + 'legalcode.html'
         target_legalcode_path = target_legalcode_dir + license_code + '-legalcode.html'
-        print 'cp ' + source_legalcode_path + ' ' + target_legalcode_path
+        print('cp ' + source_legalcode_path + ' ' + target_legalcode_path)
         shutil.copy(source_legalcode_path, target_legalcode_path)
 
         # Move deeds for individual languages
@@ -98,17 +98,17 @@ def copy_license_files(source_dir, target_dir, licenses):
             target_deed_path = target_lang_dir + license_code + '.html'
 
             # Move deed file for license_name/language
-            print 'cp ' + source_deed_path + ' ' + target_deed_path
+            print('cp ' + source_deed_path + ' ' + target_deed_path)
             shutil.copy(source_deed_path, target_deed_path)
 
     # Rename 'en' subdir to default locale 'C'
-    print 'mv -f ' + target_dir + 'en/ ' + target_dir + 'C/'
+    print('mv -f ' + target_dir + 'en/ ' + target_dir + 'C/')
     shutil.rmtree(target_dir + 'C', ignore_errors=True)
     shutil.move(target_dir + 'en', target_dir + 'C')
 
 def copy_requisite_files(source_dir, target_dir):
     for req in ['images/', 'includes/']:
-        print 'cp ' + source_dir + req + ' ' + target_dir + req
+        print('cp ' + source_dir + req + ' ' + target_dir + req)
         shutil.copytree(source_dir + req, target_dir + req)
 
 def ensure_target_dirs_exist(target_dir, langs):
