@@ -23,6 +23,7 @@ the documentation of EosApplication and to the two arrays below this one. */
 gchar * const recognized_licenses[] = {
   "Public domain",
   "Owner permission",
+  "Copyrighted free use",
   "CC0 1.0",
   "CC BY 2.0",
   "CC BY 3.0",
@@ -47,6 +48,7 @@ gchar * const recognized_licenses_display_names[] = {
   contain any ampersands (&), less-than signs (<) or greater-than signs (>). */
   N_("Public domain"),
   N_("Owner permission"),
+  N_("Copyrighted free use"),
   N_("CC0-1.0"),
   N_("Creative Commons Attribution 2.0"),
   N_("Creative Commons Attribution 3.0"),
@@ -66,6 +68,7 @@ gchar * const recognized_licenses_display_names[] = {
 /* These are the actual filenames for license files. There is a 1-to-1
 correspondence between `recognized_licenses` and this array. */
 static gchar * const recognized_licenses_filenames[] = {
+  NULL,
   NULL,
   NULL,
   "publicdomain/CC0-1.0.html",
