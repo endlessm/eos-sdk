@@ -303,6 +303,17 @@ nobase_dist_licenses_DATA = licenses/creativecommons/C/CC-BY-2.0.html \
 	licenses/creativecommons/legalcode/CC-BY-SA-2.5-legalcode.html \
 	licenses/creativecommons/legalcode/CC-BY-SA-3.0-legalcode.html \
 	licenses/creativecommons/legalcode/CC-BY-SA-4.0-legalcode.html \
+	licenses/gnu/C/FDL-1.1.html \
+	licenses/gnu/C/FDL-1.2.html \
+	licenses/gnu/C/FDL-1.3.html \
+	licenses/gnu/css/combo.css \
+	licenses/gnu/css/layout.min.css \
+	licenses/gnu/css/mini.css \
+	licenses/gnu/css/print.min.css \
+	licenses/gnu/images/dogear.png \
+	licenses/gnu/images/fsf-logo-notext.png \
+	licenses/gnu/images/heckert_gnu.small.png \
+	licenses/gnu/images/topbanner.png \
 	licenses/publicdomain/C/CC0-1.0.html \
 	licenses/publicdomain/ar/CC0-1.0.html \
 	licenses/publicdomain/es/CC0-1.0.html \
