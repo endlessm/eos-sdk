@@ -27,7 +27,7 @@
 #define _EOS_TOP_BAR_VERTICAL_BUTTON_MARGIN_PX 6
 #define _EOS_TOP_BAR_MINIMIZE_ICON_NAME "window-minimize-symbolic"
 #define _EOS_TOP_BAR_MAXIMIZE_ICON_NAME "window-maximize-symbolic"
-#define _EOS_TOP_BAR_UNMAXIMIZE_ICON_NAME "window-unmaximize-symbolic"
+#define _EOS_TOP_BAR_UNMAXIMIZE_ICON_NAME "window-restore-symbolic"
 #define _EOS_TOP_BAR_CLOSE_ICON_NAME "window-close-symbolic"
 #define _EOS_TOP_BAR_CREDITS_ICON_NAME "user-info-symbolic"
 
