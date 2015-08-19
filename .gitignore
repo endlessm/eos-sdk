@@ -116,6 +116,7 @@ nosetests.xml
 *.gcda
 *.gcno
 /_coverage
+run_coverage.coverage
 
 # Translations
 *.mo
