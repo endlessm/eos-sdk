@@ -135,10 +135,12 @@ AC_DEFUN_ONCE([EOS_COVERAGE_REPORT], [
                     [Where to put coverage reports @<:@default=_coverage@:>@])
             ], [
                 EOS_COVERAGE_DIR="$withval"
-                AC_MSG_RESULT([in $EOS_COVERAGE_DIR])
-            ], [
+            ])
+            AS_IF([test -z "$EOS_COVERAGE_DIR"], [
                 EOS_COVERAGE_DIR="$EOS_DEFAULT_COVERAGE_DIR"
                 AC_MSG_RESULT([in default location (_coverage)])
+            ], [
+                AC_MSG_RESULT([in $EOS_COVERAGE_DIR])
             ])
 
             AS_IF([test "x$EOS_HAVE_C_COVERAGE" = "xyes" || test "x$EOS_HAVE_JS_COVERAGE" = "xyes"], [
