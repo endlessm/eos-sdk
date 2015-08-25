@@ -86,6 +86,21 @@ AC_DEFUN_ONCE([EOS_COVERAGE_REPORT], [
     ])
     AC_MSG_RESULT([$EOS_COVERAGE_REQUESTED])
 
+    AC_MSG_CHECKING([where to put coverage data])
+    EOS_DEFAULT_COVERAGE_DIR='$(abs_top_builddir)/_coverage'
+    AC_ARG_WITH([coverage-dir], [
+        AS_HELP_STRING([--with-coverage-dir=DIRECTORY],
+            [Where to put coverage reports @<:@default=_coverage@:>@])
+    ], [
+        EOS_COVERAGE_DIR="$withval"
+    ])
+    AS_IF([test -z "$EOS_COVERAGE_DIR"], [
+        EOS_COVERAGE_DIR="$EOS_DEFAULT_COVERAGE_DIR"
+        AC_MSG_RESULT([in default location (_coverage)])
+    ], [
+        AC_MSG_RESULT([in $EOS_COVERAGE_DIR])
+    ])
+
     AS_IF([test "x$EOS_COVERAGE_REQUESTED" = "xyes"], [
 
         # Need LCOV to do coverage report filtering. If we don't have it
@@ -126,21 +141,6 @@ AC_DEFUN_ONCE([EOS_COVERAGE_REPORT], [
                             EOS_HAVE_JS_COVERAGE=yes
                         ])
                     ])
-            ])
-
-            AC_MSG_CHECKING([where to put coverage data])
-            EOS_DEFAULT_COVERAGE_DIR='$(abs_top_builddir)/_coverage'
-            AC_ARG_WITH([coverage-dir], [
-                AS_HELP_STRING([--with-coverage-dir=DIRECTORY],
-                    [Where to put coverage reports @<:@default=_coverage@:>@])
-            ], [
-                EOS_COVERAGE_DIR="$withval"
-            ])
-            AS_IF([test -z "$EOS_COVERAGE_DIR"], [
-                EOS_COVERAGE_DIR="$EOS_DEFAULT_COVERAGE_DIR"
-                AC_MSG_RESULT([in default location (_coverage)])
-            ], [
-                AC_MSG_RESULT([in $EOS_COVERAGE_DIR])
             ])
 
             AS_IF([test "x$EOS_HAVE_C_COVERAGE" = "xyes" || test "x$EOS_HAVE_JS_COVERAGE" = "xyes"], [
