@@ -267,14 +267,14 @@ coverage-genhtml: eos-collect-coverage
 	$(GENHTML) --legend -o $(_eos_genhtml_coverage_report_path) $(_eos_coverage_trace_path)/coverage.lcov
 '
         EOS_GENHTML_AUTO_COVERAGE_CMD='make coverage-genhtml'
-  ], [
+    ], [
         EOS_GENHTML_COVERAGE_RULES='
 coverage-genhtml:
 	@echo "Cannot generate GenHTML coverage report as genhtml was not found in PATH"
 	@exit 1
 '
         EOS_GENHTML_AUTO_COVERAGE_CMD='echo "Not generating GenHTML report"'
-])
+    ])
 
     AS_IF([test "x$EOS_HAVE_COBERTURA" = "xyes"], [
         EOS_COBERTURA_COVERAGE_RULES='
@@ -293,14 +293,14 @@ coverage-cobertura: eos-collect-coverage
 	python -c "from lcov_cobertura import LcovCobertura; open(\"$(_eos_cobertura_xml_path)\", \"w\").write(LcovCobertura(open(\"$(_eos_cobertura_merged_path)\", \"r\").read()).convert())"
 '
         EOS_COBERTURA_AUTO_COVERAGE_CMD='make coverage-cobertura'
-], [
+    ], [
         EOS_COBERTURA_COVERAGE_RULES='
 coverage-cobertura:
 	@echo "Cannot generate Cobertura coverage report as lcov-result-merger was not found in PATH or lcov_cobertura was not found in PYTHONPATH"
 	@exit 1
 '
         EOS_COBERTURA_AUTO_COVERAGE_CMD='echo "Not generating Cobertura report"'
-])
+    ])
 
     AS_IF([test "x$EOS_ENABLE_JS_COVERAGE" = "xyes"], [
         EOS_JS_COVERAGE_RULES='
@@ -364,9 +364,9 @@ _eos_coverage_outputs += $(_eos_js_coverage_data_output_file)
         # point suggests that conditional operators can be used. This is
         # misleading.
         EOS_JS_COVERAGE_LOG_FLAGS='$(addprefix --coverage-prefix=,$(foreach p,$(filter-out $(subst */,,$(EOS_COVERAGE_BLACKLIST_PATTERNS)),$(filter-out $(subst *,%,$(EOS_COVERAGE_BLACKLIST_PATTERNS)),$(EOS_JS_COVERAGE_FILES))),$(if $(filter resource,$(firstword $(subst :, ,$(p)))),$(p),$(abspath $(abs_top_srcdir)/$(p))))) --coverage-output=$(_eos_js_coverage_trace_path)'
-], [
+    ], [
         EOS_JS_COVERAGE_RULES=''
-])
+    ])
 
     AS_IF([test "x$EOS_ENABLE_C_COVERAGE" = "xyes"], [
         EOS_C_COVERAGE_RULES='
@@ -396,7 +396,7 @@ eos-clean-c-coverage:
 _eos_collect_coverage_targets += eos-c-coverage
 _eos_clean_coverage_targets += eos-clean-c-coverage
 '
-], [
+    ], [
         EOS_C_COVERAGE_RULES='
 eos-c-coverage:
 	@echo "C coverage reporting not enabled"
@@ -404,7 +404,7 @@ eos-c-coverage:
 
 eos-clean-c-coverage: eos-c-coverage
 '
-])
+    ])
 
     EOS_COVERAGE_AUTORUN_GENERATED_TARGET="
 run_coverage.coverage:
