@@ -226,7 +226,7 @@ render_license_link (GtkTreeViewColumn *column,
       string. Note: this string is markup, and so should not contain any
       ampersands (&), less-than signs (<), or greater-than signs (>). */
       gchar *license_string = g_strdup_printf (_("%s."),
-                                               gettext (eos_get_license_display_name (license_code)));
+                                               eos_get_license_display_name (license_code));
       gboolean behave_like_link = (license_uri != NULL);
       g_object_set (renderer,
                     "markup", license_string,
