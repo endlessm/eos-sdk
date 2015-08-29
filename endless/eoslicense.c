@@ -173,10 +173,11 @@ eos_get_license_display_name (const gchar *license)
   g_free (sanitized_license);
 
   /* If the array value is null, it means we don't have a license file for that
-  license name.  */
-  g_return_val_if_fail (recognized_licenses[index] != NULL, NULL);
+  license name. */
+  if (recognized_licenses[index] == NULL)
+    return _("Unknown license");
 
-  return recognized_licenses_display_names[index];
+  return gettext (recognized_licenses_display_names[index]);
 }
 
 /**
@@ -185,9 +186,11 @@ eos_get_license_display_name (const gchar *license)
  *
  * Retrieves a GFile for the specified licene and the current locale.
  *
- * Returns: (transfer full): A GFile for the specified @license name and the
- *                           current locale. It returns NULL if the license
- *                           is not found or does not have an associated file.
+ * Returns: (transfer full) (allow-none): A GFile for the specified @license
+ *                                        name and the current locale. It
+ *                                        returns %NULL if the license is not
+ *                                        found or does not have an associated
+ *                                        file.
  * Since: 0.4
  */
 GFile *
@@ -198,9 +201,6 @@ eos_get_license_file (const gchar *license)
   /* Get index of valid license */
   int index = get_license_index (sanitized_license);
   g_free (sanitized_license);
-
-  /* If the code array value is null, it means it is an unrecognized license code. */
-  g_return_val_if_fail (recognized_licenses[index] != NULL, NULL);
 
   /* If the array value is null, it means we don't have a license file for that
   license name. */
