@@ -9,6 +9,8 @@
 
 #include <glib.h>
 
+#include "eosversion.h"
+
 #ifdef EOS_SDK_DISABLE_DEPRECATION_WARNINGS
 #define EOS_SDK_DEPRECATED
 #define EOS_SDK_DEPRECATED_FOR(f)

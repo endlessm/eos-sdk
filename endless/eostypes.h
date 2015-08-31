@@ -7,7 +7,7 @@
 #error "Please do not include this header file directly."
 #endif
 
-#include "eosversion.h"
+#include "eosapiversion-private.h"
 #include "eosenums.h"
 #include "eosmacros.h"
 

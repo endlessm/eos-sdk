@@ -37,6 +37,7 @@ endless_private_installed_headers = \
 	endless/eosflexygrid.h
 
 endless_library_sources = \
+	endless/eosapiversion-private.h \
 	endless/eosapplication.c \
 	endless/eosattribution.c endless/eosattribution-private.h \
 	endless/eoscellrendererpixbuflink.c endless/eoscellrendererpixbuflink-private.h \
