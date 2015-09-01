@@ -1,0 +1,37 @@
+/* Copyright 2015 Endless Mobile, Inc. */
+
+#pragma once
+
+#if !(defined(_EOS_SDK_INSIDE_ENDLESS_H) || defined(COMPILING_EOS_SDK))
+#error "Please do not include this header file directly."
+#endif
+
+/**
+ * EOS_SDK_MAJOR_VERSION:
+ *
+ * Major version number (API level) of the Endless SDK library.
+ * For example, this is 0 for version 0.6.1.
+ *
+ * Since: 0.6
+ */
+#define EOS_SDK_MAJOR_VERSION (@EOS_SDK_MAJOR_VERSION@)
+/**
+ * EOS_SDK_MINOR_VERSION:
+ *
+ * Minor version number of the Endless SDK library.
+ * For example, this is 6 for version 0.6.1.
+ * An even number indicates a stable release, while an odd number is used for
+ * development snapshots.
+ *
+ * Since: 0.6
+ */
+#define EOS_SDK_MINOR_VERSION (@EOS_SDK_MINOR_VERSION@)
+/**
+ * EOS_SDK_MICRO_VERSION:
+ *
+ * Micro version number of the Endless SDK library.
+ * For example, this is 1 for version 0.6.1.
+ *
+ * Since: 0.6
+ */
+#define EOS_SDK_MICRO_VERSION (@EOS_SDK_MICRO_VERSION@)

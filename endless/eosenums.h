@@ -9,6 +9,8 @@
 
 #include <glib-object.h>
 
+#include "eosapiversion-private.h"
+
 G_BEGIN_DECLS
 
 /* Shared typedefs for enumerations */

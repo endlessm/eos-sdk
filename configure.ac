@@ -18,7 +18,7 @@ m4_define([_EOS_SDK_API_VERSION_MACRO], [0])
 # Minor and micro versions: increment micro version when making a release. Minor
 # version is even for a stable release and odd for a development release.
 # When making any release, if the API changes, set the interface age to 0.
-m4_define([_EOS_SDK_MINOR_VERSION_MACRO], [4])
+m4_define([_EOS_SDK_MINOR_VERSION_MACRO], [5])
 m4_define([_EOS_SDK_MICRO_VERSION_MACRO], [0])
 m4_define([_EOS_SDK_INTERFACE_AGE_MACRO], [0])
 
@@ -58,14 +58,12 @@ AC_CACHE_SAVE
 # Version numbers and macros
 EOS_SDK_API_VERSION=_EOS_SDK_API_VERSION_MACRO
 AC_SUBST(EOS_SDK_API_VERSION)
-AC_DEFINE([EOS_SDK_MAJOR_VERSION], [_EOS_SDK_API_VERSION_MACRO], [Major (API) version])
 EOS_SDK_API_NAME="endless-$EOS_SDK_API_VERSION"
 AC_SUBST(EOS_SDK_API_NAME)
-EOS_SDK_MINOR_VERSION=_EOS_SDK_MINOR_VERSION_MACRO
-EOS_SDK_MICRO_VERSION=_EOS_SDK_MICRO_VERSION_MACRO
 EOS_SDK_INTERFACE_AGE=_EOS_SDK_INTERFACE_AGE_MACRO
-AC_DEFINE([EOS_SDK_MINOR_VERSION], [_EOS_SDK_MINOR_VERSION_MACRO], [Minor version])
-AC_DEFINE([EOS_SDK_MICRO_VERSION], [_EOS_SDK_MICRO_VERSION_MACRO], [Micro version])
+AC_SUBST([EOS_SDK_MAJOR_VERSION], [_EOS_SDK_API_VERSION_MACRO])
+AC_SUBST([EOS_SDK_MINOR_VERSION], [_EOS_SDK_MINOR_VERSION_MACRO])
+AC_SUBST([EOS_SDK_MICRO_VERSION], [_EOS_SDK_MICRO_VERSION_MACRO])
 AC_DEFINE([EOS_SDK_VERSION], [_EOS_SDK_VERSION_MACRO], [Full version number])
 
 # Shared library versioning; calculated automatically.
@@ -253,6 +251,7 @@ AC_CONFIG_FILES([
 	docs/reference/endless/Makefile
 	docs/reference/endless/version.xml
 	$EOS_SDK_API_NAME.pc
+	endless/eosversion.h
 	tools/eos-json-extractor/eos-json-extractor
 ])
 AC_CONFIG_HEADERS([config.h])  dnl Header with system-dependent #defines
