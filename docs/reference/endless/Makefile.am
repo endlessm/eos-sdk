@@ -49,7 +49,7 @@ EXTRA_HFILES=
 
 # Header files or dirs to ignore when scanning. Use base file/dir names
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h private_code
-IGNORE_HFILES= eosapiversion-private.h \
+IGNORE_HFILES= eosapiversion.h \
                eosinit-private.h \
                eostopbar-private.h \
                eosmainarea-private.h \

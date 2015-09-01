@@ -9,7 +9,7 @@
 
 #include <glib-object.h>
 
-#include "eosapiversion-private.h"
+#include "eosapiversion.h"
 
 G_BEGIN_DECLS
 
