@@ -25,6 +25,7 @@ EXTRA_DIST += \
 endless_public_installed_headers = endless/endless.h
 
 endless_private_installed_headers = \
+	endless/eosapiversion.h \
 	endless/eosversion.h \
 	endless/eosapplication.h \
 	endless/eoscustomcontainer.h \
@@ -37,7 +38,6 @@ endless_private_installed_headers = \
 	endless/eosflexygrid.h
 
 endless_library_sources = \
-	endless/eosapiversion-private.h \
 	endless/eosapplication.c \
 	endless/eosattribution.c endless/eosattribution-private.h \
 	endless/eoscellrendererpixbuflink.c endless/eoscellrendererpixbuflink-private.h \
