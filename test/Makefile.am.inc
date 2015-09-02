@@ -97,5 +97,5 @@ TESTS_ENVIRONMENT = \
 	export XDG_CONFIG_HOME=`mktemp -d $${TMPDIR:-/tmp}/sdktestconfig.XXXXXXXX`; \
 	export WEBHELPER_UNINSTALLED_EXTENSION_DIR="$(top_builddir)/.libs"; \
 	export TOP_SRCDIR="$(abs_top_srcdir)"; \
-	export BUILDDIR=".";
+	export BUILDDIR="."; \
 	$(NULL)
