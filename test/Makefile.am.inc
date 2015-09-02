@@ -87,6 +87,12 @@ EXTRA_DIST += \
 	$(NULL)
 CLEANFILES += stderr.log
 
+# Order some tests so that they don't try to export the same DBus names
+test/webhelper/testTranslate2Old.log: test/webhelper/testTranslate2.log
+test/webhelper/testWebActions2.log: test/webhelper/testTranslate2Old.log
+test/webhelper/testWebActions2Old.log: test/webhelper/testWebActions2.log
+test/webhelper/testLocal.log: test/webhelper/testWebActions2Old.log
+
 # Use locally built versions of Endless-0.gir and libraries; this may need to be
 # changed to AM_TESTS_ENVIRONMENT in a future version of Automake
 # Set XDG_CONFIG_HOME so as to avoid cluttering the user's actual config
@@ -97,5 +103,5 @@ TESTS_ENVIRONMENT = \
 	export XDG_CONFIG_HOME=`mktemp -d $${TMPDIR:-/tmp}/sdktestconfig.XXXXXXXX`; \
 	export WEBHELPER_UNINSTALLED_EXTENSION_DIR="$(top_builddir)/.libs"; \
 	export TOP_SRCDIR="$(abs_top_srcdir)"; \
-	export BUILDDIR=".";
+	export BUILDDIR="."; \
 	$(NULL)
