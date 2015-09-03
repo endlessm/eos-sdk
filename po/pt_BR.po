@@ -3,15 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Fernando Farfan <fernando@endlessm.com>, 2015
 # Ivan G. Gonçalves <i@endlessm.com>, 2015
 # Roddy Shuler <roddy@endlessm.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: philip@endlessm.com\n"
-"POT-Creation-Date: 2015-09-03 19:06+0000\n"
-"PO-Revision-Date: 2015-06-26 11:14+0000\n"
-"Last-Translator: Ivan G. Gonçalves <i@endlessm.com>\n"
+"POT-Creation-Date: 2015-09-03 22:03+0000\n"
+"PO-Revision-Date: 2015-09-03 23:47+0000\n"
+"Last-Translator: Fernando Farfan <fernando@endlessm.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/endless-mobile-inc/eos-sdk/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -72,3 +73,86 @@ msgstr "Direitos autorais %s."
 #: endless/eosattribution.c:341
 msgid "Used with permission."
 msgstr "Utilizando com permissão."
+
+#. TRANSLATORS: These names should be translated as the official names of the
+#. licenses in your language. Note: these names are markup, and so should not
+#. contain any ampersands (&), less-than signs (<) or greater-than signs (>).
+#: endless/eoslicense.c:52
+msgid "Public domain"
+msgstr "Domínio público"
+
+#: endless/eoslicense.c:53
+msgid "Owner permission"
+msgstr "Com a permissão do proprietário"
+
+#: endless/eoslicense.c:54
+msgid "Copyrighted free use"
+msgstr "Uso livre do direitos de autor"
+
+#: endless/eoslicense.c:55
+msgid "CC0-1.0"
+msgstr "CC0-1.0 Universal "
+
+#: endless/eoslicense.c:56
+msgid "Creative Commons Attribution 2.0"
+msgstr "Creative Commons Atribuição 2.0 Genérica"
+
+#: endless/eoslicense.c:57
+msgid "Creative Commons Attribution 3.0"
+msgstr "Creative Commons Atribuição 3.0 Não Adaptada"
+
+#: endless/eoslicense.c:58
+msgid "Creative Commons Attribution 4.0"
+msgstr "Creative Commons Atribuição 4.0 Internacional"
+
+#: endless/eoslicense.c:59
+msgid "Creative Commons Attribution-NonCommercial 2.0"
+msgstr "Creative Commons Atribuição-NãoComercial 2.0 Genérica"
+
+#: endless/eoslicense.c:60
+msgid "Creative Commons Attribution-NonCommercial 3.0"
+msgstr "Creative Commons Atribuição-NãoComercial 3.0 Não Adaptada"
+
+#: endless/eoslicense.c:61
+msgid "Creative Commons Attribution-NonCommercial-ShareAlike 2.0 Generic"
+msgstr "Creative Commons Atribuição-NãoComercial-CompartilhaIgual 2.0 Genérica"
+
+#: endless/eoslicense.c:62
+msgid "Creative Commons Attribution-NoDerivs 2.0"
+msgstr "Creative Commons Atribuição-SemDerivações 2.0 Genérica"
+
+#: endless/eoslicense.c:63
+msgid "Creative Commons Attribution-NoDerivs 3.0"
+msgstr "Creative Commons Atribuição-SemDerivações 3.0 Não Adaptada"
+
+#: endless/eoslicense.c:64
+msgid "Creative Commons Attribution-ShareAlike 2.0"
+msgstr "Creative Commons Atribuição-CompartilhaIgual 2.0 Genérica"
+
+#: endless/eoslicense.c:65
+msgid "Creative Commons Attribution-ShareAlike 2.5 Generic"
+msgstr "Creative Commons Atribuição-CompartilhaIgual 2.5 Genérica"
+
+#: endless/eoslicense.c:66
+msgid "Creative Commons Attribution-ShareAlike 3.0"
+msgstr "Creative Commons Atribuição-CompartilhaIgual 3.0 Não Adaptada"
+
+#: endless/eoslicense.c:67
+msgid "Creative Commons Attribution-ShareAlike 4.0 International"
+msgstr "Creative Commons Atribuição-CompartilhaIgual 4.0 Internacional"
+
+#: endless/eoslicense.c:68
+msgid "GNU Free Documentation License, version 1.1"
+msgstr "Licença GNU de Documentação Livre, versão 1.1"
+
+#: endless/eoslicense.c:69
+msgid "GNU Free Documentation License, version 1.2"
+msgstr "Licença GNU de Documentação Livre, versão 1.2"
+
+#: endless/eoslicense.c:70
+msgid "GNU Free Documentation License, version 1.3"
+msgstr "Licença GNU de Documentação Livre, versão 1.3"
+
+#: endless/eoslicense.c:178
+msgid "Unknown license"
+msgstr "Licença desconhecida"
