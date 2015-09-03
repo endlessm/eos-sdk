@@ -1,3 +1,4 @@
 # List of source files which contain translatable strings.
 endless/eosapplication.c
 endless/eosattribution.c
+endless/eoslicense.c
