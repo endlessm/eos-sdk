@@ -412,6 +412,7 @@ AM_JS_LOG_FLAGS += @EOS_JS_COVERAGE_LOG_FLAGS@
 AM_CFLAGS += @EOS_C_COVERAGE_CFLAGS@
 AM_LDFLAGS = @EOS_C_COVERAGE_LDFLAGS@
 libwebhelper2private_la_LDFLAGS += @EOS_C_COVERAGE_LDFLAGS@
+libwebhelper2oldprivate_la_LDFLAGS += @EOS_C_COVERAGE_LDFLAGS@
 wh2extension_la_LDFLAGS += @EOS_C_COVERAGE_LDFLAGS@
 
 clean-local:: clean-coverage
