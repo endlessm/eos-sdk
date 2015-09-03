@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: philip@endlessm.com\n"
-"POT-Creation-Date: 2015-09-03 19:06+0000\n"
-"PO-Revision-Date: 2015-06-15 16:24+0000\n"
+"POT-Creation-Date: 2015-09-03 22:03+0000\n"
+"PO-Revision-Date: 2015-09-03 22:03+0000\n"
 "Last-Translator: endlessmobile_build <philip@endlessm.com>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/eos-sdk/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -69,4 +69,87 @@ msgstr ""
 #. ampersands (&), less-than signs (<), or greater-than signs (>).
 #: endless/eosattribution.c:341
 msgid "Used with permission."
+msgstr ""
+
+#. TRANSLATORS: These names should be translated as the official names of the
+#. licenses in your language. Note: these names are markup, and so should not
+#. contain any ampersands (&), less-than signs (<) or greater-than signs (>).
+#: endless/eoslicense.c:52
+msgid "Public domain"
+msgstr ""
+
+#: endless/eoslicense.c:53
+msgid "Owner permission"
+msgstr ""
+
+#: endless/eoslicense.c:54
+msgid "Copyrighted free use"
+msgstr ""
+
+#: endless/eoslicense.c:55
+msgid "CC0-1.0"
+msgstr ""
+
+#: endless/eoslicense.c:56
+msgid "Creative Commons Attribution 2.0"
+msgstr ""
+
+#: endless/eoslicense.c:57
+msgid "Creative Commons Attribution 3.0"
+msgstr ""
+
+#: endless/eoslicense.c:58
+msgid "Creative Commons Attribution 4.0"
+msgstr ""
+
+#: endless/eoslicense.c:59
+msgid "Creative Commons Attribution-NonCommercial 2.0"
+msgstr ""
+
+#: endless/eoslicense.c:60
+msgid "Creative Commons Attribution-NonCommercial 3.0"
+msgstr ""
+
+#: endless/eoslicense.c:61
+msgid "Creative Commons Attribution-NonCommercial-ShareAlike 2.0 Generic"
+msgstr ""
+
+#: endless/eoslicense.c:62
+msgid "Creative Commons Attribution-NoDerivs 2.0"
+msgstr ""
+
+#: endless/eoslicense.c:63
+msgid "Creative Commons Attribution-NoDerivs 3.0"
+msgstr ""
+
+#: endless/eoslicense.c:64
+msgid "Creative Commons Attribution-ShareAlike 2.0"
+msgstr ""
+
+#: endless/eoslicense.c:65
+msgid "Creative Commons Attribution-ShareAlike 2.5 Generic"
+msgstr ""
+
+#: endless/eoslicense.c:66
+msgid "Creative Commons Attribution-ShareAlike 3.0"
+msgstr ""
+
+#: endless/eoslicense.c:67
+msgid "Creative Commons Attribution-ShareAlike 4.0 International"
+msgstr ""
+
+#: endless/eoslicense.c:68
+msgid "GNU Free Documentation License, version 1.1"
+msgstr ""
+
+#: endless/eoslicense.c:69
+msgid "GNU Free Documentation License, version 1.2"
+msgstr ""
+
+#: endless/eoslicense.c:70
+msgid "GNU Free Documentation License, version 1.3"
+msgstr ""
+
+#: endless/eoslicense.c:178
+msgid "Unknown license"
 msgstr ""
