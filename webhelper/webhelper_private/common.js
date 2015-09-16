@@ -79,11 +79,11 @@ const WH2_DBUS_MAIN_PROGRAM_INTERFACE = '\
  * Constructor parameters:
  *   props - a dictionary of construction properties and values (default {})
  *
- * The application class for your web application should create <WebHelper> in
- * its *vfunc_dbus_register()* implementation, with appropriate
- * <well-known-name> and <connection> parameters.
- * After that, you can do further setup on it, such as defining web actions, in
- * your *vfunc_startup()* implementation.
+ * The application class for your web application should create <WebHelper> after
+ * registering itself in the session bus (i.e. not inside *vfunc_dbus_register()*),
+ * with appropriate <well-known-name> and <connection> parameters.
+ * A good place to do this would be in your *vfunc_startup()* implementation, where
+ * you can also do further setup on it, such as defining web actions.
  *
  * There is no need to set up specially any web views that you create, unlike
  * WebKit1 where you must set up <Application.web_actions_handler()>.
