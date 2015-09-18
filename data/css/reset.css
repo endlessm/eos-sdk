@@ -7,7 +7,7 @@
  */
 
 EosWindow,
-EosWindow * {
+EosWindow :not(GtkSpinner) {
   color: inherit;
   font-size: inherit;
   background-color: initial;
