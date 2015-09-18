@@ -179,9 +179,11 @@ EosWindow {
 
 /*
  * Themeing for context menus, to get Adwaita look
- * FIXME: Really gross to be duplicating all this Adwaita theme here. If the
- * :not selector is ever supported in gtk css, just :not(.context-menu) and
- * children in reset.css and drop all of this.
+ * FIXME: Really gross to be recreating all this Adwaita theme here.
+ * Unfortunately even the :not pseudo-selector won't allow you to select all
+ * items whose ancestor isn't a .menuitem, because if one ancestor is a
+ * .menuitem then another ancestor is likely not. So at least some of the below
+ * rules will always be necessary.
  */
 @define-color endless_menu_fg_color #2e3436;
 @define-color endless_menu_bg_color shade (#ededed, 1.1);
