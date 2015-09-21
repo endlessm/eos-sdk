@@ -482,44 +482,53 @@ eos_window_finalize (GObject *object)
   G_OBJECT_CLASS (eos_window_parent_class)->finalize (object);
 }
 
+static void
+eos_window_font_scale (EosWindow *self,
+                       gint       allocated_height)
+{
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+
+  if (!priv->font_scaling_active)
+    return;
+
+  GtkStyleProvider *provider = GTK_STYLE_PROVIDER (priv->font_size_provider);
+  gdouble new_size = priv->font_scaling_default_size *
+    ((gdouble) allocated_height / priv->font_scaling_default_window_size);
+
+  new_size = MIN (new_size, priv->font_scaling_min_font_size);
+
+  if (new_size == priv->font_scaling_calculated_font_size)
+    return;
+
+  priv->font_scaling_calculated_font_size = new_size;
+
+  /* A float will only have one decimal point when printed as a string. The
+   * decimal point can be represented as a comma or period when using either
+   * Imperial or metric units. However, the CSS parser only recognizes periods
+   * as valid decimal points. Therefore, we convert the float to a string using
+   * a period as the decimal point. */
+  gchar font_size_float_str[G_ASCII_DTOSTR_BUF_SIZE];
+  g_ascii_dtostr (font_size_float_str, G_ASCII_DTOSTR_BUF_SIZE,
+                  priv->font_scaling_calculated_font_size);
+
+  gchar *font_size_css = g_strdup_printf (FONT_SIZE_TEMPLATE,
+                                          font_size_float_str);
+  GdkScreen *screen = gdk_screen_get_default ();
+
+  gtk_style_context_remove_provider_for_screen (screen, provider);
+  gtk_css_provider_load_from_data (GTK_CSS_PROVIDER (provider), font_size_css,
+                                   -1, NULL);  /* ignore error */
+  gtk_style_context_add_provider_for_screen (screen, provider,
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+  g_free (font_size_css);
+}
+
 /* Updates the base font size depending on the window size. */
 static void
 eos_window_size_allocate (GtkWidget *window, GtkAllocation *allocation)
 {
-  EosWindow *self = EOS_WINDOW (window);
-  EosWindowPrivate *priv = eos_window_get_instance_private (self);
-
-  if (priv->font_scaling_active)
-    {
-      GtkStyleProvider *provider = GTK_STYLE_PROVIDER (priv->font_size_provider);
-      priv->font_scaling_calculated_font_size = (gdouble) priv->font_scaling_default_size *
-                                ((gdouble) allocation->height / (gdouble) priv->font_scaling_default_window_size);
-
-      if (priv->font_scaling_calculated_font_size < priv->font_scaling_min_font_size)
-        priv->font_scaling_calculated_font_size = priv->font_scaling_min_font_size;
-
-      GError *error = NULL;
-
-      /* A float will only have one decimal point when printed as a string.
-       * The decimal point can be represented as a comma or period when using
-       * either Imperial or metric units. However, the CSS parser only recognizes
-       * periods as valid decimal points. Therefore, we convert the float to a
-       * string using a period as the decimal point. */
-      gchar font_size_float_str [G_ASCII_DTOSTR_BUF_SIZE];
-      g_ascii_dtostr (font_size_float_str, G_ASCII_DTOSTR_BUF_SIZE, priv->font_scaling_calculated_font_size);
-
-      gchar *font_size_css = g_strdup_printf (FONT_SIZE_TEMPLATE, font_size_float_str);
-      GdkScreen *screen = gdk_screen_get_default ();
-
-      gtk_style_context_remove_provider_for_screen (screen, provider);
-      gtk_css_provider_load_from_data (GTK_CSS_PROVIDER (provider),
-                                       font_size_css, -1, &error);
-      gtk_style_context_add_provider_for_screen (screen, provider,
-                                                 GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
-      g_free(font_size_css);
-    }
-
+  eos_window_font_scale (EOS_WINDOW (window), allocation->height);
   GTK_WIDGET_CLASS (eos_window_parent_class)->size_allocate (window, allocation);
 }
 

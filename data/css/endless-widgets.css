@@ -179,9 +179,11 @@ EosWindow {
 
 /*
  * Themeing for context menus, to get Adwaita look
- * FIXME: Really gross to be duplicating all this Adwaita theme here. If the
- * :not selector is ever supported in gtk css, just :not(.context-menu) and
- * children in reset.css and drop all of this.
+ * FIXME: Really gross to be recreating all this Adwaita theme here.
+ * Unfortunately even the :not pseudo-selector won't allow you to select all
+ * items whose ancestor isn't a .menuitem, because if one ancestor is a
+ * .menuitem then another ancestor is likely not. So at least some of the below
+ * rules will always be necessary.
  */
 @define-color endless_menu_fg_color #2e3436;
 @define-color endless_menu_bg_color shade (#ededed, 1.1);
@@ -210,102 +212,4 @@ EosWindow {
 .menu .menuitem.separator {
     color: mix (@endless_menu_fg_color, @endless_menu_bg_color, 0.9);
     -GtkMenuItem-horizontal-padding: 0;
-}
-
-/* Simple spinner. Loosely based on http://projects.lukehaas.me/css-loaders/,
-MIT licensed. */
-
-.spinner {
-    background-image: -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                    color-stop(0, white),
-                                    color-stop(0.8, white),
-                                    color-stop(1, transparent)),
-                      -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                    color-stop(0, white),
-                                    color-stop(0.8, white),
-                                    color-stop(1, transparent)),
-                      -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                    color-stop(0, white),
-                                    color-stop(0.8, white),
-                                    color-stop(1, transparent));
-    background-position: 0% 50%, 50% 50%, 100% 50%;
-    background-size: 40% 40%;
-    background-repeat: no-repeat;
-}
-
-.spinner:active {
-    animation: spinner 2.1s infinite linear;
-}
-
-@keyframes spinner {
-    0% {
-        background-image: -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                        color-stop(0, white),
-                                        color-stop(0.8, white),
-                                        color-stop(1, transparent)),
-                          -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                        color-stop(0, white),
-                                        color-stop(0.8, white),
-                                        color-stop(1, transparent)),
-                          -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                        color-stop(0, white),
-                                        color-stop(0.8, white),
-                                        color-stop(1, transparent));
-    }
-    25% {
-        background-image: -gtk-gradient(radial, center center, 0, center center, 0.5,
-                                        color-stop(0, white),
-                                        color-stop(0.5, white),
-                                        color-stop(1, transparent)),
-                          -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                        color-stop(0, white),
-                                        color-stop(0.8, white),
-                                        color-stop(1, transparent)),
-                          -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                        color-stop(0, white),
-                                        color-stop(0.8, white),
-                                        color-stop(1, transparent));
-    }
-    50% {
-        background-image: -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                        color-stop(0, white),
-                                        color-stop(0.8, white),
-                                        color-stop(1, transparent)),
-                          -gtk-gradient(radial, center center, 0, center center, 0.5,
-                                        color-stop(0, white),
-                                        color-stop(0.5, white),
-                                        color-stop(1, transparent)),
-                          -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                        color-stop(0, white),
-                                        color-stop(0.8, white),
-                                        color-stop(1, transparent));
-    }
-    75% {
-        background-image: -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                        color-stop(0, white),
-                                        color-stop(0.8, white),
-                                        color-stop(1, transparent)),
-                          -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                        color-stop(0, white),
-                                        color-stop(0.8, white),
-                                        color-stop(1, transparent)),
-                          -gtk-gradient(radial, center center, 0, center center, 0.5,
-                                        color-stop(0, white),
-                                        color-stop(0.5, white),
-                                        color-stop(1, transparent));
-    }
-    100% {
-        background-image: -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                        color-stop(0, white),
-                                        color-stop(0.8, white),
-                                        color-stop(1, transparent)),
-                          -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                        color-stop(0, white),
-                                        color-stop(0.8, white),
-                                        color-stop(1, transparent)),
-                          -gtk-gradient(radial, center center, 0, center center, 0.2,
-                                        color-stop(0, white),
-                                        color-stop(0.8, white),
-                                        color-stop(1, transparent));
-    }
 }
