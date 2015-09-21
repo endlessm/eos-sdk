@@ -61,7 +61,8 @@ describe("Web Helper Font Sizes", function () {
     it("does not have the default font scale for a tiny window", function () {
         let test_initial_font_size = function (my_win, default_font_size) {
             my_win.font_scaling_default_window_size = 200; // Force a ridiculous value
-            expect(my_win.font_scaling_calculated_font_size).not.toEqual(default_font_size);
+            // Window's font scaling is a double, web settings' is an integer
+            expect(my_win.font_scaling_calculated_font_size).not.toBeCloseTo(default_font_size, 0);
 
             /* This does not immediately quit the application. It sets a flag for termination
              * which will cause the application to be disposed on the next main loop iteration. */
@@ -79,7 +80,8 @@ describe("Web Helper Font Sizes", function () {
         app.set_font_resizable_callback = app.set_web_settings_font_resizable;
 
         let test_font_sizing = function (my_win, my_websettings) {
-            expect(my_win.font_scaling_calculated_font_size).toEqual(my_websettings.default_font_size);
+            // Window's font scaling is a double, web settings' is an integer
+            expect(my_win.font_scaling_calculated_font_size).toBeCloseTo(my_websettings.default_font_size, 0);
 
             /* This does not immediately quit the application. It sets a flag for termination
              * which will cause the application to be disposed on the next main loop iteration. */
