@@ -99,32 +99,26 @@ static gchar * const recognized_licenses_filenames[] = {
 static const char *
 get_locale (GFile *cc_licenses_dir)
 {
-  static gchar * locale;
+  const gchar * const * languages = g_get_language_names ();
+  const gchar * const * iter;
 
-  if (g_once_init_enter (&locale))
+  for (iter = languages; *iter != NULL; iter++)
     {
-      const gchar * const * languages = g_get_language_names ();
-      const gchar * const * iter;
-      for (iter = languages; *iter != NULL; iter++)
-        {
-          GFile *license_file = g_file_get_child (cc_licenses_dir, *iter);
+      GFile *license_file = g_file_get_child (cc_licenses_dir, *iter);
 
-          gboolean locale_file_exists = g_file_query_exists (license_file, NULL);
+      gboolean locale_file_exists = g_file_query_exists (license_file, NULL);
 
-          g_object_unref (license_file);
+      g_object_unref (license_file);
 
-          if (locale_file_exists)
-            break;
-        }
-
-      /* Licenses will always be installed for at least one locale, which
-      may be the default C locale. */
-      g_assert (*iter != NULL);
-
-      g_once_init_leave (&locale, *iter);
+      if (locale_file_exists)
+        return *iter;
     }
 
-  return locale;
+  /* Licenses will always be installed for at least one locale, which may be the
+  default C locale. */
+  g_assert (*iter != NULL);
+
+  return "C";
 }
 
 static gchar *
