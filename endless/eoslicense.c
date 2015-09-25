@@ -97,14 +97,14 @@ static gchar * const recognized_licenses_filenames[] = {
 };
 
 static const char *
-get_locale (GFile *cc_licenses_dir)
+get_locale (GFile *licenses_dir)
 {
   const gchar * const * languages = g_get_language_names ();
   const gchar * const * iter;
 
   for (iter = languages; *iter != NULL; iter++)
     {
-      GFile *license_file = g_file_get_child (cc_licenses_dir, *iter);
+      GFile *license_file = g_file_get_child (licenses_dir, *iter);
 
       gboolean locale_file_exists = g_file_query_exists (license_file, NULL);
 
@@ -206,16 +206,16 @@ eos_get_license_file (const gchar *license)
 
   gchar *licenses_path = g_build_filename (DATADIR, "licenses",
                                            license_filename[0], NULL);
-  GFile *cc_licenses_dir = g_file_new_for_path (licenses_path);
+  GFile *licenses_dir = g_file_new_for_path (licenses_path);
   g_free (licenses_path);
 
-  const char *locale = get_locale (cc_licenses_dir);
+  const char *locale = get_locale (licenses_dir);
 
-  GFile *license_locale_dir = g_file_get_child (cc_licenses_dir, locale);
+  GFile *license_locale_dir = g_file_get_child (licenses_dir, locale);
   GFile *license_file = g_file_get_child (license_locale_dir,
                                           license_filename[1]);
 
-  g_object_unref (cc_licenses_dir);
+  g_object_unref (licenses_dir);
   g_object_unref (license_locale_dir);
   g_strfreev (license_filename);
 
