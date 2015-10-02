@@ -117,10 +117,13 @@ eos_top_bar_get_preferred_height (GtkWidget *widget,
                                   int *minimum,
                                   int *natural)
 {
+  GTK_WIDGET_CLASS (eos_top_bar_parent_class)->get_preferred_height (widget,
+                                                                     minimum,
+                                                                     natural);
   if (minimum != NULL)
-    *minimum = _EOS_TOP_BAR_HEIGHT_PX;
+    *minimum = MAX (_EOS_TOP_BAR_HEIGHT_PX, *minimum);
   if (natural != NULL)
-    *natural = _EOS_TOP_BAR_HEIGHT_PX;
+    *natural = MAX (_EOS_TOP_BAR_HEIGHT_PX, *natural);
 }
 
 /* Draw the edge finishing on the two lines inside the topbar; see
@@ -132,15 +135,16 @@ eos_top_bar_draw (GtkWidget *self_widget,
   GTK_WIDGET_CLASS (eos_top_bar_parent_class)->draw (self_widget, cr);
 
   gint width = gtk_widget_get_allocated_width (self_widget);
+  gint height = gtk_widget_get_allocated_height (self_widget);
   cairo_set_line_width (cr, 1.0);
   /* Highlight: #ffffff, opacity 5% */
   cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 0.05);
-  cairo_move_to (cr, 0, _EOS_TOP_BAR_HEIGHT_PX - 1.5);
+  cairo_move_to (cr, 0, height - 1.5);
   cairo_rel_line_to (cr, width, 0);
   cairo_stroke (cr);
   /* Baseline: #0a0a0a, opacity 100% */
   cairo_set_source_rgb (cr, 0.039, 0.039, 0.039);
-  cairo_move_to (cr, 0, _EOS_TOP_BAR_HEIGHT_PX - 0.5);
+  cairo_move_to (cr, 0, height - 0.5);
   cairo_rel_line_to (cr, width, 0);
   cairo_stroke (cr);
 
@@ -273,6 +277,8 @@ eos_top_bar_init (EosTopBar *self)
   priv->center_top_bar_attach = gtk_alignment_new (0.5, 0.5, 0.0, 0.0);
   gtk_widget_set_hexpand (priv->center_top_bar_attach, TRUE);
   gtk_widget_set_halign (priv->center_top_bar_attach, GTK_ALIGN_CENTER);
+  gtk_widget_set_vexpand (priv->left_top_bar_attach, TRUE);
+  gtk_widget_set_vexpand (priv->center_top_bar_attach, TRUE);
 
   /* TODO implement adding actions and widgets to the actions_grid */
 
