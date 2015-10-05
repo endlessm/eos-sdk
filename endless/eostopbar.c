@@ -117,12 +117,19 @@ eos_top_bar_get_preferred_height (GtkWidget *widget,
                                   int *minimum,
                                   int *natural)
 {
+  gboolean left_widget_visible = FALSE, center_widget_visible = FALSE;
   EosTopBar *self = EOS_TOP_BAR (widget);
   EosTopBarPrivate *priv = eos_top_bar_get_instance_private (self);
-  gboolean left_widget_visible = gtk_widget_get_visible (priv->left_top_bar_widget);
-  gboolean center_widget_visible = gtk_widget_get_visible (priv->center_top_bar_widget);
-  gtk_widget_set_visible (priv->left_top_bar_widget, TRUE);
-  gtk_widget_set_visible (priv->center_top_bar_widget, TRUE);
+  if (priv->left_top_bar_widget)
+    {
+      left_widget_visible = gtk_widget_get_visible (priv->left_top_bar_widget);
+      gtk_widget_set_visible (priv->left_top_bar_widget, TRUE);
+    }
+  if (priv->center_top_bar_widget)
+    {
+      center_widget_visible = gtk_widget_get_visible (priv->center_top_bar_widget);
+      gtk_widget_set_visible (priv->center_top_bar_widget, TRUE);
+    }
 
   GTK_WIDGET_CLASS (eos_top_bar_parent_class)->get_preferred_height (widget,
                                                                      minimum,
@@ -132,8 +139,14 @@ eos_top_bar_get_preferred_height (GtkWidget *widget,
   if (natural != NULL)
     *natural = MAX (_EOS_TOP_BAR_HEIGHT_PX, *natural);
 
-  gtk_widget_set_visible (priv->left_top_bar_widget, left_widget_visible);
-  gtk_widget_set_visible (priv->center_top_bar_widget, center_widget_visible);
+  if (priv->left_top_bar_widget)
+    {
+      gtk_widget_set_visible (priv->left_top_bar_widget, left_widget_visible);
+    }
+  if (priv->center_top_bar_widget)
+    {
+      gtk_widget_set_visible (priv->center_top_bar_widget, center_widget_visible);
+    }
 }
 
 /* Draw the edge finishing on the two lines inside the topbar; see
