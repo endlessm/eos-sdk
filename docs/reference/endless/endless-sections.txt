@@ -1,9 +1,13 @@
 <SECTION>
 <FILE>hello</FILE>
+eos_hello_sample_function
+</SECTION>
+
+<SECTION>
+<FILE>system</FILE>
 EOS_SDK_MAJOR_VERSION
 EOS_SDK_MINOR_VERSION
 EOS_SDK_MICRO_VERSION
-eos_hello_sample_function
 eos_get_system_personality
 <SUBSECTION Private>
 EOS_DEFINE_ENUM_TYPE

@@ -7,6 +7,14 @@
 #endif
 
 /**
+ * SECTION:system
+ * @short_description: System utilities
+ * @title: System
+ *
+ * Miscellaneous utilities for gathering information about the system.
+ */
+
+/**
  * EOS_SDK_MAJOR_VERSION:
  *
  * Major version number (API level) of the Endless SDK library.
