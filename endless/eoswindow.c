@@ -532,15 +532,6 @@ eos_window_size_allocate (GtkWidget *window, GtkAllocation *allocation)
   GTK_WIDGET_CLASS (eos_window_parent_class)->size_allocate (window, allocation);
 }
 
-/* Our default delete event handler destroys the window. */
-static gboolean
-eos_window_default_delete (GtkWidget* window,
-                     gpointer user_data)
-{
-  gtk_widget_destroy (GTK_WIDGET (window));
-  return FALSE;
-}
-
 static void
 eos_window_class_init (EosWindowClass *klass)
 {
