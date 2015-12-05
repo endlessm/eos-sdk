@@ -19,6 +19,10 @@
  */
 #define _EOS_STYLE_CLASS_TOP_BAR "top-bar"
 #define _EOS_STYLE_CLASS_UNMAXIMIZED "unmaximized"
+#define _EOS_STYLE_CLASS_NETWORK "network"
+#define _EOS_STYLE_CLASS_CONNECTED "connected"
+#define _EOS_STYLE_CLASS_DISCONNECTED "disconnected"
+#define _EOS_STYLE_CLASS_UNKNOWN "unknown"
 #define _EOS_TOP_BAR_HEIGHT_PX 36
 #define _EOS_TOP_BAR_BUTTON_PADDING_PX 4
 #define _EOS_TOP_BAR_ICON_SIZE_PX 16
@@ -52,6 +56,8 @@ typedef struct {
   gboolean show_credits_button;
   guint credits_enter_handler;
   guint credits_leave_handler;
+
+  GtkWidget *internet_indicator;
 } EosTopBarPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (EosTopBar, eos_top_bar, GTK_TYPE_EVENT_BOX)
@@ -274,6 +280,63 @@ on_credits_clicked (GtkButton *button,
 }
 
 static void
+set_network_connected (GtkWidget *indicator)
+{
+  GtkStyleContext *context = gtk_widget_get_style_context (indicator);
+  gtk_style_context_add_class (context, _EOS_STYLE_CLASS_CONNECTED);
+  gtk_style_context_remove_class (context, _EOS_STYLE_CLASS_DISCONNECTED);
+  gtk_style_context_remove_class (context, _EOS_STYLE_CLASS_UNKNOWN);
+}
+
+static void
+set_network_disconnected (GtkWidget *indicator)
+{
+  GtkStyleContext *context = gtk_widget_get_style_context (indicator);
+  gtk_style_context_remove_class (context, _EOS_STYLE_CLASS_CONNECTED);
+  gtk_style_context_add_class (context, _EOS_STYLE_CLASS_DISCONNECTED);
+  gtk_style_context_remove_class (context, _EOS_STYLE_CLASS_UNKNOWN);
+}
+
+static void
+set_network_unknown (GtkWidget *indicator)
+{
+  GtkStyleContext *context = gtk_widget_get_style_context (indicator);
+  gtk_style_context_remove_class (context, _EOS_STYLE_CLASS_CONNECTED);
+  gtk_style_context_remove_class (context, _EOS_STYLE_CLASS_DISCONNECTED);
+  gtk_style_context_add_class (context, _EOS_STYLE_CLASS_UNKNOWN);
+}
+
+static void
+on_check_google_done_cb (GNetworkMonitor *network,
+                         GAsyncResult    *res,
+                         GtkWidget       *internet_indicator)
+{
+  gboolean reachable = g_network_monitor_can_reach_finish (network, res, NULL);
+  if (reachable)
+    set_network_connected (internet_indicator);
+  else
+    set_network_disconnected (internet_indicator);
+}
+
+static void
+on_network_changed_cb (GNetworkMonitor *network,
+                       gboolean         available,
+                       GtkWidget       *internet_indicator)
+{
+  if (!available)
+    {
+      set_network_disconnected (internet_indicator);
+      return;
+    }
+  set_network_unknown (internet_indicator);
+  GSocketConnectable *google = g_network_address_new ("www.google.com", 80);
+  g_network_monitor_can_reach_async (network, google, NULL,
+                                     (GAsyncReadyCallback)on_check_google_done_cb,
+                                     internet_indicator);
+  g_object_unref (google);
+}
+
+static void
 eos_top_bar_init (EosTopBar *self)
 {
   GtkStyleContext *context;
@@ -377,6 +440,25 @@ eos_top_bar_init (EosTopBar *self)
   gtk_stack_add_named (GTK_STACK (priv->credits_stack),
                        priv->credits_button, "button");
 
+  priv->internet_indicator =
+    g_object_new (GTK_TYPE_IMAGE,
+                  "halign", GTK_ALIGN_START,
+                  "valign", GTK_ALIGN_CENTER,
+                  "icon-name", "network-wireless-signal-excellent-symbolic",
+                  NULL);
+  context = gtk_widget_get_style_context (priv->internet_indicator);
+  gtk_style_context_add_class (context, _EOS_STYLE_CLASS_NETWORK);
+
+  GNetworkMonitor *network = g_network_monitor_get_default ();
+  g_signal_connect (network, "network-changed",
+                    G_CALLBACK (on_network_changed_cb),
+                    priv->internet_indicator);
+  on_network_changed_cb (network,
+                         g_network_monitor_get_network_available (network),
+                         priv->internet_indicator);
+
+  gtk_container_add (GTK_CONTAINER (priv->actions_grid),
+                     priv->internet_indicator);
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
                      priv->left_top_bar_attach);
   gtk_container_add (GTK_CONTAINER (priv->actions_grid),
