@@ -635,32 +635,6 @@ eos_window_class_init (EosWindowClass *klass)
 }
 
 static void
-on_minimize_clicked_cb (GtkWidget *top_bar,
-                        EosWindow *self)
-{
-  gtk_window_iconify (GTK_WINDOW (self));
-}
-
-static void
-on_maximize_clicked_cb (GtkWidget *top_bar,
-                        EosWindow *self)
-{
-  EosWindowPrivate *priv = eos_window_get_instance_private (self);
-
-  if (priv->maximized)
-    gtk_window_unmaximize (GTK_WINDOW (self));
-  else
-    gtk_window_maximize (GTK_WINDOW (self));
-}
-
-static void
-on_close_clicked_cb (GtkWidget *top_bar,
-                     EosWindow *self)
-{
-  gtk_window_close (GTK_WINDOW (self));
-}
-
-static void
 on_credits_clicked (GtkWidget *top_bar,
                     EosWindow *self)
 {
@@ -768,12 +742,6 @@ eos_window_init (EosWindow *self)
   gtk_window_maximize (GTK_WINDOW (self));
   gtk_window_set_default_size (GTK_WINDOW (self), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 
-  g_signal_connect (priv->top_bar, "minimize-clicked",
-                    G_CALLBACK (on_minimize_clicked_cb), self);
-  g_signal_connect (priv->top_bar, "maximize-clicked",
-                    G_CALLBACK (on_maximize_clicked_cb), self);
-  g_signal_connect (priv->top_bar, "close-clicked",
-                    G_CALLBACK (on_close_clicked_cb), self);
   g_signal_connect (priv->top_bar, "credits-clicked",
                     G_CALLBACK (on_credits_clicked), self);
   g_signal_connect (self, "window-state-event",
