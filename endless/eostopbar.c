@@ -75,6 +75,20 @@ enum {
 static GParamSpec *eos_top_bar_props[NPROPS] = { NULL, };
 
 static void
+eos_top_bar_constructed (GObject *object)
+{
+  EosTopBar *self = EOS_TOP_BAR (object);
+
+  GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (self));
+  gtk_style_context_add_class (context, _EOS_STYLE_CLASS_TOP_BAR);
+
+  gtk_widget_set_hexpand (GTK_WIDGET (self), TRUE);
+  gtk_widget_set_halign (GTK_WIDGET (self), GTK_ALIGN_FILL);
+
+  eos_top_bar_update_window_maximized (self, TRUE);
+}
+
+static void
 eos_top_bar_get_property (GObject    *object,
                           guint       property_id,
                           GValue     *value,
@@ -180,6 +194,7 @@ eos_top_bar_class_init (EosTopBarClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
+  object_class->constructed = eos_top_bar_constructed;
   object_class->get_property = eos_top_bar_get_property;
   object_class->set_property = eos_top_bar_set_property;
   widget_class->get_preferred_height = eos_top_bar_get_preferred_height;
@@ -276,13 +291,7 @@ on_credits_clicked (GtkButton *button,
 static void
 eos_top_bar_init (EosTopBar *self)
 {
-  GtkStyleContext *context;
   EosTopBarPrivate *priv = eos_top_bar_get_instance_private (self);
-
-  context = gtk_widget_get_style_context (GTK_WIDGET (self));
-  gtk_style_context_add_class (context, _EOS_STYLE_CLASS_TOP_BAR);
-
-  gtk_widget_set_hexpand (GTK_WIDGET (self), TRUE);
 
   priv->actions_grid =
     g_object_new (GTK_TYPE_GRID,
@@ -328,7 +337,6 @@ eos_top_bar_init (EosTopBar *self)
                   "valign", GTK_ALIGN_CENTER,
                   NULL);
   priv->maximize_icon = gtk_image_new ();
-  eos_top_bar_update_window_maximized (self, TRUE);
   g_object_set(priv->maximize_icon,
                "pixel-size", _EOS_TOP_BAR_ICON_SIZE_PX,
                "margin", _EOS_TOP_BAR_BUTTON_PADDING_PX,
@@ -390,9 +398,6 @@ eos_top_bar_init (EosTopBar *self)
                      priv->close_button);
 
   gtk_container_add (GTK_CONTAINER (self), priv->actions_grid);
-
-  gtk_widget_set_hexpand (GTK_WIDGET (self), TRUE);
-  gtk_widget_set_halign (GTK_WIDGET (self), GTK_ALIGN_FILL);
 
   g_signal_connect (priv->minimize_button, "clicked",
                     G_CALLBACK (on_minimize_clicked_cb), self);
