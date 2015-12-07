@@ -16,7 +16,6 @@
  * class: a left widget and a center widget, which can both contain any other
  * widget.
  */
-#define _EOS_STYLE_CLASS_TOP_BAR "top-bar"
 #define _EOS_TOP_BAR_HEIGHT_PX 36
 #define _EOS_TOP_BAR_ICON_SIZE_PX 16
 #define _EOS_TOP_BAR_BUTTON_SEPARATION_PX 8
@@ -58,9 +57,6 @@ eos_top_bar_constructed (GObject *object)
 {
   EosTopBar *self = EOS_TOP_BAR (object);
   EosTopBarPrivate *priv = eos_top_bar_get_instance_private (self);
-
-  GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (self));
-  gtk_style_context_add_class (context, _EOS_STYLE_CLASS_TOP_BAR);
 
   g_object_set (self,
                 "custom-title", priv->center_top_bar_attach,
