@@ -17,7 +17,6 @@
  * widget.
  */
 #define _EOS_STYLE_CLASS_TOP_BAR "top-bar"
-#define _EOS_STYLE_CLASS_UNMAXIMIZED "unmaximized"
 #define _EOS_TOP_BAR_HEIGHT_PX 36
 #define _EOS_TOP_BAR_ICON_SIZE_PX 16
 #define _EOS_TOP_BAR_BUTTON_SEPARATION_PX 8
@@ -70,8 +69,6 @@ eos_top_bar_constructed (GObject *object)
                 "show-close-button", TRUE,
                 "spacing", _EOS_TOP_BAR_BUTTON_SEPARATION_PX,
                 NULL);
-
-  eos_top_bar_update_window_maximized (self, TRUE);
 }
 
 static void
@@ -332,27 +329,6 @@ eos_top_bar_set_center_widget (EosTopBar *self,
                          priv->center_top_bar_widget);
       gtk_widget_show (priv->center_top_bar_widget);
     }
-}
-
-/*
- * eos_top_bar_update_window_maximized:
- * @self: the top bar
- * @is_maximized: whether the window is currently maximized
- *
- * Private method for eos_window to update the topbar on the window maximized
- * state.
- */
-void
-eos_top_bar_update_window_maximized (EosTopBar *self,
-                                     gboolean is_maximized)
-{
-  g_return_if_fail (EOS_IS_TOP_BAR (self));
-
-  GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (self));
-  if (!is_maximized)
-    gtk_style_context_add_class (context, _EOS_STYLE_CLASS_UNMAXIMIZED);
-  else
-    gtk_style_context_remove_class (context, _EOS_STYLE_CLASS_UNMAXIMIZED);
 }
 
 /*

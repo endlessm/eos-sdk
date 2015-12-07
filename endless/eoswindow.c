@@ -96,8 +96,6 @@ typedef struct {
 
   EosPageManager *page_manager;
 
-  gboolean maximized;
-
   /* For scaling base font-size */
   GtkCssProvider *font_size_provider;
   gboolean font_scaling_active;
@@ -644,18 +642,6 @@ on_credits_clicked (GtkWidget *top_bar,
                                   NULL);
 }
 
-static gboolean
-on_window_state_event_cb (GtkWidget           *widget,
-                          GdkEventWindowState *event)
-{
-  EosWindow *self = EOS_WINDOW (widget);
-  EosWindowPrivate *priv = eos_window_get_instance_private (self);
-  GdkWindowState window_state = event->new_window_state;
-  priv->maximized = window_state & GDK_WINDOW_STATE_MAXIMIZED;
-  eos_top_bar_update_window_maximized (EOS_TOP_BAR (priv->top_bar), priv->maximized);
-  return FALSE;
-}
-
 /* Draw the edge finishing on the two lines on top of the window's content;
 see eos_top_bar_draw() for the two lines inside the top bar */
 static gboolean
@@ -744,8 +730,6 @@ eos_window_init (EosWindow *self)
 
   g_signal_connect (priv->top_bar, "credits-clicked",
                     G_CALLBACK (on_credits_clicked), self);
-  g_signal_connect (self, "window-state-event",
-                    G_CALLBACK (on_window_state_event_cb), NULL);
 
   eos_window_set_page_manager (self,
                                EOS_PAGE_MANAGER (eos_page_manager_new ()));

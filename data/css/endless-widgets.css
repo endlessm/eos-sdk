@@ -50,7 +50,7 @@ EosWindow {
     padding-right: 7px;
 }
 
-.top-bar.unmaximized {
+EosWindow:not(.maximized) .top-bar {
     border-radius: 7px 7px 0px 0px;
 }
 
