@@ -17,17 +17,14 @@
  * widget.
  */
 #define _EOS_TOP_BAR_HEIGHT_PX 36
-#define _EOS_TOP_BAR_ICON_SIZE_PX 16
-#define _EOS_TOP_BAR_BUTTON_SEPARATION_PX 8
-#define _EOS_TOP_BAR_CREDITS_ICON_NAME "user-info-symbolic"
 
 typedef struct {
   GtkWidget *center_top_bar_attach;  /* needed to suppress default title */
   GtkWidget *left_top_bar_widget;
   GtkWidget *center_top_bar_widget;
 
-  GtkWidget *credits_button;
-  GtkWidget *credits_icon;
+  /* This works like a revealer but it's really a GtkStack so that it takes up
+  space and presents a target even when it's not shown. */
   GtkWidget *credits_stack;
 
   gboolean show_credits_button;
@@ -57,14 +54,8 @@ eos_top_bar_constructed (GObject *object)
 {
   EosTopBar *self = EOS_TOP_BAR (object);
   EosTopBarPrivate *priv = eos_top_bar_get_instance_private (self);
-
-  g_object_set (self,
-                "custom-title", priv->center_top_bar_attach,
-                "halign", GTK_ALIGN_FILL,
-                "hexpand", TRUE,
-                "show-close-button", TRUE,
-                "spacing", _EOS_TOP_BAR_BUTTON_SEPARATION_PX,
-                NULL);
+  gtk_header_bar_set_custom_title (GTK_HEADER_BAR (self),
+                                   priv->center_top_bar_attach);
 }
 
 static void
@@ -168,6 +159,13 @@ eos_top_bar_draw (GtkWidget *self_widget,
 }
 
 static void
+on_credits_clicked (GtkButton *button,
+                    EosTopBar *self)
+{
+  g_signal_emit (self, top_bar_signals[CREDITS_CLICKED], 0);
+}
+
+static void
 eos_top_bar_class_init (EosTopBarClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
@@ -178,6 +176,16 @@ eos_top_bar_class_init (EosTopBarClass *klass)
   object_class->set_property = eos_top_bar_set_property;
   widget_class->get_preferred_height = eos_top_bar_get_preferred_height;
   widget_class->draw = eos_top_bar_draw;
+
+  gtk_widget_class_set_template_from_resource (widget_class,
+                                               "/com/endlessm/sdk/widgets/topbar.ui");
+  gtk_widget_class_bind_template_child_internal_private (widget_class,
+                                                         EosTopBar,
+                                                         center_top_bar_attach);
+  gtk_widget_class_bind_template_child_internal_private (widget_class,
+                                                         EosTopBar,
+                                                         credits_stack);
+  gtk_widget_class_bind_template_callback (widget_class, on_credits_clicked);
 
   top_bar_signals[CREDITS_CLICKED] =
     g_signal_new ("credits-clicked", G_OBJECT_CLASS_TYPE (object_class),
@@ -204,45 +212,11 @@ on_stack_hover (GtkStack *stack,
 }
 
 static void
-on_credits_clicked (GtkButton *button,
-                    EosTopBar *self)
-{
-  g_signal_emit (self, top_bar_signals[CREDITS_CLICKED], 0);
-}
-
-static void
 eos_top_bar_init (EosTopBar *self)
 {
   EosTopBarPrivate *priv = eos_top_bar_get_instance_private (self);
 
-  priv->center_top_bar_attach = gtk_event_box_new ();
-  gtk_widget_show (priv->center_top_bar_attach);
-
-  /* This works like a revealer but it's really a GtkStack so that it takes up
-  space and presents a target even when it's not shown. */
-  priv->credits_stack = gtk_stack_new ();
-  gtk_stack_set_transition_type (GTK_STACK (priv->credits_stack),
-                                 GTK_STACK_TRANSITION_TYPE_CROSSFADE);
-  gtk_widget_add_events (priv->credits_stack,
-                         GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
-  gtk_stack_add_named (GTK_STACK (priv->credits_stack),
-                       gtk_event_box_new (), "blank");
-  priv->credits_button = g_object_new (GTK_TYPE_BUTTON,
-                                       "can-focus", FALSE,
-                                       "halign", GTK_ALIGN_END,
-                                       "valign", GTK_ALIGN_CENTER,
-                                       NULL);
-  priv->credits_icon =
-    gtk_image_new_from_icon_name (_EOS_TOP_BAR_CREDITS_ICON_NAME,
-                                  GTK_ICON_SIZE_SMALL_TOOLBAR);
-  g_object_set (priv->credits_icon,
-                "pixel-size", _EOS_TOP_BAR_ICON_SIZE_PX,
-                NULL);
-  gtk_container_add (GTK_CONTAINER (priv->credits_button), priv->credits_icon);
-  gtk_stack_add_named (GTK_STACK (priv->credits_stack),
-                       priv->credits_button, "button");
-
-  gtk_header_bar_pack_end (GTK_HEADER_BAR (self), priv->credits_stack);
+  gtk_widget_init_template (GTK_WIDGET (self));
 
   priv->credits_enter_handler =
     g_signal_connect (priv->credits_stack, "enter-notify-event",
@@ -252,8 +226,6 @@ eos_top_bar_init (EosTopBar *self)
                       G_CALLBACK (on_stack_hover), GINT_TO_POINTER (FALSE));
   g_signal_handler_block (priv->credits_stack, priv->credits_enter_handler);
   g_signal_handler_block (priv->credits_stack, priv->credits_leave_handler);
-  g_signal_connect (priv->credits_button, "clicked",
-                    G_CALLBACK (on_credits_clicked), self);
 }
 
 GtkWidget *
