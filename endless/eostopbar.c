@@ -202,12 +202,13 @@ eos_top_bar_class_init (EosTopBarClass *klass)
 }
 
 static gboolean
-on_stack_hover (GtkStack *stack,
-                GdkEvent *event,
-                gpointer  data)
+on_stack_hover (GtkStack         *stack,
+                GdkEventCrossing *event,
+                gpointer          data)
 {
   gboolean show = GPOINTER_TO_INT (data);
-  gtk_stack_set_visible_child_name (stack, show ? "button" : "blank");
+  if (event->window == gtk_widget_get_window (GTK_WIDGET (stack)))
+    gtk_stack_set_visible_child_name (stack, show ? "button" : "blank");
   return GDK_EVENT_PROPAGATE;
 }
 
