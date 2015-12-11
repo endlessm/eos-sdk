@@ -96,8 +96,6 @@ typedef struct {
 
   EosPageManager *page_manager;
 
-  gboolean maximized;
-
   /* For scaling base font-size */
   GtkCssProvider *font_size_provider;
   gboolean font_scaling_active;
@@ -532,15 +530,6 @@ eos_window_size_allocate (GtkWidget *window, GtkAllocation *allocation)
   GTK_WIDGET_CLASS (eos_window_parent_class)->size_allocate (window, allocation);
 }
 
-/* Our default delete event handler destroys the window. */
-static gboolean
-eos_window_default_delete (GtkWidget* window,
-                     gpointer user_data)
-{
-  gtk_widget_destroy (GTK_WIDGET (window));
-  return FALSE;
-}
-
 static void
 eos_window_class_init (EosWindowClass *klass)
 {
@@ -644,32 +633,6 @@ eos_window_class_init (EosWindowClass *klass)
 }
 
 static void
-on_minimize_clicked_cb (GtkWidget *top_bar,
-                        EosWindow *self)
-{
-  gtk_window_iconify (GTK_WINDOW (self));
-}
-
-static void
-on_maximize_clicked_cb (GtkWidget *top_bar,
-                        EosWindow *self)
-{
-  EosWindowPrivate *priv = eos_window_get_instance_private (self);
-
-  if (priv->maximized)
-    gtk_window_unmaximize (GTK_WINDOW (self));
-  else
-    gtk_window_maximize (GTK_WINDOW (self));
-}
-
-static void
-on_close_clicked_cb (GtkWidget *top_bar,
-                     EosWindow *self)
-{
-  gtk_window_close (GTK_WINDOW (self));
-}
-
-static void
 on_credits_clicked (GtkWidget *top_bar,
                     EosWindow *self)
 {
@@ -677,18 +640,6 @@ on_credits_clicked (GtkWidget *top_bar,
   /* application cannot be NULL */
   g_action_group_activate_action (G_ACTION_GROUP (application), "image-credits",
                                   NULL);
-}
-
-static gboolean
-on_window_state_event_cb (GtkWidget           *widget,
-                          GdkEventWindowState *event)
-{
-  EosWindow *self = EOS_WINDOW (widget);
-  EosWindowPrivate *priv = eos_window_get_instance_private (self);
-  GdkWindowState window_state = event->new_window_state;
-  priv->maximized = window_state & GDK_WINDOW_STATE_MAXIMIZED;
-  eos_top_bar_update_window_maximized (EOS_TOP_BAR (priv->top_bar), priv->maximized);
-  return FALSE;
 }
 
 /* Draw the edge finishing on the two lines on top of the window's content;
@@ -777,16 +728,8 @@ eos_window_init (EosWindow *self)
   gtk_window_maximize (GTK_WINDOW (self));
   gtk_window_set_default_size (GTK_WINDOW (self), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 
-  g_signal_connect (priv->top_bar, "minimize-clicked",
-                    G_CALLBACK (on_minimize_clicked_cb), self);
-  g_signal_connect (priv->top_bar, "maximize-clicked",
-                    G_CALLBACK (on_maximize_clicked_cb), self);
-  g_signal_connect (priv->top_bar, "close-clicked",
-                    G_CALLBACK (on_close_clicked_cb), self);
   g_signal_connect (priv->top_bar, "credits-clicked",
                     G_CALLBACK (on_credits_clicked), self);
-  g_signal_connect (self, "window-state-event",
-                    G_CALLBACK (on_window_state_event_cb), NULL);
 
   eos_window_set_page_manager (self,
                                EOS_PAGE_MANAGER (eos_page_manager_new ()));
