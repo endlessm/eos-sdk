@@ -46,6 +46,7 @@ eos_window_set_font_scaling_default_window_size
 eos_window_get_font_scaling_min_font_size
 eos_window_set_font_scaling_min_font_size
 eos_window_get_font_scaling_calculated_font_size
+EOS_STYLE_CLASS_COMPOSITE
 <SUBSECTION Standard>
 EosWindowClass
 EOS_IS_WINDOW
