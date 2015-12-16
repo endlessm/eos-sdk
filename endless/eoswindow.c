@@ -2,10 +2,7 @@
 
 #include "config.h"
 #include "string.h"
-#include "eoswindow.h"
-
-#include "eosapplication.h"
-#include "eospagemanager.h"
+#include "endless.h"
 #include "eostopbar-private.h"
 
 #include <gtk/gtk.h>
@@ -633,6 +630,16 @@ eos_window_class_init (EosWindowClass *klass)
 }
 
 static void
+update_screen (EosWindow *self)
+{
+  GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (self));
+  if (eos_is_composite_tv_screen (gtk_window_get_screen (GTK_WINDOW (self))))
+    gtk_style_context_add_class (context, EOS_STYLE_CLASS_COMPOSITE);
+  else
+    gtk_style_context_remove_class (context, EOS_STYLE_CLASS_COMPOSITE);
+}
+
+static void
 on_credits_clicked (GtkWidget *top_bar,
                     EosWindow *self)
 {
@@ -668,6 +675,8 @@ static void
 eos_window_init (EosWindow *self)
 {
   EosWindowPrivate *priv = eos_window_get_instance_private (self);
+
+  update_screen (self);
 
   priv->top_bar = eos_top_bar_new ();
   gtk_widget_show_all (priv->top_bar);
@@ -730,6 +739,7 @@ eos_window_init (EosWindow *self)
 
   g_signal_connect (priv->top_bar, "credits-clicked",
                     G_CALLBACK (on_credits_clicked), self);
+  g_signal_connect (self, "notify::screen", G_CALLBACK (update_screen), NULL);
 
   eos_window_set_page_manager (self,
                                EOS_PAGE_MANAGER (eos_page_manager_new ()));

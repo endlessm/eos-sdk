@@ -30,4 +30,16 @@ enum_type##_get_type (void) \
   return g_define_type_id__volatile; \
 }
 
+/**
+ * EOS_STYLE_CLASS_COMPOSITE:
+ *
+ * A CSS class to match a window on a composite TV.
+ *
+ * This is added to #EosWindow when it is detected to be on a composite TV
+ * screen.
+ *
+ * Since: 0.6
+ */
+#define EOS_STYLE_CLASS_COMPOSITE "composite"
+
 #endif /* EOS_MACROS_H */
