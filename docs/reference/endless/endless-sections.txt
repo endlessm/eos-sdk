@@ -5,6 +5,7 @@ EOS_SDK_MINOR_VERSION
 EOS_SDK_MICRO_VERSION
 eos_hello_sample_function
 eos_get_system_personality
+eos_is_composite_tv_screen
 <SUBSECTION Private>
 EOS_DEFINE_ENUM_TYPE
 EOS_ENUM_VALUE

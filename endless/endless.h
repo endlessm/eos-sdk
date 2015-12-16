@@ -28,6 +28,9 @@ gboolean eos_hello_sample_function (GFile   *file,
 EOS_SDK_AVAILABLE_IN_0_0
 const gchar *   eos_get_system_personality      (void);
 
+EOS_SDK_AVAILABLE_IN_0_6
+gboolean        eos_is_composite_tv_screen (GdkScreen *screen);
+
 G_END_DECLS
 
 #endif
