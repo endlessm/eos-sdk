@@ -49,6 +49,7 @@ endless_library_sources = \
 	endless/eospagemanager.c \
 	endless/eosresource.c endless/eosresource-private.h \
 	endless/eostopbar.c endless/eostopbar-private.h \
+	endless/eosutil.c \
 	endless/eoswindow.c \
 	endless/eosflexygrid.c endless/eosflexygridcell.c endless/eosflexygrid-private.h
 
