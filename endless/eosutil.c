@@ -69,7 +69,7 @@ eos_get_system_personality (void)
 
 /**
  * eos_is_composite_tv_screen:
- * @screen: a #GdkScreen, or %NULL to use the default display's default screen.
+ * @screen: (allow-none): a #GdkScreen, or %NULL to use the default display's default screen.
  *
  * Determines whether @screen is a composite TV out.
  *
