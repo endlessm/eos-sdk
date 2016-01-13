@@ -214,3 +214,9 @@ EosWindow .titlebar .endless-search-box:selected {
     color: mix (@endless_menu_fg_color, @endless_menu_bg_color, 0.9);
     -GtkMenuItem-horizontal-padding: 0;
 }
+
+/* Changes for composite TVs */
+
+.composite .header-bar .entry {
+      font-size: 18px;
+  }
