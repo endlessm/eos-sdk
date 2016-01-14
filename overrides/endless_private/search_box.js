@@ -2,10 +2,22 @@ const Gdk = imports.gi.Gdk;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
+const Pango = imports.gi.Pango;
 
 const BOX_WIDTH_CHARS = 25;
 const CELL_PADDING_X = 8;
 const CELL_PADDING_Y = 6;
+const SCREEN_RES_WIDTH_TINY = 720;
+const SCREEN_RES_WIDTH_SMALL = 800;
+const SCREEN_RES_WIDTH_MEDIUM = 1024;
+const SCREEN_RES_WIDTH_LARGE = 1366;
+const SCREEN_RES_WIDTH_XL = 1920;
+const TITLE_MAX_CHARS_TINY = 36;
+const TITLE_MAX_CHARS_SMALL = 60;
+const TITLE_MAX_CHARS_MEDIUM = 80;
+const TITLE_MAX_CHARS_LARGE = 100;
+const TITLE_MAX_CHARS_XL = 120;
+const TITLE_MAX_CHARS_DEFAULT = 255;
 
 /**
  * Class: SearchBox
@@ -58,6 +70,8 @@ const SearchBox = new Lang.Class({
         let cells = this._auto_complete.get_cells();
         cells[0].xpad = CELL_PADDING_X;
         cells[0].ypad = CELL_PADDING_Y;
+        cells[0].width_chars = this._get_title_max_chars();
+        cells[0].ellipsize = Pango.EllipsizeMode.END;
 
         this._auto_complete.set_match_func(function () { return true; });
         this.completion = this._auto_complete;
@@ -171,5 +185,32 @@ const SearchBox = new Lang.Class({
         }
         this._entry_changed_by_widget = true;
         this.emit('changed');
-    }
+    },
+
+    /*
+     * This assumes that the search_box widget is centered in the topbar.
+     * Aligning the topbar to any other position may cause this method to not
+     * function as expected!
+     *
+     * The constants used here correspond to the responsive system breakpoints
+     * defined by the Design team.
+     */
+    _get_title_max_chars: function () {
+        let screen_width = Gdk.Screen.get_default().get_width();
+        let title_max_chars = TITLE_MAX_CHARS_DEFAULT;
+
+        if (screen_width <= SCREEN_RES_WIDTH_TINY) {
+            title_max_chars = TITLE_MAX_CHARS_TINY;
+        } else if (screen_width <= SCREEN_RES_WIDTH_SMALL) {
+            title_max_chars = TITLE_MAX_CHARS_SMALL;
+        } else if (screen_width <= SCREEN_RES_WIDTH_MEDIUM) {
+            title_max_chars = TITLE_MAX_CHARS_MEDIUM;
+        } else if (screen_width <= SCREEN_RES_WIDTH_LARGE) {
+            title_max_chars = TITLE_MAX_CHARS_LARGE;
+        } else if (screen_width <= SCREEN_RES_WIDTH_XL) {
+            title_max_chars = TITLE_MAX_CHARS_XL;
+        }
+
+        return title_max_chars;
+    },
 });
