@@ -53,11 +53,14 @@ const SearchBox = new Lang.Class({
         }
     },
 
-    _init: function(props) {
+    _init: function (props={}) {
+        if (['width_chars', 'width-chars', 'widthChars'].every(name =>
+            typeof props[name] === 'undefined')) {
+            props.width_chars = BOX_WIDTH_CHARS;
+        }
         this.parent(props);
 
         this.primary_icon_name = 'edit-find-symbolic';
-        this.set_width_chars(BOX_WIDTH_CHARS);
 
         this._auto_complete = new Gtk.EntryCompletion();
 
