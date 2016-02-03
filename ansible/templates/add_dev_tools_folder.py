@@ -11,7 +11,7 @@ Icon=eos-folder-tools-symbolic
 Type=Directory
 """
 
-DEFAULT_LAYOUT_FILE='/usr/share/EndlessOS/language-defaults/icon-grid-C.json'
+DEFAULT_LAYOUT_FILE='/usr/share/eos-shell-content/icon-grid-defaults/icon-grid-C.json'
 DESTINATIION_FOLDER= os.path.expanduser('~/.local/share/desktop-directories/') + DIRECTORY_ID
 
 def get_default_layout():
