@@ -53,6 +53,7 @@ javascript_tests = \
 	test/webhelper/testWebActions2Old.js \
 	test/webhelper/testUpdateFontSize.js \
 	test/endless/testCustomContainer.js \
+	test/endless/testTopbarHomeButton.js \
 	test/endless/testTopbarNavButton.js \
 	test/endless/testSearchBox.js \
 	$(NULL)
