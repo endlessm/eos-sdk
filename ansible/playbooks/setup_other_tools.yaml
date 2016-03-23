@@ -16,3 +16,9 @@
 
 - name: "Installing transifex client"
   shell: pip install transifex-client
+
+- name: "Installing Arcanist"
+  apt: name=arcanist
+
+- name: "Configuring Arcanist"
+  shell: arc set-config default https://phabricator.endlessm.com
