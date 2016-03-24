@@ -19,12 +19,7 @@ const TopbarHomeButton = new Lang.Class({
     _init: function(props={}) {
         this.parent(props);
 
-        let icon_name;
-        if (Gtk.Widget.get_default_direction() === Gtk.TextDirection.RTL) {
-            icon_name = 'go-home-rtl-symbolic';
-        } else {
-            icon_name = 'go-home-symbolic';
-        }
+        let icon_name = 'go-home-symbolic';
         let image = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.SMALL_TOOLBAR);
         this.set_image(image);
 
