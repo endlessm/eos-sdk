@@ -23,6 +23,8 @@
 
 /*#define VERBOSE 1*/
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+
 #define DEFAULT_CELL_SIZE       180
 #define DEFAULT_SPACING         15
 
@@ -1232,3 +1234,4 @@ eos_flexy_grid_get_cell_at_coords (EosFlexyGrid *grid,
   return NULL;
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS

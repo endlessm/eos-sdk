@@ -5,6 +5,8 @@
 
 #include "run-tests.h"
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+
 typedef struct
 {
   EosFlexyGrid *grid;
@@ -73,3 +75,5 @@ add_flexy_grid_test (void)
   ADD_FLEXY_GRID_TEST ("/flexy-grid/get-set-cell-size", flexy_grid_cell_size_access);
   ADD_FLEXY_GRID_TEST ("/flexy-grid/get-set-cell-spacing", flexy_grid_cell_spacing_access);
 }
+
+G_GNUC_END_IGNORE_DEPRECATIONS
