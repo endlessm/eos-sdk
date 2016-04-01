@@ -472,13 +472,13 @@ const WebHelper = new Lang.Class({
      * Sets up an action that may be invoked from an HTML document inside a
      * WebView, or from the in-browser Javascript environment inside a WebView.
      * If you set up an action "setVolume" as follows:
-     * > app.define_web_action('setVolume', function(dict) { ... });
+     * > webhelper.define_web_action('setVolume', function (dict) { ... });
      * Then you can invoke the action inside the HTML document, e.g. as the
      * target of a link, as follows:
-     * > <a href="endless://setVolume?volume=11">This one goes to 11</a>
+     * > <a href="webhelper://setVolume?volume=11">This one goes to 11</a>
      * Or from the in-browser Javascript, by navigating to the action URI, as
      * follows:
-     * > window.location.href = 'endless://setVolume?volume=11';
+     * > window.location.href = 'webhelper://setVolume?volume=11';
      *
      * In both cases, the function would then be called with the _dict_
      * parameter equal to
