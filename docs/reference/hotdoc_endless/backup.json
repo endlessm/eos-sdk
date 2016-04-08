@@ -1,0 +1,43 @@
+{
+    "c_include_directories": [
+        "../../.."
+    ],
+    "c_sources": [
+        "../../../endless/endless.h",
+        "../../../endless/eospagemanager.c",
+        "../../../endless/eosinit.c",
+        "../../../endless/eosattribution.c",
+        "../../../endless/eoshello.c",
+        "../../../endless/eostopbar.c",
+        "../../../endless/eosapplication.c",
+        "../../../endless/eoslicense.c",
+        "../../../endless/eoscellrenderertextlink.c",
+        "../../../endless/endless.h",
+        "../../../endless/eosutil.c",
+        "../../../endless/eosmacros.h",
+        "../../../endless/eosflexygridcell.c",
+        "../../../endless/eoswindow.h",
+        "../../../endless/eoslicense.h",
+        "../../../endless/eosflexygrid.h",
+        "../../../endless/eosenums.h",
+        "../../../endless/eosflexygrid.c",
+        "../../../endless/eoscellrendererpixbuflink.c",
+        "../../../endless/eoscustomcontainer.c",
+        "../../../endless/eosresource-private.h",
+        "../../../endless/eospagemanager.h",
+        "../../../endless/eosresource.c",
+        "../../../endless/eoswindow.c"
+    ],
+    "extra_c_flags": [
+        "-DPIC"
+    ],
+    "gi_sources": [
+        "../../../Endless-0.gir"
+    ],
+    "pkg_config_packages": [
+        "gtk+-3.0",
+        "glib-2.0"
+    ],
+    "index": "markdown_files/index.markdown",
+    "output": "built_doc"
+}
