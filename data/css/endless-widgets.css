@@ -151,6 +151,7 @@ EosWindow .titlebar .endless-search-box {
 }
 
 EosWindow .titlebar .endless-search-box image {
+    margin: 0px 4px;
     color: #919191;
 }
 
