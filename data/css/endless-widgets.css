@@ -63,7 +63,7 @@ EosWindow .titlebar:backdrop {
 EosWindow .titlebar button {
     border-radius: 2px;
     color: #8c8c8c;
-    icon-shadow: 0px -1px alpha(black, 0.25);
+    -gtk-icon-shadow: 0px -1px alpha(black, 0.25);
     padding: 4px;
 }
 
@@ -73,7 +73,7 @@ EosWindow .titlebar button:backdrop {
 
 EosWindow .titlebar button:hover {
     color: #dcdcdc;
-    icon-shadow: 0px -1px alpha(black, 0.35);
+    -gtk-icon-shadow: 0px -1px alpha(black, 0.35);
     background-image: -gtk-gradient(linear, left bottom, left top,
         color-stop(0.98, rgb(131, 131, 131)),
         color-stop(0.95, rgb(108, 108, 108)),
@@ -82,7 +82,7 @@ EosWindow .titlebar button:hover {
 
 EosWindow .titlebar button:active {
     color: #787878;
-    icon-shadow: none;
+    -gtk-icon-shadow: none;
     background-image: -gtk-gradient(linear, left bottom, left top,
         color-stop(0.98, rgb(79, 79, 79)),
         color-stop(0.95, rgb(71, 71, 71)),
@@ -110,7 +110,7 @@ EosWindow .titlebar .forward:insensitive {
     background-image: none;
     box-shadow: none;
     color: #5a5a5a;
-    icon-shadow: none;
+    -gtk-icon-shadow: none;
 }
 
 EosWindow .titlebar .home {
