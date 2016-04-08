@@ -215,11 +215,16 @@ scrollbar {
     font: initial;
     color: @endless_menu_fg_color;
     background-color: @endless_menu_bg_color;
+    padding: 2px 0px;
 }
 
 .context-menu menuitem {
     padding: 4px;
-    -GtkMenuItem-arrow-scaling: 0.4;
+}
+
+.context-menu menuitem arrow {
+    min-width: 8px;
+    min-height: 8px;
 }
 
 .context-menu menuitem:active,
@@ -233,8 +238,13 @@ scrollbar {
 }
 
 .context-menu separator {
-    color: mix (@endless_menu_fg_color, @endless_menu_bg_color, 0.9);
-    -GtkMenuItem-horizontal-padding: 0;
+    background-color: transparent;
+    background-image: image(mix (@endless_menu_fg_color, @endless_menu_bg_color, 0.9));
+    background-size: 1px 1px;
+    color: red;
+    min-width: 1px;
+    min-height: 1px;
+    margin: 0px 4px;
 }
 
 /* Changes for composite TVs */
