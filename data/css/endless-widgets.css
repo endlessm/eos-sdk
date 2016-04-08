@@ -1,7 +1,7 @@
 /* Wipe all theming CSS to start with. We'll leave the adwaita theme for
  * spinner.*/
 EosWindow,
-EosWindow :not(spinner) {
+EosWindow :not(spinner):not(decoration) {
     all: unset;
 }
 
