@@ -1,6 +1,9 @@
-/* Wipe all theming CSS to start with */
-
-@import url("resource:///com/endlessm/sdk/css/reset.css");
+/* Wipe all theming CSS to start with. We'll leave the adwaita theme for
+ * spinner.*/
+EosWindow,
+EosWindow :not(GtkSpinner) {
+    all: unset;
+}
 
 @define-color endless_theme_bg_color #2e3436;
 @define-color endless_wm_shadow alpha(black, 0.5);
