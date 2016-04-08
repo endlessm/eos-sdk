@@ -539,6 +539,7 @@ eos_window_class_init (EosWindowClass *klass)
   object_class->finalize = eos_window_finalize;
   widget_class->size_allocate = eos_window_size_allocate;
 
+  gtk_widget_class_set_css_name (widget_class, "EosWindow");
   /**
    * EosWindow:application:
    *
