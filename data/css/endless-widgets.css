@@ -140,6 +140,7 @@ EosWindow .titlebar .back.rtl {
 EosWindow .titlebar .endless-search-box {
     background-color: #4d4d4d;
     color: #eeeeec;
+    caret-color: #eeeeec;
     padding: 1px 2px 1px 4px;
     border-radius: 15px;
     border-style: solid;
