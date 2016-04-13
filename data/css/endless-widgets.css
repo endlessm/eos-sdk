@@ -44,7 +44,7 @@ EosWindow {
 EosWindow .titlebar {
     font-family: "Lato";
     font-weight: bold;
-    font-size: 11px;
+    font-size: 14.7px;
     background-image: -gtk-gradient(linear, center top, center bottom,
         from(#464646), to(#1e1e1e));
     padding-left: 7px;
@@ -250,5 +250,5 @@ scrollbar {
 /* Changes for composite TVs */
 
 .composite headerbar entry {
-      font-size: 18px;
+      font-size: 24px;
   }
