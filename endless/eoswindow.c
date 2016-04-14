@@ -585,7 +585,7 @@ eos_window_class_init (EosWindowClass *klass)
                       "This is the default font-size by which font-size for children widgets will scale",
                       1,
                       G_MAXINT,
-                      12,
+                      16,
                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
   /**
@@ -611,7 +611,7 @@ eos_window_class_init (EosWindowClass *klass)
                       "This is the minimum font-size under which font-size for children widgets won't scale",
                       1,
                       G_MAXINT,
-                      8,
+                      10,
                       G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
 
   /**
@@ -624,7 +624,7 @@ eos_window_class_init (EosWindowClass *klass)
                       "This is the calculated font-size by which children widgets scale",
                       1,
                       G_MAXDOUBLE,
-                      12,
+                      16,
                       G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, NPROPS, eos_window_props);
