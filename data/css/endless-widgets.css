@@ -182,15 +182,6 @@ EosWindow .titlebar .endless-search-box:selected {
     border-style: solid;
 }
 
-/*
- * We need to set the min scrollbar size smaller than in adwaita (42 pixels)
- * as it is making our auto-complete results too big if there is only one
- * entry. This is a bug in GTK
- */
-scrollbar {
-    -GtkScrollbar-min-slider-length: 28;
-}
-
 .credits-button {
     opacity: 0.0;
     transition: opacity 250ms;
