@@ -189,6 +189,16 @@ EosWindow .titlebar .endless-search-box:selected {
     -GtkScrollbar-min-slider-length: 28;
 }
 
+.credits-button {
+    opacity: 0.0;
+    transition: opacity 250ms;
+}
+
+.credits-button:hover,
+.credits-button:active {
+    opacity: 1.0;
+}
+
 /*
  * Themeing for context menus, to get Adwaita look
  * FIXME: Really gross to be recreating all this Adwaita theme here.

@@ -23,9 +23,7 @@ typedef struct {
   GtkWidget *left_top_bar_widget;
   GtkWidget *center_top_bar_widget;
 
-  /* This works like a revealer but it's really a GtkStack so that it takes up
-  space and presents a target even when it's not shown. */
-  GtkWidget *credits_stack;
+  GtkWidget *credits_button;
 
   gboolean show_credits_button;
   guint credits_enter_handler;
@@ -184,7 +182,7 @@ eos_top_bar_class_init (EosTopBarClass *klass)
                                                          center_top_bar_attach);
   gtk_widget_class_bind_template_child_internal_private (widget_class,
                                                          EosTopBar,
-                                                         credits_stack);
+                                                         credits_button);
   gtk_widget_class_bind_template_callback (widget_class, on_credits_clicked);
 
   top_bar_signals[CREDITS_CLICKED] =
@@ -201,32 +199,10 @@ eos_top_bar_class_init (EosTopBarClass *klass)
   g_object_class_install_properties (object_class, NPROPS, eos_top_bar_props);
 }
 
-static gboolean
-on_stack_hover (GtkStack         *stack,
-                GdkEventCrossing *event,
-                gpointer          data)
-{
-  gboolean show = GPOINTER_TO_INT (data);
-  if (event->window == gtk_widget_get_window (GTK_WIDGET (stack)))
-    gtk_stack_set_visible_child_name (stack, show ? "button" : "blank");
-  return GDK_EVENT_PROPAGATE;
-}
-
 static void
 eos_top_bar_init (EosTopBar *self)
 {
-  EosTopBarPrivate *priv = eos_top_bar_get_instance_private (self);
-
   gtk_widget_init_template (GTK_WIDGET (self));
-
-  priv->credits_enter_handler =
-    g_signal_connect (priv->credits_stack, "enter-notify-event",
-                      G_CALLBACK (on_stack_hover), GINT_TO_POINTER (TRUE));
-  priv->credits_leave_handler =
-    g_signal_connect (priv->credits_stack, "leave-notify-event",
-                      G_CALLBACK (on_stack_hover), GINT_TO_POINTER (FALSE));
-  g_signal_handler_block (priv->credits_stack, priv->credits_enter_handler);
-  g_signal_handler_block (priv->credits_stack, priv->credits_leave_handler);
 }
 
 GtkWidget *
@@ -334,20 +310,7 @@ eos_top_bar_set_show_credits_button (EosTopBar *self,
     return;
 
   priv->show_credits_button = show_credits_button;
-  if (show_credits_button)
-    {
-      g_signal_handler_unblock (priv->credits_stack,
-                                priv->credits_enter_handler);
-      g_signal_handler_unblock (priv->credits_stack,
-                                priv->credits_leave_handler);
-    }
-  else
-    {
-      gtk_stack_set_visible_child_name (GTK_STACK (priv->credits_stack),
-                                        "blank");
-      g_signal_handler_block (priv->credits_stack, priv->credits_enter_handler);
-      g_signal_handler_block (priv->credits_stack, priv->credits_leave_handler);
-    }
+  gtk_widget_set_visible (priv->credits_button, show_credits_button);
   g_object_notify_by_pspec (G_OBJECT (self),
                             eos_top_bar_props[PROP_SHOW_CREDITS_BUTTON]);
 }

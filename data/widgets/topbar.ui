@@ -10,41 +10,24 @@
     <property name="show_close_button">True</property>
     <property name="spacing">8</property>
     <child>
-      <object class="GtkStack" id="credits_stack">
-        <property name="visible">True</property>
+      <object class="GtkButton" id="credits_button">
+        <property name="visible">False</property>
+        <property name="no-show-all">True</property>
         <property name="can_focus">False</property>
-        <property name="transition_type">crossfade</property>
-        <property name="events">GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK</property>
+        <property name="halign">end</property>
+        <property name="valign">center</property>
+        <signal name="clicked" handler="on_credits_clicked"/>
         <child>
-          <object class="GtkEventBox" id="blank">
+          <object class="GtkImage" id="credits_image">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="icon_name">user-info-symbolic</property>
+            <property name="pixel_size">16</property>
           </object>
-          <packing>
-            <property name="name">blank</property>
-          </packing>
         </child>
-        <child>
-          <object class="GtkButton" id="credits_button">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="halign">end</property>
-            <property name="valign">center</property>
-            <signal name="clicked" handler="on_credits_clicked"/>
-            <child>
-              <object class="GtkImage" id="credits_image">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="icon_name">user-info-symbolic</property>
-                <property name="pixel_size">16</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="name">button</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
+        <style>
+          <class name="credits-button"/>
+        </style>
       </object>
       <packing>
         <property name="pack_type">end</property>
