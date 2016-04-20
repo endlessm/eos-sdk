@@ -10,10 +10,8 @@
   ],
   "exclude": [
     "test/webhelper/testTranslate.js",
-    "test/webhelper/testTranslate2Old.js",
     "test/webhelper/testUpdateFontSize.js",
-    "test/webhelper/testWebActions.js",
-    "test/webhelper/testWebActions2Old.js"
+    "test/webhelper/testWebActions.js"
   ],
   "environment": {
     "GI_TYPELIB_PATH": ".",

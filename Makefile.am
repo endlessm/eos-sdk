@@ -91,7 +91,6 @@ DISTCLEANFILES += @EOS_SDK_API_NAME@.pc
 webhelper_sources = \
 	webhelper/webhelper.js \
 	webhelper/webhelper2.js \
-	webhelper/webhelper2_old.js \
 	$(NULL)
 
 gjsmodulesdir = $(datadir)/gjs-1.0
@@ -101,7 +100,6 @@ dist_webhelper_DATA = \
 	$(webhelper_sources) \
 	$(NULL)
 dist_webhelper_private_DATA = \
-	webhelper/webhelper_private/common.js \
 	webhelper/webhelper_private/config.js \
 	$(NULL)
 
@@ -129,28 +127,6 @@ wh2extension_la_SOURCES = \
 wh2extension_la_CPPFLAGS = @WEBHELPER2_EXTENSION_CFLAGS@
 wh2extension_la_LIBADD = @WEBHELPER2_EXTENSION_LIBS@
 wh2extension_la_LDFLAGS = -module -avoid-version -no-undefined
-
-# WebKit2-3.0 version
-
-lib_LTLIBRARIES += libwebhelper2oldprivate.la
-libwebhelper2oldprivate_la_SOURCES = \
-	webhelper/lib/wh2private.c \
-	webhelper/lib/wh2private.h \
-	$(NULL)
-libwebhelper2oldprivate_la_CPPFLAGS = @WEBHELPER2_OLD_PRIVATE_CFLAGS@
-libwebhelper2oldprivate_la_LIBADD = @WEBHELPER2_OLD_PRIVATE_LIBS@
-libwebhelper2oldprivate_la_LDFLAGS = -avoid-version
-
-webhelper2oldextensionsdir = $(libexecdir)/webhelper2old
-webhelper2oldextensions_LTLIBRARIES = wh2oldextension.la
-wh2oldextension_la_SOURCES = \
-	webhelper/webextensions/wh2extension.c \
-	webhelper/webextensions/wh2jscutil.c \
-	webhelper/webextensions/wh2jscutil.h \
-	$(NULL)
-wh2oldextension_la_CPPFLAGS = @WEBHELPER2_OLD_EXTENSION_CFLAGS@
-wh2oldextension_la_LIBADD = @WEBHELPER2_OLD_EXTENSION_LIBS@
-wh2oldextension_la_LDFLAGS = -module -avoid-version -no-undefined
 
 # # # INTROSPECTION FILES # # #
 
@@ -186,16 +162,6 @@ WebHelper2Private_1_0_gir_SCANNERFLAGS = \
 WebHelper2Private_1_0_gir_LIBS = libwebhelper2private.la
 WebHelper2Private_1_0_gir_FILES = $(libwebhelper2private_la_SOURCES)
 INTROSPECTION_GIRS += WebHelper2Private-1.0.gir
-
-WebHelper2OldPrivate-1.0.gir: libwebhelper2oldprivate.la
-WebHelper2OldPrivate_1_0_gir_INCLUDES = GObject-2.0 GLib-2.0 WebKit2-3.0
-WebHelper2OldPrivate_1_0_gir_SCANNERFLAGS = \
-	--identifier-prefix=Wh2 \
-	--symbol-prefix=wh2 \
-	$(NULL)
-WebHelper2OldPrivate_1_0_gir_LIBS = libwebhelper2oldprivate.la
-WebHelper2OldPrivate_1_0_gir_FILES = $(libwebhelper2oldprivate_la_SOURCES)
-INTROSPECTION_GIRS += WebHelper2OldPrivate-1.0.gir
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = $(INTROSPECTION_GIRS)
@@ -412,7 +378,6 @@ AM_JS_LOG_FLAGS += @EOS_JS_COVERAGE_LOG_FLAGS@
 AM_CFLAGS += @EOS_C_COVERAGE_CFLAGS@
 AM_LDFLAGS = @EOS_C_COVERAGE_LDFLAGS@
 libwebhelper2private_la_LDFLAGS += @EOS_C_COVERAGE_LDFLAGS@
-libwebhelper2oldprivate_la_LDFLAGS += @EOS_C_COVERAGE_LDFLAGS@
 wh2extension_la_LDFLAGS += @EOS_C_COVERAGE_LDFLAGS@
 
 clean-local:: clean-coverage

@@ -8,8 +8,6 @@ Endless-0.gir
 Endless-0.typelib
 WebHelper2Private-1.0.gir
 WebHelper2Private-1.0.typelib
-WebHelper2OldPrivate-1.0.gir
-WebHelper2OldPrivate-1.0.typelib
 endless/eosresource.c
 endless/eosresource-private.h
 endless/eosversion.h
