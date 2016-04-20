@@ -490,7 +490,7 @@ eos_window_font_scale (EosWindow *self,
   gdouble new_size = priv->font_scaling_default_size *
     ((gdouble) allocated_height / priv->font_scaling_default_window_size);
 
-  new_size = MIN (new_size, priv->font_scaling_min_font_size);
+  new_size = MAX (new_size, priv->font_scaling_min_font_size);
 
   if (new_size == priv->font_scaling_calculated_font_size)
     return;
