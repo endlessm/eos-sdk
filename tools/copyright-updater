@@ -1,0 +1,82 @@
+#!/usr/bin/python3
+
+# Copyright (C) 2016 Endless Mobile, Inc.
+
+import argparse
+import datetime
+import os
+import re
+
+COPYRIGHT = 'Copyright (C) %s Endless Mobile, Inc.'
+
+LANGS = {'C':          {'exts': ['.c', '.h'], 'format': '/* %s */'},
+         'JavaScript': {'exts': ['.js'],      'format': '// %s'},
+         'Python':     {'exts': ['.py'],      'format': '# %s'}}
+
+class CopyrightUpdater(object):
+    def __init__(self, args):
+        self._args = args
+
+    def _process_file(self, path, format_template):
+        copyright_template = format_template % COPYRIGHT
+        copyright_start, copyright_end = copyright_template.split('%s')
+        year = str(datetime.datetime.now().year)
+        with open(path) as f:
+            lines = f.readlines()
+        if len(lines) == 0:
+            # Leave a blank file alone
+            return
+        for i, line in enumerate(lines):
+            if 'Copyright' in line and 'Endless' in line:
+                # Found a line with an existing copyright statement
+                # Just update this line and we're done
+                first_year = re.search(r'\d+', line).group()
+                if first_year == year:
+                    years = year
+                else:
+                    years = first_year + '-' + year
+                new_line = copyright_template % years + '\n'
+                # Don't bother re-writing the file if nothing has changed
+                if new_line != line:
+                    lines[i] = new_line
+                    with open(path, 'w') as f:
+                        f.writelines(lines)
+                return
+        # There was no match, so we need to add a copyright statement
+        with open(path, 'w') as f:
+            if lines[0].startswith('#!'):
+                # Keep the '#!' on the first line of the file
+                f.write(lines[0])
+                # Add a blank line before the copyright statement
+                f.write('\n')
+                lines = lines[1:]
+            # Add the copyright statement
+            f.write(copyright_template % year + '\n')
+            if lines[0] != '\n':
+                # Add a blank line after the copyright statement
+                f.write('\n')
+            f.writelines(lines)
+
+    def process(self):
+        for root, dirnames, filenames in os.walk(self._args.directory):
+            for filename in filenames:
+                for lang in LANGS:
+                    entry = LANGS[lang]
+                    for ext in entry['exts']:
+                        if filename.endswith(ext) or \
+                           filename.endswith(ext + '.in') or \
+                           filename.endswith(ext + '.in.in'):
+                            self._process_file(os.path.join(root, filename),
+                                               entry['format'])
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description='Insert/update copyright statement for all ' + \
+        ', '.join(LANGS.keys()) + ' files in a directory tree')
+
+    parser.add_argument('directory', \
+                        help='Top of directory tree to process')
+
+    args = parser.parse_args()
+
+    CopyrightUpdater(args).process()
