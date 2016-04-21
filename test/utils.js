@@ -1,3 +1,5 @@
+// Copyright 2016 Endless Mobile, Inc.
+
 const Gtk = imports.gi.Gtk;
 
 function update_gui () {

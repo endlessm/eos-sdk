@@ -1,4 +1,4 @@
-/* Copyright 2015 Endless Mobile, Inc. */
+/* Copyright 2015-2016 Endless Mobile, Inc. */
 
 #ifndef EOS_ATTRIBUTION_H
 #define EOS_ATTRIBUTION_H

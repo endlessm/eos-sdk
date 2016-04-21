@@ -1,3 +1,5 @@
+// Copyright 2016 Endless Mobile, Inc.
+
 //Copyright 2013 Endless Mobile, Inc.
 
 const Endless = imports.gi.Endless;

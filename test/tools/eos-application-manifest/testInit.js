@@ -1,3 +1,5 @@
+// Copyright 2016 Endless Mobile, Inc.
+
 const Module = imports.tools['eos-application-manifest'].commands.init;
 
 describe('eos-application-manifest init', function () {

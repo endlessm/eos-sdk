@@ -1,4 +1,4 @@
-/* Copyright 2013 Endless Mobile, Inc. */
+/* Copyright 2013-2016 Endless Mobile, Inc. */
 
 #include <glib.h>
 #include <endless/endless.h>

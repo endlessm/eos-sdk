@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Copyright 2016 Endless Mobile, Inc.
+
 import os
 import shutil
 import sys

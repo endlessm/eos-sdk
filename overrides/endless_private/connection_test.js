@@ -1,3 +1,5 @@
+// Copyright 2016 Endless Mobile, Inc.
+
 const Gio = imports.gi.Gio;
 
 // Performs a connection test by first looking for an available connection, and

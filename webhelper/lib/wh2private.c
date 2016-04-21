@@ -1,6 +1,6 @@
 /* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*- */
 
-/* Copyright 2015 Endless Mobile, Inc. */
+/* Copyright 2015-2016 Endless Mobile, Inc. */
 
 #include <glib.h>
 #include <webkit2/webkit2.h>
