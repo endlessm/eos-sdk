@@ -13,6 +13,11 @@ LANGS = {'C':          {'exts': ['.c', '.h'], 'format': '/* %s */'},
          'JavaScript': {'exts': ['.js'],      'format': '// %s'},
          'Python':     {'exts': ['.py'],      'format': '# %s'}}
 
+EXCLUSIONS = ['cssParse.js',
+              'jquery-min.js',
+              'mustache.js',
+              'licenses/includes/']
+
 class AttributeDict(dict):
     def __getattr__(self, attr):
         return self[attr]
@@ -49,7 +54,15 @@ class CopyrightUpdater(object):
                     with open(path, 'w') as f:
                         f.writelines(lines)
                 return
-        # There was no match, so we need to add a copyright statement
+
+        # There is no existing Endless copyright statement
+
+        # Special case to avoid adding a new copyright statement
+        # to any paths that match the list of exclusions
+        for exclusion in EXCLUSIONS:
+            if path.find(exclusion) >= 0:
+                return
+
         with open(path, 'w') as f:
             if lines[0].startswith('#!'):
                 # Keep the '#!' on the first line of the file
