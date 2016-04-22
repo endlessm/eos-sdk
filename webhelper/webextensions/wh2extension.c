@@ -54,11 +54,30 @@ context_free (Context *ctxt)
   g_free (ctxt);
 }
 
+/* Spins the main loop until the DBus connection comes up. We need this since we
+define functions in JS, that JS code can potentially call before there is a
+connection. */
+static void
+wait_for_connection_sync (Context *ctxt)
+{
+  g_return_if_fail (ctxt->connection == NULL);
+
+  GMainContext *main = g_main_context_get_thread_default ();
+  while (ctxt->connection == NULL)
+    g_main_context_iteration (main, TRUE /* may block */);
+
+  g_assert (ctxt->connection);
+}
+
 static gchar *
 translation_function (const gchar *message,
                       Context     *ctxt)
 {
   GError *error = NULL;
+
+  if (ctxt->connection == NULL)
+    wait_for_connection_sync (ctxt);
+
   GVariant *result =
     g_dbus_connection_call_sync (ctxt->connection, ctxt->main_program_name,
                                  MAIN_PROGRAM_OBJECT_PATH,
@@ -88,6 +107,10 @@ ngettext_translation_function (const gchar *singular,
                                Context     *ctxt)
 {
   GError *error = NULL;
+
+  if (ctxt->connection == NULL)
+    wait_for_connection_sync (ctxt);
+
   GVariant *result =
     g_dbus_connection_call_sync (ctxt->connection, ctxt->main_program_name,
                                  MAIN_PROGRAM_OBJECT_PATH,
@@ -471,11 +494,6 @@ on_bus_acquired (GDBusConnection *connection,
 
   ctxt->connection = connection;
 
-  /* Get a notification when Javascript is ready */
-  WebKitScriptWorld *script_world = webkit_script_world_get_default ();
-  g_signal_connect (script_world, "window-object-cleared",
-                    G_CALLBACK (on_window_object_cleared), ctxt);
-
   /* Export our interface on the bus */
   ctxt->node = g_dbus_node_info_new_for_xml (introspection_xml, &error);
   if (ctxt->node == NULL)
@@ -558,4 +576,13 @@ webkit_web_extension_initialize_with_user_data (WebKitWebExtension *extension,
                   ctxt, (GDestroyNotify) context_free);
 
   g_free (well_known_name);
+
+  /* Get a notification when Javascript is ready. In this callback it's possible
+  that the DBus connection has not been acquired yet, so we have sync waits
+  later if JS tries to call DBus. However, connecting to this signal later
+  doesn't work because it will often already have been fired before the DBus
+  connection is acquired. */
+  WebKitScriptWorld *script_world = webkit_script_world_get_default ();
+  g_signal_connect (script_world, "window-object-cleared",
+                    G_CALLBACK (on_window_object_cleared), ctxt);
 }
