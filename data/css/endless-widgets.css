@@ -1,7 +1,7 @@
 /* Wipe all theming CSS to start with. We'll leave the adwaita theme for
  * spinner.*/
 EosWindow,
-EosWindow :not(GtkSpinner) {
+EosWindow :not(spinner):not(decoration) {
     all: unset;
 }
 
@@ -10,7 +10,7 @@ EosWindow :not(GtkSpinner) {
 
 /* Insensitive Text */
 
-.menu GtkLabel:insensitive {
+menu label:disabled {
     color: rgba(255, 255, 255, 0.5);
 }
 
@@ -44,7 +44,7 @@ EosWindow {
 EosWindow .titlebar {
     font-family: "Lato";
     font-weight: bold;
-    font-size: 11px;
+    font-size: 14.7px;
     background-image: -gtk-gradient(linear, center top, center bottom,
         from(#464646), to(#1e1e1e));
     padding-left: 7px;
@@ -60,29 +60,29 @@ EosWindow .titlebar:backdrop {
         from(#282828), to(#1e1e1e));
 }
 
-EosWindow .titlebar .button {
+EosWindow .titlebar button {
     border-radius: 2px;
     color: #8c8c8c;
-    icon-shadow: 0px -1px alpha(black, 0.25);
+    -gtk-icon-shadow: 0px -1px alpha(black, 0.25);
     padding: 4px;
 }
 
-EosWindow .titlebar .button:backdrop {
+EosWindow .titlebar button:backdrop {
     color: #646464;
 }
 
-EosWindow .titlebar .button:hover {
+EosWindow .titlebar button:hover {
     color: #dcdcdc;
-    icon-shadow: 0px -1px alpha(black, 0.35);
+    -gtk-icon-shadow: 0px -1px alpha(black, 0.35);
     background-image: -gtk-gradient(linear, left bottom, left top,
         color-stop(0.98, rgb(131, 131, 131)),
         color-stop(0.95, rgb(108, 108, 108)),
         color-stop(0, rgb(68, 68, 68)));
 }
 
-EosWindow .titlebar .button:active {
+EosWindow .titlebar button:active {
     color: #787878;
-    icon-shadow: none;
+    -gtk-icon-shadow: none;
     background-image: -gtk-gradient(linear, left bottom, left top,
         color-stop(0.98, rgb(79, 79, 79)),
         color-stop(0.95, rgb(71, 71, 71)),
@@ -102,15 +102,15 @@ EosWindow .titlebar .forward {
     padding: 2px 10px;
 }
 
-EosWindow .titlebar .home:insensitive,
-EosWindow .titlebar .back:insensitive,
-EosWindow .titlebar .forward:insensitive {
+EosWindow .titlebar .home:disabled,
+EosWindow .titlebar .back:disabled,
+EosWindow .titlebar .forward:disabled {
     border-color: alpha(black, 0.20);
     background-color: transparent;
     background-image: none;
     box-shadow: none;
     color: #5a5a5a;
-    icon-shadow: none;
+    -gtk-icon-shadow: none;
 }
 
 EosWindow .titlebar .home {
@@ -140,6 +140,7 @@ EosWindow .titlebar .back.rtl {
 EosWindow .titlebar .endless-search-box {
     background-color: #4d4d4d;
     color: #eeeeec;
+    caret-color: #eeeeec;
     padding: 1px 2px 1px 4px;
     border-radius: 15px;
     border-style: solid;
@@ -150,7 +151,8 @@ EosWindow .titlebar .endless-search-box {
     /*border-image: linear-gradient(to bottom, #262626, #515151) 1 1 stretch;*/
 }
 
-EosWindow .titlebar .endless-search-box.image {
+EosWindow .titlebar .endless-search-box image {
+    margin: 0px 4px;
     color: #919191;
 }
 
@@ -159,7 +161,7 @@ EosWindow .titlebar .endless-search-box:selected {
     background-color: #eeeeec;
 }
 
-.endless-search-box .frame {
+.endless-search-box frame {
     background-color: #f5f5f5;
     padding: 7px;
     border-radius: 4px;
@@ -180,15 +182,6 @@ EosWindow .titlebar .endless-search-box:selected {
     border-style: solid;
 }
 
-/*
- * We need to set the min scrollbar size smaller than in adwaita (42 pixels)
- * as it is making our auto-complete results too big if there is only one
- * entry. This is a bug in GTK
- */
-.scrollbar {
-    -GtkScrollbar-min-slider-length: 28;
-}
-
 .credits-button {
     opacity: 0.0;
     transition: opacity 250ms;
@@ -203,41 +196,51 @@ EosWindow .titlebar .endless-search-box:selected {
  * Themeing for context menus, to get Adwaita look
  * FIXME: Really gross to be recreating all this Adwaita theme here.
  * Unfortunately even the :not pseudo-selector won't allow you to select all
- * items whose ancestor isn't a .menuitem, because if one ancestor is a
- * .menuitem then another ancestor is likely not. So at least some of the below
+ * items whose ancestor isn't a menuitem, because if one ancestor is a
+ * menuitem then another ancestor is likely not. So at least some of the below
  * rules will always be necessary.
  */
 @define-color endless_menu_fg_color #2e3436;
 @define-color endless_menu_bg_color shade (#ededed, 1.1);
 
-.menu {
+.context-menu {
     font: initial;
     color: @endless_menu_fg_color;
     background-color: @endless_menu_bg_color;
+    padding: 2px 0px;
 }
 
-.menu .menuitem {
+.context-menu menuitem {
     padding: 4px;
-    -GtkMenuItem-arrow-scaling: 0.4;
 }
 
-.menu .menuitem:active,
-.menu .menuitem:hover {
+.context-menu menuitem arrow {
+    min-width: 8px;
+    min-height: 8px;
+}
+
+.context-menu menuitem:active,
+.context-menu menuitem:hover {
     color: #ffffff;
     background-color: #4a90d9;
 }
 
-.menu .menuitem *:insensitive {
+.context-menu menuitem *:disabled {
     color: mix (@endless_menu_fg_color, @endless_menu_bg_color, 0.6);
 }
 
-.menu .menuitem.separator {
-    color: mix (@endless_menu_fg_color, @endless_menu_bg_color, 0.9);
-    -GtkMenuItem-horizontal-padding: 0;
+.context-menu separator {
+    background-color: transparent;
+    background-image: image(mix (@endless_menu_fg_color, @endless_menu_bg_color, 0.9));
+    background-size: 1px 1px;
+    color: red;
+    min-width: 1px;
+    min-height: 1px;
+    margin: 0px 4px;
 }
 
 /* Changes for composite TVs */
 
-.composite .header-bar .entry {
-      font-size: 18px;
+.composite headerbar entry {
+      font-size: 24px;
   }
