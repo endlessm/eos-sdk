@@ -1,3 +1,5 @@
+// Copyright 2016 Endless Mobile, Inc.
+
 const Endless = imports.gi.Endless;
 const Gtk = imports.gi.Gtk;
 

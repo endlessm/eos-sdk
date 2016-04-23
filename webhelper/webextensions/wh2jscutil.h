@@ -1,6 +1,6 @@
 /* -*- mode: C; c-file-style: "gnu"; indent-tabs-mode: nil; -*- */
 
-/* Copyright 2015 Endless Mobile, Inc. */
+/* Copyright 2015-2016 Endless Mobile, Inc. */
 
 #ifndef WH2_JSC_UTIL_H
 #define WH2_JSC_UTIL_H

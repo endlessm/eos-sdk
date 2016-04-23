@@ -1,3 +1,5 @@
+// Copyright 2016 Endless Mobile, Inc.
+
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const System = imports.system;

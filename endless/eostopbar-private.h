@@ -1,4 +1,4 @@
-/* Copyright 2013 Endless Mobile, Inc. */
+/* Copyright 2013-2016 Endless Mobile, Inc. */
 
 #ifndef EOS_TOP_BAR_H
 #define EOS_TOP_BAR_H

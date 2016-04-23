@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Copyright 2016 Endless Mobile, Inc.
+
 from bs4 import BeautifulSoup, Comment
 import os
 import re

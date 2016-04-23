@@ -1,4 +1,4 @@
-/* Copyright 2013 Endless Mobile, Inc. */
+/* Copyright 2013-2016 Endless Mobile, Inc. */
 
 #ifndef ENDLESS_H
 #define ENDLESS_H

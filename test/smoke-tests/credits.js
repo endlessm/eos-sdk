@@ -1,3 +1,5 @@
+// Copyright 2016 Endless Mobile, Inc.
+
 const Endless = imports.gi.Endless;
 const GdkPixbuf = imports.gi.GdkPixbuf;
 const Gio = imports.gi.Gio;
