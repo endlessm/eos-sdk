@@ -1,3 +1,5 @@
+/* Copyright (C) 2016 Endless Mobile, Inc. */
+
 #include <glib.h>
 
 #include "endless.h"

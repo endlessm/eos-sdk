@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+# Copyright (C) 2016 Endless Mobile, Inc.
+
 import json
 import os
 import time

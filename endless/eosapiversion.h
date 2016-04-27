@@ -1,4 +1,4 @@
-/* Copyright 2013-2015 Endless Mobile, Inc. */
+/* Copyright (C) 2013-2016 Endless Mobile, Inc. */
 
 #ifndef API_VERSION_H
 #define API_VERSION_H

@@ -1,4 +1,4 @@
-/* Copyright 2015 Endless Mobile, Inc. */
+/* Copyright (C) 2015-2016 Endless Mobile, Inc. */
 
 #ifndef EOS_CELL_RENDERER_TEXT_LINK_H
 #define EOS_CELL_RENDERER_TEXT_LINK_H

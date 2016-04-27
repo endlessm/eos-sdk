@@ -1,3 +1,5 @@
+/* Copyright (C) 2016 Endless Mobile, Inc. */
+
 #include <gtk/gtk.h>
 #include <endless/endless.h>
 

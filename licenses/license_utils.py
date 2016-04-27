@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Copyright (C) 2016 Endless Mobile, Inc.
+
 import re
 
 def rewrite_attr(html, elem, attr, source, target):

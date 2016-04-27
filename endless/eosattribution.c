@@ -1,4 +1,4 @@
-/* Copyright 2015 Endless Mobile, Inc. */
+/* Copyright (C) 2015-2016 Endless Mobile, Inc. */
 
 #include "config.h"
 #include <glib/gi18n-lib.h>

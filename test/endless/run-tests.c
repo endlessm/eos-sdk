@@ -1,4 +1,4 @@
-/* Copyright 2013 Endless Mobile, Inc. */
+/* Copyright (C) 2013-2016 Endless Mobile, Inc. */
 
 #include <unistd.h> /* For getpid() */
 #include <glib-object.h>

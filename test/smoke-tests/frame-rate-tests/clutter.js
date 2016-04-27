@@ -1,3 +1,5 @@
+// Copyright (C) 2016 Endless Mobile, Inc.
+
 const Clutter = imports.gi.Clutter;
 const GdkPixbuf = imports.gi.GdkPixbuf;
 const Cogl = imports.gi.Cogl;

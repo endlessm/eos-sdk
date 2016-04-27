@@ -1,3 +1,5 @@
+// Copyright (C) 2016 Endless Mobile, Inc.
+
 const Gdk = imports.gi.Gdk;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;

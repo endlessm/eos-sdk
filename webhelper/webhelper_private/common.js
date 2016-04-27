@@ -1,4 +1,4 @@
-// Copyright 2015 Endless Mobile, Inc.
+// Copyright (C) 2015-2016 Endless Mobile, Inc.
 
 // The following constant and two modules must be in the global namespace before
 // importing this file: LIBEXEC_SUBDIR, WebKit2, WebHelper2Private

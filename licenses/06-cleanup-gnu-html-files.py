@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Copyright (C) 2016 Endless Mobile, Inc.
+
 from bs4 import BeautifulSoup
 import os
 import re
