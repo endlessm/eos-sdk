@@ -56,7 +56,7 @@ eos_custom_container_add (GtkContainer *container,
   EosCustomContainer *self = EOS_CUSTOM_CONTAINER (container);
   EosCustomContainerPrivate *priv = eos_custom_container_get_instance_private (self);
 
-  priv->children = g_list_prepend (priv->children, child);
+  priv->children = g_list_append (priv->children, child);
   gtk_widget_set_parent (child, GTK_WIDGET (container));
 }
 
