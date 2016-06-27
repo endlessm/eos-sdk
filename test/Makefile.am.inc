@@ -33,7 +33,8 @@ credits_resource_files = \
 	test/smoke-tests/images/attribution.json \
 	$(NULL)
 test/smoke-tests/images/credits.gresource: test/smoke-tests/images/credits.gresource.xml $(credits_resource_files)
-	$(AM_V_GEN)$(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(srcdir)/test/smoke-tests/images $<
+	$(AM_V_GEN)$(MKDIR_P) $(@D) && \
+	$(GLIB_COMPILE_RESOURCES) --target=$@ --sourcedir=$(srcdir)/test/smoke-tests/images $<
 dist_noinst_DATA += test/smoke-tests/images/credits.gresource
 CLEANFILES += test/smoke-tests/images/credits.gresource
 EXTRA_DIST += \
