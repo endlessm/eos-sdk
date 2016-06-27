@@ -145,7 +145,7 @@ gettext_shim (JSContextRef     js,
   if (n_args != 1)
     {
       gchar *errmsg = g_strdup_printf ("Expected one argument to gettext(),"
-                                       "but got %d.", n_args);
+                                       "but got %"G_GSIZE_FORMAT".", n_args);
       *exception = throw_exception (js, errmsg);
       g_free (errmsg);
       return NULL;
@@ -190,7 +190,7 @@ ngettext_shim (JSContextRef     js,
   if (n_args != 3)
     {
       gchar *errmsg = g_strdup_printf ("Expected three arguments to ngettext(),"
-                                       "but got %d.", n_args);
+                                       "but got %"G_GSIZE_FORMAT".", n_args);
       *exception = throw_exception (js, errmsg);
       g_free (errmsg);
       return NULL;
