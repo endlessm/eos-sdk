@@ -21,7 +21,8 @@ dist_noinst_DATA =
 
 # Compiler flags
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
-AM_CFLAGS = @STRICT_CFLAGS@
+AM_CPPFLAGS = -I$(builddir)/endless # needed for eosversion.h include to work in out of tree builds
+AM_CFLAGS   = @STRICT_CFLAGS@
 
 # Make sure to run Gtk-doc tests and build the documentation when doing
 # 'make distcheck'
@@ -146,6 +147,7 @@ Endless_@EOS_SDK_API_VERSION@_gir_INCLUDES = \
 Endless_@EOS_SDK_API_VERSION@_gir_SCANNERFLAGS = \
 	--identifier-prefix=Eos \
 	--symbol-prefix=eos \
+	-I$(builddir)/endless \
 	-DCOMPILING_EOS_SDK
 # Endless_@EOS_SDK_API_VERSION@_gir_CFLAGS = $(INCLUDES)
 Endless_@EOS_SDK_API_VERSION@_gir_LIBS = libendless-@EOS_SDK_API_VERSION@.la
