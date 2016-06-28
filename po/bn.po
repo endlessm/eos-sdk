@@ -1,15 +1,16 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Endless Mobile, Inc.
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the eos-sdk package.
 # 
 # Translators:
+# Shimon Sharmin <oparthib@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: philip@endlessm.com\n"
-"POT-Creation-Date: 2016-04-12 01:58+0000\n"
-"PO-Revision-Date: 2016-04-16 04:32+0000\n"
-"Last-Translator: Roddy Shuler <roddy@endlessm.com>\n"
+"POT-Creation-Date: 2016-06-21 02:05+0000\n"
+"PO-Revision-Date: 2016-06-23 07:58+0000\n"
+"Last-Translator: Shimon Sharmin <oparthib@gmail.com>\n"
 "Language-Team: Bengali (http://www.transifex.com/endless-mobile-inc/eos-sdk/language/bn/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,7 +20,7 @@ msgstr ""
 
 #: endless/eosapplication.c:291
 msgid "Image credits"
-msgstr ""
+msgstr "ছবির কৃতিত্ব"
 
 #. TRANSLATORS: %s will be replaced with the name of an image license,
 #. such as "Public domain" or "Creative Commons Attribution". These names are
@@ -29,14 +30,14 @@ msgstr ""
 #: endless/eosattribution.c:228
 #, c-format
 msgid "%s."
-msgstr ""
+msgstr "%s"
 
 #. TRANSLATORS: This string is markup, and so should not
 #. contain any ampersands (&), less-than signs (<), or
 #. greater-than signs (>).
 #: endless/eosattribution.c:244
 msgid "Click for image license."
-msgstr ""
+msgstr "ছবির লাইসেন্সের জন্য চাপুন।"
 
 #. TRANSLATORS: %s will be replaced with the name or account name of the
 #. person that the image should be credited to. Make sure %s is still in the
@@ -45,7 +46,7 @@ msgstr ""
 #: endless/eosattribution.c:275
 #, c-format
 msgid "Image credit: %s."
-msgstr ""
+msgstr "ছবির কৃতিত্ব: %s"
 
 #. TRANSLATORS: %d will be replaced with the copyright year, %s with
 #. the copyright holder. Make sure these tokens are in the translated
@@ -54,7 +55,7 @@ msgstr ""
 #: endless/eosattribution.c:320
 #, c-format
 msgid "Copyright %d %s."
-msgstr ""
+msgstr "স্বত্ব %d %s"
 
 #. TRANSLATORS: %s will be replaced with the name of the copyright
 #. holder. Make sure %s is still in the translated string. Note: this
@@ -63,93 +64,93 @@ msgstr ""
 #: endless/eosattribution.c:329
 #, c-format
 msgid "Copyright %s."
-msgstr ""
+msgstr "স্বত্ব %s"
 
 #. TRANSLATORS: This string is markup and so should not contain any
 #. ampersands (&), less-than signs (<), or greater-than signs (>).
 #: endless/eosattribution.c:341
 msgid "Used with permission."
-msgstr ""
+msgstr "অনুমতি নিয়ে ব্যবহৃত।"
 
 #. TRANSLATORS: These names should be translated as the official names of the
 #. licenses in your language. Note: these names are markup, and so should not
 #. contain any ampersands (&), less-than signs (<) or greater-than signs (>).
 #: endless/eoslicense.c:52
 msgid "Public domain"
-msgstr ""
+msgstr "সর্বজনীন ডোমেইন"
 
 #: endless/eoslicense.c:53
 msgid "Owner permission"
-msgstr ""
+msgstr "স্বত্বাধিকারীর অনুমতি"
 
 #: endless/eoslicense.c:54
 msgid "Copyrighted free use"
-msgstr ""
+msgstr "স্বত্ব সংরক্ষণ করে মুক্ত ব্যবহার"
 
 #: endless/eoslicense.c:55
 msgid "CC0-1.0"
-msgstr ""
+msgstr "CC0-1.0"
 
 #: endless/eoslicense.c:56
 msgid "Creative Commons Attribution 2.0"
-msgstr ""
+msgstr "ক্রিয়েটিভ কমনস আরোপণ 2.0"
 
 #: endless/eoslicense.c:57
 msgid "Creative Commons Attribution 3.0"
-msgstr ""
+msgstr "ক্রিয়েটিভ কমনস আরোপণ 3.0"
 
 #: endless/eoslicense.c:58
 msgid "Creative Commons Attribution 4.0"
-msgstr ""
+msgstr "ক্রিয়েটিভ কমনস আরোপণ 4.0"
 
 #: endless/eoslicense.c:59
 msgid "Creative Commons Attribution-NonCommercial 2.0"
-msgstr ""
+msgstr "ক্রিয়েটিভ কমনস আরোপণ- অবাণিজ্যিক 2.0"
 
 #: endless/eoslicense.c:60
 msgid "Creative Commons Attribution-NonCommercial 3.0"
-msgstr ""
+msgstr "ক্রিয়েটিভ কমনস আরোপণ- অবাণিজ্যিক 3.0"
 
 #: endless/eoslicense.c:61
 msgid "Creative Commons Attribution-NonCommercial-ShareAlike 2.0 Generic"
-msgstr ""
+msgstr "ক্রিয়েটিভ কমনস আরোপণ- অবাণিজ্যিক- শেয়ারএ্যালাইক 2.0 জেনেরিক"
 
 #: endless/eoslicense.c:62
 msgid "Creative Commons Attribution-NoDerivs 2.0"
-msgstr ""
+msgstr "ক্রিয়েটিভ কমনস আরোপণ- নোডেরিভ 2.0"
 
 #: endless/eoslicense.c:63
 msgid "Creative Commons Attribution-NoDerivs 3.0"
-msgstr ""
+msgstr "ক্রিয়েটিভ কমনস আরোপণ- নোডেরিভ 3.0"
 
 #: endless/eoslicense.c:64
 msgid "Creative Commons Attribution-ShareAlike 2.0"
-msgstr ""
+msgstr "ক্রিয়েটিভ কমনস আরোপণ- শেয়ারএ্যালাইক 2.0"
 
 #: endless/eoslicense.c:65
 msgid "Creative Commons Attribution-ShareAlike 2.5 Generic"
-msgstr ""
+msgstr "ক্রিয়েটিভ কমনস আরোপণ- শেয়ারএ্যালাইক 2.5 জেনেরিক"
 
 #: endless/eoslicense.c:66
 msgid "Creative Commons Attribution-ShareAlike 3.0"
-msgstr ""
+msgstr "ক্রিয়েটিভ কমনস আরোপণ- শেয়ারএ্যালাইক 3.0"
 
 #: endless/eoslicense.c:67
 msgid "Creative Commons Attribution-ShareAlike 4.0 International"
-msgstr ""
+msgstr "ক্রিয়েটিভ কমনস আরোপণ- শেয়ারএ্যালাইক 4.0 আন্তর্জাতিক"
 
 #: endless/eoslicense.c:68
 msgid "GNU Free Documentation License, version 1.1"
-msgstr ""
+msgstr "GNU মুক্ত নথিপত্র লাইসেন্স, ভার্সন 1.1"
 
 #: endless/eoslicense.c:69
 msgid "GNU Free Documentation License, version 1.2"
-msgstr ""
+msgstr "GNU মুক্ত নথিপত্র লাইসেন্স, ভার্সন 1.2"
 
 #: endless/eoslicense.c:70
 msgid "GNU Free Documentation License, version 1.3"
-msgstr ""
+msgstr "GNU মুক্ত নথিপত্র লাইসেন্স, ভার্সন 1.3"
 
 #: endless/eoslicense.c:172
 msgid "Unknown license"
-msgstr ""
+msgstr "অপরিচিত লাইসেন্স"
