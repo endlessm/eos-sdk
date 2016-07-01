@@ -1,6 +1,6 @@
 # Copyright 2013 Endless Mobile, Inc.
 
-TEST_FLAGS = @EOS_SDK_CFLAGS@ -I$(top_srcdir) -DCOMPILING_EOS_SDK
+TEST_FLAGS = @EOS_SDK_CFLAGS@ -I$(builddir)/endless  -I$(top_srcdir) -DCOMPILING_EOS_SDK
 TEST_LIBS = @EOS_SDK_LIBS@ $(top_builddir)/libendless-@EOS_SDK_API_VERSION@.la
 
 noinst_PROGRAMS = \
