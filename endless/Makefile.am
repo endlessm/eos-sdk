@@ -64,6 +64,7 @@ libendless_@EOS_SDK_API_VERSION@_la_SOURCES = \
 # G_MESSAGES_DEBUG=EndlessSDK ./myprogram
 # and turn on debug messages
 libendless_@EOS_SDK_API_VERSION@_la_CPPFLAGS = \
+	-I$(builddir)/endless \
 	@EOS_SDK_CFLAGS@ \
 	-DG_LOG_DOMAIN=\"EndlessSDK\" \
 	-DCOMPILING_EOS_SDK \
