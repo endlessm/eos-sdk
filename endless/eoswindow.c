@@ -6,6 +6,7 @@
 #include "eostopbar-private.h"
 
 #include <gtk/gtk.h>
+#include <eosmetrics/eosmetrics.h>
 
 /**
  * SECTION:window
@@ -80,6 +81,8 @@
 
 #define _EOS_TOP_BAR_EDGE_FINISHING_HEIGHT_PX 2
 
+#define UNMAXIMIZE_EVENT "2b5c044d-d819-4e2c-a3a6-c485c1ac371e"
+
 typedef struct {
   EosApplication *application;
 
@@ -106,6 +109,10 @@ typedef struct {
   gulong visible_child_property_handler;
   GtkCssProvider *background_provider;
   gchar *current_background_css_props;
+
+  /* Only send unmaximize metric once */
+  gboolean has_been_unmaximized;
+  guint unmaximize_timeout_id;
 } EosWindowPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
@@ -640,6 +647,48 @@ update_screen (EosWindow *self)
     gtk_style_context_remove_class (context, EOS_STYLE_CLASS_COMPOSITE);
 }
 
+static gboolean
+record_unmaximize_metric (EosWindow *self)
+{
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  GtkApplication *app = gtk_window_get_application (GTK_WINDOW (self));
+  const char *app_id = g_application_get_application_id (G_APPLICATION (app));
+  EmtrEventRecorder *recorder = emtr_event_recorder_get_default ();
+  emtr_event_recorder_record_event (recorder, UNMAXIMIZE_EVENT,
+                                    g_variant_new_string (app_id));
+  priv->has_been_unmaximized = TRUE;
+  priv->unmaximize_timeout_id = 0;
+  return G_SOURCE_REMOVE;
+}
+
+static void
+on_maximize_state_change (EosWindow  *self,
+                          GParamSpec *pspec)
+{
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+  if (priv->has_been_unmaximized)
+    return;
+
+  /* We assume that if the window remains unmaximized for 10 seconds, then the
+   * user meant to unmaximize it on purpose and is using the app that way. This
+   * also bypasses any initial uncertainty from the window manager on whether
+   * the window was supposed to be maximized or not. */
+  if (gtk_window_is_maximized (GTK_WINDOW (self)))
+    {
+      if (priv->unmaximize_timeout_id != 0)
+        {
+          g_source_remove (priv->unmaximize_timeout_id);
+          priv->unmaximize_timeout_id = 0;
+        }
+    }
+  else
+    {
+      priv->unmaximize_timeout_id =
+        g_timeout_add_seconds (10, (GSourceFunc) record_unmaximize_metric,
+                               self);
+    }
+}
+
 static void
 on_credits_clicked (GtkWidget *top_bar,
                     EosWindow *self)
@@ -741,6 +790,8 @@ eos_window_init (EosWindow *self)
   g_signal_connect (priv->top_bar, "credits-clicked",
                     G_CALLBACK (on_credits_clicked), self);
   g_signal_connect (self, "notify::screen", G_CALLBACK (update_screen), NULL);
+  g_signal_connect (self, "notify::is-maximized",
+                    G_CALLBACK(on_maximize_state_change), NULL);
 
   eos_window_set_page_manager (self,
                                EOS_PAGE_MANAGER (eos_page_manager_new ()));
