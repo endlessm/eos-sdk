@@ -125,6 +125,7 @@ AC_PATH_PROG([NATURALDOCS], [naturaldocs], [notfound])
 AC_ARG_VAR([NATURALDOCS], [Path to naturaldocs])
 GLIB_COMPILE_RESOURCES=`$PKG_CONFIG --variable glib_compile_resources gio-2.0`
 AC_SUBST(GLIB_COMPILE_RESOURCES)
+AX_PYTHON_MODULE_VERSION([dbusmock], 0.10)
 
 AC_CACHE_SAVE
 

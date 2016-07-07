@@ -79,13 +79,18 @@ AM_JS_LOG_FLAGS = \
 	@JASMINE_REPORT_ARGUMENT@ \
 	--no-config \
 	$(NULL)
-LOG_COMPILER = gtester
+LOG_COMPILER = $(top_srcdir)/test/gtester-mock-event-recorder.sh
 AM_LOG_FLAGS = -k --verbose
 EXTRA_DIST += \
 	test/run-with-dbus \
 	test/test-bus.conf \
 	$(NULL)
 CLEANFILES += stderr.log
+
+dist_noinst_SCRIPTS = \
+	test/gtester-mock-event-recorder.sh \
+	test/wait-for-service-helper.py \
+	$(NULL)
 
 # Use locally built versions of Endless-0.gir and libraries; this may need to be
 # changed to AM_TESTS_ENVIRONMENT in a future version of Automake
