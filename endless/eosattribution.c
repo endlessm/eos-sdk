@@ -481,12 +481,10 @@ eos_attribution_initable_init (GInitable    *initable,
   gint count;
   for (count = 0; count < num_images; count++)
     {
-      /* Required info */
-      const gchar *resource_path;
       /* Optional info; some combinations of these are required though */
       const gchar *original_uri = NULL, *license = NULL, *license_uri = NULL,
         *credit = NULL, *credit_contact = NULL, *copyright_holder = NULL,
-        *comment = NULL;
+        *comment = NULL, *resource_path = NULL, *thumb_uri = NULL;
       gint64 copyright_year = -1;
       gboolean permission = FALSE;
 
@@ -505,18 +503,6 @@ eos_attribution_initable_init (GInitable    *initable,
           continue;
         }
 
-      /* "resource_path" is required */
-      if (!json_reader_read_member (reader, "resource_path"))
-        {
-          g_warning ("Element %d in attribution file must contain a 'resource_path'",
-                     count);
-          json_reader_end_member (reader);
-          json_reader_end_element (reader);
-          continue;
-        }
-      resource_path = json_reader_get_string_value (reader);
-      json_reader_end_member (reader);
-
       /* Read all optional elements */
 
       gchar **members = json_reader_list_members (reader);
@@ -529,6 +515,8 @@ eos_attribution_initable_init (GInitable    *initable,
       json_reader_end_member (reader); \
     }
 
+      READ_MEMBER_IF_PRESENT("resource_path", string_value, resource_path)
+      READ_MEMBER_IF_PRESENT("thumb_uri", string_value, thumb_uri)
       READ_MEMBER_IF_PRESENT("uri", string_value, original_uri)
       READ_MEMBER_IF_PRESENT("license", string_value, license)
       READ_MEMBER_IF_PRESENT("license_uri", string_value, license_uri)
@@ -546,12 +534,22 @@ eos_attribution_initable_init (GInitable    *initable,
 
       /* Validate the data */
 
+      if (resource_path == NULL && thumb_uri == NULL)
+        {
+          g_warning ("Image element %d must have one of the following "
+                     "specified: resource_path, thumb_uri",
+                     count);
+          continue;
+        }
+
+      const char *debug_name = resource_path ? resource_path : thumb_uri;
+
       if (license == NULL && license_uri == NULL && credit == NULL &&
           copyright_holder == NULL)
         {
           g_warning ("Image %s must have at least one of the following "
                      "specified: license, license_uri, credit, or "
-                     "copyright_holder.", resource_path);
+                     "copyright_holder.", debug_name);
           continue;
         }
 
@@ -571,13 +569,30 @@ eos_attribution_initable_init (GInitable    *initable,
       /* Populate a row of the model */
 
       GError *inner_error = NULL;
-      GdkPixbuf *pixbuf = gdk_pixbuf_new_from_resource_at_scale (resource_path,
-                                                                 -1, ROW_HEIGHT,
-                                                                 TRUE,
-                                                                 &inner_error);
+      GdkPixbuf *pixbuf;
+
+      if (resource_path)
+        {
+          pixbuf = gdk_pixbuf_new_from_resource_at_scale (resource_path,
+                                                          -1, ROW_HEIGHT,
+                                                          TRUE,
+                                                          &inner_error);
+        }
+      else
+        {
+          g_autoptr(GFile) file = g_file_new_for_uri (thumb_uri);
+          g_autoptr(GFileInputStream) input_stream = g_file_read (file, cancellable, &inner_error);
+
+          pixbuf = gdk_pixbuf_new_from_stream_at_scale (G_INPUT_STREAM (input_stream),
+                                                        -1, ROW_HEIGHT,
+                                                        TRUE,
+                                                        cancellable,
+                                                        &inner_error);
+        }
+
       if (pixbuf == NULL)
         {
-          g_warning ("Not able to load pixbuf from '%s': %s", resource_path,
+          g_warning ("Not able to load pixbuf from '%s': %s", debug_name,
                      inner_error->message);
           g_clear_error (&inner_error);
           continue;

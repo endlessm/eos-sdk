@@ -68,11 +68,11 @@
  *     </tr>
  *   </thead>
  *   <tr>
- *     <td><code>resource_path</code></td>
+ *     <td><code>thumb_uri</code></td>
  *     <td>Yes</td>
  *     <td>string</td>
  *     <td>
- *       Resource path to the image (e.g. <code>/com/example/...</code>)
+ *       A URI to show in the dialog. (e.g. <code>resource:///com/endlessm/...</code>)
  *     </td>
  *   </tr>
  *   <tr>
