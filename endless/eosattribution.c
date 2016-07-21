@@ -536,7 +536,9 @@ eos_attribution_initable_init (GInitable    *initable,
 
       if (resource_path == NULL && thumb_uri == NULL)
         {
-          g_warning ("Image must have one of the following specified: resource_path, thumb_uri");
+          g_warning ("Image element %d must have one of the following "
+                     "specified: resource_path, thumb_uri",
+                     count);
           continue;
         }
 
