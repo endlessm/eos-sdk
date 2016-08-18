@@ -86,7 +86,7 @@ EOSMETRICS_REQUIREMENT="eosmetrics-0"
 # These go into the pkg-config file as Requires: and Requires.private:
 # (Generally, use Requires.private: instead of Requires:)
 EOS_REQUIRED_MODULES=
-EOS_REQUIRED_MODULES_PRIVATE="$GLIB_REQUIREMENT $GOBJECT_REQUIREMENT $GIO_REQUIREMENT $GTK_REQUIREMENT $JSON_GLIB_REQUIREMENT $EOSMETRICS_REQUIREMENT"
+EOS_REQUIRED_MODULES_PRIVATE="$GLIB_REQUIREMENT $GOBJECT_REQUIREMENT $GIO_REQUIREMENT $GTK_REQUIREMENT $JSON_GLIB_REQUIREMENT"
 AC_SUBST(EOS_REQUIRED_MODULES)
 AC_SUBST(EOS_REQUIRED_MODULES_PRIVATE)
 
@@ -170,6 +170,16 @@ AS_CASE([$enable_strict_flags],
 dnl Strip leading spaces
 STRICT_CFLAGS=${STRICT_CFLAGS#*  }
 AC_SUBST(STRICT_CFLAGS)
+
+# --disable-metrics: Don't send metrics to Endless, avoid eos-metrics
+# dependency.
+AH_TEMPLATE([USE_METRICS], [Define this to 1 if you want to include support in
+	the library for sending metrics to Endless])
+AC_ARG_ENABLE([metrics], [AS_HELP_STRING([--disable-metrics],
+	[Sending metrics requires eos-metrics dependency @<:@default=yes@:>@])])
+AS_IF([test "x$enable_metrics" != "xno"], [
+	AC_DEFINE([USE_METRICS])
+	EOS_REQUIRED_MODULES_PRIVATE="$EOS_REQUIRED_MODULES_PRIVATE $EOSMETRICS_REQUIREMENT"])
 
 # --enable-gir-doc: Build GIR documentation for Javascript. Done automatically
 # during 'make distcheck'.
