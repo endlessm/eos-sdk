@@ -6,7 +6,10 @@
 #include "eostopbar-private.h"
 
 #include <gtk/gtk.h>
+
+#ifdef USE_METRICS
 #include <eosmetrics/eosmetrics.h>
+#endif
 
 /**
  * SECTION:window
@@ -647,6 +650,8 @@ update_screen (EosWindow *self)
     gtk_style_context_remove_class (context, EOS_STYLE_CLASS_COMPOSITE);
 }
 
+#ifdef USE_METRICS
+
 static gboolean
 record_unmaximize_metric (EosWindow *self)
 {
@@ -688,6 +693,8 @@ on_maximize_state_change (EosWindow  *self,
                                self);
     }
 }
+
+#endif /* USE_METRICS */
 
 static void
 on_credits_clicked (GtkWidget *top_bar,
@@ -790,8 +797,10 @@ eos_window_init (EosWindow *self)
   g_signal_connect (priv->top_bar, "credits-clicked",
                     G_CALLBACK (on_credits_clicked), self);
   g_signal_connect (self, "notify::screen", G_CALLBACK (update_screen), NULL);
+#ifdef USE_METRICS
   g_signal_connect (self, "notify::is-maximized",
                     G_CALLBACK(on_maximize_state_change), NULL);
+#endif
 
   eos_window_set_page_manager (self,
                                EOS_PAGE_MANAGER (eos_page_manager_new ()));
