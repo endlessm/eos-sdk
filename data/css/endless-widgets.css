@@ -156,7 +156,7 @@ EosWindow .titlebar .endless-search-box image {
     color: #919191;
 }
 
-EosWindow .titlebar .endless-search-box:selected {
+EosWindow .titlebar .endless-search-box selection {
     color: #2e3436;
     background-color: #eeeeec;
 }
