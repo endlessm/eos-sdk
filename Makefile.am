@@ -38,6 +38,8 @@ DISTCLEANFILES =
 # Other targets to add to
 lib_LTLIBRARIES =
 
+EOS_JS_COVERAGE_FILES =
+
 # Make sure that 'make dist' includes documentation
 if CAN_MAKE_DIST
 dist-hook::
@@ -57,9 +59,12 @@ subst = $(SED) \
 	-e 's,%libexecdir%,$(libexecdir),g' \
 	$(NULL)
 
-subst_files = \
+subst_files =
+if ENABLE_WEBHELPER
+subst_files += \
 	webhelper/webhelper_private/config.js \
 	$(NULL)
+endif ENABLE_WEBHELPER
 
 $(subst_files): %: %.in Makefile
 	$(AM_V_GEN)$(MKDIR_P) $(@D) && \
@@ -89,6 +94,8 @@ DISTCLEANFILES += @EOS_SDK_API_NAME@.pc
 
 # # # WEBHELPER LIBRARY # # #
 
+if ENABLE_WEBHELPER
+
 webhelper_sources = \
 	webhelper/webhelper.js \
 	webhelper/webhelper2.js \
@@ -104,7 +111,7 @@ dist_webhelper_private_DATA = \
 	webhelper/webhelper_private/config.js \
 	$(NULL)
 
-EOS_JS_COVERAGE_FILES = $(webhelper_sources)
+EOS_JS_COVERAGE_FILES += $(webhelper_sources)
 
 ## Workaround for https://bugs.webkit.org/show_bug.cgi?id=116672
 ## When that is solved, we can eliminate this private library and go back to
@@ -128,6 +135,8 @@ wh2extension_la_SOURCES = \
 wh2extension_la_CPPFLAGS = @WEBHELPER2_EXTENSION_CFLAGS@
 wh2extension_la_LIBADD = @WEBHELPER2_EXTENSION_LIBS@
 wh2extension_la_LDFLAGS = -module -avoid-version -no-undefined
+
+endif ENABLE_WEBHELPER
 
 # # # INTROSPECTION FILES # # #
 
@@ -155,6 +164,8 @@ Endless_@EOS_SDK_API_VERSION@_gir_FILES = $(introspection_sources)
 Endless_@EOS_SDK_API_VERSION@_gir_EXPORT_PACKAGES = @EOS_SDK_API_NAME@
 INTROSPECTION_GIRS += Endless-@EOS_SDK_API_VERSION@.gir
 
+if ENABLE_WEBHELPER
+
 WebHelper2Private-1.0.gir: libwebhelper2private.la
 WebHelper2Private_1_0_gir_INCLUDES = GObject-2.0 GLib-2.0 WebKit2-4.0
 WebHelper2Private_1_0_gir_SCANNERFLAGS = \
@@ -164,6 +175,8 @@ WebHelper2Private_1_0_gir_SCANNERFLAGS = \
 WebHelper2Private_1_0_gir_LIBS = libwebhelper2private.la
 WebHelper2Private_1_0_gir_FILES = $(libwebhelper2private_la_SOURCES)
 INTROSPECTION_GIRS += WebHelper2Private-1.0.gir
+
+endif ENABLE_WEBHELPER
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = $(INTROSPECTION_GIRS)
@@ -349,7 +362,9 @@ nobase_dist_licenses_DATA = licenses/creativecommons/C/CC-BY-2.0.html \
 
 # # # PURE JAVASCRIPT MODULE DOCUMENTATION # # #
 
+if ENABLE_WEBHELPER
 include $(top_srcdir)/docs/reference/webhelper/Makefile.am.inc
+endif ENABLE_WEBHELPER
 
 # # # GJS OVERRIDES # # #
 
@@ -379,7 +394,10 @@ EOS_COVERAGE_BLACKLIST_PATTERNS = "*test/endless*"
 AM_JS_LOG_FLAGS += @EOS_JS_COVERAGE_LOG_FLAGS@
 AM_CFLAGS += @EOS_C_COVERAGE_CFLAGS@
 AM_LDFLAGS = @EOS_C_COVERAGE_LDFLAGS@
+
+if ENABLE_WEBHELPER
 libwebhelper2private_la_LDFLAGS += @EOS_C_COVERAGE_LDFLAGS@
 wh2extension_la_LDFLAGS += @EOS_C_COVERAGE_LDFLAGS@
+endif ENABLE_WEBHELPER
 
 clean-local:: clean-coverage
