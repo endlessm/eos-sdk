@@ -45,14 +45,6 @@ EXTRA_DIST += \
 javascript_tests = \
 	test/tools/eos-application-manifest/testInit.js \
 	test/tools/testHtmlExtractor.js \
-	test/webhelper/testLocal.js \
-	test/webhelper/testTranslate.js \
-	test/webhelper/testTranslate2.js \
-	test/webhelper/testTranslate2Old.js \
-	test/webhelper/testWebActions.js \
-	test/webhelper/testWebActions2.js \
-	test/webhelper/testWebActions2Old.js \
-	test/webhelper/testUpdateFontSize.js \
 	test/endless/testCustomContainer.js \
 	test/endless/testTopbarHomeButton.js \
 	test/endless/testTopbarNavButton.js \
@@ -63,6 +55,19 @@ EXTRA_DIST += \
 	test/tools/test.html \
 	test/utils.js \
 	$(NULL)
+
+if ENABLE_WEBHELPER
+javascript_tests += \
+	test/webhelper/testLocal.js \
+	test/webhelper/testTranslate.js \
+	test/webhelper/testTranslate2.js \
+	test/webhelper/testTranslate2Old.js \
+	test/webhelper/testWebActions.js \
+	test/webhelper/testWebActions2.js \
+	test/webhelper/testWebActions2Old.js \
+	test/webhelper/testUpdateFontSize.js \
+	$(NULL)
+endif ENABLE_WEBHELPER
 
 # Run tests when running 'make check'
 TESTS = \
@@ -75,7 +80,6 @@ JS_LOG_DRIVER_FLAGS = --comments
 TEST_EXTENSIONS = .js .coverage
 JS_LOG_COMPILER = jasmine
 AM_JS_LOG_FLAGS = \
-	--include-path=$(top_srcdir)/webhelper \
 	--include-path=$(top_srcdir) \
 	--tap \
 	@JASMINE_REPORT_ARGUMENT@ \
@@ -88,6 +92,10 @@ EXTRA_DIST += \
 	test/test-bus.conf \
 	$(NULL)
 CLEANFILES += stderr.log
+
+if ENABLE_WEBHELPER
+AM_JS_LOG_FLAGS += --include-path=$(top_srcdir)/webhelper
+endif ENABLE_WEBHELPER
 
 # Use locally built versions of Endless-0.gir and libraries; this may need to be
 # changed to AM_TESTS_ENVIRONMENT in a future version of Automake
