@@ -1,0 +1,155 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Endless Mobile, Inc.
+# This file is distributed under the same license as the eos-sdk package.
+# 
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: eos-sdk\n"
+"Report-Msgid-Bugs-To: philip@endlessm.com\n"
+"POT-Creation-Date: 2017-01-10 03:20+0000\n"
+"PO-Revision-Date: 2017-01-09 06:17+0000\n"
+"Last-Translator: Roddy Shuler <roddy@endlessm.com>\n"
+"Language-Team: Chinese (Taiwan) (http://www.transifex.com/endless-mobile-inc/eos-sdk/language/zh_TW/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_TW\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: endless/eosapplication.c:291
+msgid "Image credits"
+msgstr "圖片來源"
+
+#. TRANSLATORS: %s will be replaced with the name of an image license,
+#. such as "Public domain" or "Creative Commons Attribution". These names are
+#. translated elsewhere in this file. Make sure %s is still in the translated
+#. string. Note: this string is markup, and so should not contain any
+#. ampersands (&), less-than signs (<), or greater-than signs (>).
+#: endless/eosattribution.c:228
+#, c-format
+msgid "%s."
+msgstr "%s。"
+
+#. TRANSLATORS: This string is markup, and so should not
+#. contain any ampersands (&), less-than signs (<), or
+#. greater-than signs (>).
+#: endless/eosattribution.c:244
+msgid "Click for image license."
+msgstr "按一下查看影像授權。"
+
+#. TRANSLATORS: %s will be replaced with the name or account name of the
+#. person that the image should be credited to. Make sure %s is still in the
+#. translated string. Note: this string is markup and so should not contain
+#. any ampersands (&), less-than signs (<), or greater-than signs (>).
+#: endless/eosattribution.c:275
+#, c-format
+msgid "Image credit: %s."
+msgstr "圖片來源：%s。"
+
+#. TRANSLATORS: %d will be replaced with the copyright year, %s with
+#. the copyright holder. Make sure these tokens are in the translated
+#. string. Note: this string is markup and so should not contain
+#. any ampersands (&), less-than signs (<), or greater-than signs (>).
+#: endless/eosattribution.c:320
+#, c-format
+msgid "Copyright %d %s."
+msgstr "版權年份 %d，%s 版權所有 。"
+
+#. TRANSLATORS: %s will be replaced with the name of the copyright
+#. holder. Make sure %s is still in the translated string. Note: this
+#. string is markup and so should not contain any ampersands (&),
+#. less-than signs (<), or greater-than signs (>).
+#: endless/eosattribution.c:329
+#, c-format
+msgid "Copyright %s."
+msgstr "%s 版權所有。"
+
+#. TRANSLATORS: This string is markup and so should not contain any
+#. ampersands (&), less-than signs (<), or greater-than signs (>).
+#: endless/eosattribution.c:341
+msgid "Used with permission."
+msgstr "取得許可後使用。"
+
+#. TRANSLATORS: These names should be translated as the official names of the
+#. licenses in your language. Note: these names are markup, and so should not
+#. contain any ampersands (&), less-than signs (<) or greater-than signs (>).
+#: endless/eoslicense.c:52
+msgid "Public domain"
+msgstr "公用域"
+
+#: endless/eoslicense.c:53
+msgid "Owner permission"
+msgstr "所有人許可"
+
+#: endless/eoslicense.c:54
+msgid "Copyrighted free use"
+msgstr "版權免費使用"
+
+#: endless/eoslicense.c:55
+msgid "CC0-1.0"
+msgstr "CC0-1.0"
+
+#: endless/eoslicense.c:56
+msgid "Creative Commons Attribution 2.0"
+msgstr "CC 創用 2.0"
+
+#: endless/eoslicense.c:57
+msgid "Creative Commons Attribution 3.0"
+msgstr "創用 CC 3.0"
+
+#: endless/eoslicense.c:58
+msgid "Creative Commons Attribution 4.0"
+msgstr "創用 CC 4.0"
+
+#: endless/eoslicense.c:59
+msgid "Creative Commons Attribution-NonCommercial 2.0"
+msgstr "創用 CC－非商業性使用 2.0"
+
+#: endless/eoslicense.c:60
+msgid "Creative Commons Attribution-NonCommercial 3.0"
+msgstr "創用 CC 姓名標示-非商業性 3.0"
+
+#: endless/eoslicense.c:61
+msgid "Creative Commons Attribution-NonCommercial-ShareAlike 2.0 Generic"
+msgstr "創用 CC 姓名標示-非商業性-ShareAlike 2.0 通用"
+
+#: endless/eoslicense.c:62
+msgid "Creative Commons Attribution-NoDerivs 2.0"
+msgstr "創用 CC 姓名標示 - 禁止改作 2.0"
+
+#: endless/eoslicense.c:63
+msgid "Creative Commons Attribution-NoDerivs 3.0"
+msgstr "創用 CC 姓名標示-NoDerivs 3.0"
+
+#: endless/eoslicense.c:64
+msgid "Creative Commons Attribution-ShareAlike 2.0"
+msgstr "創用 CC 姓名標示 - 相同方式分享 2.0"
+
+#: endless/eoslicense.c:65
+msgid "Creative Commons Attribution-ShareAlike 2.5 Generic"
+msgstr "創用CC 姓名標示 - 相同方式分享 2.5 通用版"
+
+#: endless/eoslicense.c:66
+msgid "Creative Commons Attribution-ShareAlike 3.0"
+msgstr "創用 CC 姓名標示 - 相同方式分享 3.0"
+
+#: endless/eoslicense.c:67
+msgid "Creative Commons Attribution-ShareAlike 4.0 International"
+msgstr "創用CC 姓名標示 - 相同方式分享 4.0 國際版"
+
+#: endless/eoslicense.c:68
+msgid "GNU Free Documentation License, version 1.1"
+msgstr "GNU 自由文件授權，第 1.1 版"
+
+#: endless/eoslicense.c:69
+msgid "GNU Free Documentation License, version 1.2"
+msgstr "GNU 自由文件授權版本 1.2"
+
+#: endless/eoslicense.c:70
+msgid "GNU Free Documentation License, version 1.3"
+msgstr "GNU 自由檔案授權，版本 1.3"
+
+#: endless/eoslicense.c:172
+msgid "Unknown license"
+msgstr "不明的授權"
