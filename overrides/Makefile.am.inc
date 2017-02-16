@@ -7,7 +7,6 @@ gjsdir = ${datadir}/gjs-1.0
 overrides_sources = \
     overrides/Endless.js \
     overrides/endless_private/asset_button.js \
-    overrides/endless_private/connection_test.js \
     overrides/endless_private/search_box.js \
     overrides/endless_private/topbar_home_button.js \
     overrides/endless_private/topbar_nav_button.js \
