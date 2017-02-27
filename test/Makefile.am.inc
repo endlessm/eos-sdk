@@ -83,18 +83,14 @@ AM_JS_LOG_FLAGS = \
 	@JASMINE_REPORT_ARGUMENT@ \
 	--no-config \
 	$(NULL)
-LOG_COMPILER = $(top_srcdir)/test/gtester-mock-event-recorder.sh
-AM_LOG_FLAGS = -k --verbose
+LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/tap-driver.sh
+LOG_COMPILER = $(top_srcdir)/test/tap-test.sh
 EXTRA_DIST += \
+	test/tap-test.sh
 	test/run-with-dbus \
 	test/test-bus.conf \
 	$(NULL)
 CLEANFILES += stderr.log
-
-dist_noinst_SCRIPTS = \
-	test/gtester-mock-event-recorder.sh \
-	test/wait-for-service-helper.py \
-	$(NULL)
 
 if ENABLE_WEBHELPER
 AM_JS_LOG_FLAGS += --include-path=$(top_srcdir)/webhelper
@@ -105,6 +101,7 @@ endif ENABLE_WEBHELPER
 # Set XDG_CONFIG_HOME so as to avoid cluttering the user's actual config
 # directory with junk from the tests
 TESTS_ENVIRONMENT = \
+	export EOS_DISABLE_METRICS=1; \
 	export GI_TYPELIB_PATH="$(top_builddir)$${GI_TYPELIB_PATH:+:$$GI_TYPELIB_PATH}"; \
 	export LD_LIBRARY_PATH="$(top_builddir)/.libs$${LD_LIBRARY_PATH:+:$$LD_LIBRARY_PATH}"; \
 	export XDG_CONFIG_HOME=`mktemp -d $${TMPDIR:-/tmp}/sdktestconfig.XXXXXXXX`; \
