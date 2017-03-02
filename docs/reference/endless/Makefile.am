@@ -13,7 +13,10 @@ DOC_MAIN_SGML_FILE=$(DOC_MODULE)-docs.xml
 # gtk-doc will search all .c and .h files beneath these paths
 # for inline comments documenting functions and macros.
 # e.g. DOC_SOURCE_DIR=$(top_srcdir)/gtk $(top_srcdir)/gdk
-DOC_SOURCE_DIR=$(top_srcdir)/endless
+DOC_SOURCE_DIR = \
+	$(top_srcdir)/endless \
+	$(top_builddir)/endless \
+	$(NULL)
 
 # Extra options to pass to gtkdoc-scangobj. Not normally needed.
 SCANGOBJ_OPTIONS= \
@@ -39,7 +42,7 @@ MKHTML_OPTIONS=
 FIXXREF_OPTIONS=
 
 # Used for dependencies. The docs will be rebuilt if any of these change.
-BUILT_HFILES=
+BUILT_HFILES = $(top_builddir)/endless/eosversion.h
 HFILE_GLOB=$(top_srcdir)/endless/*.h
 CFILE_GLOB=$(top_srcdir)/endless/*.c
 
@@ -51,6 +54,7 @@ EXTRA_HFILES=
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h private_code
 IGNORE_HFILES= eosapiversion.h \
                eosinit-private.h \
+               eosresource-private.h \
                eostopbar-private.h \
                eosmainarea-private.h \
                eosactionmenu-private.h \
