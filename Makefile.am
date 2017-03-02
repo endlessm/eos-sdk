@@ -26,7 +26,12 @@ AM_CFLAGS   = @STRICT_CFLAGS@
 
 # Make sure to run Gtk-doc tests and build the documentation when doing
 # 'make distcheck'
-AM_DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --enable-gir-doc --enable-js-doc
+AM_DISTCHECK_CONFIGURE_FLAGS = \
+	--enable-gtk-doc \
+	--enable-gir-doc \
+	--enable-js-doc \
+	--enable-webhelper \
+	$(NULL)
 if EOS_ENABLE_COVERAGE
 AM_DISTCHECK_CONFIGURE_FLAGS += --enable-coverage --with-coverage-dir=@EOS_COVERAGE_DIR@
 endif EOS_ENABLE_COVERAGE
