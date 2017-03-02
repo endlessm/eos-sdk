@@ -181,6 +181,12 @@ AS_IF([test "x$enable_metrics" != "xno"], [
 	AC_DEFINE([USE_METRICS])
 	EOS_REQUIRED_MODULES_PRIVATE="$EOS_REQUIRED_MODULES_PRIVATE $EOSMETRICS_REQUIREMENT"])
 
+# --disable-webhelper: Don't build WebHelper. Use this if you just want a quick
+# Endless SDK without the webkit dependency.
+AC_ARG_ENABLE([webhelper], [AS_HELP_STRING([--disable-webhelper],
+	[WebHelper requires WebKit dependency @<:@default=yes@:>@])])
+AM_CONDITIONAL([ENABLE_WEBHELPER], [test "x$enable_webhelper" != "xno"])
+
 # --enable-gir-doc: Build GIR documentation for Javascript. Done automatically
 # during 'make distcheck'.
 AC_ARG_ENABLE([gir-doc],
@@ -227,18 +233,21 @@ AC_SUBST([JASMINE_REPORT_ARGUMENT])
 PKG_CHECK_MODULES([EOS_SDK], [
 	$EOS_REQUIRED_MODULES
 	$EOS_REQUIRED_MODULES_PRIVATE])
-PKG_CHECK_MODULES([WEBHELPER2_EXTENSION], [
-	$GLIB_REQUIREMENT
-	$GOBJECT_REQUIREMENT
-	$WEBKIT2_REQUIREMENT])
-PKG_CHECK_MODULES([WEBHELPER2_PRIVATE], [
-	$GLIB_REQUIREMENT
-	$WEBKIT2_REQUIREMENT])
 
-# Check installed GIRs for webhelper JS module
-EOS_CHECK_GJS_GIR([GLib], [2.0])
-EOS_CHECK_GJS_GIR([WebKit], [3.0])
-EOS_CHECK_GJS_GIR([WebKit2], [4.0])
+AS_IF([test "x$enable_webhelper" != "xno"], [
+	PKG_CHECK_MODULES([WEBHELPER2_EXTENSION], [
+		$GLIB_REQUIREMENT
+		$GOBJECT_REQUIREMENT
+		$WEBKIT2_REQUIREMENT])
+	PKG_CHECK_MODULES([WEBHELPER2_PRIVATE], [
+		$GLIB_REQUIREMENT
+		$WEBKIT2_REQUIREMENT])
+
+	# Check installed GIRs for webhelper JS module
+	EOS_CHECK_GJS_GIR([GLib], [2.0])
+	EOS_CHECK_GJS_GIR([WebKit], [3.0])
+	EOS_CHECK_GJS_GIR([WebKit2], [4.0])
+])
 
 # Code coverage reports support
 EOS_COVERAGE_REPORT([c js])
