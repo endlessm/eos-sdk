@@ -86,7 +86,7 @@ AM_JS_LOG_FLAGS = \
 LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/tap-driver.sh
 LOG_COMPILER = $(top_srcdir)/test/tap-test.sh
 EXTRA_DIST += \
-	test/tap-test.sh
+	test/tap-test.sh \
 	test/run-with-dbus \
 	test/test-bus.conf \
 	$(NULL)
