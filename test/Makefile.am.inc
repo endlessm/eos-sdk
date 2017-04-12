@@ -56,17 +56,6 @@ EXTRA_DIST += \
 	test/utils.js \
 	$(NULL)
 
-if ENABLE_WEBHELPER
-javascript_tests += \
-	test/webhelper/testLocal.js \
-	test/webhelper/testTranslate.js \
-	test/webhelper/testTranslate2.js \
-	test/webhelper/testWebActions.js \
-	test/webhelper/testWebActions2.js \
-	test/webhelper/testUpdateFontSize.js \
-	$(NULL)
-endif ENABLE_WEBHELPER
-
 # Run tests when running 'make check'
 TESTS = \
 	test/endless/run-tests \
@@ -86,15 +75,11 @@ AM_JS_LOG_FLAGS = \
 LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/tap-driver.sh
 LOG_COMPILER = $(top_srcdir)/test/tap-test.sh
 EXTRA_DIST += \
-	test/tap-test.sh
+	test/tap-test.sh \
 	test/run-with-dbus \
 	test/test-bus.conf \
 	$(NULL)
 CLEANFILES += stderr.log
-
-if ENABLE_WEBHELPER
-AM_JS_LOG_FLAGS += --include-path=$(top_srcdir)/webhelper
-endif ENABLE_WEBHELPER
 
 # Use locally built versions of Endless-0.gir and libraries; this may need to be
 # changed to AM_TESTS_ENVIRONMENT in a future version of Automake
@@ -105,7 +90,6 @@ TESTS_ENVIRONMENT = \
 	export GI_TYPELIB_PATH="$(top_builddir)$${GI_TYPELIB_PATH:+:$$GI_TYPELIB_PATH}"; \
 	export LD_LIBRARY_PATH="$(top_builddir)/.libs$${LD_LIBRARY_PATH:+:$$LD_LIBRARY_PATH}"; \
 	export XDG_CONFIG_HOME=`mktemp -d $${TMPDIR:-/tmp}/sdktestconfig.XXXXXXXX`; \
-	export WEBHELPER_UNINSTALLED_EXTENSION_DIR="$(top_builddir)/.libs"; \
 	export TOP_SRCDIR="$(abs_top_srcdir)"; \
 	export BUILDDIR="."; \
 	$(NULL)

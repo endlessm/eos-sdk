@@ -81,7 +81,6 @@ GOBJECT_REQUIREMENT="gobject-2.0"
 GIO_REQUIREMENT="gio-2.0"
 GTK_REQUIREMENT="gtk+-3.0 >= 3.20"
 JSON_GLIB_REQUIREMENT="json-glib-1.0 >= 0.12"
-WEBKIT2_REQUIREMENT="webkit2gtk-4.0"
 EOSMETRICS_REQUIREMENT="eosmetrics-0"
 # These go into the pkg-config file as Requires: and Requires.private:
 # (Generally, use Requires.private: instead of Requires:)
@@ -122,8 +121,6 @@ AC_PATH_PROG([GIRDOCTOOL], [g-ir-doc-tool], [notfound])
 AC_ARG_VAR([GIRDOCTOOL], [Path to g-ir-doc-tool])
 AC_PATH_PROG([YELPBUILD], [yelp-build], [notfound])
 AC_ARG_VAR([YELPBUILD], [Path to yelp-build])
-AC_PATH_PROG([NATURALDOCS], [naturaldocs], [notfound])
-AC_ARG_VAR([NATURALDOCS], [Path to naturaldocs])
 GLIB_COMPILE_RESOURCES=`$PKG_CONFIG --variable glib_compile_resources gio-2.0`
 AC_SUBST(GLIB_COMPILE_RESOURCES)
 
@@ -180,12 +177,6 @@ AS_IF([test "x$enable_metrics" != "xno"], [
 	AC_DEFINE([USE_METRICS])
 	EOS_REQUIRED_MODULES_PRIVATE="$EOS_REQUIRED_MODULES_PRIVATE $EOSMETRICS_REQUIREMENT"])
 
-# --disable-webhelper: Don't build WebHelper. Use this if you just want a quick
-# Endless SDK without the webkit dependency.
-AC_ARG_ENABLE([webhelper], [AS_HELP_STRING([--disable-webhelper],
-	[WebHelper requires WebKit dependency @<:@default=yes@:>@])])
-AM_CONDITIONAL([ENABLE_WEBHELPER], [test "x$enable_webhelper" != "xno"])
-
 # --enable-gir-doc: Build GIR documentation for Javascript. Done automatically
 # during 'make distcheck'.
 AC_ARG_ENABLE([gir-doc],
@@ -198,22 +189,12 @@ AS_IF([test "x$enable_gir_doc" = "xyes"], [
 		[AC_MSG_ERROR([yelp-build must be installed for --enable-gir-doc])])])
 AM_CONDITIONAL([ENABLE_GIR_DOC], [test "x$enable_gir_doc" = "xyes"])
 
-# --enable-js-doc: Build pure Javascript module documentation.
-AC_ARG_ENABLE([js-doc],
-	[AS_HELP_STRING([--enable-js-doc],
-		[Build documentation for pure Javascript modules @<:@default=no@:>@])])
-AS_IF([test "x$enable_js_doc" = "xyes"], [
-	AS_IF([test "x$NATURALDOCS" = "xnotfound"],
-		[AC_MSG_ERROR([NaturalDocs must be installed for --enable-js-doc])])])
-AM_CONDITIONAL([ENABLE_JS_DOC], [test "x$enable_js_doc" = "xyes"])
-
-# For 'make dist' or 'make distcheck', all three of --enable-gtk-doc,
-# --enable-gir-doc, and --enable-js-doc are required
+# For 'make dist' or 'make distcheck', both of --enable-gtk-doc and
+# --enable-gir-doc are required
 AC_MSG_CHECKING([whether this configuration allows building distributions])
 can_make_dist=yes
 AM_COND_IF([ENABLE_GTK_DOC], [], [can_make_dist=no])
 AM_COND_IF([ENABLE_GIR_DOC], [], [can_make_dist=no])
-AM_COND_IF([ENABLE_JS_DOC], [], [can_make_dist=no])
 AM_CONDITIONAL([CAN_MAKE_DIST], [test "x$can_make_dist" = "xyes"])
 AC_MSG_RESULT([$can_make_dist])
 
@@ -233,21 +214,6 @@ PKG_CHECK_MODULES([EOS_SDK], [
 	$EOS_REQUIRED_MODULES
 	$EOS_REQUIRED_MODULES_PRIVATE])
 
-AS_IF([test "x$enable_webhelper" != "xno"], [
-	PKG_CHECK_MODULES([WEBHELPER2_EXTENSION], [
-		$GLIB_REQUIREMENT
-		$GOBJECT_REQUIREMENT
-		$WEBKIT2_REQUIREMENT])
-	PKG_CHECK_MODULES([WEBHELPER2_PRIVATE], [
-		$GLIB_REQUIREMENT
-		$WEBKIT2_REQUIREMENT])
-
-	# Check installed GIRs for webhelper JS module
-	EOS_CHECK_GJS_GIR([GLib], [2.0])
-	EOS_CHECK_GJS_GIR([WebKit], [3.0])
-	EOS_CHECK_GJS_GIR([WebKit2], [4.0])
-])
-
 # Code coverage reports support
 EOS_COVERAGE_REPORT([c js])
 
@@ -266,9 +232,6 @@ AC_CONFIG_FILES([
 	tools/eos-json-extractor/eos-json-extractor
 ])
 AC_CONFIG_HEADERS([config.h])  dnl Header with system-dependent #defines
-# Make docs/reference/webhelper/eos.css available in the build tree as well as
-# the source tree
-AC_CONFIG_LINKS([docs/reference/webhelper/eos.css:docs/reference/webhelper/eos.css])
 # Do the output
 AC_OUTPUT
 

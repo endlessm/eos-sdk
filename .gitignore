@@ -6,14 +6,11 @@ test/smoke-tests/hello
 test/smoke-tests/images/credits.gresource
 Endless-0.gir
 Endless-0.typelib
-WebHelper2Private-1.0.gir
-WebHelper2Private-1.0.typelib
 endless/eosresource.c
 endless/eosresource-private.h
 endless/eosversion.h
 tools/eos-application-manifest/eos-application-manifest
 tools/eos-json-extractor/eos-json-extractor
-webhelper/webhelper_private/config.js
 
 *.py[cod]
 
@@ -129,10 +126,3 @@ run_coverage.coverage
 # Editor stuff
 *~
 *.swp
-
-# NaturalDocs project files
-/docs/reference/webhelper/Data/
-/docs/reference/webhelper/Languages.txt
-/docs/reference/webhelper/Menu.txt
-/docs/reference/webhelper/Topics.txt
-/docs/reference/webhelper/html/
