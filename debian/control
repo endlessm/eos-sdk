@@ -13,8 +13,6 @@ Build-Depends: at-spi2-core,
                gir1.2-glib-2.0,
                gir1.2-gtk-3.0 (>= 3.20),
                gir1.2-json-1.0,
-               gir1.2-webkit-3.0 (>= 2.0),
-               gir1.2-webkit2-4.0,
                gjs (>= 1.40),
                adwaita-icon-theme,
                gobject-introspection,
@@ -24,8 +22,6 @@ Build-Depends: at-spi2-core,
                libglib2.0-bin,
                libgtk-3-dev (>= 3.20),
                libjson-glib-dev,
-               libwebkit2gtk-4.0-dev,
-               naturaldocs,
                pkg-config (>= 0.24),
                python-lcov-cobertura (>= 1.5),
                python3,
@@ -90,34 +86,6 @@ Description: Endless SDK
  Introspection data for the Endless SDK. Install this if you want to use the
  GObject introspection bindings for the Endless SDK from a language such as
  Javascript.
-
-Package: eos-sdk-0-webhelper
-Section: non-free/libs
-Architecture: any
-Depends: ${misc:Depends},
-         ${shlibs:Depends},
-         gir1.2-endless-0 (= ${binary:Version}),
-         gir1.2-glib-2.0,
-         gir1.2-gtk-3.0 (>= 3.20),
-         gir1.2-webhelper2private-1.0 (= ${binary:Version}),
-         gir1.2-webkit-3.0 (>= 2.0),
-         gir1.2-webkit2-4.0,
-         gjs
-Replaces: eos-sdk-webhelper
-Provides: eos-sdk-webhelper
-Conflicts: eos-sdk-webhelper
-Description: Endless SDK web helper
- Internal convenience library to simplify creation of web apps using the
- Endless SDK.
-
-Package: gir1.2-webhelper2private-1.0
-Section: non-free/introspection
-Architecture: any
-Depends: ${gir:Depends},
-         ${misc:Depends},
-         ${shlibs:Depends}
-Description: Endless SDK web helper
- "Private" library used by WebHelper.
 
 Package: eos-sdk-0-bin
 Section: non-free/libdevel
