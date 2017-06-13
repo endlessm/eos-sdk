@@ -10,6 +10,9 @@
 #include "eoscellrenderertextlink-private.h"
 #include "eoslicense.h"
 
+/* less than _CREDITS_DIALOG_DEFAULT_WIDTH from eosapplication.c */
+#define _NOTES_COLUMN_WIDTH 600
+
 typedef struct
 {
   GFile *file;
@@ -415,6 +418,11 @@ eos_attribution_init (EosAttribution *self)
 
   /* Renderer for general notes */
   renderer = gtk_cell_renderer_text_new ();
+  g_object_set(renderer,
+               "single-paragraph-mode", TRUE,
+               "wrap-mode", PANGO_WRAP_WORD_CHAR,
+               "wrap-width", _NOTES_COLUMN_WIDTH,
+               NULL);
   gtk_cell_area_box_pack_start (GTK_CELL_AREA_BOX (area), renderer,
                                 FALSE, FALSE, FALSE);
   gtk_tree_view_column_set_cell_data_func (column, renderer,
