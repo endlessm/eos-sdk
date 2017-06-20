@@ -14,4 +14,4 @@ before_script:
     - docker build -t withgit .
 
 script:
-    - docker run --volume $HOME/.ccache:/root/.ccache withgit /bin/sh -c '/usr/bin/endless-build-module eos-sdk'
+    - docker run --volume $HOME/.ccache:/root/.ccache withgit /bin/sh -c '/usr/bin/endless-build-module --check --with-xvfb eos-sdk'
