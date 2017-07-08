@@ -5,7 +5,7 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const AssetButton = new Lang.Class({
+var AssetButton = new Lang.Class({
     Name: 'AssetButton',
     GTypeName: 'EosAssetButton',
     Extends: Gtk.Button,
