@@ -67,8 +67,13 @@ eos_custom_container_remove (GtkContainer *container,
   EosCustomContainer *self = EOS_CUSTOM_CONTAINER (container);
   EosCustomContainerPrivate *priv = eos_custom_container_get_instance_private (self);
 
+  gboolean needs_resize = gtk_widget_get_visible (child);
+
   priv->children = g_list_remove (priv->children, child);
   gtk_widget_unparent (child);
+
+  if (needs_resize)
+    gtk_widget_queue_resize (GTK_WIDGET (container));
 }
 
 static void
