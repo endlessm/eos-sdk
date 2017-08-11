@@ -30,7 +30,7 @@ const TITLE_MAX_CHARS_DEFAULT = 255;
  * search box's alignment is set to Gtk.Align.FILL in either direction.
  *
  */
-const SearchBox = new Lang.Class({
+var SearchBox = new Lang.Class({
     Name: 'SearchBox',
     GTypeName: 'EosSearchBox',
     Extends: Gtk.Entry,

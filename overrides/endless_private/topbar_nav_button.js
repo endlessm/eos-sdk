@@ -3,7 +3,7 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 
-const TopbarNavButton = new Lang.Class({
+var TopbarNavButton = new Lang.Class({
     Name: 'TopbarNavButton',
     GTypeName: 'EosTopbarNavButton',
     Extends: Gtk.Grid,

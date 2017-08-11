@@ -11,7 +11,7 @@ const Lang = imports.lang;
  * clicked, the user must be re-directed to the home page of the
  * application.
  */
-const TopbarHomeButton = new Lang.Class({
+var TopbarHomeButton = new Lang.Class({
     Name: 'TopbarHomeButton',
     GTypeName: 'EosTopbarHomeButton',
     Extends: Gtk.Button,
