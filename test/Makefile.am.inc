@@ -87,6 +87,7 @@ CLEANFILES += stderr.log
 # directory with junk from the tests
 TESTS_ENVIRONMENT = \
 	export EOS_DISABLE_METRICS=1; \
+	export NO_AT_BRIDGE=1; \
 	export GI_TYPELIB_PATH="$(top_builddir)$${GI_TYPELIB_PATH:+:$$GI_TYPELIB_PATH}"; \
 	export LD_LIBRARY_PATH="$(top_builddir)/.libs$${LD_LIBRARY_PATH:+:$$LD_LIBRARY_PATH}"; \
 	export XDG_CONFIG_HOME=`mktemp -d $${TMPDIR:-/tmp}/sdktestconfig.XXXXXXXX`; \
