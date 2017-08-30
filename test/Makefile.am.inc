@@ -62,7 +62,7 @@ TESTS = \
 	$(javascript_tests) \
 	run_coverage.coverage \
 	$(NULL)
-JS_LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(top_srcdir)/test/run-with-dbus --session $(SHELL) $(top_srcdir)/tap-driver.sh
+JS_LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/tap-driver.sh
 JS_LOG_DRIVER_FLAGS = --comments
 TEST_EXTENSIONS = .js .coverage
 JS_LOG_COMPILER = jasmine
@@ -87,9 +87,10 @@ CLEANFILES += stderr.log
 # directory with junk from the tests
 TESTS_ENVIRONMENT = \
 	export EOS_DISABLE_METRICS=1; \
+	export NO_AT_BRIDGE=1; \
 	export GI_TYPELIB_PATH="$(top_builddir)$${GI_TYPELIB_PATH:+:$$GI_TYPELIB_PATH}"; \
 	export LD_LIBRARY_PATH="$(top_builddir)/.libs$${LD_LIBRARY_PATH:+:$$LD_LIBRARY_PATH}"; \
 	export XDG_CONFIG_HOME=`mktemp -d $${TMPDIR:-/tmp}/sdktestconfig.XXXXXXXX`; \
 	export TOP_SRCDIR="$(abs_top_srcdir)"; \
 	export BUILDDIR="."; \
-	$(NULL)
+	$(DBUS_RUN_SESSION) --config-file=$(top_srcdir)/test/test-bus.conf
