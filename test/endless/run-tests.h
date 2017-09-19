@@ -41,5 +41,6 @@ void add_action_menu_tests                   (void);
 void add_action_button_tests                 (void);
 void add_flexy_grid_test                     (void);
 void add_custom_container_tests              (void);
+void add_profile_tests                       (void);
 
 #endif /* RUN_TESTS_H */

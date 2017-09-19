@@ -108,6 +108,7 @@ main (int    argc,
   add_page_manager_tests ();
   add_flexy_grid_test ();
   add_custom_container_tests ();
+  add_profile_tests ();
 
   return g_test_run ();
 }
