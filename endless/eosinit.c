@@ -6,13 +6,14 @@
 
 #include "endless.h"
 #include "eosinit-private.h"
+#include "eosprofile-private.h"
 
 /* Constructors supported since GCC 2.7; I have this on GLib's authority. This
 should also work on Clang. */
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 7)
 
 #define _EOS_CONSTRUCTOR(func) static void __attribute__((constructor)) func (void);
-#define _EOS_DESTRUCTOR(func) static void __atrribute__((destructor)) func (void);
+#define _EOS_DESTRUCTOR(func) static void __attribute__((destructor)) func (void);
 
 #else
 
@@ -38,8 +39,17 @@ _eos_init (void)
       bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
       bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 
+      eos_profile_state_init ();
+
       _eos_initialized = TRUE;
     }
+}
+
+_EOS_DESTRUCTOR(_eos_fini);
+static void
+_eos_fini (void)
+{
+  eos_profile_state_dump ();
 }
 
 /*

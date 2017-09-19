@@ -33,11 +33,14 @@ endless_private_installed_headers = \
 	endless/eoslicense.h \
 	endless/eosmacros.h \
 	endless/eospagemanager.h \
+	endless/eosprofile.h \
 	endless/eostypes.h \
 	endless/eoswindow.h \
 	endless/eosflexygrid.h
 
 endless_library_sources = \
+	endless/gvdb/gvdb-builder.c \
+	endless/gvdb/gvdb-reader.c \
 	endless/eosapplication.c \
 	endless/eosattribution.c endless/eosattribution-private.h \
 	endless/eoscellrendererpixbuflink.c endless/eoscellrendererpixbuflink-private.h \
@@ -47,11 +50,17 @@ endless_library_sources = \
 	endless/eosinit.c endless/eosinit-private.h \
 	endless/eoslicense.c \
 	endless/eospagemanager.c \
+	endless/eosprofile.c endless/eosprofile-private.h \
 	endless/eosresource.c endless/eosresource-private.h \
 	endless/eostopbar.c endless/eostopbar-private.h \
 	endless/eosutil.c \
 	endless/eoswindow.c \
 	endless/eosflexygrid.c endless/eosflexygridcell.c endless/eosflexygrid-private.h
+
+EXTRA_DIST += \
+	endless/gvdb/gvdb-builder.h \
+	endless/gvdb/gvdb-format.h \
+	endless/gvdb/gvdb-reader.h
 
 # Endless GUI library
 lib_LTLIBRARIES += libendless-@EOS_SDK_API_VERSION@.la
@@ -65,6 +74,7 @@ libendless_@EOS_SDK_API_VERSION@_la_SOURCES = \
 # and turn on debug messages
 libendless_@EOS_SDK_API_VERSION@_la_CPPFLAGS = \
 	-I$(builddir)/endless \
+	-I$(builddir)/endless/gvdb \
 	@EOS_SDK_CFLAGS@ \
 	-DG_LOG_DOMAIN=\"EndlessSDK\" \
 	-DCOMPILING_EOS_SDK \
