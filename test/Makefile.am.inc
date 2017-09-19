@@ -18,6 +18,7 @@ test_endless_run_tests_SOURCES = \
 	test/endless/test-window.c \
 	test/endless/test-flexy-grid.c \
 	test/endless/test-custom-container.c \
+	test/endless/test-profile.c \
 	$(NULL)
 test_endless_run_tests_CPPFLAGS = $(TEST_FLAGS)
 test_endless_run_tests_LDADD = $(TEST_LIBS)
