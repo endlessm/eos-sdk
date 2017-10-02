@@ -160,3 +160,14 @@ EOS_LICENSE_PUBLIC_DOMAN
 EOS_LICENSE_OWNER_PERMISSION
 EOS_LICENSE_NO_LICENSE
 </SECTION>
+
+<SECTION>
+<FILE>profiling</FILE>
+EosProfileProbe
+EOS_PROFILE_PROBE
+eos_profile_probe_start
+eos_profile_probe_stop
+<SUBSECTION Standard>
+EOS_TYPE_PROFILE_PROBE
+eos_profile_probe_get_type
+</SECTION>
