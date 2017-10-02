@@ -63,6 +63,8 @@ IGNORE_HFILES= eosapiversion.h \
                eosattribution-private.h \
                eoscellrendererpixbuflink-private.h \
                eoscellrenderertextlink-private.h \
+	       eosprofile-private.h \
+	       gvdb \
                $(NULL)
 
 # Images to copy into HTML directory.
