@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the eos-sdk package.
 # 
 # Translators:
+# Kukuh Syafaat <syafaatkukuh@gmail.com>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: philip@endlessm.com\n"
 "POT-Creation-Date: 2017-05-30 02:27+0000\n"
-"PO-Revision-Date: 2016-08-31 21:39+0000\n"
-"Last-Translator: Philip Chimento <philip.chimento@gmail.com>\n"
+"PO-Revision-Date: 2017-11-09 06:09+0000\n"
+"Last-Translator: Kukuh Syafaat <syafaatkukuh@gmail.com>\n"
 "Language-Team: Indonesian (http://www.transifex.com/endless-mobile-inc/eos-sdk/language/id/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -96,7 +97,7 @@ msgstr "Atribusi Creative Commons 2.0"
 
 #: endless/eoslicense.c:57
 msgid "Creative Commons Attribution 3.0"
-msgstr "Creative Commons Atribusi 3.0"
+msgstr "Atribusi Creative Commons 3.0"
 
 #: endless/eoslicense.c:58
 msgid "Creative Commons Attribution 4.0"
@@ -104,39 +105,39 @@ msgstr "Atribusi Creative Commons 4.0"
 
 #: endless/eoslicense.c:59
 msgid "Creative Commons Attribution-NonCommercial 2.0"
-msgstr "Creative Commons Atribusi-NonKomersial 2.0"
+msgstr "Atribusi-NonKomersial Creative Commons 2.0"
 
 #: endless/eoslicense.c:60
 msgid "Creative Commons Attribution-NonCommercial 3.0"
-msgstr "Creative Commons Atribusi-NonKomersial 3.0"
+msgstr "Atribusi-NonKomersial Creative Commons 3.0"
 
 #: endless/eoslicense.c:61
 msgid "Creative Commons Attribution-NonCommercial-ShareAlike 2.0 Generic"
-msgstr "Atribusi Creative Commons-NonKomersial-BerbagiSerupa 2.0 Generik"
+msgstr "Atribusi-NonKomersial-BerbagiSerupa Creative Commons 2.0 Generik"
 
 #: endless/eoslicense.c:62
 msgid "Creative Commons Attribution-NoDerivs 2.0"
-msgstr "Creative Commons Atribusi-TanpaTurunan 2.0"
+msgstr "Atribusi-TanpaTurunan Creative Commons 2.0"
 
 #: endless/eoslicense.c:63
 msgid "Creative Commons Attribution-NoDerivs 3.0"
-msgstr "Atribusi Creative Commons-Tanpa Derivasi 3.0"
+msgstr "Atribusi-TanpaTurunan Creative Commons 3.0"
 
 #: endless/eoslicense.c:64
 msgid "Creative Commons Attribution-ShareAlike 2.0"
-msgstr "Creative Commons Atribusi-BerbagiSerupa 2.0"
+msgstr "Atribusi-BerbagiSerupa Creative Commons 2.0"
 
 #: endless/eoslicense.c:65
 msgid "Creative Commons Attribution-ShareAlike 2.5 Generic"
-msgstr "Creative Commons Attribution-ShareAlike 2.5 Generic"
+msgstr "Atribusi-BerbagiSerupa Creative Commons 2.5 Generik"
 
 #: endless/eoslicense.c:66
 msgid "Creative Commons Attribution-ShareAlike 3.0"
-msgstr "Creative Commons Attribution-ShareAlike 3.0"
+msgstr "Atribusi-BerbagiSerupa Creative Commons 3.0"
 
 #: endless/eoslicense.c:67
 msgid "Creative Commons Attribution-ShareAlike 4.0 International"
-msgstr "Creative Commons Attribution-ShareAlike 4.0 International"
+msgstr "Atribusi-BerbagiSerupa Creative Commons 4.0 Internasional"
 
 #: endless/eoslicense.c:68
 msgid "GNU Free Documentation License, version 1.1"
