@@ -1,0 +1,3 @@
+option('metrics', type: 'boolean', value: true, description: 'Include metrics support (requires eos-metrics)')
+option('gir_doc', type: 'boolean', value: false, description: 'Build GIR documentation
+for JavaScript (requires g-ir-doc-tool and yelp)')

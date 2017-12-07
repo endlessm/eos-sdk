@@ -1,0 +1,5 @@
+subdir('creativecommons')
+subdir('publicdomain')
+subdir('gnu')
+subdir('images')
+subdir('includes')
