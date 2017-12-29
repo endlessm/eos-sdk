@@ -638,6 +638,14 @@ eos_window_class_init (EosWindowClass *klass)
                       G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, NPROPS, eos_window_props);
+
+  /* FIXME: find a better way to do this */
+  gtk_widget_class_install_style_property (g_type_class_peek (GTK_TYPE_WIDGET),
+                                           g_param_spec_boolean ("eos-opaque",
+                                                                 "Opaque",
+                                                                 "Whether the widget is opaque or not. If true then there is no need to render widget behind it",
+                                                                 FALSE,
+                                                                 G_PARAM_READABLE));
 }
 
 static void
@@ -729,6 +737,103 @@ on_edge_finishing_draw_cb (GtkWidget *edge_finishing,
 }
 
 static void
+accumulate_alloc (GtkWidget *widget, gpointer data)
+{
+  gint opaque;
+
+  if (!gtk_widget_get_visible (widget))
+    return;
+
+  gtk_widget_style_get (widget, "eos-opaque", &opaque, NULL);
+
+  if (opaque)
+    {
+      GtkAllocation alloc;
+      gtk_widget_get_allocation (widget, &alloc);
+      cairo_region_union_rectangle (data, (cairo_rectangle_int_t *)&alloc);
+    }
+  else if (GTK_IS_CONTAINER (widget))
+    gtk_container_forall (GTK_CONTAINER (widget), accumulate_alloc, data);
+}
+
+static void
+propagate_draw (GtkWidget *widget, gpointer data)
+{
+  gtk_container_propagate_draw (GTK_CONTAINER (gtk_widget_get_parent (widget)),
+                                widget,
+                                data);
+}
+
+static gboolean
+render_background_optimized_draw (GtkWidget *widget, cairo_t *cr)
+{
+  cairo_rectangle_int_t clip;
+
+  /*
+   * To speed things up we avoid drawing if the clip area will be totally
+   * obscured by a children.
+   */
+  if (GTK_IS_CONTAINER (widget) && gdk_cairo_get_clip_rectangle (cr, &clip))
+    {
+      cairo_region_t *alloc = cairo_region_create ();
+
+      /* Get non transparent children allocation */
+      gtk_container_foreach (GTK_CONTAINER (widget), accumulate_alloc, alloc);
+
+      /* Stop drawing if clip is contained by children allocation */
+      if (cairo_region_contains_rectangle (alloc, &clip) == CAIRO_REGION_OVERLAP_IN)
+        {
+          g_message ("%s %s %dx%d %dx%d", __func__, G_OBJECT_TYPE_NAME (widget), clip.x, clip.y, clip.width, clip.height);
+          cairo_region_destroy (alloc);
+          gtk_container_forall (GTK_CONTAINER (widget), propagate_draw, cr);
+          return TRUE;
+        }
+      cairo_region_destroy (alloc);
+    }
+
+  return FALSE;
+}
+
+static void on_add (GtkContainer *container, GtkWidget *widget);
+static void on_remove (GtkContainer *container, GtkWidget *widget);
+
+static void
+add_draw_callback (GtkWidget *widget, gpointer data)
+{
+  g_signal_connect (widget, "draw", G_CALLBACK (render_background_optimized_draw), NULL);
+  if (GTK_IS_CONTAINER (widget))
+    {
+      gtk_container_forall (GTK_CONTAINER (widget), add_draw_callback, data);
+      g_signal_connect (widget, "add", G_CALLBACK (on_add), NULL);
+      g_signal_connect (widget, "remove", G_CALLBACK (on_remove), NULL);
+    }
+}
+
+static void
+remove_draw_callback (GtkWidget *widget, gpointer data)
+{
+  g_signal_handlers_disconnect_by_func (widget, render_background_optimized_draw, NULL);
+  if (GTK_IS_CONTAINER (widget))
+    {
+      g_signal_handlers_disconnect_by_func (widget, on_add, NULL);
+      g_signal_handlers_disconnect_by_func (widget, on_remove, NULL);
+      gtk_container_forall (GTK_CONTAINER (widget), remove_draw_callback, data);
+    }
+}
+
+static void
+on_add (GtkContainer *container, GtkWidget *widget)
+{
+  add_draw_callback (widget, NULL);
+}
+
+static void
+on_remove (GtkContainer *container, GtkWidget *widget)
+{
+  remove_draw_callback (widget, NULL);
+}
+
+static void
 eos_window_init (EosWindow *self)
 {
   EosWindowPrivate *priv = eos_window_get_instance_private (self);
@@ -806,6 +911,8 @@ eos_window_init (EosWindow *self)
                                EOS_PAGE_MANAGER (eos_page_manager_new ()));
   // Make our internal widgets visible, so user needs only call show on the window.
   gtk_widget_show_all (priv->overlay);
+
+  add_draw_callback (GTK_WIDGET (self), NULL);
 }
 
 /* Public API */
