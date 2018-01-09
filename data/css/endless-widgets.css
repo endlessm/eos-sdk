@@ -20,6 +20,10 @@ EosWindow {
     background-color: @endless_theme_bg_color;
 }
 
+EosWindow.in-resize {
+    image-rendering: crisp-edges;
+}
+
 .window-frame {
     border-color: darker(@endless_theme_bg_color);
     border-radius: 7px 7px 0 0;
