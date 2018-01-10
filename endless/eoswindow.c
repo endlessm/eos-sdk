@@ -116,6 +116,11 @@ typedef struct {
   /* Only send unmaximize metric once */
   gboolean has_been_unmaximized;
   guint unmaximize_timeout_id;
+
+  gint64 last_configure;
+  guint in_resize_id;
+  gint width;
+  gint height;
 } EosWindowPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
@@ -483,6 +488,8 @@ eos_window_finalize (GObject *object)
   g_object_unref (priv->background_provider);
   g_object_unref (priv->font_size_provider);
   g_free (priv->current_background_css_props);
+  if (priv->in_resize_id)
+    g_source_remove (priv->in_resize_id);
 
   G_OBJECT_CLASS (eos_window_parent_class)->finalize (object);
 }
@@ -537,6 +544,46 @@ eos_window_size_allocate (GtkWidget *window, GtkAllocation *allocation)
   GTK_WIDGET_CLASS (eos_window_parent_class)->size_allocate (window, allocation);
 }
 
+static gboolean
+in_resize_timeout (gpointer data)
+{
+  EosWindowPrivate *priv = eos_window_get_instance_private (data);
+
+  gtk_style_context_remove_class (gtk_widget_get_style_context (data),
+                                  "in-resize");
+  priv->in_resize_id = 0;
+
+  return G_SOURCE_REMOVE;
+}
+
+static gboolean
+eos_window_configure_event (GtkWidget *widget, GdkEventConfigure *event)
+{
+  EosWindowPrivate *priv = eos_window_get_instance_private (EOS_WINDOW (widget));
+
+  if (event->width != priv->width || event->height != priv->height)
+    {
+      guint64 current_time = g_source_get_time (g_main_current_source ());
+
+      if (current_time - priv->last_configure < 1000000)
+        {
+          if (priv->in_resize_id)
+            g_source_remove (priv->in_resize_id);
+          else
+            gtk_style_context_add_class (gtk_widget_get_style_context (widget),
+                                         "in-resize");
+
+          priv->in_resize_id = g_timeout_add_seconds (1, in_resize_timeout, widget);
+        }
+
+      priv->width = event->width;
+      priv->height = event->height;
+      priv->last_configure = current_time;
+    }
+
+  return GTK_WIDGET_CLASS (eos_window_parent_class)->configure_event (widget, event);
+}
+
 static void
 eos_window_class_init (EosWindowClass *klass)
 {
@@ -548,6 +595,7 @@ eos_window_class_init (EosWindowClass *klass)
   object_class->set_property = eos_window_set_property;
   object_class->finalize = eos_window_finalize;
   widget_class->size_allocate = eos_window_size_allocate;
+  widget_class->configure_event = eos_window_configure_event;
 
   gtk_widget_class_set_css_name (widget_class, "EosWindow");
   /**
