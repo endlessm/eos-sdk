@@ -48,4 +48,20 @@ function _init() {
             }
         }
     };
+
+    // Override Endless.ProfileProbe.start() to populate it with the location
+    // in the JS file, like the EOS_PROFILE_PROBE pre-processor macro does for
+    // C files
+    Endless.ProfileProbe._start_real = Endless.ProfileProbe.start;
+    Endless.ProfileProbe.start = function(name) {
+        let exc = new Error();
+        let splits = exc.stack.split('\n')[1].split(':');
+        let [line] = splits.slice(-2);
+        let loc = splits.slice(0, -2).join(':');
+        let [func, file] = loc.split('@');
+        if (func === '') {
+            func = '<main>';
+        }
+        return Endless.ProfileProbe._start_real(file, line, func, name);
+    };
 }
