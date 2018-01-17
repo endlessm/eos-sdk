@@ -461,6 +461,12 @@ profile_state_dump_to_console (void)
                              (int) scale_val (max_sample), unit_for (max_sample),
                              s == 0.0 ? "" : stddev);
         }
+      else if (valid_samples->len == 1)
+        {
+          msg = g_strdup_printf ("total time:%d %s",
+                                 (int) scale_val (total),
+                                 unit_for (total));
+        }
       else
         {
           msg = g_strdup ("not enough valid samples found");
