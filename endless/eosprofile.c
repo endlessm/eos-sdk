@@ -111,8 +111,6 @@ sample_compare (gconstpointer a,
 #define N_SAMPLES       64
 
 struct _EosProfileProbe {
-  volatile int ref_count;
-
   char *file;
   gint32 line;
   char *function;
@@ -132,8 +130,6 @@ eos_profile_probe_new (const char *file,
                        const char *name)
 {
   EosProfileProbe *res = g_new0 (EosProfileProbe, 1);
-
-  res->ref_count = 1;
 
   res->name = g_strdup (name);
   res->function = g_strdup (function);
