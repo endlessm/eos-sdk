@@ -41,3 +41,17 @@ dist_commands_DATA = \
 	$(NULL)
 
 EXTRA_DIST += $(tools_test_modules)
+
+bin_PROGRAMS = \
+	eos-profile \
+	$(NULL)
+
+eos_profile_SOURCES = \
+	tools/eos-profile-tool/eos-profile-main.c \
+	tools/eos-profile-tool/eos-profile-cmds.h \
+	tools/eos-profile-tool/eos-profile-cmd-help.c \
+	$(NULL)
+
+eos_profile_CPPFLAGS = @EOS_SDK_CFLAGS@ -DG_LOG_DOMAIN=\"EosProfile\"
+eos_profile_CFLAGS = $(AM_CFLAGS)
+eos_profile_LDADD = $(top_builddir)/libendless-@EOS_SDK_API_VERSION@.la @EOS_SDK_LIBS@
