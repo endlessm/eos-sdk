@@ -148,9 +148,9 @@ eos_profile_probe_destroy (gpointer data)
 {
   EosProfileProbe *probe = data;
 
-  g_hash_table_remove (profile_state->probes, probe->name);
+  if (probe->samples != NULL)
+    g_array_unref (probe->samples);
 
-  g_array_unref (probe->samples);
   g_free (probe->name);
   g_free (probe->function);
   g_free (probe->file);
