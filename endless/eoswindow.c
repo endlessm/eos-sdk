@@ -573,7 +573,7 @@ eos_window_configure_event (GtkWidget *widget, GdkEventConfigure *event)
             gtk_style_context_add_class (gtk_widget_get_style_context (widget),
                                          "in-resize");
 
-          priv->in_resize_id = g_timeout_add (500000, in_resize_timeout, widget);
+          priv->in_resize_id = g_timeout_add (500, in_resize_timeout, widget);
         }
 
       priv->width = event->width;
