@@ -47,11 +47,26 @@ bin_PROGRAMS = \
 	$(NULL)
 
 eos_profile_SOURCES = \
-	tools/eos-profile-tool/eos-profile-main.c \
 	tools/eos-profile-tool/eos-profile-cmds.h \
 	tools/eos-profile-tool/eos-profile-cmd-help.c \
+	tools/eos-profile-tool/eos-profile-cmd-show.c \
+	tools/eos-profile-tool/eos-profile-main.c \
+	tools/eos-profile-tool/eos-profile-utils.c \
+	tools/eos-profile-tool/eos-profile-utils.h \
+	endless/gvdb/gvdb-reader.c \
 	$(NULL)
 
-eos_profile_CPPFLAGS = @EOS_SDK_CFLAGS@ -DG_LOG_DOMAIN=\"EosProfile\"
+eos_profile_CPPFLAGS = \
+	@EOS_SDK_CFLAGS@ \
+	-DCOMPILING_EOS_SDK \
+	-DG_LOG_DOMAIN=\"EosProfile\" \
+	-I$(top_builddir) \
+	-I$(top_srcdir) \
+	-I$(top_srcdir)/endless/ \
+	-I$(top_builddir)/endless/ \
+	-I$(top_srcdir)/endless/gvdb \
+	-I$(top_srcdir)/tools/eos-profile-tool \
+	$(NULL)
+
 eos_profile_CFLAGS = $(AM_CFLAGS)
-eos_profile_LDADD = $(top_builddir)/libendless-@EOS_SDK_API_VERSION@.la @EOS_SDK_LIBS@
+eos_profile_LDADD = $(top_builddir)/libendless-@EOS_SDK_API_VERSION@.la -lm @EOS_SDK_LIBS@

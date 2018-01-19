@@ -1,6 +1,6 @@
 #include "config.h"
 
-#include <glib.h>
+#include "eos-profile-cmds.h"
 
 gboolean
 eos_profile_cmd_help_parse_args (int    argc,
@@ -20,6 +20,7 @@ eos_profile_cmd_help_main (void)
     "Examples:\n"
     "\n"
     "  eos-profile help         - This help screen\n"
+    "  eos-profile show FILE    - Shows a capture file\n"
     "\n"
   );
 
