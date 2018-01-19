@@ -164,8 +164,8 @@ print_samples (const char *name,
                                       valid_samples->len);
       eos_profile_util_print_message (NULL, EOS_PRINT_COLOR_NONE,
                                       "  ┕━ • total time: %d %s,"
-                                      " avg: %g %s, min: %d %s, max: %d"
-                                      "%s%s",
+                                      " avg: %g %s, min: %d %s, max: %d %s"
+                                      "%s",
                                       (int) scale_val (total), unit_for (total),
                                       scale_val (avg), unit_for (avg),
                                       (int) scale_val (min_sample), unit_for (min_sample),
