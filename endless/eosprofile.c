@@ -110,17 +110,6 @@ sample_compare (gconstpointer a,
 
 #define N_SAMPLES       64
 
-struct _EosProfileProbe {
-  char *file;
-  gint32 line;
-  char *function;
-  char *name;
-
-  GArray *samples;
-
-  GMutex probe_lock;
-};
-
 static EosProfileProbe eos_profile_dummy_probe;
 
 static EosProfileProbe *
@@ -606,7 +595,7 @@ eos_profile_state_dump (void)
 
       GVariantBuilder builder;
 
-      g_variant_builder_init (&builder, G_VARIANT_TYPE ("(sssuua(xx))"));
+      g_variant_builder_init (&builder, G_VARIANT_TYPE (PROBE_DB_META_PROBE_TYPE));
 
       g_variant_builder_add (&builder, "s", probe->name);
       g_variant_builder_add (&builder, "s", probe->function);

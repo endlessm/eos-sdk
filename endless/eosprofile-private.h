@@ -15,6 +15,8 @@ G_BEGIN_DECLS
 #define PROBE_DB_META_START_KEY         PROBE_DB_META_BASE_KEY "/start_time"
 #define PROBE_DB_META_PROFILE_KEY       PROBE_DB_META_BASE_KEY "/profile_time"
 
+#define PROBE_DB_META_PROBE_TYPE        "(sssuua(xx))"
+
 typedef struct {
   /* element-type (key utf8) (value EosProfileProbe) */
   GHashTable *probes;
@@ -32,6 +34,18 @@ typedef struct {
 
 G_LOCK_DEFINE_STATIC (profile_state);
 static ProfileState *profile_state;
+
+struct _EosProfileProbe {
+  char *file;
+  gint32 line;
+  char *function;
+  char *name;
+
+  /* element-type ProfileSample */
+  GArray *samples;
+
+  GMutex probe_lock;
+};
 
 typedef struct {
   gint64 start_time;
