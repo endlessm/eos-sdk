@@ -254,6 +254,19 @@ eos_profile_cmd_show_main (void)
               continue;
             }
 
+          if (g_strcmp0 (name, PROBE_DB_META_START_KEY) == 0)
+            {
+              g_autoptr(GDateTime) dt =
+                g_date_time_new_from_unix_local (g_variant_get_int64 (value));
+              g_autofree char *start_time =
+                g_date_time_format (dt, "%Y-%m-%d %T");
+
+              eos_profile_util_print_message ("INFO", EOS_PRINT_COLOR_BLUE,
+                                              "Start time: %s",
+                                              start_time);
+              continue;
+            }
+
           const char *file = NULL;
           const char *function = NULL;
           const char *probe_name = NULL;
