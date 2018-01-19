@@ -630,11 +630,6 @@ eos_profile_state_dump (void)
       gvdb_item_set_value (item, g_variant_builder_end (&builder));
     }
 
-  /* Clean up */
-  g_hash_table_unref (profile_state->probes);
-  g_free (profile_state->capture_file);
-  g_free (profile_state);
-
   g_autoptr(GError) error = NULL;
   gvdb_table_write_contents (db_table, profile_state->capture_file,
                              G_BYTE_ORDER != G_LITTLE_ENDIAN,
@@ -642,4 +637,9 @@ eos_profile_state_dump (void)
 
   if (error != NULL)
     g_printerr ("PROFILE: %s\n", error->message);
+
+  /* Clean up */
+  g_hash_table_unref (profile_state->probes);
+  g_free (profile_state->capture_file);
+  g_free (profile_state);
 }
