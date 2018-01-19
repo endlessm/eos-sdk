@@ -80,7 +80,7 @@ print_location (const char *file,
                 const char *function)
 {
   eos_profile_util_print_message (NULL, EOS_PRINT_COLOR_NONE,
-                                  " `- %s at %s:%d",
+                                  " ┕━ • location: %s() at %s:%d",
                                   function,
                                   file,
                                   line);
@@ -159,29 +159,33 @@ print_samples (const char *name,
 
       g_autofree char *stddev = g_strdup_printf (", σ: %g", s);
 
-      msg =
-        g_strdup_printf ("%d samples: total time: %d %s, avg: %g %s, min: %d %s, max: %d %s%s",
-                         valid_samples->len,
-                         (int) scale_val (total), unit_for (total),
-                         scale_val (avg), unit_for (avg),
-                         (int) scale_val (min_sample), unit_for (min_sample),
-                         (int) scale_val (max_sample), unit_for (max_sample),
-                         s == 0.0 ? "" : stddev);
+      eos_profile_util_print_message (NULL, EOS_PRINT_COLOR_NONE,
+                                      " ┕━ • %d samples",
+                                      valid_samples->len);
+      eos_profile_util_print_message (NULL, EOS_PRINT_COLOR_NONE,
+                                      "  ┕━ • total time: %d %s,"
+                                      " avg: %g %s, min: %d %s, max: %d"
+                                      "%s%s",
+                                      (int) scale_val (total), unit_for (total),
+                                      scale_val (avg), unit_for (avg),
+                                      (int) scale_val (min_sample), unit_for (min_sample),
+                                      (int) scale_val (max_sample), unit_for (max_sample),
+                                      s == 0.0 || isnan (s) ? "" : stddev);
     }
   else if (valid_samples->len == 1)
     {
-      msg = g_strdup_printf ("1 sample: total time: %d %s",
-                             (int) scale_val (total),
-                             unit_for (total));
+      eos_profile_util_print_message (NULL, EOS_PRINT_COLOR_NONE,
+                                      " ┕━ • 1 sample");
+      eos_profile_util_print_message (NULL, EOS_PRINT_COLOR_NONE,
+                                      "  ┕━ • total time: %d %s",
+                                      (int) scale_val (total),
+                                      unit_for (total));
     }
   else
     {
-      msg = g_strdup ("Not enough valid samples found");
+      eos_profile_util_print_message (NULL, EOS_PRINT_COLOR_NONE,
+                                      " ┕━ • Not enough valid samples found");
     }
-
-  eos_profile_util_print_message (NULL, EOS_PRINT_COLOR_NONE,
-                                  " `- %s",
-                                  msg);
 }
 
 int
