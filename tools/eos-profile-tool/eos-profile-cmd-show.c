@@ -210,7 +210,7 @@ eos_profile_cmd_show_main (void)
           return 1;
         }
 
-      g_autoptr(GVariant) v = gvdb_table_get_raw_value (db, PROBE_DB_META_VERSION_KEY);
+      GVariant *v = gvdb_table_get_raw_value (db, PROBE_DB_META_VERSION_KEY);
       gint32 version = v != NULL ? g_variant_get_int32 (v) : -1;
 
       if (version != PROBE_DB_VERSION)
@@ -219,53 +219,65 @@ eos_profile_cmd_show_main (void)
           return 1;
         }
 
+      v = gvdb_table_get_raw_value (db, PROBE_DB_META_APPID_KEY);
+      if (v != NULL)
+        {
+          const char *appid = g_variant_get_string (v, NULL);
+
+          eos_profile_util_print_message ("INFO", EOS_PRINT_COLOR_BLUE,
+                                          "Application: %s",
+                                          appid);
+          g_clear_pointer (&v, g_variant_unref);
+        }
+
+      g_clear_pointer (&v, g_variant_unref);
+      v = gvdb_table_get_raw_value (db, PROBE_DB_META_PROFILE_KEY);
+      if (v != NULL)
+        {
+          gint64 profile_time = g_variant_get_int64 (v);
+
+          eos_profile_util_print_message ("INFO", EOS_PRINT_COLOR_BLUE,
+                                          "Total profile time: %d %s",
+                                          (int) scale_val (profile_time),
+                                          unit_for (profile_time));
+          g_clear_pointer (&v, g_variant_unref);
+        }
+
+      v = gvdb_table_get_raw_value (db, PROBE_DB_META_START_KEY);
+      if (v != NULL)
+        {
+          g_autoptr(GDateTime) dt =
+            g_date_time_new_from_unix_local (g_variant_get_int64 (v));
+          g_autofree char *start_time =
+            g_date_time_format (dt, "%Y-%m-%d %T");
+
+          eos_profile_util_print_message ("INFO", EOS_PRINT_COLOR_BLUE,
+                                          "Start time: %s",
+                                          start_time);
+          g_clear_pointer (&v, g_variant_unref);
+        }
+
       int names_len = 0;
       g_auto(GStrv) names = gvdb_table_get_names (db, &names_len);
+
+      const char * const meta_keys[] = {
+        PROBE_DB_META_VERSION_KEY,
+        PROBE_DB_META_APPID_KEY,
+        PROBE_DB_META_PROFILE_KEY,
+        PROBE_DB_META_START_KEY,
+        NULL,
+      };
 
       for (int j = 0; j < names_len; j++)
         {
           const char *name = names[j];
 
-          if (g_strcmp0 (name, PROBE_DB_META_VERSION_KEY) == 0)
+          if (g_strv_contains (meta_keys, name))
             continue;
 
           g_autoptr(GVariant) value = gvdb_table_get_raw_value (db, name);
           if (value == NULL)
             continue;
-
-          if (g_strcmp0 (name, PROBE_DB_META_APPID_KEY) == 0)
-            {
-              const char *appid = g_variant_get_string (value, NULL);
-
-              eos_profile_util_print_message ("INFO", EOS_PRINT_COLOR_BLUE,
-                                              "Application: %s",
-                                              appid);
-              continue;
-            }
-
-          if (g_strcmp0 (name, PROBE_DB_META_PROFILE_KEY) == 0)
-            {
-              gint64 profile_time = g_variant_get_int64 (value);
-
-              eos_profile_util_print_message ("INFO", EOS_PRINT_COLOR_BLUE,
-                                              "Profile time: %d %s",
-                                              (int) scale_val (profile_time),
-                                              unit_for (profile_time));
-              continue;
-            }
-
-          if (g_strcmp0 (name, PROBE_DB_META_START_KEY) == 0)
-            {
-              g_autoptr(GDateTime) dt =
-                g_date_time_new_from_unix_local (g_variant_get_int64 (value));
-              g_autofree char *start_time =
-                g_date_time_format (dt, "%Y-%m-%d %T");
-
-              eos_profile_util_print_message ("INFO", EOS_PRINT_COLOR_BLUE,
-                                              "Start time: %s",
-                                              start_time);
-              continue;
-            }
 
           const char *file = NULL;
           const char *function = NULL;
