@@ -80,7 +80,7 @@ print_location (const char *file,
                 const char *function)
 {
   eos_profile_util_print_message (NULL, EOS_PRINT_COLOR_NONE,
-                                  " ┕━ • location: %s() at %s:%d",
+                                  "  ┕━ • location: %s() at %s:%d",
                                   function,
                                   file,
                                   line);
@@ -160,12 +160,11 @@ print_samples (const char *name,
       g_autofree char *stddev = g_strdup_printf (", σ: %g", s);
 
       eos_profile_util_print_message (NULL, EOS_PRINT_COLOR_NONE,
-                                      " ┕━ • %d samples",
+                                      "  ┕━ • %d samples",
                                       valid_samples->len);
       eos_profile_util_print_message (NULL, EOS_PRINT_COLOR_NONE,
-                                      "  ┕━ • total time: %d %s,"
-                                      " avg: %g %s, min: %d %s, max: %d %s"
-                                      "%s",
+                                      "     ┕━ • total time: %d %s\n"
+                                      "     ┕━ • avg: %g %s, min: %d %s, max: %d %s%s",
                                       (int) scale_val (total), unit_for (total),
                                       scale_val (avg), unit_for (avg),
                                       (int) scale_val (min_sample), unit_for (min_sample),
@@ -175,16 +174,16 @@ print_samples (const char *name,
   else if (valid_samples->len == 1)
     {
       eos_profile_util_print_message (NULL, EOS_PRINT_COLOR_NONE,
-                                      " ┕━ • 1 sample");
+                                      "  ┕━ • 1 sample");
       eos_profile_util_print_message (NULL, EOS_PRINT_COLOR_NONE,
-                                      "  ┕━ • total time: %d %s",
+                                      "     ┕━ • total time: %d %s",
                                       (int) scale_val (total),
                                       unit_for (total));
     }
   else
     {
       eos_profile_util_print_message (NULL, EOS_PRINT_COLOR_NONE,
-                                      " ┕━ • Not enough valid samples found");
+                                      "  ┕━ • Not enough valid samples found");
     }
 }
 
