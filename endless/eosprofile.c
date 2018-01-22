@@ -110,19 +110,6 @@ sample_compare (gconstpointer a,
 
 #define N_SAMPLES       64
 
-struct _EosProfileProbe {
-  volatile int ref_count;
-
-  char *file;
-  gint32 line;
-  char *function;
-  char *name;
-
-  GArray *samples;
-
-  GMutex probe_lock;
-};
-
 static EosProfileProbe eos_profile_dummy_probe;
 
 static EosProfileProbe *
@@ -132,8 +119,6 @@ eos_profile_probe_new (const char *file,
                        const char *name)
 {
   EosProfileProbe *res = g_new0 (EosProfileProbe, 1);
-
-  res->ref_count = 1;
 
   res->name = g_strdup (name);
   res->function = g_strdup (function);
@@ -152,9 +137,9 @@ eos_profile_probe_destroy (gpointer data)
 {
   EosProfileProbe *probe = data;
 
-  g_hash_table_remove (profile_state->probes, probe->name);
+  if (probe->samples != NULL)
+    g_array_unref (probe->samples);
 
-  g_array_unref (probe->samples);
   g_free (probe->name);
   g_free (probe->function);
   g_free (probe->file);
@@ -333,6 +318,12 @@ eos_profile_state_init (void)
                                                              g_get_prgname ());
             }
         }
+
+      GTimeVal now;
+      g_get_current_time (&now);
+      profile_state->start_time = now.tv_sec;
+
+      profile_state->profile_start = g_get_monotonic_time ();
     }
 }
 
@@ -530,11 +521,52 @@ get_parent (GHashTable *table,
   return parent;
 }
 
+static void
+add_metadata (GHashTable *table)
+{
+  /* version */
+  g_autofree char *version_key = g_strdup (PROBE_DB_META_VERSION_KEY);
+  gsize version_key_len = strlen (version_key);
+  GvdbItem *key_meta = gvdb_hash_table_insert (table, PROBE_DB_META_VERSION_KEY);
+  gvdb_item_set_parent (key_meta, get_parent (table, version_key, version_key_len));
+  gvdb_item_set_value (key_meta, g_variant_new_int32 (PROBE_DB_VERSION));
+
+  /* application id */
+  GApplication *app = g_application_get_default ();
+  if (app != NULL)
+    {
+      const char *appid = g_application_get_application_id (app);
+
+      g_autofree char *appid_key = g_strdup (PROBE_DB_META_APPID_KEY);
+      gsize appid_key_len = strlen (appid_key);
+      GvdbItem *appid_meta = gvdb_hash_table_insert (table, PROBE_DB_META_APPID_KEY);
+      gvdb_item_set_parent (appid_meta, get_parent (table, appid_key, appid_key_len));
+      gvdb_item_set_value (appid_meta, g_variant_new_string (appid));
+    }
+
+  /* start time */
+  g_autofree char *start_key = g_strdup (PROBE_DB_META_START_KEY);
+  gsize start_key_len = strlen (start_key);
+  GvdbItem *start_meta = gvdb_hash_table_insert (table, PROBE_DB_META_START_KEY);
+  gvdb_item_set_parent (start_meta, get_parent (table, start_key, start_key_len));
+  gvdb_item_set_value (start_meta, g_variant_new_int64 (profile_state->start_time));
+
+  /* profile time */
+  g_autofree char *profile_key = g_strdup (PROBE_DB_META_PROFILE_KEY);
+  gsize profile_key_len = strlen (profile_key);
+  GvdbItem *profile_meta = gvdb_hash_table_insert (table, PROBE_DB_META_PROFILE_KEY);
+  gvdb_item_set_parent (profile_meta, get_parent (table, profile_key, profile_key_len));
+  gint64 profile_time = profile_state->profile_end - profile_state->profile_start;
+  gvdb_item_set_value (profile_meta, g_variant_new_int64 (profile_time));
+}
+
 void
 eos_profile_state_dump (void)
 {
   if (profile_state == NULL)
     return;
+
+  profile_state->profile_end = g_get_monotonic_time ();
 
   if (!profile_state->capture)
     {
@@ -545,11 +577,7 @@ eos_profile_state_dump (void)
   g_autoptr(GHashTable) db_table = gvdb_hash_table_new (NULL, NULL);
 
   /* Metadata for the DB */
-  g_autofree char *version_key = g_strdup (PROBE_DB_META_VERSION_KEY);
-  gsize version_key_len = strlen (version_key);
-  GvdbItem *meta = gvdb_hash_table_insert (db_table, PROBE_DB_META_VERSION_KEY);
-  gvdb_item_set_parent (meta, get_parent (db_table, version_key, version_key_len));
-  gvdb_item_set_value (meta, g_variant_new_int32 (PROBE_DB_VERSION));
+  add_metadata (db_table);
 
   /* Iterate over the probes */
   GHashTableIter iter;
@@ -567,7 +595,7 @@ eos_profile_state_dump (void)
 
       GVariantBuilder builder;
 
-      g_variant_builder_init (&builder, G_VARIANT_TYPE ("(sssuua(xx))"));
+      g_variant_builder_init (&builder, G_VARIANT_TYPE (PROBE_DB_META_PROBE_TYPE));
 
       g_variant_builder_add (&builder, "s", probe->name);
       g_variant_builder_add (&builder, "s", probe->function);
@@ -602,11 +630,6 @@ eos_profile_state_dump (void)
       gvdb_item_set_value (item, g_variant_builder_end (&builder));
     }
 
-  /* Clean up */
-  g_hash_table_unref (profile_state->probes);
-  g_free (profile_state->capture_file);
-  g_free (profile_state);
-
   g_autoptr(GError) error = NULL;
   gvdb_table_write_contents (db_table, profile_state->capture_file,
                              G_BYTE_ORDER != G_LITTLE_ENDIAN,
@@ -614,4 +637,9 @@ eos_profile_state_dump (void)
 
   if (error != NULL)
     g_printerr ("PROFILE: %s\n", error->message);
+
+  /* Clean up */
+  g_hash_table_unref (profile_state->probes);
+  g_free (profile_state->capture_file);
+  g_free (profile_state);
 }
