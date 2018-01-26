@@ -10,28 +10,33 @@
 
 #include "eos-profile-cmds.h"
 
-static const struct {
-  const char *name;
-  const char *description;
-
-  EosProfileCmdParseArgs parse_args;
-  EosProfileCmdMain main;
-} profile_commands[] = {
+static const EosProfileCmd profile_commands[] = {
   {
     .name = "help",
-    .description = "Prints help",
+    .description = "Prints this help string",
+    .usage = NULL,
     .parse_args = eos_profile_cmd_help_parse_args,
     .main = eos_profile_cmd_help_main,
   },
   {
     .name = "show",
-    .description = "Shows a capture",
+    .description = "Prints a report from a capture file",
+    .usage = "show <FILE> [FILE…]",
     .parse_args = eos_profile_cmd_show_parse_args,
     .main = eos_profile_cmd_show_main,
   },
-
-  { NULL, },
 };
+
+void
+eos_profile_foreach_cmd (EosProfileCmdCallback cb,
+                         gpointer              data)
+{
+  for (int i = 0; i < G_N_ELEMENTS (profile_commands); i++)
+    {
+      if (cb (&profile_commands[i], data))
+        break;
+    }
+}
 
 int
 main (int argc,
@@ -45,8 +50,13 @@ main (int argc,
 
   const char *cmd = NULL;
 
-  if (argc < 2)
-    cmd = "help";
+  if (argc < 2 ||
+      g_strcmp0 (argv[1], "-h") == 0 ||
+      g_strcmp0 (argv[1], "-?") == 0 ||
+      g_strcmp0 (argv[1], "--help") == 0)
+    {
+      cmd = "help";
+    }
   else
     cmd = argv[1];
 
@@ -58,7 +68,16 @@ main (int argc,
           argv += 1;
 
           if (!profile_commands[i].parse_args (argc, argv))
-            return EXIT_FAILURE;
+            {
+              const char *usage = profile_commands[i].usage;
+
+              if (usage == NULL)
+                usage = profile_commands[i].name;
+
+              g_printerr ("Usage: eos-profile %s\n", usage);
+
+              return EXIT_FAILURE;
+            }
 
           return profile_commands[i].main ();
         }

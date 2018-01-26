@@ -57,9 +57,7 @@ eos_profile_cmd_show_parse_args (int    argc,
 
   if (files->len == 0)
     {
-      g_printerr ("Usage: eos-profile show FILE [FILE...]\n");
       g_ptr_array_unref (files);
-
       return FALSE;
     }
 
