@@ -25,6 +25,13 @@ static const EosProfileCmd profile_commands[] = {
     .parse_args = eos_profile_cmd_show_parse_args,
     .main = eos_profile_cmd_show_main,
   },
+  {
+    .name = "convert",
+    .description = "Converts a capture file to another format",
+    .usage = "convert [OPTIONS…] <FILE>",
+    .parse_args = eos_profile_cmd_convert_parse_args,
+    .main = eos_profile_cmd_convert_main,
+  },
 };
 
 void
