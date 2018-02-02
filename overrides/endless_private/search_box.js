@@ -153,7 +153,7 @@ var SearchBox = new Lang.Class({
     },
 
     _onMatchSelected: function (widget, model, iter) {
-        let index = model.get_path(iter).get_indices();
+        let index = model.get_path(iter).get_indices()[0];
         this.emit('menu-item-selected', this._items[index]['id']);
         return Gdk.EVENT_STOP;
     },
