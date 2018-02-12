@@ -185,6 +185,25 @@ print_samples (const char *name,
     }
 }
 
+static gboolean
+print_probes (const char *probe_name,
+              const char *file,
+              const char *function,
+              gint32      line,
+              gint32      n_samples,
+              GVariant   *samples,
+              gpointer    data G_GNUC_UNUSED)
+{
+  print_probe (probe_name);
+
+  print_location (file, line, function);
+
+  if (n_samples > 0)
+    print_samples (probe_name, n_samples, samples);
+
+  return TRUE;
+}
+
 int
 eos_profile_cmd_show_main (void)
 {
@@ -254,48 +273,7 @@ eos_profile_cmd_show_main (void)
           g_clear_pointer (&v, g_variant_unref);
         }
 
-      int names_len = 0;
-      g_auto(GStrv) names = gvdb_table_get_names (db, &names_len);
-
-      const char * const meta_keys[] = {
-        PROBE_DB_META_VERSION_KEY,
-        PROBE_DB_META_APPID_KEY,
-        PROBE_DB_META_PROFILE_KEY,
-        PROBE_DB_META_START_KEY,
-        NULL,
-      };
-
-      for (int j = 0; j < names_len; j++)
-        {
-          const char *name = names[j];
-
-          if (g_strv_contains (meta_keys, name))
-            continue;
-
-          g_autoptr(GVariant) value = gvdb_table_get_raw_value (db, name);
-          if (value == NULL)
-            continue;
-
-          const char *file = NULL;
-          const char *function = NULL;
-          const char *probe_name = NULL;
-          g_autoptr(GVariant) samples = NULL;
-          gint32 line, n_samples;
-
-          g_variant_get (value, "(&s&s&suu@a(xx))",
-                         &probe_name,
-                         &function,
-                         &file,
-                         &line,
-                         &n_samples,
-                         &samples);
-
-          print_probe (probe_name);
-          print_location (file, line, function);
-          if (n_samples > 0)
-            print_samples (probe_name, n_samples, samples);
-          
-        }
+      eos_profile_util_foreach_probe_v1 (db, print_probes, NULL);
 
       gvdb_table_free (db);
     }
