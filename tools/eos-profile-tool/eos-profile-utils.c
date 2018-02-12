@@ -2,6 +2,8 @@
 
 #include "eos-profile-utils.h"
 
+#include "endless/eosprofile-private.h"
+
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -90,4 +92,53 @@ eos_profile_util_print_warning (const char *fmt,
   va_end (args);
 
   g_printerr ("%s\n", msg);
+}
+
+void
+eos_profile_util_foreach_probe_v1 (GvdbTable               *db,
+                                   EosProfileProbeCallback  callback,
+                                   gpointer                 callback_data)
+{
+  int names_len = 0;
+  g_auto(GStrv) names = gvdb_table_get_names (db, &names_len);
+
+  const char * const meta_keys[] = {
+    PROBE_DB_META_VERSION_KEY,
+    PROBE_DB_META_APPID_KEY,
+    PROBE_DB_META_PROFILE_KEY,
+    PROBE_DB_META_START_KEY,
+    NULL,
+  };
+
+  for (int i = 0; i < names_len; i++)
+    {
+      const char *key_name = names[i];
+
+      if (g_strv_contains (meta_keys, key_name))
+        continue;
+
+      if (!gvdb_table_has_value (db, key_name))
+        continue;
+
+      g_autoptr(GVariant) value = gvdb_table_get_raw_value (db, key_name);
+      if (value == NULL)
+        continue;
+
+      const char *file = NULL;
+      const char *function = NULL;
+      const char *probe_name = NULL;
+      g_autoptr(GVariant) samples = NULL;
+      gint32 line, n_samples;
+
+      g_variant_get (value, "(&s&s&suu@a(xx))",
+                     &probe_name,
+                     &function,
+                     &file,
+                     &line,
+                     &n_samples,
+                     &samples);
+
+      if (!callback (probe_name, function, file, line, n_samples, samples, callback_data))
+        break;
+   }
 }
