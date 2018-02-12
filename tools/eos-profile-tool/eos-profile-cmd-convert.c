@@ -118,7 +118,7 @@ collect_probe_samples (GVariant   *array,
 
   g_autofree char *msg = NULL;
 
-  if (valid_samples->len > 1)
+  if (valid_samples->len > 0)
     {
       JsonObject *obj = json_object_new ();
 
@@ -126,7 +126,7 @@ collect_probe_samples (GVariant   *array,
       double s = 0;
       double s_part = 0;
 
-      JsonArray *raw_array = json_array_sized_new (valid_samples->len);
+      JsonArray *raw_array = json_array_sized_new (valid_samples->len - 1);
 
       for (int i = 1; i < valid_samples->len - 1; i++)
         {
@@ -142,7 +142,7 @@ collect_probe_samples (GVariant   *array,
           json_array_add_int_element (raw_array, delta);
         }
 
-      json_object_set_int_member (probe_obj, "numSamples", valid_samples->len);
+      json_object_set_int_member (probe_obj, "numSamples", valid_samples->len - 1);
       json_object_set_array_member (probe_obj, "rawSamples", raw_array);
 
       if (valid_samples->len > 1)
@@ -154,9 +154,13 @@ collect_probe_samples (GVariant   *array,
         json_object_set_double_member (probe_obj, "sigma", s);
 
       json_object_set_int_member (probe_obj, "totalTime", total);
-      json_object_set_double_member (probe_obj, "minSample", min_sample);
-      json_object_set_double_member (probe_obj, "maxSample", max_sample);
-      json_object_set_double_member (probe_obj, "average", avg);
+
+      if (valid_samples->len > 1)
+        {
+          json_object_set_double_member (probe_obj, "minSample", min_sample);
+          json_object_set_double_member (probe_obj, "maxSample", max_sample);
+          json_object_set_double_member (probe_obj, "average", avg);
+        }
     }
   else
     {
@@ -165,6 +169,34 @@ collect_probe_samples (GVariant   *array,
       json_object_set_array_member (probe_obj, "rawSamples", NULL);
     }
 }
+
+static gboolean
+append_probe (const char *probe_name,
+              const char *file,
+              const char *function,
+              gint32      line,
+              gint32      n_samples,
+              GVariant   *samples,
+              gpointer    data)
+{
+  JsonArray *probes_arr = data;
+
+  JsonObject *probe_obj = json_object_new ();
+
+  json_object_set_string_member (probe_obj, "name", probe_name);
+  json_object_set_string_member (probe_obj, "file", file);
+  json_object_set_int_member (probe_obj, "line", line);
+  json_object_set_string_member (probe_obj, "function", function);
+
+  JsonObject *samples_obj = json_object_new ();
+  collect_probe_samples (samples, samples_obj);
+  json_object_set_object_member (probe_obj, "samples", samples_obj);
+
+  json_array_add_object_element (probes_arr, probe_obj);
+
+  return TRUE;
+}
+
 
 int
 eos_profile_cmd_convert_main (void)
@@ -233,60 +265,9 @@ eos_profile_cmd_convert_main (void)
 
   json_object_set_object_member (obj, "meta", meta);
 
-  int names_len = 0;
-  g_auto(GStrv) names = gvdb_table_get_names (db, &names_len);
-
-  const char * const meta_keys[] = {
-    PROBE_DB_META_VERSION_KEY,
-    PROBE_DB_META_APPID_KEY,
-    PROBE_DB_META_PROFILE_KEY,
-    PROBE_DB_META_START_KEY,
-    NULL,
-  };
-
   JsonArray *probes_arr = json_array_new ();
 
-  for (int i = 0; i < names_len; i++)
-    {
-      const char *key_name = names[i];
-
-      if (g_strv_contains (meta_keys, key_name))
-        continue;
-
-      if (!gvdb_table_has_value (db, key_name))
-        continue;
-
-      g_autoptr(GVariant) value = gvdb_table_get_raw_value (db, key_name);
-      if (value == NULL)
-        continue;
-
-      const char *file = NULL;
-      const char *function = NULL;
-      const char *probe_name = NULL;
-      g_autoptr(GVariant) samples = NULL;
-      gint32 line, n_samples;
-
-      g_variant_get (value, "(&s&s&suu@a(xx))",
-                     &probe_name,
-                     &function,
-                     &file,
-                     &line,
-                     &n_samples,
-                     &samples);
-
-      JsonObject *probe_obj = json_object_new ();
-
-      json_object_set_string_member (probe_obj, "name", probe_name);
-      json_object_set_string_member (probe_obj, "file", file);
-      json_object_set_int_member (probe_obj, "line", line);
-      json_object_set_string_member (probe_obj, "function", function);
-
-      JsonObject *samples_obj = json_object_new ();
-      collect_probe_samples (samples, samples_obj);
-      json_object_set_object_member (probe_obj, "samples", samples_obj);
-
-      json_array_add_object_element (probes_arr, probe_obj);
-    }
+  eos_profile_util_foreach_probe_v1 (db, append_probe, probes_arr);
 
   json_object_set_array_member (obj, "probes", probes_arr);
 
