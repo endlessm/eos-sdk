@@ -49,6 +49,7 @@ bin_PROGRAMS = \
 eos_profile_SOURCES = \
 	tools/eos-profile-tool/eos-profile-cmds.h \
 	tools/eos-profile-tool/eos-profile-cmd-convert.c \
+	tools/eos-profile-tool/eos-profile-cmd-diff.c \
 	tools/eos-profile-tool/eos-profile-cmd-help.c \
 	tools/eos-profile-tool/eos-profile-cmd-show.c \
 	tools/eos-profile-tool/eos-profile-main.c \

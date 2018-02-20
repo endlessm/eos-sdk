@@ -32,6 +32,13 @@ static const EosProfileCmd profile_commands[] = {
     .parse_args = eos_profile_cmd_convert_parse_args,
     .main = eos_profile_cmd_convert_main,
   },
+  {
+    .name = "diff",
+    .description = "Compares FILES",
+    .usage = "diff [OPTIONS…] <FILES>",
+    .parse_args = eos_profile_cmd_diff_parse_args,
+    .main = eos_profile_cmd_diff_main,
+  },
 };
 
 void
