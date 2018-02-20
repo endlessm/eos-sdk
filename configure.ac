@@ -121,6 +121,8 @@ AC_PATH_PROG([GIRDOCTOOL], [g-ir-doc-tool], [notfound])
 AC_ARG_VAR([GIRDOCTOOL], [Path to g-ir-doc-tool])
 AC_PATH_PROG([YELPBUILD], [yelp-build], [notfound])
 AC_ARG_VAR([YELPBUILD], [Path to yelp-build])
+AC_PATH_PROG([XSLTPROC], [xsltproc], [notfound])
+AC_ARG_VAR([XSLTPROC], [Path to xsltproc])
 GLIB_COMPILE_RESOURCES=`$PKG_CONFIG --variable glib_compile_resources gio-2.0`
 AC_SUBST(GLIB_COMPILE_RESOURCES)
 AC_PATH_PROG([DBUS_RUN_SESSION], [dbus-run-session])
@@ -189,6 +191,17 @@ AS_IF([test "x$enable_gir_doc" = "xyes"], [
 	AS_IF([test "x$YELPBUILD" = "xnotfound"],
 		[AC_MSG_ERROR([yelp-build must be installed for --enable-gir-doc])])])
 AM_CONDITIONAL([ENABLE_GIR_DOC], [test "x$enable_gir_doc" = "xyes"])
+
+AC_ARG_ENABLE([man],
+        [AS_HELP_STRING([--enable-man],
+                [Build man pages for the installed tools @<:@default=no@:>@])])
+AS_IF([test "x$enable_man" != xno], [
+        AS_IF([test "x$XSLTPROC" = xnotfound], [
+                AS_IF([test "x$enable_man" = xyes], [
+                        AC_MSG_ERROR([xsltproc must be installed for --enable-man])])
+                enable_man=no])])
+
+AM_CONDITIONAL([ENABLE_MAN], [test "x$enable_man" != xno])
 
 # For 'make dist' or 'make distcheck', both of --enable-gtk-doc and
 # --enable-gir-doc are required
