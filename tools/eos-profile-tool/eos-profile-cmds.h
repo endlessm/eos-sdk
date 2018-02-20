@@ -26,5 +26,8 @@ int             eos_profile_cmd_show_main               (void);
 gboolean        eos_profile_cmd_convert_parse_args      (int argc, char **argv);
 int             eos_profile_cmd_convert_main            (void);
 
+gboolean        eos_profile_cmd_diff_parse_args         (int argc, char **argv);
+int             eos_profile_cmd_diff_main               (void);
+
 void            eos_profile_foreach_cmd         (EosProfileCmdCallback cb,
                                                  gpointer              data);
