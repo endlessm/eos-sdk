@@ -73,7 +73,9 @@ HTML_IMAGES=
 
 # Extra SGML files that are included by $(DOC_MAIN_SGML_FILE).
 # e.g. content_files=running.sgml building.sgml changes-2.0.sgml
-content_files=
+content_files=\
+	eos-profile.xml \
+	$(NULL)
 
 # SGML files where gtk-doc abbrevations (#GtkWidget) are expanded
 # These files must be listed here *and* in content_files
@@ -106,3 +108,29 @@ TESTS_ENVIRONMENT = \
 	export BUILDDIR=$(abs_builddir);
 TESTS = $(GTKDOC_CHECK)
 endif
+
+man_MANS =
+
+if ENABLE_MAN
+
+man_MANS += \
+	eos-profile.1 \
+	$(NULL)
+
+XSLTPROC_FLAGS = \
+	--nonet \
+	--stringparam man.output.quietly 1 \
+	--stringparam funcsynopsis.style ansi \
+	--stringparam man.th.extra1.suppress 1 \
+	--stringparam man.authors.section.enabled 0 \
+	--stringparam man.copyright.section.enabled 1 \
+	$(NULL)
+
+.xml.1:
+	$(AM_V_GEN) $(XSLTPROC) $(XSLTPROC_FLAGS) http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl $<
+
+endif
+
+CLEANFILES ?=
+CLEANFILES += $(man_MANS)
+EXTRA_DIST += $(man_MANS)

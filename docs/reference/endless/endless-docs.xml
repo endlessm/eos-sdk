@@ -28,6 +28,11 @@
     <!--<xi:include href="xml/hello.xml"/>-->
   </chapter>
 
+  <chapter id="tools">
+    <title>Tools</title>
+    <xi:include href="eos-profile.xml"/>
+  </chapter>
+
   <chapter id="object-tree">
     <title>Object Hierarchy</title>
      <xi:include href="xml/tree_index.sgml"/>
