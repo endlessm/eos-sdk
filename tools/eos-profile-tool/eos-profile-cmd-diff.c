@@ -6,7 +6,13 @@
 #include "endless/eosprofile-private.h"
 #include "endless/gvdb/gvdb-reader.h"
 
+#include <json-glib/json-glib.h>
 #include <math.h>
+#include <float.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 static const double
 scale_val (double val)
@@ -45,8 +51,28 @@ unit_for (double val)
 }
 
 static char **opt_files;
+static char *opt_format;
+static char *opt_output;
 
 static GOptionEntry opts[] = {
+  {
+    .long_name = "format",
+    .short_name = 'f',
+    .flags = G_OPTION_FLAG_NONE,
+    .arg = G_OPTION_ARG_STRING,
+    .arg_data = &opt_format,
+    .description = "The output format (valid values: plain, json)",
+    .arg_description = "FORMAT",
+  },
+  {
+    .long_name = "output",
+    .short_name = 'o',
+    .flags = G_OPTION_FLAG_NONE,
+    .arg = G_OPTION_ARG_FILENAME,
+    .arg_data = &opt_output,
+    .description = "The output file, or '-' for the standard output",
+    .arg_description = "FILE",
+  },
   {
     .long_name = G_OPTION_REMAINING,
     .short_name = 0,
@@ -59,6 +85,9 @@ static GOptionEntry opts[] = {
 
   { NULL, },
 };
+
+static int output_fd = -1;
+static char *output_tmpfile = NULL;
 
 gboolean
 eos_profile_cmd_diff_parse_args (int    argc,
@@ -75,6 +104,38 @@ eos_profile_cmd_diff_parse_args (int    argc,
     {
       eos_profile_util_print_error ("Invalid argument: %s", error->message);
       return FALSE;
+    }
+
+  if (opt_format == NULL)
+    opt_format = "plain";
+
+  if (g_strcmp0 (opt_format, "plain") != 0 &&
+      g_strcmp0 (opt_format, "json") != 0)
+    {
+      eos_profile_util_print_error ("Invalid output format");
+      return FALSE;
+    }
+
+  if (opt_output == NULL)
+    opt_output = "-";
+
+  if (opt_output != NULL)
+    {
+      if (opt_output[0] == '-' && opt_output[1] == '\0')
+        {
+          output_fd = STDOUT_FILENO;
+        }
+      else
+        {
+          g_autoptr(GError) error = NULL;
+
+          output_fd = g_file_open_tmp ("eos-profile-diff-XXXXXX", &output_tmpfile, &error);
+          if (error != NULL)
+            {
+              eos_profile_util_print_error ("Unable to open output file: %s", error->message);
+              return FALSE;
+            }
+        }
     }
 
   if (opt_files == NULL || g_strv_length (opt_files) < 2)
@@ -249,6 +310,21 @@ eos_profile_cmd_diff_main (void)
       i += 1;
     }
 
+  g_autoptr(JsonNode) json_res = NULL;
+  g_autoptr(GString) buf = NULL;
+
+  if (g_strcmp0 (opt_format, "json") == 0)
+    {
+      json_res = json_node_new (JSON_NODE_ARRAY);
+
+      JsonArray *arr = json_array_new ();
+      json_node_take_array (json_res, arr);
+    }
+  else if (g_strcmp0 (opt_format, "plain") == 0)
+    {
+      buf = g_string_new (NULL);
+    }
+
   GHashTableIter iter;
   gpointer value;
 
@@ -256,31 +332,91 @@ eos_profile_cmd_diff_main (void)
   while (g_hash_table_iter_next (&iter, NULL, &value))
     {
       ProbeData *p = value;
+      JsonArray *res_array = NULL;
+      JsonArray *avg_array = NULL;
+      JsonObject *obj = NULL;
 
-      g_print ("Probe: %s\n", p->probe_name);
+      if (json_res != NULL)
+        {
+          res_array = json_node_get_array (json_res);
 
-      g_print ("  ┕━ • avg: ");
+          obj = json_object_new ();
+          json_array_add_object_element (res_array, obj);
+
+          json_object_set_string_member (obj, "probeName", p->probe_name);
+
+          avg_array = json_array_sized_new (p->results->len);
+          json_object_set_array_member (obj, "averageResults", avg_array);
+        }
+      else
+        {
+          g_string_append_printf (buf,
+                                  "Probe: %s\n"
+                                  "  ┕━ • avg: ",
+                                  p->probe_name);
+        }
+
       for (int j = 0; j < p->results->len; j++)
         {
           ProbeResult *r = &g_array_index (p->results, ProbeResult, j);
 
-          g_print ("%.02f %s", scale_val (r->avg), unit_for (r->avg));
-
-          if (r->avg > p->avg)
-            g_print ("[+]");
-          else if (r->avg < p->avg)
-            g_print ("[-]");
-          else if (fabs (r->avg - p->avg) < 0.0001)
-            g_print ("[~]");
+          if (avg_array != NULL)
+            {
+              json_array_add_double_element (avg_array, r->avg);
+            }
           else
-            g_print ("[=]");
+            {
+              g_string_append_printf (buf, "%.02f %s", scale_val (r->avg), unit_for (r->avg));
 
-          if (j == p->results->len - 1)
-            g_print ("\n");
-          else
-            g_print (", ");
+              if (fabs (r->avg - p->avg) < FLT_EPSILON)
+                g_string_append (buf, "[=]");
+              else if (r->avg > p->avg)
+                g_string_append (buf, "[+]");
+              else if (r->avg < p->avg)
+                g_string_append (buf, "[-]");
+
+              if (j == p->results->len - 1)
+                g_string_append (buf, "\n");
+              else
+                g_string_append (buf, ", ");
+           }
         }
     }
 
-  return 0;
+  g_autofree char *data = NULL;
+
+  if (json_res != NULL)
+    {
+      g_autoptr(JsonGenerator) gen = json_generator_new ();
+
+      json_generator_set_root (gen, json_res);
+      data = json_generator_to_data (gen, NULL);
+    }
+  else if (buf != NULL)
+    {
+      data = g_string_free (buf, FALSE);
+      buf = NULL;
+    }
+
+  write (output_fd, data, strlen (data));
+  if (output_fd != STDOUT_FILENO)
+    {
+      close (output_fd);
+
+      if (rename (output_tmpfile, opt_output) != 0)
+        {
+          int errno_sv = errno;
+
+          eos_profile_util_print_error ("Unable to save output to '%s': %s",
+                                        opt_output,
+                                        g_strerror (errno_sv));
+          unlink (output_tmpfile);
+
+          return EXIT_FAILURE;
+        }
+    }
+  else
+    write (output_fd, "\n", 1);
+
+  return EXIT_SUCCESS;
 }
