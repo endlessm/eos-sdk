@@ -71,4 +71,4 @@ eos_profile_CPPFLAGS = \
 	$(NULL)
 
 eos_profile_CFLAGS = $(AM_CFLAGS)
-eos_profile_LDADD = $(top_builddir)/libendless-@EOS_SDK_API_VERSION@.la -lm @EOS_SDK_LIBS@
+eos_profile_LDADD = -lm @EOS_SDK_LIBS@
