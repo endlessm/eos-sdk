@@ -13,6 +13,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <fcntl.h>
 
 static const double
 scale_val (double val)
@@ -263,6 +265,80 @@ append_probe (const char *probe_name,
   return TRUE;
 }
 
+#define AUTO_FD_INVALID (-1)
+
+typedef int AutoFd;
+
+static void
+auto_fd_clear (AutoFd *fd)
+{
+  if (fd == NULL || *fd == AUTO_FD_INVALID)
+    return;
+
+  int rfd = *fd;
+  *fd = AUTO_FD_INVALID;
+  close (rfd);
+}
+
+static int
+auto_fd_steal (AutoFd *fd)
+{
+  if (fd == NULL)
+    return AUTO_FD_INVALID;
+
+  int rfd = *fd;
+  *fd = AUTO_FD_INVALID;
+
+  return rfd;
+}
+
+G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC (AutoFd, auto_fd_clear)
+
+static int
+copy_fallback (const char *src,
+               const char *dest)
+{
+  g_auto(AutoFd) src_fd = open (src, O_RDONLY);
+
+  if (src_fd < 0)
+    return EXIT_FAILURE;
+
+  g_auto(AutoFd) dest_fd = open (dest, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+  if (dest_fd < 0)
+    return EXIT_FAILURE;
+
+  int res = 0;
+
+  do
+    {
+      char buf[8192];
+
+      res = read (src_fd, buf, 8192);
+      if (res < 0)
+        {
+          int errno_sv = errno;
+
+          eos_profile_util_print_error ("Unable to read from '%s': %s",
+                                        src,
+                                        g_strerror (errno_sv));
+          return EXIT_FAILURE;
+        }
+
+      if (write (dest_fd, buf, res) < 0)
+        {
+          int errno_sv = errno;
+
+          eos_profile_util_print_error ("Unable to write to '%s': %s",
+                                        dest,
+                                        g_strerror (errno_sv));
+          return EXIT_FAILURE;
+        }
+    }
+  while (res != 0);
+
+  return EXIT_SUCCESS;
+}
+
 int
 eos_profile_cmd_diff_main (void)
 {
@@ -406,13 +482,24 @@ eos_profile_cmd_diff_main (void)
       if (rename (output_tmpfile, opt_output) != 0)
         {
           int errno_sv = errno;
+          int res = EXIT_SUCCESS;
 
-          eos_profile_util_print_error ("Unable to save output to '%s': %s",
-                                        opt_output,
-                                        g_strerror (errno_sv));
+          /* Fall back to a real copy if the temp file and the real output
+           * file are not on the same device
+           */
+          if (errno_sv == EXDEV)
+            res = copy_fallback (output_tmpfile, opt_output);
+          else
+            {
+              eos_profile_util_print_error ("Unable to save output to '%s': %s",
+                                            opt_output,
+                                            g_strerror (errno_sv));
+              res = EXIT_FAILURE;
+            }
+
           unlink (output_tmpfile);
 
-          return EXIT_FAILURE;
+          return res;
         }
     }
   else
