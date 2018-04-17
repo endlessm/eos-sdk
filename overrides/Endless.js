@@ -24,7 +24,6 @@ function getCurrentFileDir() {
 imports.searchPath.unshift(getCurrentFileDir());
 
 const AssetButton = imports.endless_private.asset_button;
-const SearchBox = imports.endless_private.search_box;
 const TopbarHomeButton = imports.endless_private.topbar_home_button;
 const TopbarNavButton = imports.endless_private.topbar_nav_button;
 
@@ -33,7 +32,6 @@ function _init() {
     Endless = this;
     Endless.getCurrentFileDir = getCurrentFileDir;
     Endless.AssetButton = AssetButton.AssetButton;
-    Endless.SearchBox = SearchBox.SearchBox;
     Endless.TopbarHomeButton = TopbarHomeButton.TopbarHomeButton;
     Endless.TopbarNavButton = TopbarNavButton.TopbarNavButton;
 

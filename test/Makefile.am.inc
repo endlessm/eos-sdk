@@ -49,7 +49,6 @@ javascript_tests = \
 	test/endless/testCustomContainer.js \
 	test/endless/testTopbarHomeButton.js \
 	test/endless/testTopbarNavButton.js \
-	test/endless/testSearchBox.js \
 	$(NULL)
 EXTRA_DIST += \
 	$(javascript_tests) \
