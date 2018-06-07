@@ -4,13 +4,14 @@
 # 
 # Translators:
 # Stefan Schroeder <ondekoza@gmail.com>, 2016
+# XorgMC <xorgmc@gmail.com>, 2018
 msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: philip@endlessm.com\n"
 "POT-Creation-Date: 2017-05-30 02:27+0000\n"
-"PO-Revision-Date: 2017-09-23 11:13+0000\n"
-"Last-Translator: Stefan Schroeder <ondekoza@gmail.com>\n"
+"PO-Revision-Date: 2018-05-20 21:08+0000\n"
+"Last-Translator: XorgMC <xorgmc@gmail.com>\n"
 "Language-Team: German (http://www.transifex.com/endless-os/eos-sdk/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,7 +21,7 @@ msgstr ""
 
 #: endless/eosapplication.c:291
 msgid "Image credits"
-msgstr "Bilderquelle"
+msgstr "Bildquelle"
 
 #. TRANSLATORS: %s will be replaced with the name of an image license,
 #. such as "Public domain" or "Creative Commons Attribution". These names are
@@ -37,7 +38,7 @@ msgstr "%s."
 #. greater-than signs (>).
 #: endless/eosattribution.c:244
 msgid "Click for image license."
-msgstr "Bildlizenz durch klicken"
+msgstr "Für Bildlizenz anklicken"
 
 #. TRANSLATORS: %s will be replaced with the name or account name of the
 #. person that the image should be credited to. Make sure %s is still in the
@@ -46,7 +47,7 @@ msgstr "Bildlizenz durch klicken"
 #: endless/eosattribution.c:275
 #, c-format
 msgid "Image credit: %s."
-msgstr "Bilderquelle: %s."
+msgstr "Bildquelle: %s."
 
 #. TRANSLATORS: %d will be replaced with the copyright year, %s with
 #. the copyright holder. Make sure these tokens are in the translated
