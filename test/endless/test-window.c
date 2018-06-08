@@ -26,14 +26,14 @@ test_assign_application (GApplication *app)
 static void
 test_application_not_null (GApplication *app)
 {
-  /* Unix-only test */
-  if (g_test_trap_fork(0 /* timeout */, G_TEST_TRAP_SILENCE_STDERR))
+  if (g_test_subprocess ())
     {
       GtkWidget *win = eos_window_new (NULL);
       gtk_widget_destroy (win);
-      exit (0);
+      return;
     }
 
+  g_test_trap_subprocess (NULL, 0, 0);
   g_test_trap_assert_failed ();
   g_test_trap_assert_stderr (EXPECTED_NULL_APPLICATION_ERRMSG);
 
