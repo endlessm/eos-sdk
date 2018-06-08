@@ -33,7 +33,6 @@ GtkWidget *container_find_descendant_with_type (GtkContainer *container,
                                                 GType type);
 
 void add_init_tests                          (void);
-void add_hello_tests                         (void);
 void add_application_tests                   (void);
 void add_window_tests                        (void);
 void add_page_manager_tests                  (void);

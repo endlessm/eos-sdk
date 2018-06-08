@@ -5,14 +5,12 @@ TEST_LIBS = @EOS_SDK_LIBS@ $(top_builddir)/libendless-@EOS_SDK_API_VERSION@.la
 
 noinst_PROGRAMS = \
 	test/endless/run-tests \
-	test/smoke-tests/hello \
 	$(NULL)
 
 test_endless_run_tests_SOURCES = \
 	test/endless/run-tests.c \
 	test/endless/run-tests.h \
 	test/endless/test-init.c \
-	test/endless/test-hello.c \
 	test/endless/test-application.c \
 	test/endless/test-page-manager.c \
 	test/endless/test-window.c \
@@ -22,10 +20,6 @@ test_endless_run_tests_SOURCES = \
 	$(NULL)
 test_endless_run_tests_CPPFLAGS = $(TEST_FLAGS)
 test_endless_run_tests_LDADD = $(TEST_LIBS)
-
-test_smoke_tests_hello_SOURCES = test/smoke-tests/hello.c
-test_smoke_tests_hello_CPPFLAGS = $(TEST_FLAGS)
-test_smoke_tests_hello_LDADD = $(TEST_LIBS)
 
 credits_resource_files = \
 	test/smoke-tests/images/test1.jpg \
