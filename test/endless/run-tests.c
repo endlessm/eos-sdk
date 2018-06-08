@@ -102,7 +102,6 @@ main (int    argc,
   gtk_init (&argc, &argv);
 
   add_init_tests ();
-  add_hello_tests ();
   add_application_tests ();
   add_window_tests ();
   add_page_manager_tests ();
