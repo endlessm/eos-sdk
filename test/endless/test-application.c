@@ -21,14 +21,14 @@ test_two_windows (EosApplication *app)
 {
   GtkWidget *win1 = eos_window_new (app);
 
-  /* Unix-only test */
-  if (g_test_trap_fork(0 /* timeout */, G_TEST_TRAP_SILENCE_STDERR))
+  if (g_test_subprocess ())
     {
       GtkWidget *win2 = eos_window_new (app);
       gtk_widget_destroy (win2);
-      exit (0);
+      return;
     }
 
+  g_test_trap_subprocess (NULL, 0, 0);
   g_test_trap_assert_failed ();
   g_test_trap_assert_stderr (EXPECTED_TWO_WINDOW_ERRMSG);
 
@@ -155,12 +155,13 @@ test_config_dir_fails_if_not_writable (UniqueAppFixture *fixture,
 
   set_writable (precreated_config_dir, FALSE);
 
-  /* Unix-only test */
-  if (g_test_trap_fork(0 /* timeout */, G_TEST_TRAP_SILENCE_STDERR))
+  if (g_test_subprocess ())
     {
       GFile *config_dir = eos_application_get_config_dir (fixture->app);
+      return;
     }
 
+  g_test_trap_subprocess (NULL, 0, 0);
   g_test_trap_assert_failed ();
   g_test_trap_assert_stderr (EXPECTED_CONFIG_NOT_WRITABLE_ERRMSG);
 
