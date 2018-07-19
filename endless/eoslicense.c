@@ -167,9 +167,9 @@ eos_get_license_display_name (const gchar *license)
   g_free (sanitized_license);
 
   /* If the array value is null, it means we don't have a license file for that
-  license name. */
+  license name. If we don't, just display the license code as-is */
   if (recognized_licenses[index] == NULL)
-    return _("Unknown license");
+    return license;
 
   return gettext (recognized_licenses_display_names[index]);
 }
