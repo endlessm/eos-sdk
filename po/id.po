@@ -1,16 +1,16 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Endless Mobile, Inc.
-# This file is distributed under the same license as the eos-sdk package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
 # Kukuh Syafaat <syafaatkukuh@gmail.com>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
-"Report-Msgid-Bugs-To: philip@endlessm.com\n"
-"POT-Creation-Date: 2017-05-30 02:27+0000\n"
-"PO-Revision-Date: 2017-11-09 06:09+0000\n"
-"Last-Translator: Kukuh Syafaat <syafaatkukuh@gmail.com>\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-07-20 14:50-0700\n"
+"PO-Revision-Date: 2018-07-20 21:51+0000\n"
+"Last-Translator: endlessmobile_build <philip@endlessm.com>\n"
 "Language-Team: Indonesian (http://www.transifex.com/endless-os/eos-sdk/language/id/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -27,7 +27,7 @@ msgstr "Pemilik gambar"
 #. translated elsewhere in this file. Make sure %s is still in the translated
 #. string. Note: this string is markup, and so should not contain any
 #. ampersands (&), less-than signs (<), or greater-than signs (>).
-#: endless/eosattribution.c:228
+#: endless/eosattribution.c:231
 #, c-format
 msgid "%s."
 msgstr "%s."
@@ -35,7 +35,7 @@ msgstr "%s."
 #. TRANSLATORS: This string is markup, and so should not
 #. contain any ampersands (&), less-than signs (<), or
 #. greater-than signs (>).
-#: endless/eosattribution.c:244
+#: endless/eosattribution.c:247
 msgid "Click for image license."
 msgstr "Klik untuk lisensi gambar."
 
@@ -43,7 +43,7 @@ msgstr "Klik untuk lisensi gambar."
 #. person that the image should be credited to. Make sure %s is still in the
 #. translated string. Note: this string is markup and so should not contain
 #. any ampersands (&), less-than signs (<), or greater-than signs (>).
-#: endless/eosattribution.c:275
+#: endless/eosattribution.c:278
 #, c-format
 msgid "Image credit: %s."
 msgstr "Gambar milik: %s."
@@ -52,7 +52,7 @@ msgstr "Gambar milik: %s."
 #. the copyright holder. Make sure these tokens are in the translated
 #. string. Note: this string is markup and so should not contain
 #. any ampersands (&), less-than signs (<), or greater-than signs (>).
-#: endless/eosattribution.c:320
+#: endless/eosattribution.c:323
 #, c-format
 msgid "Copyright %d %s."
 msgstr "Hak Cipta %d %s."
@@ -61,14 +61,14 @@ msgstr "Hak Cipta %d %s."
 #. holder. Make sure %s is still in the translated string. Note: this
 #. string is markup and so should not contain any ampersands (&),
 #. less-than signs (<), or greater-than signs (>).
-#: endless/eosattribution.c:329
+#: endless/eosattribution.c:332
 #, c-format
 msgid "Copyright %s."
 msgstr "Hak Cipta %s."
 
 #. TRANSLATORS: This string is markup and so should not contain any
 #. ampersands (&), less-than signs (<), or greater-than signs (>).
-#: endless/eosattribution.c:341
+#: endless/eosattribution.c:344
 msgid "Used with permission."
 msgstr "Digunakan dengan izin."
 
@@ -150,7 +150,3 @@ msgstr "Lisensi Dokumentasi Bebas GNU, versi 1.2"
 #: endless/eoslicense.c:70
 msgid "GNU Free Documentation License, version 1.3"
 msgstr "Lisensi Dokumentasi Bebas GNU, versi 1.3"
-
-#: endless/eoslicense.c:172
-msgid "Unknown license"
-msgstr "Lisensi tak dikenal"
