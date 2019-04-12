@@ -259,6 +259,16 @@ on_attribution_show_uri (EosAttribution *attribution,
     }
 }
 
+/* Signal handler for app.image-quit::activate action */
+static void
+on_quit_activate (GSimpleAction  *action,
+                  GVariant       *parameter,
+                  gpointer       data)
+{
+  EosApplication *self = EOS_APPLICATION (data);
+  g_application_quit (G_APPLICATION(self));
+}
+
 /* Signal handler for app.image-credits::activate action */
 static void
 on_image_credits_activate (GSimpleAction  *action,
@@ -427,13 +437,22 @@ ensure_config_dir_exists_and_is_writable (EosApplication *self)
 static void
 eos_application_startup (GApplication *application)
 {
+  EosApplication *self = EOS_APPLICATION (application);
+  EosApplicationPrivate *priv = eos_application_get_instance_private (self);
+
   G_APPLICATION_CLASS (eos_application_parent_class)->startup (application);
 
+  /* Set up the hotkey for the quit action */
+  static const gchar * const quit_accels[] = { "<Primary>q", NULL };
+  gtk_application_set_accels_for_action (GTK_APPLICATION (application),
+                                         "app.quit",
+                                         quit_accels);
+
   /* Set up the hotkey for the image credit dialog */
-  static const gchar * const accelerators[] = { "<Primary><Shift>a", NULL };
+  static const gchar * const credits_accels[] = { "<Primary><Shift>a", NULL };
   gtk_application_set_accels_for_action (GTK_APPLICATION (application),
                                          "app.image-credits",
-                                         accelerators);
+                                         credits_accels);
 
   GtkCssProvider *provider = gtk_css_provider_new ();
 
@@ -451,8 +470,6 @@ eos_application_startup (GApplication *application)
 
   g_object_unref (provider);
 
-  EosApplication *self = EOS_APPLICATION (application);
-  EosApplicationPrivate *priv = eos_application_get_instance_private (self);
   g_once (&priv->init_config_dir_once,
           (GThreadFunc)ensure_config_dir_exists_and_is_writable, self);
 }
@@ -629,10 +646,14 @@ eos_application_init (EosApplication *self)
 
   /* Set up app actions */
   static const GActionEntry actions[] = {
-    { "image-credits", on_image_credits_activate },
+    { "quit", on_quit_activate, NULL, NULL, NULL },
+    { "image-credits", on_image_credits_activate, NULL, NULL, NULL }
   };
-  g_action_map_add_action_entries (G_ACTION_MAP (self), actions,
-                                   G_N_ELEMENTS (actions), self);
+
+  g_action_map_add_action_entries (G_ACTION_MAP (self),
+                                   actions, G_N_ELEMENTS (actions),
+                                   self);
+
   set_image_credits_action_enabled (self, FALSE);
 
   g_signal_connect (self, "notify::application-id",
