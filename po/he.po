@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-01 22:50+0000\n"
+"POT-Creation-Date: 2019-05-03 21:50+0000\n"
 "PO-Revision-Date: 2018-07-20 21:51+0000\n"
 "Last-Translator: endlessmobile_build <philip@endlessm.com>\n"
 "Language-Team: Hebrew (http://www.transifex.com/endless-os/eos-sdk/language/he/)\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Language: he\n"
 "Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;\n"
 
-#: endless/eosapplication.c:291
+#: endless/eosapplication.c:301
 msgid "Image credits"
 msgstr ""
 

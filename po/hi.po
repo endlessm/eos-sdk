@@ -3,12 +3,12 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# e2f_in c7 <e2f_in_c7@outlook.com>, 2016
+# 25c299dc371da5bff014f86901f492aa, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-01 22:50+0000\n"
+"POT-Creation-Date: 2019-05-03 21:50+0000\n"
 "PO-Revision-Date: 2018-07-20 21:51+0000\n"
 "Last-Translator: endlessmobile_build <philip@endlessm.com>\n"
 "Language-Team: Hindi (http://www.transifex.com/endless-os/eos-sdk/language/hi/)\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Language: hi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: endless/eosapplication.c:291
+#: endless/eosapplication.c:301
 msgid "Image credits"
 msgstr "चित्र क्रेडिट"
 
