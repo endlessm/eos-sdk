@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-01 22:50+0000\n"
+"POT-Creation-Date: 2019-05-03 21:50+0000\n"
 "PO-Revision-Date: 2019-01-08 16:49+0000\n"
 "Last-Translator: Will Thompson <wjt@endlessm.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/endless-os/eos-sdk/language/hu/)\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Language: hu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: endless/eosapplication.c:291
+#: endless/eosapplication.c:301
 msgid "Image credits"
 msgstr ""
 
