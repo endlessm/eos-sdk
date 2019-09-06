@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-09 21:50+0000\n"
-"PO-Revision-Date: 2019-05-07 03:56+0000\n"
+"POT-Creation-Date: 2019-09-06 00:40+0000\n"
+"PO-Revision-Date: 2019-09-04 23:55+0000\n"
 "Last-Translator: Muha Aliss <muhaaliss@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/endless-os/eos-sdk/language/tr/)\n"
 "MIME-Version: 1.0\n"
@@ -82,7 +82,7 @@ msgstr ""
 
 #: endless/eoslicense.c:53
 msgid "Owner permission"
-msgstr ""
+msgstr "Sahip izni"
 
 #: endless/eoslicense.c:54
 msgid "Copyrighted free use"
