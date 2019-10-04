@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-13 21:50+0000\n"
-"PO-Revision-Date: 2018-07-20 21:51+0000\n"
-"Last-Translator: endlessmobile_build <philip@endlessm.com>\n"
+"POT-Creation-Date: 2019-09-27 21:50+0000\n"
+"PO-Revision-Date: 2019-10-04 13:37+0000\n"
+"Last-Translator: Will Thompson <wjt@endlessm.com>\n"
 "Language-Team: English (Canada) (http://www.transifex.com/endless-os/eos-sdk/language/en_CA/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -76,7 +76,7 @@ msgstr ""
 #. contain any ampersands (&), less-than signs (<) or greater-than signs (>).
 #: endless/eoslicense.c:52
 msgid "Public domain"
-msgstr ""
+msgstr "Public domain"
 
 #: endless/eoslicense.c:53
 msgid "Owner permission"
