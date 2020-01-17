@@ -82,8 +82,6 @@
 
 #define CSS_TEMPLATE "#%s %s #%s %s"
 
-#define _EOS_TOP_BAR_EDGE_FINISHING_HEIGHT_PX 2
-
 #define UNMAXIMIZE_EVENT "2b5c044d-d819-4e2c-a3a6-c485c1ac371e"
 
 typedef struct {
@@ -92,7 +90,6 @@ typedef struct {
   GtkWidget *top_bar;
   GtkWidget *overlay;
   GtkSizeGroup *overlay_size_group;
-  GtkWidget *edge_finishing;
   GtkWidget *current_background;
   GtkWidget *next_background;
   GtkWidget *background_stack;
@@ -484,7 +481,6 @@ eos_window_finalize (GObject *object)
   EosWindow *self = EOS_WINDOW (object);
   EosWindowPrivate *priv = eos_window_get_instance_private (self);
 
-  g_object_unref (priv->edge_finishing);
   g_object_unref (priv->background_provider);
   g_object_unref (priv->font_size_provider);
   g_free (priv->current_background_css_props);
@@ -598,6 +594,7 @@ eos_window_class_init (EosWindowClass *klass)
   widget_class->configure_event = eos_window_configure_event;
 
   gtk_widget_class_set_css_name (widget_class, "EosWindow");
+
   /**
    * EosWindow:application:
    *
@@ -754,28 +751,6 @@ on_credits_clicked (GtkWidget *top_bar,
                                   NULL);
 }
 
-/* Draw the edge finishing on the two lines on top of the window's content;
-see eos_top_bar_draw() for the two lines inside the top bar */
-static gboolean
-on_edge_finishing_draw_cb (GtkWidget *edge_finishing,
-                           cairo_t   *cr)
-{
-  gint width = gtk_widget_get_allocated_width (edge_finishing);
-  cairo_set_line_width (cr, 1.0);
-  /* Shadow 1: #000000, opacity 15% */
-  cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.15);
-  cairo_move_to (cr, 0, 0.5);
-  cairo_rel_line_to (cr, width, 0);
-  cairo_stroke (cr);
-  /* Shadow 2: #000000, opacity 5% */
-  cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.05);
-  cairo_move_to (cr, 0, 1.5);
-  cairo_rel_line_to (cr, width, 0);
-  cairo_stroke (cr);
-
-  return GDK_EVENT_PROPAGATE;
-}
-
 static void
 eos_window_init (EosWindow *self)
 {
@@ -788,6 +763,8 @@ eos_window_init (EosWindow *self)
   gtk_window_set_titlebar (GTK_WINDOW (self), priv->top_bar);
 
   priv->overlay = gtk_overlay_new ();
+  gtk_style_context_add_class (gtk_widget_get_style_context (priv->overlay),
+                               EOS_WINDOW_STYLE_CLASS_INNER);
   gtk_container_add (GTK_CONTAINER (self), priv->overlay);
 
   priv->background_stack = gtk_stack_new ();
@@ -826,18 +803,6 @@ eos_window_init (EosWindow *self)
   // background frame with no minimum size. So we use a size group.
   priv->overlay_size_group = gtk_size_group_new (GTK_SIZE_GROUP_BOTH);
   gtk_size_group_add_widget (priv->overlay_size_group, priv->background_stack);
-
-  priv->edge_finishing = gtk_drawing_area_new ();
-  gtk_widget_set_vexpand (priv->edge_finishing, FALSE);
-  gtk_widget_set_valign (priv->edge_finishing, GTK_ALIGN_START);
-  /* has_window == FALSE is necessary for not catching input events */
-  gtk_widget_set_has_window (priv->edge_finishing, FALSE);
-  gtk_widget_set_size_request (priv->edge_finishing,
-                               -1, _EOS_TOP_BAR_EDGE_FINISHING_HEIGHT_PX);
-  g_signal_connect (priv->edge_finishing, "draw",
-                    G_CALLBACK (on_edge_finishing_draw_cb), NULL);
-  // We ref the edge finishing as it gets reparented when page managers change
-  g_object_ref(priv->edge_finishing);
 
   gtk_window_maximize (GTK_WINDOW (self));
   gtk_window_set_default_size (GTK_WINDOW (self), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
@@ -909,10 +874,6 @@ eos_window_set_page_manager (EosWindow *self,
 
   if (priv->page_manager != NULL)
     {
-      // We need to remove the edge finishing and add it again so it always
-      // appears over the page manager
-      gtk_container_remove (GTK_CONTAINER (priv->overlay),
-                            priv->edge_finishing);
       gtk_size_group_remove_widget (priv->overlay_size_group,
                                     GTK_WIDGET (priv->page_manager));
       gtk_container_remove (GTK_CONTAINER (priv->overlay),
@@ -921,11 +882,6 @@ eos_window_set_page_manager (EosWindow *self,
   priv->page_manager = page_manager;
   gtk_overlay_add_overlay (GTK_OVERLAY (priv->overlay),
                            GTK_WIDGET (priv->page_manager));
-  gtk_overlay_add_overlay (GTK_OVERLAY (priv->overlay),
-                           priv->edge_finishing);
-  gtk_overlay_set_overlay_pass_through(GTK_OVERLAY (priv->overlay),
-                                       priv->edge_finishing,
-                                       TRUE);
   gtk_size_group_add_widget (priv->overlay_size_group,
                              GTK_WIDGET (priv->page_manager));
 

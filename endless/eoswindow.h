@@ -36,6 +36,8 @@ G_BEGIN_DECLS
   (G_TYPE_INSTANCE_GET_CLASS ((obj), \
   EOS_TYPE_WINDOW, EosWindowClass))
 
+#define EOS_WINDOW_STYLE_CLASS_INNER "eos-window-inner"
+
 typedef struct _EosWindow EosWindow;
 typedef struct _EosWindowClass EosWindowClass;
 
