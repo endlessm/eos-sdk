@@ -36,12 +36,12 @@ typedef struct _EosTopBarClass EosTopBarClass;
 
 struct _EosTopBar
 {
-  GtkEventBox parent;
+  GtkHeaderBar parent;
 };
 
 struct _EosTopBarClass
 {
-  GtkEventBoxClass parent_class;
+  GtkHeaderBarClass parent_class;
 };
 
 GType      eos_top_bar_get_type                (void) G_GNUC_CONST;
