@@ -26,8 +26,11 @@ EOS_SDK_DEPRECATED_IN_0_0
 gboolean eos_hello_sample_function (GFile   *file,
                                     GError **error);
 
-EOS_SDK_AVAILABLE_IN_0_6
+EOS_SDK_DEPRECATED_IN_0_6
 gboolean        eos_is_composite_tv_screen (GdkScreen *screen);
+
+EOS_SDK_AVAILABLE_IN_0_6
+gboolean        eos_is_composite_tv_monitor (GdkMonitor *monitor);
 
 G_END_DECLS
 

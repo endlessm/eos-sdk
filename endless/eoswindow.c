@@ -121,6 +121,8 @@ typedef struct {
   guint in_resize_id;
   gint width;
   gint height;
+
+  GdkMonitor *monitor;
 } EosWindowPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
@@ -689,13 +691,35 @@ eos_window_class_init (EosWindowClass *klass)
 }
 
 static void
-update_screen (EosWindow *self)
+update_monitor (EosWindow *self)
 {
+  EosWindowPrivate *priv = eos_window_get_instance_private (self);
+
+  GdkWindow *gdk_window = gtk_widget_get_window (GTK_WIDGET (self));
+  if (gdk_window == NULL)
+    return;
+
+  GdkDisplay *gdk_display = gdk_window_get_display (gdk_window);
+  GdkMonitor *gdk_monitor = gdk_display_get_monitor_at_window (gdk_display,
+                                                               gdk_window);
+
+  if (priv->monitor != gdk_monitor)
+    priv->monitor = gdk_monitor;
+  else
+    return;
+
   GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (self));
-  if (eos_is_composite_tv_screen (gtk_window_get_screen (GTK_WINDOW (self))))
+
+  if (eos_is_composite_tv_monitor (gdk_monitor))
     gtk_style_context_add_class (context, EOS_STYLE_CLASS_COMPOSITE);
   else
     gtk_style_context_remove_class (context, EOS_STYLE_CLASS_COMPOSITE);
+}
+
+static void
+on_size_allocate (EosWindow *self)
+{
+  update_monitor(self);
 }
 
 #ifdef USE_METRICS
@@ -781,8 +805,6 @@ eos_window_init (EosWindow *self)
 {
   EosWindowPrivate *priv = eos_window_get_instance_private (self);
 
-  update_screen (self);
-
   priv->top_bar = eos_top_bar_new ();
   gtk_widget_show_all (priv->top_bar);
   gtk_window_set_titlebar (GTK_WINDOW (self), priv->top_bar);
@@ -842,9 +864,11 @@ eos_window_init (EosWindow *self)
   gtk_window_maximize (GTK_WINDOW (self));
   gtk_window_set_default_size (GTK_WINDOW (self), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 
+  g_signal_connect (self, "realize", G_CALLBACK (update_monitor), NULL);
+  g_signal_connect (self, "size-allocate", G_CALLBACK (on_size_allocate), NULL);
+
   g_signal_connect (priv->top_bar, "credits-clicked",
                     G_CALLBACK (on_credits_clicked), self);
-  g_signal_connect (self, "notify::screen", G_CALLBACK (update_screen), NULL);
 #ifdef USE_METRICS
   g_signal_connect (self, "notify::is-maximized",
                     G_CALLBACK(on_maximize_state_change), NULL);
