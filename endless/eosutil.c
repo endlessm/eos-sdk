@@ -15,16 +15,7 @@
 gboolean
 eos_is_composite_tv_screen (GdkScreen *screen)
 {
-  if (screen == NULL)
-    screen = gdk_screen_get_default ();
-
-  if (gdk_screen_get_width (screen) != 720)
-    return FALSE;
-
-  int height = gdk_screen_get_height (screen);
-  if (height != 480 && height != 576)
-    return FALSE;
-
-  g_debug ("Composite screen detected for screen %p", screen);
-  return TRUE;
+  // Composite mode support has been removed from Endless OS
+  // <https://phabricator.endlessm.com/T22102>
+  return FALSE;
 }

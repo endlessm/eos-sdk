@@ -121,6 +121,7 @@ typedef struct {
   guint in_resize_id;
   gint width;
   gint height;
+
 } EosWindowPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (EosWindow, eos_window, GTK_TYPE_APPLICATION_WINDOW)
@@ -688,16 +689,6 @@ eos_window_class_init (EosWindowClass *klass)
   g_object_class_install_properties (object_class, NPROPS, eos_window_props);
 }
 
-static void
-update_screen (EosWindow *self)
-{
-  GtkStyleContext *context = gtk_widget_get_style_context (GTK_WIDGET (self));
-  if (eos_is_composite_tv_screen (gtk_window_get_screen (GTK_WINDOW (self))))
-    gtk_style_context_add_class (context, EOS_STYLE_CLASS_COMPOSITE);
-  else
-    gtk_style_context_remove_class (context, EOS_STYLE_CLASS_COMPOSITE);
-}
-
 #ifdef USE_METRICS
 
 static gboolean
@@ -781,8 +772,6 @@ eos_window_init (EosWindow *self)
 {
   EosWindowPrivate *priv = eos_window_get_instance_private (self);
 
-  update_screen (self);
-
   priv->top_bar = eos_top_bar_new ();
   gtk_widget_show_all (priv->top_bar);
   gtk_window_set_titlebar (GTK_WINDOW (self), priv->top_bar);
@@ -844,7 +833,6 @@ eos_window_init (EosWindow *self)
 
   g_signal_connect (priv->top_bar, "credits-clicked",
                     G_CALLBACK (on_credits_clicked), self);
-  g_signal_connect (self, "notify::screen", G_CALLBACK (update_screen), NULL);
 #ifdef USE_METRICS
   g_signal_connect (self, "notify::is-maximized",
                     G_CALLBACK(on_maximize_state_change), NULL);
