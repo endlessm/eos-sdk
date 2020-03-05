@@ -1,144 +1,18 @@
 /* Wipe all theming CSS to start with. We'll leave the adwaita theme for
  * spinner.*/
-EosWindow,
-EosWindow :not(spinner):not(decoration) {
+.eos-window-inner :not(spinner):not(decoration),
+.eos-reset,
+.eos-reset :not(spinner):not(decoration) {
     all: unset;
-}
-
-@define-color endless_theme_bg_color #2e3436;
-@define-color endless_wm_shadow alpha(black, 0.5);
-
-/* Insensitive Text */
-
-menu label:disabled {
-    color: rgba(255, 255, 255, 0.5);
-}
-
-/* Endless app window */
-
-EosWindow {
-    background-color: @endless_theme_bg_color;
 }
 
 EosWindow.in-resize {
     -eos-cairo-filter: -eos-nearest;
 }
 
-.window-frame {
-    border-color: darker(@endless_theme_bg_color);
-    border-radius: 7px 7px 0 0;
-    border-width: 1px;
-    border-style: solid;
-
-    box-shadow: 0 2px 8px 3px @endless_wm_shadow;
-
-    /* this is used for the resize cursor area */
-    margin: 10px;
-}
-
-.window-frame:backdrop {
-    box-shadow: 0 2px 5px 1px @endless_wm_shadow;
-}
-
-.window-frame.tooltip {
-    border-radius: 5px;
-    box-shadow: none;
-}
-
-EosWindow .titlebar {
-    font-family: "Lato";
-    font-weight: bold;
-    font-size: 14.7px;
-    background-image: -gtk-gradient(linear, center top, center bottom,
-        from(#464646), to(#1e1e1e));
-    padding-left: 7px;
-    padding-right: 7px;
-}
-
-EosWindow:not(.maximized) .titlebar {
-    border-radius: 7px 7px 0px 0px;
-}
-
-EosWindow .titlebar:backdrop {
-    background-image: -gtk-gradient(linear, center top, center bottom,
-        from(#282828), to(#1e1e1e));
-}
-
-EosWindow .titlebar button {
-    border-radius: 2px;
-    color: #8c8c8c;
-    -gtk-icon-shadow: 0px -1px alpha(black, 0.25);
-    padding: 4px;
-}
-
-EosWindow .titlebar button:backdrop {
-    color: #646464;
-}
-
-EosWindow .titlebar button:hover {
-    color: #dcdcdc;
-    -gtk-icon-shadow: 0px -1px alpha(black, 0.35);
-    background-image: -gtk-gradient(linear, left bottom, left top,
-        color-stop(0.98, rgb(131, 131, 131)),
-        color-stop(0.95, rgb(108, 108, 108)),
-        color-stop(0, rgb(68, 68, 68)));
-}
-
-EosWindow .titlebar button:active {
-    color: #787878;
-    -gtk-icon-shadow: none;
-    background-image: -gtk-gradient(linear, left bottom, left top,
-        color-stop(0.98, rgb(79, 79, 79)),
-        color-stop(0.95, rgb(71, 71, 71)),
-        color-stop(0, rgb(67, 67, 67)));
-}
-
-EosWindow .titlebar .home,
-EosWindow .titlebar .back,
-EosWindow .titlebar .forward {
-    background-image: linear-gradient(-179deg,
-        rgba(98, 98, 98, 0.49) 0%,
-        alpha(black, 0.50) 100%);
-    border-style: solid;
-    border-width: 1px;
-    border-color: black;
-    box-shadow: inset 1px 1px alpha(white, 0.25);
-    padding: 2px 10px;
-}
-
-EosWindow .titlebar .home:disabled,
-EosWindow .titlebar .back:disabled,
-EosWindow .titlebar .forward:disabled {
-    border-color: alpha(black, 0.20);
-    background-color: transparent;
-    background-image: none;
-    box-shadow: none;
-    color: #5a5a5a;
-    -gtk-icon-shadow: none;
-}
-
-EosWindow .titlebar .home {
-    border-radius: 5px;
-}
-
-EosWindow .titlebar .back {
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-    border-right: 0px none;
-}
-
-EosWindow .titlebar .forward {
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-
-EosWindow .titlebar .forward.rtl {
-    border-radius: 5px 0 0 5px;
-    border-right: 0px none;
-}
-
-EosWindow .titlebar .back.rtl {
-    border-radius: 0 5px 5px 0;
+EosWindow .titlebar .NavigationSearchBox {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .credits-button {
@@ -162,33 +36,33 @@ EosWindow .titlebar .back.rtl {
 @define-color endless_menu_fg_color #2e3436;
 @define-color endless_menu_bg_color shade (#ededed, 1.1);
 
-.context-menu {
+.eos-window-inner .context-menu {
     font: initial;
     color: @endless_menu_fg_color;
     background-color: @endless_menu_bg_color;
     padding: 2px 0px;
 }
 
-.context-menu menuitem {
+.eos-window-inner .context-menu menuitem {
     padding: 4px;
 }
 
-.context-menu menuitem arrow {
+.eos-window-inner .context-menu menuitem arrow {
     min-width: 8px;
     min-height: 8px;
 }
 
-.context-menu menuitem:active,
-.context-menu menuitem:hover {
+.eos-window-inner .context-menu menuitem:active,
+.eos-window-inner .context-menu menuitem:hover {
     color: #ffffff;
     background-color: #4a90d9;
 }
 
-.context-menu menuitem *:disabled {
+.eos-window-inner .context-menu menuitem *:disabled {
     color: mix (@endless_menu_fg_color, @endless_menu_bg_color, 0.6);
 }
 
-.context-menu separator {
+.eos-window-inner .context-menu separator {
     background-color: transparent;
     background-image: image(mix (@endless_menu_fg_color, @endless_menu_bg_color, 0.9));
     background-size: 1px 1px;

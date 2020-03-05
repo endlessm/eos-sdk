@@ -95,68 +95,6 @@ eos_top_bar_set_property (GObject      *object,
 }
 
 static void
-eos_top_bar_get_preferred_height (GtkWidget *widget,
-                                  int *minimum,
-                                  int *natural)
-{
-  gboolean left_widget_visible = FALSE, center_widget_visible = FALSE;
-  EosTopBar *self = EOS_TOP_BAR (widget);
-  EosTopBarPrivate *priv = eos_top_bar_get_instance_private (self);
-  if (priv->left_top_bar_widget)
-    {
-      left_widget_visible = gtk_widget_get_visible (priv->left_top_bar_widget);
-      gtk_widget_set_visible (priv->left_top_bar_widget, TRUE);
-    }
-  if (priv->center_top_bar_widget)
-    {
-      center_widget_visible = gtk_widget_get_visible (priv->center_top_bar_widget);
-      gtk_widget_set_visible (priv->center_top_bar_widget, TRUE);
-    }
-
-  GTK_WIDGET_CLASS (eos_top_bar_parent_class)->get_preferred_height (widget,
-                                                                     minimum,
-                                                                     natural);
-  if (minimum != NULL)
-    *minimum = MAX (_EOS_TOP_BAR_HEIGHT_PX, *minimum);
-  if (natural != NULL)
-    *natural = MAX (_EOS_TOP_BAR_HEIGHT_PX, *natural);
-
-  if (priv->left_top_bar_widget)
-    {
-      gtk_widget_set_visible (priv->left_top_bar_widget, left_widget_visible);
-    }
-  if (priv->center_top_bar_widget)
-    {
-      gtk_widget_set_visible (priv->center_top_bar_widget, center_widget_visible);
-    }
-}
-
-/* Draw the edge finishing on the two lines inside the topbar; see
-after_draw_cb() in eoswindow.c for the two lines outside the topbar */
-static gboolean
-eos_top_bar_draw (GtkWidget *self_widget,
-                  cairo_t   *cr)
-{
-  GTK_WIDGET_CLASS (eos_top_bar_parent_class)->draw (self_widget, cr);
-
-  gint width = gtk_widget_get_allocated_width (self_widget);
-  gint height = gtk_widget_get_allocated_height (self_widget);
-  cairo_set_line_width (cr, 1.0);
-  /* Highlight: #ffffff, opacity 5% */
-  cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 0.05);
-  cairo_move_to (cr, 0, height - 1.5);
-  cairo_rel_line_to (cr, width, 0);
-  cairo_stroke (cr);
-  /* Baseline: #0a0a0a, opacity 100% */
-  cairo_set_source_rgb (cr, 0.039, 0.039, 0.039);
-  cairo_move_to (cr, 0, height - 0.5);
-  cairo_rel_line_to (cr, width, 0);
-  cairo_stroke (cr);
-
-  return GDK_EVENT_PROPAGATE;
-}
-
-static void
 on_credits_clicked (GtkButton *button,
                     EosTopBar *self)
 {
@@ -172,8 +110,6 @@ eos_top_bar_class_init (EosTopBarClass *klass)
   object_class->constructed = eos_top_bar_constructed;
   object_class->get_property = eos_top_bar_get_property;
   object_class->set_property = eos_top_bar_set_property;
-  widget_class->get_preferred_height = eos_top_bar_get_preferred_height;
-  widget_class->draw = eos_top_bar_draw;
 
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/com/endlessm/sdk/widgets/topbar.ui");
@@ -272,7 +208,10 @@ eos_top_bar_set_center_widget (EosTopBar *self,
     {
       gtk_container_add (GTK_CONTAINER (priv->center_top_bar_attach),
                          priv->center_top_bar_widget);
+      gtk_widget_show (priv->center_top_bar_attach);
       gtk_widget_show (priv->center_top_bar_widget);
+    } else {
+      gtk_widget_hide (priv->center_top_bar_attach);
     }
 }
 
