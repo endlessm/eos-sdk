@@ -3,15 +3,16 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# abc Def <hdogan1974@gmail.com>, 2020
 # Muha Aliss <muhaaliss@gmail.com>, 2019
 # Mustafa Haluk Saran <mhsaran@yahoo.com>, 2019
 msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-27 21:50+0000\n"
-"PO-Revision-Date: 2019-09-04 23:55+0000\n"
-"Last-Translator: Muha Aliss <muhaaliss@gmail.com>\n"
+"POT-Creation-Date: 2020-03-27 21:50+0000\n"
+"PO-Revision-Date: 2020-03-28 17:36+0000\n"
+"Last-Translator: abc Def <hdogan1974@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/endless-os/eos-sdk/language/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -47,7 +48,7 @@ msgstr "Görsel lisansı için tıklayınız."
 #: endless/eosattribution.c:278
 #, c-format
 msgid "Image credit: %s."
-msgstr ""
+msgstr "Görüntü jeneriği: %s."
 
 #. TRANSLATORS: %d will be replaced with the copyright year, %s with
 #. the copyright holder. Make sure these tokens are in the translated
@@ -78,7 +79,7 @@ msgstr "İzni ile kullanılır."
 #. contain any ampersands (&), less-than signs (<) or greater-than signs (>).
 #: endless/eoslicense.c:52
 msgid "Public domain"
-msgstr ""
+msgstr "Kamusal alan"
 
 #: endless/eoslicense.c:53
 msgid "Owner permission"
@@ -86,7 +87,7 @@ msgstr "Sahip izni"
 
 #: endless/eoslicense.c:54
 msgid "Copyrighted free use"
-msgstr ""
+msgstr "Telif hakkıyla korunan ücretsiz kullanım"
 
 #: endless/eoslicense.c:55
 msgid "CC0-1.0"
