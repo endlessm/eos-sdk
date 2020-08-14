@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eos-sdk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-31 21:50+0000\n"
-"PO-Revision-Date: 2020-05-23 14:13+0000\n"
+"POT-Creation-Date: 2020-08-07 21:50+0000\n"
+"PO-Revision-Date: 2020-08-14 08:18+0000\n"
 "Last-Translator: Pavel Borecki <pavel.borecki@gmail.com>\n"
 "Language-Team: Czech (http://www.transifex.com/endless-os/eos-sdk/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: endless/eosapplication.c:301
 msgid "Image credits"
-msgstr ""
+msgstr "Autorství obrázku"
 
 #. TRANSLATORS: %s will be replaced with the name of an image license,
 #. such as "Public domain" or "Creative Commons Attribution". These names are
@@ -30,7 +30,7 @@ msgstr ""
 #: endless/eosattribution.c:231
 #, c-format
 msgid "%s."
-msgstr ""
+msgstr "%s."
 
 #. TRANSLATORS: This string is markup, and so should not
 #. contain any ampersands (&), less-than signs (<), or
